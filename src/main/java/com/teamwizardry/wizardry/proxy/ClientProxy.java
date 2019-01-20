@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSpr
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
+import com.teamwizardry.wizardry.client.core.renderer.PearlRadialUIRenderer;
 import com.teamwizardry.wizardry.client.render.item.RenderHaloEntity;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModEntities;
@@ -68,6 +69,8 @@ public class ClientProxy extends CommonProxy {
 		ModelLoader.setCustomMeshDefinition(ModItems.BOOK, stack -> default3dPath);
 
 		ModKeybinds.register();
+
+		PearlRadialUIRenderer.INSTANCE.getClass();
 	}
 
 	@Override

@@ -1,8 +1,13 @@
 package com.teamwizardry.wizardry.common.core;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.BounceHandler;
 import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -14,23 +19,22 @@ import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.common.network.PacketBounce;
 import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
 import com.teamwizardry.wizardry.init.ModPotions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -44,6 +48,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -72,7 +77,9 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onFall(LivingFallEvent event) {
 		EntityLivingBase entity = event.getEntityLiving();
-		if (entity.getEntityWorld().isRemote) return;
+		if (entity == null) {
+			return;
+		}
 
 		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> {
 			if (bouncyBlock.getWorld() == entity.getEntityWorld().provider.getDimension()) {
@@ -81,52 +88,82 @@ public class EventHandler {
 			return false;
 		});
 
-		if (!entity.isPotionActive(ModPotions.BOUNCING)) {
-			boolean success = false;
-
-			int x1 = entity.getPosition().getX();
-			int y1 = entity.getPosition().getY();
-			int z1 = entity.getPosition().getZ();
-
-			for (BounceHandler.BouncyBlock bouncyBlock : BounceHandler.bouncingBlocks) {
-				int x2 = bouncyBlock.getPos().getX();
-				int y2 = bouncyBlock.getPos().getY();
-				int z2 = bouncyBlock.getPos().getZ();
-				Minecraft.getMinecraft().player.sendChatMessage(bouncyBlock.getPos() + " - " + entity.getPosition().add(sub));
-				if (bouncyBlock.getWorld() == entity.getEntityWorld().provider.getDimension() &&
-						((x1 >= x2 - 1 || x1 <= x2 + 1)
-								&& (y1 >= y2 - 1 || y1 <= y2 + 1)
-								&& (z1 >= z2 - 1 || z1 <= z2 + 1))) {
+		boolean success = false;
+		if (entity.isPotionActive(ModPotions.BOUNCING)) success = true;
+		else {
+			BlockPos entityPos = new BlockPos(entity.getPositionVector().add(0, -1, 0));
+			for (BounceHandler.BouncyBlock block : BounceHandler.bouncingBlocks) {
+				if (block.getPos().equals(entityPos)) {
 					success = true;
 					break;
 				}
 			}
-			if (!success) return;
 		}
 
-		//	if (event.getDistance() > 2) {
-
-		event.setCanceled(true);
-		event.setDamageMultiplier(0);
-		entity.fallDistance = 0;
-		entity.isAirBorne = true;
-		entity.onGround = false;
-		entity.motionY = -entity.motionY;
-		entity.velocityChanged = true;
-
-		if (entity instanceof EntityPlayerMP)
-			((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(entity));
-		//	PacketHandler.NETWORK.sendToServer(new PacketBounce());
-		//	PacketHandler.NETWORK.sendToServer(new PacketAddBouncyEntity(entity, entity.motionY));
-		//	BounceHandler.addBounceHandler(entity, entity.motionY);
-
-		entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
-		//	}
+		if (success) {
+			boolean isClient = entity.getEntityWorld().isRemote;
+			if (event.getDistance() > 2) {
+				event.setDamageMultiplier(0);
+				entity.fallDistance = 0;
+				if (isClient) {
+					entity.motionY *= -0.9;
+					entity.isAirBorne = true;
+					entity.onGround = false;
+					double f = 0.91d + 0.04d;
+					entity.motionX /= f;
+					entity.motionZ /= f;
+					PacketHandler.NETWORK.sendToServer(new PacketBounce());
+				} else {
+					event.setCanceled(true);
+				}
+				entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
+				BounceHandler.addBounceHandler(entity, entity.motionY);
+			}
+		}
 	}
 
 	@SubscribeEvent
-	public void worldTick(TickEvent.WorldTickEvent event) {
+	public void clientTick(TickEvent.PlayerTickEvent event) {
+		if (event.phase != Phase.END) return;
 
+		EntityLivingBase entity = event.player;
+
+
+		boolean isClient = entity.getEntityWorld().isRemote;
+		if (true) return;
+
+		//	if (isClient)
+		//		Minecraft.getMinecraft().player.sendChatMessage(entity.fallDistance + " - " + (entity.lastTickPosY - entity.posY) + " - " + entity.prevPosY + ", "+ entity.posY + ", " + entity.lastTickPosY);
+		//	Minecraft.getMinecraft().player.sendChatMessage(isClient + "");
+		if (entity.lastTickPosY == entity.posY && entity.fallDistance > 2) {
+			entity.fallDistance = 0;
+			if (isClient) {
+
+			}
+			entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
+			BounceHandler.addBounceHandler(entity, entity.motionY);
+		} else if (entity.lastTickPosY == entity.posY && entity.fallDistance == 0 && isClient) {
+			entity.motionY *= -0.9;
+			entity.isAirBorne = true;
+			entity.onGround = false;
+			double f = 0.91d + 0.04d;
+			entity.motionX /= f;
+			entity.motionZ /= f;
+			PacketHandler.NETWORK.sendToServer(new PacketBounce());
+
+			entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
+			BounceHandler.addBounceHandler(entity, entity.motionY);
+		}
+
+		Vec3d motion = new Vec3d(entity.motionX, entity.motionY, entity.motionZ);
+		ParticleBuilder glitter = new ParticleBuilder(200);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.disableMotionCalculation();
+		glitter.disableRandom();
+		ParticleSpawner.spawn(glitter, entity.getEntityWorld(), new StaticInterp<>(entity.getPositionVector()), 1, 0, (i, build) -> {
+			if (entity.getEntityWorld().isRemote) build.setColor(Color.RED);
+			else build.setColor(Color.BLUE);
+		});
 	}
 
 	@SubscribeEvent

@@ -33,7 +33,7 @@ public class BounceHandler {
 	private int timer;
 	private boolean wasInAir;
 	private double bounce;
-	private boolean bounced = false;
+	private boolean bounced;
 
 	private double lastMovX;
 	private double lastMovZ;
@@ -43,6 +43,7 @@ public class BounceHandler {
 		timer = 0;
 		wasInAir = false;
 		this.bounce = bounce;
+		bounced = bounce == 0;
 
 		bouncingEntities.put(entityLiving, this);
 	}
@@ -64,12 +65,13 @@ public class BounceHandler {
 			MinecraftForge.EVENT_BUS.register(new BounceHandler(entity, bounce));
 		} else if (bounce != 0) {
 			handler.bounce = bounce;
+			handler.bounced = false;
 		}
 	}
 
 	@SubscribeEvent
 	public void playerTickPost(TickEvent.PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END && event.player == entityLiving && !event.player.isElytraFlying()) {
+		if (event.phase == TickEvent.Phase.END && event.player == entityLiving) {
 			if (!bounced) {
 				event.player.motionY = bounce;
 				bounced = true;

@@ -43,7 +43,7 @@ public class Wizardry {
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
 
-		Wizardry.logger.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
+		Wizardry.logger.info("IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
 		proxy.preInit(event);
 	}

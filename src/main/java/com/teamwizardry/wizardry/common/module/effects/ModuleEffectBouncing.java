@@ -61,13 +61,9 @@ public class ModuleEffectBouncing implements IModuleEffect, ILingeringModule {
 		if (entity instanceof EntityLivingBase) {
 			world.playSound(null, entity.getPosition(), ModSounds.SLIME_SQUISHING, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
 			((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.BOUNCING, (int) time, 0, true, false));
-		}
-
-		if (pos != null) {
-			if (!BlockUtils.isAnyAir(world, pos)) {
-				BounceHandler.addBounceHandler(world, pos, (int) time);
-				PacketHandler.NETWORK.sendToAll(new PacketAddBouncyBlock(world, pos, (int) time));
-			}
+		} else {
+			BounceHandler.addBounceHandler(world, pos, (int) time);
+			PacketHandler.NETWORK.sendToAll(new PacketAddBouncyBlock(world, pos, (int) time));
 		}
 
 		return true;

@@ -46,8 +46,7 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
-import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -62,7 +61,6 @@ import java.util.List;
 
 @SuppressWarnings("Duplicates")
 @SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(Side.CLIENT)
 public class PearlRadialUIRenderer {
 
 	public static final PearlRadialUIRenderer INSTANCE = new PearlRadialUIRenderer();
@@ -117,6 +115,7 @@ public class PearlRadialUIRenderer {
 	public float itemExpansion = 0;
 
 	private PearlRadialUIRenderer() {
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	private static int getScrollSlot(MouseEvent event, int count, int scrollSlot) {
@@ -130,8 +129,12 @@ public class PearlRadialUIRenderer {
 		return scrollSlot;
 	}
 
+	private static void renderModel(IBakedModel model, int color, ItemStack stack) {
+		renderLitItem(Minecraft.getMinecraft().getRenderItem(), model, color, stack);
+	}
+
 	@SubscribeEvent
-	public static void onScroll(MouseEvent event) {
+	public void onScroll(MouseEvent event) {
 		if (event.getDwheel() == 0 || !Keyboard.isCreated()) return;
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
@@ -223,8 +226,219 @@ public class PearlRadialUIRenderer {
 		}
 	}
 
+	private static int genSnapshotHashcode(List<ItemStack> pearls) {
+		int hashcode = 0;
+		for (ItemStack stack : pearls) {
+			List<SpellRing> rings = SpellUtils.getAllSpellRings(stack);
+			for (SpellRing ring : rings) {
+				hashcode += ring.hashCode();
+			}
+		}
+		return hashcode;
+	}
+
+	private static void renderText(double width, double height, String string) {
+		GlStateManager.pushMatrix();
+		GlStateManager.enableTexture2D();
+		GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
+		GlStateManager.enableBlend();
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		GlStateManager.translate(width / 2.0, height / 2.0, 0);
+
+		String[] split = string.split("\n");
+		for (int i = 0; i < split.length; i++) {
+			String text = split[i];
+			Minecraft.getMinecraft().fontRenderer.drawString(
+					text,
+					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
+					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
+					0x000000);
+		}
+
+		float rot1 = MathHelper.sin(ClientTickHandler.getTicks() / 50f) * 5;
+		GlStateManager.rotate(rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
+		for (int i = 0; i < split.length; i++) {
+			String text = split[i];
+			Minecraft.getMinecraft().fontRenderer.drawString(
+					text,
+					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
+					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
+					0x2b000000);
+		}
+		GlStateManager.rotate(-rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
+
+		float rot2 = MathHelper.sin(ClientTickHandler.getTicks() / 20f) * 6;
+		GlStateManager.rotate(rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
+		for (int i = 0; i < split.length; i++) {
+			String text = split[i];
+			Minecraft.getMinecraft().fontRenderer.drawString(
+					text,
+					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
+					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
+					0x21000000);
+		}
+		GlStateManager.rotate(-rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
+		GlStateManager.popMatrix();
+	}
+
+	private static void renderQuads(BufferBuilder renderer, List<BakedQuad> quads, int color, ItemStack stack) {
+		color &= 0xFF000000;
+		boolean flag = !stack.isEmpty();
+		int i = 0;
+
+		for (int j = quads.size(); i < j; ++i) {
+			BakedQuad bakedquad = quads.get(i);
+			int k = color | 0xFFFFFF;
+
+			if (flag && bakedquad.hasTintIndex()) {
+				k = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, bakedquad.getTintIndex());
+
+				if (EntityRenderer.anaglyphEnable) {
+					k = TextureUtil.anaglyphColor(k);
+				}
+
+				k &= 0xFFFFFF;
+				k |= color;
+			}
+
+			LightUtil.renderQuadColor(renderer, bakedquad, k);
+		}
+	}
+
+	private static int getColorMultiplier(ItemStack stack, int tintIndex) {
+		if (tintIndex == -1 || stack.isEmpty()) return 0xFFFFFFFF;
+
+		int colorMultiplier = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, tintIndex);
+
+		if (EntityRenderer.anaglyphEnable) {
+			colorMultiplier = TextureUtil.anaglyphColor(colorMultiplier);
+		}
+
+		// FUCK YOU
+		//	// Always full opacity
+		//	colorMultiplier |= 0xff << 24; // -16777216
+
+		return colorMultiplier;
+	}
+
+
+	//					colorMultiplier = (newColorMultiplier & 0xFFFFFF) | ((int)(INSTANCE.itemExpansion * 255) << 24);
+	private static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) {
+		List<BakedQuad> allquads = new ArrayList<>();
+
+		for (EnumFacing enumfacing : EnumFacing.VALUES) {
+			allquads.addAll(model.getQuads(null, enumfacing, 0));
+		}
+
+		allquads.addAll(model.getQuads(null, null, 0));
+
+		if (allquads.isEmpty()) return;
+
+		// Current list of consecutive quads with the same lighting
+		List<BakedQuad> segment = new ArrayList<>();
+
+		// Lighting of the current segment
+		int segmentBlockLight = -1;
+		int segmentSkyLight = -1;
+		// Coloring of the current segment
+		int segmentColorMultiplier = color;
+		// If the current segment contains lighting data
+		boolean hasLighting = false;
+
+		// Tint index cache to avoid unnecessary IItemColor lookups
+		int prevTintIndex = -1;
+
+		for (int i = 0; i < allquads.size(); i++) {
+			BakedQuad q = allquads.get(i);
+
+			// Lighting of the current quad
+			int bl = 0;
+			int sl = 0;
+
+			// Fail-fast on ITEM, as it cannot have light data
+			if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().hasUvOffset(1)) {
+				q.pipe(lightGatherer);
+				if (lightGatherer.hasLighting()) {
+					bl = lightGatherer.blockLight;
+					sl = lightGatherer.skyLight;
+				}
+			}
+
+			int colorMultiplier = segmentColorMultiplier;
+
+			// If there is no color override, and this quad is tinted, we need to apply IItemColor
+			if (color == 0xFFFFFFFF && q.hasTintIndex()) {
+				int tintIndex = q.getTintIndex();
+
+				if (prevTintIndex != tintIndex) {
+					colorMultiplier = getColorMultiplier(stack, tintIndex);
+				}
+				prevTintIndex = tintIndex;
+			} else {
+				colorMultiplier = color;
+				prevTintIndex = -1;
+			}
+
+			boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
+			boolean colorDirty = hasLighting && segmentColorMultiplier != colorMultiplier;
+
+			// If lighting or color data has changed, draw the segment and flush it
+			if (lightingDirty || colorDirty) {
+				if (i > 0) // Make sure this isn't the first quad being processed
+				{
+					drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
+				}
+				segmentBlockLight = bl;
+				segmentSkyLight = sl;
+				segmentColorMultiplier = colorMultiplier;
+				hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0;
+			}
+
+			segment.add(q);
+		}
+
+		drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
+
+		// Clean up render state if necessary
+		if (hasLighting) {
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
+			GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+		}
+	}
+
+	private static void drawSegment(RenderItem ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor) {
+		BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+
+		float lastBl = OpenGlHelper.lastBrightnessX;
+		float lastSl = OpenGlHelper.lastBrightnessY;
+
+		if (updateLighting || updateColor) {
+			float emissive = Math.max(bl, sl) / 240f;
+
+			float r = (tintColor >>> 16 & 0xff) / 255f;
+			float g = (tintColor >>> 8 & 0xff) / 255f;
+			float b = (tintColor & 0xff) / 255f;
+
+			GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
+
+			if (updateLighting) {
+				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
+			}
+		}
+
+		renderQuads(bufferbuilder, segment, baseColor, stack);
+		Tessellator.getInstance().draw();
+
+		// Preserve this as it represents the "world" lighting
+		OpenGlHelper.lastBrightnessX = lastBl;
+		OpenGlHelper.lastBrightnessY = lastSl;
+
+		segment.clear();
+	}
+
 	@SubscribeEvent
-	public static void renderHud(RenderGameOverlayEvent.Pre event) {
+	public void renderHud(RenderGameOverlayEvent.Pre event) {
 		if (!init) {
 			ANIMATOR.add(centerRadiusAnim, colorAnim, heartBeatAnim, parasolGradientAnim, itemExpansionAnim);
 			init = true;
@@ -652,234 +866,6 @@ public class PearlRadialUIRenderer {
 			}
 			// ------------- PARASOL AND PEARL RENDERING ------------- //
 		}
-	}
-
-	private static int genSnapshotHashcode(List<ItemStack> pearls) {
-		int hashcode = 0;
-		for (ItemStack stack : pearls) {
-			List<SpellRing> rings = SpellUtils.getAllSpellRings(stack);
-			for (SpellRing ring : rings) {
-				hashcode += ring.hashCode();
-			}
-		}
-		return hashcode;
-	}
-
-	private static void renderText(double width, double height, String string) {
-		GlStateManager.pushMatrix();
-		GlStateManager.enableTexture2D();
-		GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
-		GlStateManager.enableBlend();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.translate(width / 2.0, height / 2.0, 0);
-
-		String[] split = string.split("\n");
-		for (int i = 0; i < split.length; i++) {
-			String text = split[i];
-			Minecraft.getMinecraft().fontRenderer.drawString(
-					text,
-					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-					0x000000);
-		}
-
-		float rot1 = MathHelper.sin(ClientTickHandler.getTicks() / 50f) * 5;
-		GlStateManager.rotate(rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-		for (int i = 0; i < split.length; i++) {
-			String text = split[i];
-			Minecraft.getMinecraft().fontRenderer.drawString(
-					text,
-					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-					0x2b000000);
-		}
-		GlStateManager.rotate(-rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-
-		float rot2 = MathHelper.sin(ClientTickHandler.getTicks() / 20f) * 6;
-		GlStateManager.rotate(rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-		for (int i = 0; i < split.length; i++) {
-			String text = split[i];
-			Minecraft.getMinecraft().fontRenderer.drawString(
-					text,
-					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-					0x21000000);
-		}
-		GlStateManager.rotate(-rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-		GlStateManager.popMatrix();
-	}
-
-	private static void renderQuads(BufferBuilder renderer, List<BakedQuad> quads, int color, ItemStack stack) {
-		color &= 0xFF000000;
-		boolean flag = !stack.isEmpty();
-		int i = 0;
-
-		for (int j = quads.size(); i < j; ++i) {
-			BakedQuad bakedquad = quads.get(i);
-			int k = color | 0xFFFFFF;
-
-			if (flag && bakedquad.hasTintIndex()) {
-				k = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, bakedquad.getTintIndex());
-
-				if (EntityRenderer.anaglyphEnable) {
-					k = TextureUtil.anaglyphColor(k);
-				}
-
-				k &= 0xFFFFFF;
-				k |= color;
-			}
-
-			LightUtil.renderQuadColor(renderer, bakedquad, k);
-		}
-	}
-
-	private static int getColorMultiplier(ItemStack stack, int tintIndex) {
-		if (tintIndex == -1 || stack.isEmpty()) return 0xFFFFFFFF;
-
-		int colorMultiplier = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, tintIndex);
-
-		if (EntityRenderer.anaglyphEnable) {
-			colorMultiplier = TextureUtil.anaglyphColor(colorMultiplier);
-		}
-
-		// FUCK YOU
-		//	// Always full opacity
-		//	colorMultiplier |= 0xff << 24; // -16777216
-
-		return colorMultiplier;
-	}
-
-
-	//					colorMultiplier = (newColorMultiplier & 0xFFFFFF) | ((int)(INSTANCE.itemExpansion * 255) << 24);
-	private static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) {
-		List<BakedQuad> allquads = new ArrayList<>();
-
-		for (EnumFacing enumfacing : EnumFacing.VALUES) {
-			allquads.addAll(model.getQuads(null, enumfacing, 0));
-		}
-
-		allquads.addAll(model.getQuads(null, null, 0));
-
-		if (allquads.isEmpty()) return;
-
-		// Current list of consecutive quads with the same lighting
-		List<BakedQuad> segment = new ArrayList<>();
-
-		// Lighting of the current segment
-		int segmentBlockLight = -1;
-		int segmentSkyLight = -1;
-		// Coloring of the current segment
-		int segmentColorMultiplier = color;
-		// If the current segment contains lighting data
-		boolean hasLighting = false;
-
-		// Tint index cache to avoid unnecessary IItemColor lookups
-		int prevTintIndex = -1;
-
-		for (int i = 0; i < allquads.size(); i++) {
-			BakedQuad q = allquads.get(i);
-
-			// Lighting of the current quad
-			int bl = 0;
-			int sl = 0;
-
-			// Fail-fast on ITEM, as it cannot have light data
-			if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().hasUvOffset(1)) {
-				q.pipe(lightGatherer);
-				if (lightGatherer.hasLighting()) {
-					bl = lightGatherer.blockLight;
-					sl = lightGatherer.skyLight;
-				}
-			}
-
-			int colorMultiplier = segmentColorMultiplier;
-
-			// If there is no color override, and this quad is tinted, we need to apply IItemColor
-			if (color == 0xFFFFFFFF && q.hasTintIndex()) {
-				int tintIndex = q.getTintIndex();
-
-				if (prevTintIndex != tintIndex) {
-					colorMultiplier = getColorMultiplier(stack, tintIndex);
-				}
-				prevTintIndex = tintIndex;
-			} else {
-				colorMultiplier = color;
-				prevTintIndex = -1;
-			}
-
-			boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
-			boolean colorDirty = hasLighting && segmentColorMultiplier != colorMultiplier;
-
-			// If lighting or color data has changed, draw the segment and flush it
-			if (lightingDirty || colorDirty) {
-				if (i > 0) // Make sure this isn't the first quad being processed
-				{
-					drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
-				}
-				segmentBlockLight = bl;
-				segmentSkyLight = sl;
-				segmentColorMultiplier = colorMultiplier;
-				hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0;
-			}
-
-			segment.add(q);
-		}
-
-		drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
-
-		// Clean up render state if necessary
-		if (hasLighting) {
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
-			GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
-		}
-	}
-
-	private static void drawSegment(RenderItem ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor) {
-		BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
-		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-
-		float lastBl = OpenGlHelper.lastBrightnessX;
-		float lastSl = OpenGlHelper.lastBrightnessY;
-
-		if (updateLighting || updateColor) {
-			float emissive = Math.max(bl, sl) / 240f;
-
-			float r = (tintColor >>> 16 & 0xff) / 255f;
-			float g = (tintColor >>> 8 & 0xff) / 255f;
-			float b = (tintColor & 0xff) / 255f;
-
-			GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
-
-			if (updateLighting) {
-				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
-			}
-		}
-
-		renderQuads(bufferbuilder, segment, baseColor, stack);
-		Tessellator.getInstance().draw();
-
-		// Preserve this as it represents the "world" lighting
-		OpenGlHelper.lastBrightnessX = lastBl;
-		OpenGlHelper.lastBrightnessY = lastSl;
-
-		segment.clear();
-	}
-
-	private static void renderModel(IBakedModel model, int color, ItemStack stack) {
-		if (ForgeModContainer.allowEmissiveItems) {
-			renderLitItem(Minecraft.getMinecraft().getRenderItem(), model, color, stack);
-			return;
-		}
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
-		bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
-
-		for (EnumFacing enumfacing : EnumFacing.values()) {
-			renderQuads(bufferbuilder, model.getQuads(null, enumfacing, 0L), color, stack);
-		}
-
-		renderQuads(bufferbuilder, model.getQuads(null, null, 0L), color, stack);
-		tessellator.draw();
 	}
 
 	private static void renderEffect(IBakedModel model) {
