@@ -1,13 +1,9 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.BounceHandler;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -34,7 +30,6 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -42,20 +37,18 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 public class EventHandler {
 
-	private final HashSet<UUID> fallResetter = new HashSet<>();
+	public static final HashSet<UUID> fallResetter = new HashSet<>();
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -64,9 +57,6 @@ public class EventHandler {
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.DIAMOND));
 	}
-
-
-	private static final BlockPos sub = new BlockPos(0, -1, 0);
 
 	/**
 	 * Code "borrowed" from Tinker's construct slime boots
@@ -120,50 +110,6 @@ public class EventHandler {
 				BounceHandler.addBounceHandler(entity, entity.motionY);
 			}
 		}
-	}
-
-	@SubscribeEvent
-	public void clientTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase != Phase.END) return;
-
-		EntityLivingBase entity = event.player;
-
-
-		boolean isClient = entity.getEntityWorld().isRemote;
-		if (true) return;
-
-		//	if (isClient)
-		//		Minecraft.getMinecraft().player.sendChatMessage(entity.fallDistance + " - " + (entity.lastTickPosY - entity.posY) + " - " + entity.prevPosY + ", "+ entity.posY + ", " + entity.lastTickPosY);
-		//	Minecraft.getMinecraft().player.sendChatMessage(isClient + "");
-		if (entity.lastTickPosY == entity.posY && entity.fallDistance > 2) {
-			entity.fallDistance = 0;
-			if (isClient) {
-
-			}
-			entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
-			BounceHandler.addBounceHandler(entity, entity.motionY);
-		} else if (entity.lastTickPosY == entity.posY && entity.fallDistance == 0 && isClient) {
-			entity.motionY *= -0.9;
-			entity.isAirBorne = true;
-			entity.onGround = false;
-			double f = 0.91d + 0.04d;
-			entity.motionX /= f;
-			entity.motionZ /= f;
-			PacketHandler.NETWORK.sendToServer(new PacketBounce());
-
-			entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
-			BounceHandler.addBounceHandler(entity, entity.motionY);
-		}
-
-		Vec3d motion = new Vec3d(entity.motionX, entity.motionY, entity.motionZ);
-		ParticleBuilder glitter = new ParticleBuilder(200);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.disableMotionCalculation();
-		glitter.disableRandom();
-		ParticleSpawner.spawn(glitter, entity.getEntityWorld(), new StaticInterp<>(entity.getPositionVector()), 1, 0, (i, build) -> {
-			if (entity.getEntityWorld().isRemote) build.setColor(Color.RED);
-			else build.setColor(Color.BLUE);
-		});
 	}
 
 	@SubscribeEvent
@@ -235,7 +181,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onFlyFall(PlayerFlyableFallEvent event) {
 		if (event.getEntityPlayer().getEntityWorld().provider.getDimension() == 0) {
-			if (event.getEntityPlayer().fallDistance >= ConfigValues.underworldFallDistance) {
+			if (event.getEntityPlayer().posY <= 0) {
 				BlockPos location = event.getEntityPlayer().getPosition();
 				BlockPos bedrock = PosUtils.checkNeighborBlocksThoroughly(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {

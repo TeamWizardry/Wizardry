@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.command;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -11,25 +12,34 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.network.PacketSyncModules;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.teamwizardry.wizardry.common.core.EventHandler.fallResetter;
 
 
 /**
@@ -58,7 +68,21 @@ public class CommandWizardry extends CommandBase {
 	public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) throws CommandException {
 		if (args.length < 1) throw new WrongUsageException(getUsage(sender));
 
-		if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
+		if (args[0].equalsIgnoreCase("tpunderworld")) {
+			Entity entity = sender.getCommandSenderEntity();
+			if (entity instanceof EntityPlayerMP) {
+				EntityPlayer player = ((EntityPlayer) entity);
+
+				BlockPos location = player.getPosition();
+				BlockPos bedrock = PosUtils.checkNeighborBlocksThoroughly(player.getEntityWorld(), location, Blocks.BEDROCK);
+				if (bedrock != null) {
+					fallResetter.add(player.getUniqueID());
+					TeleportUtil.teleportToDimension(player, Wizardry.underWorld.getId(), 0, 300, 0);
+					player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
+				}
+			}
+
+		} else if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
 			Entity entity = sender.getCommandSenderEntity();
 			if (entity instanceof EntityPlayerMP) {
 
