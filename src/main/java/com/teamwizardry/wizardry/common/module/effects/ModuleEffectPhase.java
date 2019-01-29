@@ -244,8 +244,8 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		EnumFacing faceHit = spell.getFaceHit();
 
-		Set<BlockPos> blockSet = spell.getData(SpellData.DefaultKeys.BLOCK_SET, new BlockSet(new HashSet<>())).getBlockSet();
-		Map<BlockPos, IBlockState> blockStateCache = spell.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE, new BlockStateCache(new HashMap<>())).getBlockStateCache();
+		Set<BlockPos> blockSet = spell.getDataWithFallback(SpellData.DefaultKeys.BLOCK_SET, new BlockSet(new HashSet<>())).getBlockSet();
+		Map<BlockPos, IBlockState> blockStateCache = spell.getDataWithFallback(SpellData.DefaultKeys.BLOCKSTATE_CACHE, new BlockStateCache(new HashMap<>())).getBlockStateCache();
 		HashMap<BlockPos, IBlockState> tmpCache = new HashMap<>(blockStateCache);
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;

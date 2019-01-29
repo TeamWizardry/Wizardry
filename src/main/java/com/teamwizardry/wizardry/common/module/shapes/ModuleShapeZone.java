@@ -88,7 +88,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 		Vec3d min = targetPos.subtract(aoe/2, range/2, aoe/2);
 		Vec3d max = targetPos.add(aoe / 2, range / 2, aoe / 2);
 
-		NBTTagCompound info = spell.getData(SpellData.DefaultKeys.COMPOUND, new NBTTagCompound());
+		NBTTagCompound info = spell.getDataWithFallback(SpellData.DefaultKeys.COMPOUND, new NBTTagCompound());
 
 		double zoneOffset = info.getDouble(ZONE_OFFSET) + potency;
 		info.setBoolean(ZONE_CAST, false);
