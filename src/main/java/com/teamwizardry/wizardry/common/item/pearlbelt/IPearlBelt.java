@@ -1,19 +1,15 @@
 package com.teamwizardry.wizardry.common.item.pearlbelt;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlWheelHolder;
-import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotClient;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModKeybinds;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

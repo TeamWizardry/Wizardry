@@ -15,7 +15,6 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.module.defaults.IModuleOverrides;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModKeybinds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;

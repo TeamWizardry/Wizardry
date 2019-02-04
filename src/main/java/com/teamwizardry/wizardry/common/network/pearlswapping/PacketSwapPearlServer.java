@@ -1,12 +1,9 @@
 package com.teamwizardry.wizardry.common.network.pearlswapping;
 
 import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
-import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlWheelHolder;
 import com.teamwizardry.wizardry.api.util.PearlHandlingUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;

@@ -14,8 +14,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
-import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
-import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlWheelHolder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
@@ -27,7 +25,6 @@ import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlo
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSwapPearlServer;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModKeybinds;
-import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
@@ -46,14 +43,12 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
-import net.minecraftforge.client.settings.KeyBindingMap;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -62,12 +57,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("Duplicates")
 @SideOnly(Side.CLIENT)
