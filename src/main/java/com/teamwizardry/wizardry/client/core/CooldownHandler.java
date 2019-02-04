@@ -2,10 +2,20 @@ package com.teamwizardry.wizardry.client.core;
 
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlWheelHolder;
+import com.teamwizardry.wizardry.api.util.PearlHandlingUtils;
+import com.teamwizardry.wizardry.client.core.renderer.PearlRadialUIRenderer;
+import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModKeybinds;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,14 +33,22 @@ public class CooldownHandler {
 	public static void clientTick(TickEvent.ClientTickEvent event) {
 		if (event.phase != TickEvent.Phase.START) return;
 		if (playerHandler == null) return;
-		if (Minecraft.getMinecraft().player == null) return;
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player == null) return;
 
 		if (resetMain) {
-			playerHandler.invoke(Minecraft.getMinecraft().player, 1000);
-			Wizardry.proxy.setItemStackHandHandler(EnumHand.MAIN_HAND, Minecraft.getMinecraft().player.getHeldItemMainhand());
+			playerHandler.invoke(player, 1000);
+			Wizardry.proxy.setItemStackHandHandler(EnumHand.MAIN_HAND, player.getHeldItemMainhand());
 		}
 		if (resetOff)
-			Wizardry.proxy.setItemStackHandHandler(EnumHand.OFF_HAND, Minecraft.getMinecraft().player.getHeldItemOffhand());
+			Wizardry.proxy.setItemStackHandHandler(EnumHand.OFF_HAND, player.getHeldItemOffhand());
+
+		// Keybind logic
+		Minecraft mc = Minecraft.getMinecraft();
+		if (ModKeybinds.pearlSwapping.isKeyDown() && mc.currentScreen == null &&
+				(player.getHeldItemMainhand().getItem() instanceof IPearlWheelHolder || PearlHandlingUtils.canOpenPearlWheel(player))) {
+			mc.displayGuiScreen(PearlRadialUIRenderer.INSTANCE);
+		}
 	}
 
 	public static void setResetOff(boolean resetOff) {

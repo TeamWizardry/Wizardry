@@ -54,6 +54,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public ItemStack swapPearl(ItemStack pearlHolder, ItemStack stackSwipeTo) {
+		if(stackSwipeTo == ItemStack.EMPTY) return ItemStack.EMPTY; //Temporary workaround for swapping a pearl into an empty belt
 		ItemStack extractedPearl = new ItemStack(ModItems.PEARL_NACRE);
 		SpellUtils.copySpell(pearlHolder, extractedPearl);
 
@@ -65,7 +66,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
-		if (ModKeybinds.pearlSwapping.isKeyDown()) return false;
 		if (isCoolingDown(playerIn.world, stack)) return false;
 		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return false;
@@ -83,8 +83,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {
-		if (ModKeybinds.pearlSwapping.isKeyDown()) return EnumActionResult.PASS;
-
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
 			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
@@ -115,12 +113,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
-		if (ModKeybinds.pearlSwapping.isKeyDown()) {
-			ItemStack stack = player.getHeldItem(hand);
-			swapOnRightClick(player, stack);
-			return new ActionResult<>(EnumActionResult.PASS, stack);
-		}
-
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
 			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
@@ -159,7 +151,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
-		if (ModKeybinds.pearlSwapping.isKeyDown()) return;
 		if (isCoolingDown(player.world, stack)) return;
 		if (!(player instanceof EntityPlayer)) return;
 

@@ -22,6 +22,7 @@ import com.teamwizardry.wizardry.common.item.ItemBook;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
+import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSwapPearlServer;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
@@ -99,6 +100,7 @@ public class CommonProxy {
 		PacketHandler.register(PacketSyncCooldown.class, Side.CLIENT);
 		PacketHandler.register(PacketVanishPotion.class, Side.CLIENT);
 		PacketHandler.register(PacketDevilDustFizzle.class, Side.CLIENT);
+		PacketHandler.register(PacketSwapPearlServer.class, Side.SERVER);
 
 		PageTypes.INSTANCE.registerPageProvider("wizardry_structure", PageWizardryStructure::new);
 		ItemBook.BOOK = new Book("book");

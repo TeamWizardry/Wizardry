@@ -72,20 +72,10 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 				ItemNBTHelper.setInt(belt, "scroll_slot", -1);
 				player.playSound(ModSounds.BELL_TING, 1f, 1f);
 			}
-		} else if (ModKeybinds.pearlSwapping.isKeyDown()) {
-			int scrollSlot = ItemNBTHelper.getInt(belt, "scroll_slot", -1);
-			if (scrollSlot == -1) return;
-
-			ItemStack output = removePearl(belt, scrollSlot);
-			if (output.isEmpty()) return;
-
-			player.addItemStackToInventory(output);
-			ItemNBTHelper.setInt(belt, "scroll_slot", Math.max(scrollSlot - 1, 0));
 		}
 
-
-		if (player instanceof EntityPlayerMP)
-			PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(player.inventory.getSlotFor(belt), -1), (EntityPlayerMP) player);
+		//if (player instanceof EntityPlayerMP)
+			//PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(player.inventory.getSlotFor(belt), -1), (EntityPlayerMP) player);
 	}
 
 	default IItemHandler getBeltPearls(ItemStack stack) {
