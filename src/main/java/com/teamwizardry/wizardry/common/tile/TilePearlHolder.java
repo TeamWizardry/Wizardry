@@ -35,10 +35,12 @@ public class TilePearlHolder extends TileManaInteractor implements ICooldown {
 	public ModuleInventory inventory = new ModuleInventory(new ItemStackHandler() {
 		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-			if (stack.getItem() instanceof IManaCell
-					|| stack.getItem() instanceof ItemNacrePearl)
-				return super.getStackLimit(slot, stack);
-			else return 0;
+			if (stack.getItem() instanceof IManaCell || stack.getItem() instanceof ItemNacrePearl) {
+				//Max number of orbs the pearl holder can hold
+				return 1;
+			} else {
+				return 0;
+			}
 		}
 	});
 
