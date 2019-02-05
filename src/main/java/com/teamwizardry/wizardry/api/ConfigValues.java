@@ -18,6 +18,9 @@ public class ConfigValues {
 	@ConfigProperty(category = "general", comment = "If enabled, external recipes and modules will be forcibly reset to default.\nDisable to allow custom recipes and module values.")
 	public static boolean useInternalValues = false;
 	
+	@ConfigProperty(category = "world", comment = "If true, mana pool dimension whitelist is instead a blacklist")
+	public static boolean isDimBlacklist = false;
+	
 	@ConfigProperty(category = "world", comment = "Whitelisted dimensions for mana pool generation.")
 	public static int[] manaPoolDimWhitelist = {0};
 
