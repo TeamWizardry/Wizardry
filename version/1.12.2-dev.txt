@@ -1,5 +1,6 @@
 0.11.0
 Fixed not being able to go to the underworld while in creative or while not taking fall damage / having fly
+Makes pearl holder only hold one pearl at a time and not a stack
 
 0.10.0
 Added pearl belt to hold multiple pearls (yes you can actually stop bugging us about it now)
