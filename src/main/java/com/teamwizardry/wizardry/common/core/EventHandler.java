@@ -1,6 +1,7 @@
 
 package com.teamwizardry.wizardry.common.core;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.BounceHandler;
@@ -43,7 +44,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import scala.Console;
+import scala.Int;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -140,7 +144,8 @@ public class EventHandler {
 			FluidTracker.INSTANCE.tick(event.world);
 		}
 	}
-	boolean pass = false;
+	//Added hashmap to work in servers
+	HashMap<Integer, Boolean> passmap = new HashMap<Integer, Boolean>();
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void playerTick(TickEvent.PlayerTickEvent event) {
 		//Leaving the underowrld
@@ -157,17 +162,17 @@ public class EventHandler {
 		}
 		//adds pass to check if player on bedrock after reached velocity
 		if (event.player.getEntityWorld().provider.getDimension() == 0) {
-			if (event.player.motionY < -2.7 || pass)  {
-				pass = true;
+			if (event.player.motionY < -2.7 || passmap.get(event.player.getEntityId()) != null)  {
+				passmap.put(event.player.getEntityId(), true);
 				BlockPos location = event.player.getPosition();
 				BlockPos bedrock = PosUtils.checkNeighborBlocksThoroughly(event.player.getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
-					pass = false;
 					event.player.isDead = false;
 					fallResetter.add(event.player.getUniqueID());
 					TeleportUtil.teleportToDimension(event.player, Wizardry.underWorld.getId(), 0, 300, 0);
+					passmap.remove(event.player.getEntityId());
 				} else if (event.player.motionY > -1) {//resets pass if stopped falling or slowed down alot
-					pass = false;
+					passmap.remove(event.player.getEntityId());
 				}
 			}
 		}
