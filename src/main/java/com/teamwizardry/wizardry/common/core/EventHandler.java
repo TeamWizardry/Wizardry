@@ -43,8 +43,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.Console;
-import sun.jvm.hotspot.opto.Block;
 
 import java.util.HashSet;
 import java.util.List;
