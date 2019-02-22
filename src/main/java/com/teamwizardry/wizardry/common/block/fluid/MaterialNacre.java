@@ -10,11 +10,5 @@ import net.minecraft.block.material.MaterialLiquid;
 public class MaterialNacre extends MaterialLiquid {
 	public MaterialNacre(MapColor color) {
 		super(color);
-		setNoPushMobility();
-	}
-
-	@Override
-	public boolean blocksMovement() {
-		return true;
 	}
 }
