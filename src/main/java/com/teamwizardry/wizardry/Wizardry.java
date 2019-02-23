@@ -28,7 +28,7 @@ public class Wizardry {
 	public static final String DEPENDENCIES = "required-after:librarianlib";
 	public static Logger logger;
 	public static DimensionType underWorld;
-
+	public static DimensionType torikki;
 	@SidedProxy(clientSide = CLIENT, serverSide = SERVER)
 	public static CommonProxy proxy;
 	@Mod.Instance

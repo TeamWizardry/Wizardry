@@ -38,7 +38,7 @@ public class WorldProviderTorikki extends WorldProvider {
 	@Nonnull
 	@Override
 	public DimensionType getDimensionType() {
-		return Wizardry.underWorld;
+		return Wizardry.torikki;
 	}
 
 	@Nonnull
@@ -107,7 +107,7 @@ public class WorldProviderTorikki extends WorldProvider {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderHandler getSkyRenderer() {
-		return UnderworldSky.INSTANCE;
+		return TorikkiSky.INSTANCE;
 	}
 
 	@Nonnull
@@ -117,8 +117,8 @@ public class WorldProviderTorikki extends WorldProvider {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static class UnderworldSky extends IRenderHandler {
-		public static UnderworldSky INSTANCE = new UnderworldSky();
+	public static class TorikkiSky extends IRenderHandler {
+		public static TorikkiSky INSTANCE = new TorikkiSky();
 
 		@Override
 		public void render(float partialTicks, WorldClient world, Minecraft mc) {
