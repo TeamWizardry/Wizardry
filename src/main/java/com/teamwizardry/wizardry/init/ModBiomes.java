@@ -15,15 +15,16 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod.EventBusSubscriber
 public class ModBiomes {
 
-	public static Biome BIOME_UNDERWORLD = new BiomeUnderWorld(new Biome.BiomeProperties("wizardry_underworld")).setRegistryName("wizardry_underworld");
-	public static Biome BIOME_TORIKKI = new BiomeTorikki(new Biome.BiomeProperties("wizardry_torikki")).setRegistryName("wizardry_torikki");
-	@SubscribeEvent
-	public static void register(RegistryEvent.Register<Biome> evt) {
-		IForgeRegistry<Biome> r = evt.getRegistry();
+    public static Biome BIOME_UNDERWORLD = new BiomeUnderWorld(new Biome.BiomeProperties("wizardry_underworld")).setRegistryName("wizardry_underworld");
+    public static Biome BIOME_TORIKKI = new BiomeTorikki(new Biome.BiomeProperties("wizardry_torikki")).setRegistryName("wizardry_torikki");
 
-		r.register(BIOME_UNDERWORLD);
-		r.register(BIOME_TORIKKI);
-		BiomeDictionary.addTypes(BIOME_TORIKKI, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.SPOOKY, BiomeDictionary.Type.MOUNTAIN, BiomeDictionary.Type.WASTELAND);
-		BiomeDictionary.addTypes(BIOME_UNDERWORLD,BiomeDictionary.Type.VOID, BiomeDictionary.Type.SPOOKY, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.DRY, BiomeDictionary.Type.COLD);
-	}
+    @SubscribeEvent
+    public static void register(RegistryEvent.Register<Biome> evt) {
+        IForgeRegistry<Biome> r = evt.getRegistry();
+
+        r.register(BIOME_UNDERWORLD);
+        r.register(BIOME_TORIKKI);
+        BiomeDictionary.addTypes(BIOME_TORIKKI, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.SPOOKY, BiomeDictionary.Type.MOUNTAIN, BiomeDictionary.Type.WASTELAND);
+        BiomeDictionary.addTypes(BIOME_UNDERWORLD, BiomeDictionary.Type.VOID, BiomeDictionary.Type.SPOOKY, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.DRY, BiomeDictionary.Type.COLD);
+    }
 }
