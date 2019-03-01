@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.item;
+package com.teamwizardry.wizardry.common.item.mob;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 
