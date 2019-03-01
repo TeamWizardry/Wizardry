@@ -90,7 +90,6 @@ public class CommandWizardry extends CommandBase {
 					BlockPos location = player.getPosition();
 					fallResetter.add(player.getUniqueID());
 					TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0, 300, 0);
-
 				}
 
 		} else if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
