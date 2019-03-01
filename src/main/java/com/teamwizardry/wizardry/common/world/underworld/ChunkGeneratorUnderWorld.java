@@ -1,12 +1,23 @@
 package com.teamwizardry.wizardry.common.world.underworld;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.teamwizardry.librarianlib.features.base.fluid.ModFluid;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.common.block.BlockCloud;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
+
 import kotlin.Pair;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -17,12 +28,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Demoniaque44
@@ -80,9 +85,9 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 						primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState().withProperty(BlockCloud.HAS_LIGHT_VALUE, true));
 					else
 					{
-//						if (y >= minY + 8 && y <= maxY - 8)
-//							primer.setBlockState(x, y, z, ModFluids.LETHE.getActualBlock().getDefaultState());
-//						else
+						if (y >= minY + 6 && y <= maxY - 6)
+							primer.setBlockState(x, y, z, ModFluids.LETHE.getActualBlock().getDefaultState());
+						else
 							primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState());
 					}
 				}
