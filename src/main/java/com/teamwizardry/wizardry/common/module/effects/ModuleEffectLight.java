@@ -45,12 +45,13 @@ public class ModuleEffectLight implements IModuleEffect {
 		EnumFacing facing = spell.getFaceHit();
 		Entity caster = spell.getCaster();
 
+		BlockPos finalPos = targetPos;
+		if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
+		if (!world.isAirBlock(finalPos)) return false;
+		
 		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetPos == null) return true;
-
-		BlockPos finalPos = targetPos;
-		if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
 
 		BlockUtils.placeBlock(world, finalPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
 		TileLight te = BlockUtils.getTileEntity(world, finalPos, TileLight.class);
