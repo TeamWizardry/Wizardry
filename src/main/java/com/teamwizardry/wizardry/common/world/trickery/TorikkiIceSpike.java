@@ -10,6 +10,9 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 import java.util.Random;
 
+/**This should work for now, its Minecraft's generator so it just Works (tm)
+ * Created by Tide
+ */
 public class TorikkiIceSpike extends WorldGenerator {
     public boolean generate(World worldIn, Random rand, BlockPos position) {
         while (worldIn.isAirBlock(position) && position.getY() > 2) {

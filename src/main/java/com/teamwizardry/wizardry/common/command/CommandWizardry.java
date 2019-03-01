@@ -81,6 +81,17 @@ public class CommandWizardry extends CommandBase {
 					player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
 				}
 			}
+		}
+
+			else if (args[0].equalsIgnoreCase("tptorikki")) {
+			Entity entity = sender.getCommandSenderEntity();
+				if (entity instanceof EntityPlayerMP) {
+					EntityPlayer player = ((EntityPlayer) entity);
+					BlockPos location = player.getPosition();
+					fallResetter.add(player.getUniqueID());
+					TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0, 300, 0);
+
+				}
 
 		} else if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
 			Entity entity = sender.getCommandSenderEntity();
