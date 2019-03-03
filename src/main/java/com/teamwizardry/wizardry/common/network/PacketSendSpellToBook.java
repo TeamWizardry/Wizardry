@@ -10,7 +10,6 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.management.PlayerList;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -43,7 +42,6 @@ public class PacketSendSpellToBook extends PacketBase {
 		for (List<ModuleInstance> moduleList : compiledSpell) {
 			for (ModuleInstance module : moduleList)
 				compiledList.appendTag(module.serialize());
-			compiledList.appendTag(new NBTTagString());
 		}
 		moduleList = compiledList;
 

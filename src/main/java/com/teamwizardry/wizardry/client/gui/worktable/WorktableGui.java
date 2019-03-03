@@ -352,11 +352,11 @@ public class WorktableGui extends GuiBase {
 				for (CommonWorktableModule commonModule : commonModules) {
 					commonList.appendTag(commonModule.serializeNBT());
 				}
-				for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
-					if (stack.getItem() == ModItems.BOOK) {
-						ItemNBTHelper.setList(stack, "common_modules", commonList);
-					}
-				}
+				//	for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
+				//		if (stack.getItem() == ModItems.BOOK) {
+				//			ItemNBTHelper.setList(stack, "common_modules", commonList);
+				//		}
+				//	}
 
 				PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(Minecraft.getMinecraft().player.getUniqueID(), chains, commonModules));
 

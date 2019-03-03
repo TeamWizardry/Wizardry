@@ -60,7 +60,6 @@ public class ModItems {
 	public static ItemWisdomStick WISDOM_STICK;
 
 	public static void init() {
-		//GLASS_ORB = new ItemGlassOrb();
 		ORB = new ItemOrb();
 		PEARL_NACRE = new ItemNacrePearl();
 
@@ -70,6 +69,7 @@ public class ModItems {
 		SYRINGE = new ItemSyringe();
 		BOMB = new ItemBomb();
 		BLACKENED_SPIRIT = new ItemBlackenedSpirit();
+		JAR = new ItemJar();
 
 		STAFF = new ItemStaff();
 

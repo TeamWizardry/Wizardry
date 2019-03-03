@@ -5,19 +5,19 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.client.render.block.TileJarRenderer;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.common.item.ItemJar;
 import com.teamwizardry.wizardry.common.tile.TileJar;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -45,16 +45,10 @@ public class BlockJar extends BlockModContainer {
 		setLightOpacity(0);
 	}
 
-	@Nullable
-	@Override
-	public ItemBlock createItemForm() {
-		return new ItemJar(this);
-	}
-
 	@Override
 	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
 		TileEntity entity = world.getTileEntity(pos);
-		if (entity != null && entity instanceof TileJar) {
+		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
 			return jar.hasFairy ? 15 : 0;
 		} else return 0;
@@ -64,7 +58,7 @@ public class BlockJar extends BlockModContainer {
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
 			TileEntity entity = worldIn.getTileEntity(pos);
-			if (entity != null && entity instanceof TileJar) {
+			if (entity instanceof TileJar) {
 				TileJar jar = (TileJar) entity;
 				jar.color = new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
 				jar.age = ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
@@ -77,11 +71,13 @@ public class BlockJar extends BlockModContainer {
 
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-		ItemStack stack = new ItemStack(this);
+		ItemStack stack = new ItemStack(ModItems.JAR);
 		TileEntity entity = world.getTileEntity(pos);
-		if (entity != null && entity instanceof TileJar) {
+		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
 			if (jar.color == null) return stack;
+			stack.setItemDamage(1);
+			ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
 			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
 		}
@@ -89,10 +85,26 @@ public class BlockJar extends BlockModContainer {
 	}
 
 	@Override
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+		drops.clear();
+		ItemStack stack = new ItemStack(ModItems.JAR);
+		TileEntity entity = world.getTileEntity(pos);
+		if (entity instanceof TileJar) {
+			TileJar jar = (TileJar) entity;
+			if (jar.color == null) return;
+			stack.setItemDamage(1);
+			ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
+			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
+			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
+			drops.add(stack);
+		}
+	}
+
+	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
 			TileEntity tile = worldIn.getTileEntity(pos);
-			if (tile != null && tile instanceof TileJar) {
+			if (tile instanceof TileJar) {
 				TileJar jar = (TileJar) tile;
 				if (playerIn.isSneaking() && jar.hasFairy) {
 					EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age);
