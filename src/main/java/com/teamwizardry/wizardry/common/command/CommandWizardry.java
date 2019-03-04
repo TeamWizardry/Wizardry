@@ -67,8 +67,27 @@ public class CommandWizardry extends CommandBase {
 	@Override
 	public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) throws CommandException {
 		if (args.length < 1) throw new WrongUsageException(getUsage(sender));
+		if (args[0].equalsIgnoreCase("help")){
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "All commands are prefixed with /wizardry");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "tpunderworld:");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Teleports you to the Underworld, but requires that you be standing on Bedrock");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "tptorikki:");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Teleports you to Torikki");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "genpearl:");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Generates a new pearl based on the arguments passed in the order <>, <>, <>");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "genstaff");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "See genpearl, but pops it in a " + TextFormatting.ITALIC +"BRAND NEW STAFF");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "reload");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Reloads all Wizardry Spell Modules");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "reset");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Resets all Wizardry Spell Modules");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "debug");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Outputs all information about a spell module");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "listmodules");
+			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Outputs a list of all Spell Modules");
 
-		if (args[0].equalsIgnoreCase("tpunderworld")) {
+		}
+		else if (args[0].equalsIgnoreCase("tpunderworld")) {
 			Entity entity = sender.getCommandSenderEntity();
 			if (entity instanceof EntityPlayerMP) {
 				EntityPlayer player = ((EntityPlayer) entity);
@@ -79,6 +98,9 @@ public class CommandWizardry extends CommandBase {
 					fallResetter.add(player.getUniqueID());
 					TeleportUtil.teleportToDimension(player, Wizardry.underWorld.getId(), 0, 300, 0);
 					player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
+				}
+				else{
+					notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Error: You are not standing on Bedrock!");
 				}
 			}
 		}
@@ -92,7 +114,9 @@ public class CommandWizardry extends CommandBase {
 					TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0, 300, 0);
 				}
 
-		} else if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
+			}
+
+			else if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
 			Entity entity = sender.getCommandSenderEntity();
 			if (entity instanceof EntityPlayerMP) {
 
