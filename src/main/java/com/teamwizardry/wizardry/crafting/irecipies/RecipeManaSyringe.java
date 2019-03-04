@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
+import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
@@ -17,7 +18,7 @@ public class RecipeManaSyringe extends IForgeRegistryEntry.Impl<IRecipe> impleme
 	@Override
 	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
 		boolean foundSyringe = false;
-		boolean foundBucket = false;
+		boolean foundMana = false;
 
 		ItemStack bucket = FluidUtil.getFilledBucket(new FluidStack(ModFluids.MANA.getActual(), 1));
 
@@ -25,11 +26,12 @@ public class RecipeManaSyringe extends IForgeRegistryEntry.Impl<IRecipe> impleme
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack.getItem() == ModItems.SYRINGE && stack.getItemDamage() == 0) {
 				foundSyringe = true;
-			}
-			if (ItemStack.areItemStacksEqual(bucket, stack))
-				foundBucket = true;
+			} else if (stack.getItem() == ModItems.ORB && CapManager.isManaFull(stack)) {
+				foundMana = true;
+			} else if (ItemStack.areItemStacksEqual(bucket, stack))
+				foundMana = true;
 		}
-		return foundSyringe && foundBucket;
+		return foundSyringe && foundMana;
 	}
 
 	@Nonnull

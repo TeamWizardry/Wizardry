@@ -1,5 +1,8 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
@@ -24,12 +27,11 @@ public class RecipeJam extends IForgeRegistryEntry.Impl<IRecipe> implements IRec
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.JAR) {
-
-				if (stack.getItemDamage() == 1)
+			if (stack.getItem() == ModItems.JAR || stack.getItem() == ModBlocks.JAR.getItemForm()) {
+				if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false))
 					foundJar = true;
-			}
-			if (stack.getItem() == Items.GOLDEN_SWORD)
+
+			} else if (stack.getItem() == Items.GOLDEN_SWORD)
 				foundSword = true;
 		}
 		return foundJar && foundSword;
@@ -38,22 +40,18 @@ public class RecipeJam extends IForgeRegistryEntry.Impl<IRecipe> implements IRec
 	@Override
 	@Nonnull
 	public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
-		ItemStack sword = ItemStack.EMPTY;
 		ItemStack jar = ItemStack.EMPTY;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.JAR) {
-				if (stack.getItemDamage() == 1)
+			if (stack.getItem() == ModItems.JAR || stack.getItem() == ModBlocks.JAR.getItemForm()) {
+				if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false))
 					jar = stack;
 			}
-			if (stack.getItem() == Items.GOLDEN_SWORD)
-				sword = stack;
 		}
 
 		ItemStack baseItemCopy = jar.copy();
 		baseItemCopy.setItemDamage(2);
-		if (sword.hasTagCompound()) baseItemCopy.setTagCompound(sword.getTagCompound());
 
 		return baseItemCopy;
 	}

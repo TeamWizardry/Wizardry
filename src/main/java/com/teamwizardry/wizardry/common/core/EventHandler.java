@@ -1,11 +1,6 @@
 
 package com.teamwizardry.wizardry.common.core;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.BounceHandler;
@@ -23,7 +18,6 @@ import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.network.PacketBounce;
 import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
 import com.teamwizardry.wizardry.init.ModPotions;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -48,6 +42,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
 public class EventHandler {
 
 	public static final HashSet<UUID> fallResetter = new HashSet<>();
@@ -67,7 +66,7 @@ public class EventHandler {
 	 * I don't feel like re-inventing the wheel. Shut up.
 	 */
 	@SubscribeEvent
-	public void onFall(LivingFallEvent event) {
+	public void onFallBounce(LivingFallEvent event) {
 		EntityLivingBase entity = event.getEntityLiving();
 		if (entity == null) {
 			return;
@@ -94,7 +93,7 @@ public class EventHandler {
 
 		if (success) {
 			boolean isClient = entity.getEntityWorld().isRemote;
-			if (event.getDistance() > 2) {
+			if (event.getDistance() > 0.5) {
 				event.setDamageMultiplier(0);
 				entity.fallDistance = 0;
 				if (isClient) {
@@ -113,6 +112,58 @@ public class EventHandler {
 			}
 		}
 	}
+
+	/**
+	 * Code "borrowed" from Tinker's construct slime boots
+	 * https://github.com/SlimeKnights/TinkersConstruct/blob/23034cb63e98bba06faf1cdc4074009daf93be1f/src/main/java/slimeknights/tconstruct/gadgets/item/ItemSlimeBoots.java
+	 * <p>
+	 * I don't feel like re-inventing the wheel. Shut up.
+	 */
+	@SubscribeEvent
+	public void flyableFallBounce(PlayerFlyableFallEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (entity == null) {
+			return;
+		}
+
+		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> {
+			if (bouncyBlock.getWorld() == entity.getEntityWorld().provider.getDimension()) {
+				return entity.getEntityWorld().getTotalWorldTime() - bouncyBlock.getTime() >= bouncyBlock.getExpiry();
+			}
+			return false;
+		});
+
+		boolean success = false;
+		if (entity.isPotionActive(ModPotions.BOUNCING)) success = true;
+		else {
+			BlockPos entityPos = new BlockPos(entity.getPositionVector().add(0, -1, 0));
+			for (BounceHandler.BouncyBlock block : BounceHandler.bouncingBlocks) {
+				if (block.getPos().equals(entityPos)) {
+					success = true;
+					break;
+				}
+			}
+		}
+
+		if (success) {
+			boolean isClient = entity.getEntityWorld().isRemote;
+			if (event.getDistance() > 0.5) {
+				entity.fallDistance = 0;
+				if (isClient) {
+					entity.motionY *= -0.9;
+					entity.isAirBorne = true;
+					entity.onGround = false;
+					double f = 0.91d + 0.04d;
+					entity.motionX /= f;
+					entity.motionZ /= f;
+					PacketHandler.NETWORK.sendToServer(new PacketBounce());
+				}
+				entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
+				BounceHandler.addBounceHandler(entity, entity.motionY);
+			}
+		}
+	}
+
 
 	@SubscribeEvent
 	public void redstoneHandler(EntityJoinWorldEvent event) {

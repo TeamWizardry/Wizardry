@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IGlowingItem;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,6 +27,10 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (worldIn.isRemote) return EnumActionResult.SUCCESS;
+
+		EntityFairy entity = new EntityFairy(worldIn);
+		entity.setPosition(pos.getX(), pos.getY() + 1, pos.getZ());
+		worldIn.spawnEntity(entity);
 
 		return EnumActionResult.SUCCESS;
 	}

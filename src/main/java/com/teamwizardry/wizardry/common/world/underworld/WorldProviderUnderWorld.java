@@ -34,7 +34,7 @@ public class WorldProviderUnderWorld extends WorldProvider {
 	@Nonnull
 	@Override
 	public IChunkGenerator createChunkGenerator() {
-		return new ChunkGeneratorUnderWorld(world);
+		return new ChunkGeneratorUnderWorld(world, getSeed());
 	}
 
 	@Nonnull
