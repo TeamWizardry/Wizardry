@@ -111,7 +111,7 @@ public class CommandWizardry extends CommandBase {
 					EntityPlayer player = ((EntityPlayer) entity);
 					BlockPos location = player.getPosition();
 					fallResetter.add(player.getUniqueID());
-					TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0, 300, 0);
+					TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0,  65, 0);
 				}
 
 			}

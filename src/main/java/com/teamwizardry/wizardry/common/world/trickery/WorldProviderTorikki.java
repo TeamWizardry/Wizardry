@@ -32,7 +32,7 @@ public class WorldProviderTorikki extends WorldProvider {
 	@Nonnull
 	@Override
 	public IChunkGenerator createChunkGenerator() {
-		return new ChunkGeneratorTorikki(world);
+		return new ChunkGeneratorTorikki(world,getSeed());
 	}
 
 	@Nonnull
