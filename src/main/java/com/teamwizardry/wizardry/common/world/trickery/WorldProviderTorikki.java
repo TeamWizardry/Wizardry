@@ -1,7 +1,10 @@
 package com.teamwizardry.wizardry.common.world.trickery;
 
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.world.biome.BiomeUnderWorld;
+import com.teamwizardry.wizardry.common.world.biome.BiomeTorikki;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -22,8 +25,6 @@ import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-
 /**
  * Created by Demoniaque44
  */
@@ -32,7 +33,7 @@ public class WorldProviderTorikki extends WorldProvider {
 	@Nonnull
 	@Override
 	public IChunkGenerator createChunkGenerator() {
-		return new ChunkGeneratorTorikki(world,getSeed());
+		return new ChunkGeneratorTorikki(world, getSeed());
 	}
 
 	@Nonnull
@@ -44,7 +45,7 @@ public class WorldProviderTorikki extends WorldProvider {
 	@Nonnull
 	@Override
 	public Biome getBiomeForCoords(@Nonnull BlockPos pos) {
-		return new BiomeUnderWorld(new Biome.BiomeProperties("torikki"));
+		return new BiomeTorikki(new Biome.BiomeProperties("torikki"));
 	}
 
 	@Override
@@ -114,6 +115,16 @@ public class WorldProviderTorikki extends WorldProvider {
 	@Override
 	public String getSaveFolder() {
 		return "torikki";
+	}
+	
+	@Override
+	protected void generateLightBrightnessTable()
+	{
+		// Fixed vanilla algorithm to use correct scaling
+		float offset = 2/9F;
+		
+		for (int i = 0; i < 16; i++)
+			this.lightBrightnessTable[i] = i / (60F - 3*i) * (1 - offset) + offset;
 	}
 
 	@SideOnly(Side.CLIENT)
