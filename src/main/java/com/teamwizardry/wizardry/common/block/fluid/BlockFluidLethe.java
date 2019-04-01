@@ -41,19 +41,17 @@ public class BlockFluidLethe extends BlockModFluid {
 		BlockPos pos = entityIn.getPosition();
 		World world = entityIn.world;
 		IBlockState state = world.getBlockState(pos);
-		if (state.getBlock() == ModFluids.LETHE.getActualBlock()) {
-
-			run(world, pos, state.getBlock(), entityIn,
-					entity -> entity instanceof EntityPlayer,
-					entity -> {
-						EntityPlayer player = (EntityPlayer) entity;
-						float xpDrain = player.experienceTotal > 1 ? 1 : player.experienceTotal;
-						player.experienceTotal -= xpDrain;
-						CapManagerBuilder manager = CapManager.forObject(player);
-						manager.addMana(xpDrain);
-					});
-
-		}
+//		if (state.getBlock() == ModFluids.LETHE.getActualBlock()) {
+//
+//			run(world, pos, state.getBlock(), entityIn,
+//					entity -> entity instanceof EntityPlayer,
+//					entity -> {
+//						EntityPlayer player = (EntityPlayer) entity;
+//						if (player.experienceLevel > 0)
+//							CapManager.forObject(player).addMana(expToNextLevel(--player.experienceLevel));
+//					});
+//
+//		}
 
 		run(world, pos, state.getBlock(), entityIn,
 				entity -> entity instanceof EntityItem && ManaRecipes.RECIPES.keySet().stream().anyMatch(item -> item.apply(((EntityItem) entity).getItem())),
@@ -77,5 +75,14 @@ public class BlockFluidLethe extends BlockModFluid {
 		AxisAlignedBB entityBox = entity.getCollisionBoundingBox();
 		if ((entityBox == null || entityBox.intersects(bb))
 				&& test.test(entity)) process.accept(entity);
+	}
+	
+	private static int expToNextLevel(int currentLevel)
+	{
+		if (currentLevel > 30)
+			return 9 * currentLevel - 158;
+		if (currentLevel > 15)
+			return 5 * currentLevel - 38;
+		return 2 * currentLevel + 7;
 	}
 }

@@ -43,7 +43,6 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 
 	}
 
-
 	private boolean isChunkCenter(int chunkX, int chunkZ) {
 		long s2 = ((chunkX + world.getSeed() + 337) * 947) + chunkZ * 719L;
 		Random rand = new Random(s2);

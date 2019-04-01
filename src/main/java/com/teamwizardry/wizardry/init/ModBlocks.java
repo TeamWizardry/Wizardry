@@ -89,9 +89,9 @@ public class ModBlocks {
 		event.getMappings().stream()
 				.filter(mapping -> mapping.key.getPath().equals("nacre"))
 				.forEach(mapping -> mapping.remap(ModFluids.NACRE.getActualBlock()));
-		event.getMappings().stream()
-				.filter(mapping -> mapping.key.getPath().equals("lethe"))
-				.forEach(mapping -> mapping.remap(ModFluids.LETHE.getActualBlock()));
+//		event.getMappings().stream()
+//				.filter(mapping -> mapping.key.getPath().equals("lethe"))
+//				.forEach(mapping -> mapping.remap(ModFluids.LETHE.getActualBlock()));
 	}
 
 	@SubscribeEvent

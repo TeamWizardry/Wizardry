@@ -67,56 +67,49 @@ public class CommandWizardry extends CommandBase {
 	@Override
 	public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) throws CommandException {
 		if (args.length < 1) throw new WrongUsageException(getUsage(sender));
-		if (args[0].equalsIgnoreCase("help")){
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "All commands are prefixed with /wizardry");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "tpunderworld:");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Teleports you to the Underworld, but requires that you be standing on Bedrock");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "tptorikki:");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Teleports you to Torikki");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "genpearl:");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Generates a new pearl based on the arguments passed in the order <>, <>, <>");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "genstaff");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "See genpearl, but pops it in a " + TextFormatting.ITALIC +"BRAND NEW STAFF");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "reload");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Reloads all Wizardry Spell Modules");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "reset");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Resets all Wizardry Spell Modules");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "debug");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Outputs all information about a spell module");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "listmodules");
-			notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Outputs a list of all Spell Modules");
+		
+		if (args[0].equalsIgnoreCase("help")) {
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "All commands are prefixed with /wizardry");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "tpunderworld:");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "Teleports you to the Underworld, but requires that you be standing on Bedrock");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "tptorikki:");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "Teleports you to Torikki");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "genpearl:");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "Generates a new pearl based on the arguments passed in the order <>, <>, <>");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "genstaff");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "See genpearl, but pops it in a " + TextFormatting.ITALIC +"BRAND NEW STAFF");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "reload");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "Reloads all Wizardry Spell Modules");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "reset");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "Resets all Wizardry Spell Modules");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "debug");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "Outputs all information about a spell module");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "listmodules");
+			notifyCommandListener(sender, this, TextFormatting.LIGHT_PURPLE + "Outputs a list of all Spell Modules");
 
 		}
+		
 		else if (args[0].equalsIgnoreCase("tpunderworld")) {
 			Entity entity = sender.getCommandSenderEntity();
 			if (entity instanceof EntityPlayerMP) {
 				EntityPlayer player = ((EntityPlayer) entity);
-
-				BlockPos location = player.getPosition();
-				BlockPos bedrock = PosUtils.checkNeighborBlocksThoroughly(player.getEntityWorld(), location, Blocks.BEDROCK);
-				if (bedrock != null) {
-					fallResetter.add(player.getUniqueID());
-					TeleportUtil.teleportToDimension(player, Wizardry.underWorld.getId(), 0, 300, 0);
-					player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
-				}
-				else{
-					notifyCommandListener(sender,this,TextFormatting.LIGHT_PURPLE + "Error: You are not standing on Bedrock!");
-				}
+				fallResetter.add(player.getUniqueID());
+				TeleportUtil.teleportToDimension(player, Wizardry.underWorld.getId(), 0, 300, 0);
+				player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
 			}
 		}
 
-			else if (args[0].equalsIgnoreCase("tptorikki")) {
+		else if (args[0].equalsIgnoreCase("tptorikki")) {
 			Entity entity = sender.getCommandSenderEntity();
-				if (entity instanceof EntityPlayerMP) {
-					EntityPlayer player = ((EntityPlayer) entity);
-					BlockPos location = player.getPosition();
-					fallResetter.add(player.getUniqueID());
-					TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0,  65, 0);
-				}
-
+			if (entity instanceof EntityPlayerMP) {
+				EntityPlayer player = ((EntityPlayer) entity);
+				BlockPos location = player.getPosition();
+				fallResetter.add(player.getUniqueID());
+				TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0,  65, 0);
 			}
+		}
 
-			else if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
+		else if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
 			Entity entity = sender.getCommandSenderEntity();
 			if (entity instanceof EntityPlayerMP) {
 
@@ -124,7 +117,8 @@ public class CommandWizardry extends CommandBase {
 				if (args[0].equalsIgnoreCase("genstaff")) {
 					item = new ItemStack(ModItems.STAFF);
 					item.setItemDamage(1);
-				} else item = new ItemStack(ModItems.PEARL_NACRE);
+				}
+				else item = new ItemStack(ModItems.PEARL_NACRE);
 
 				List<ItemStack> recipe = new ArrayList<>();
 				recipe.add(ModuleRegistry.INSTANCE.getModules(ModuleType.SHAPE).get(RandUtil.nextInt(ModuleRegistry.INSTANCE.getModules(ModuleType.SHAPE).size() - 1)).getItemStack());
@@ -134,33 +128,34 @@ public class CommandWizardry extends CommandBase {
 				SpellBuilder builder = new SpellBuilder(recipe, 1);
 
 				NBTTagList list = new NBTTagList();
-				for (SpellRing spellRing : builder.getSpell()) {
+				for (SpellRing spellRing : builder.getSpell())
 					list.appendTag(spellRing.serializeNBT());
-				}
 				ItemNBTHelper.setList(item, Constants.NBT.SPELL, list);
 				ItemNBTHelper.setBoolean(item, "infused", true);
 
 				((EntityPlayerMP) entity).addItemStackToInventory(item);
 				((EntityPlayerMP) entity).openContainer.detectAndSendChanges();
 
-			} else {
-				notifyCommandListener(sender, this, "TODO: You're not a player.");
 			}
+			else notifyCommandListener(sender, this, "TODO: You're not a player.");
 
-		} else if (args[0].equalsIgnoreCase("reload")) {
+		}
+		
+		else if (args[0].equalsIgnoreCase("reload")) {
 			SpellRingCache.INSTANCE.clear();
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
 			ModuleRegistry.INSTANCE.loadOverrideDefaults();
 			ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
 			ModuleRegistry.INSTANCE.loadModules(CommonProxy.directory);
 
-			if (server.isDedicatedServer()) {
+			if (server.isDedicatedServer())
 				PacketHandler.NETWORK.sendToAll(new PacketSyncModules(ModuleRegistry.INSTANCE.modules));
-			}
 
 			notifyCommandListener(sender, this, "wizardry.command.success");
 
-		} else if (args[0].equalsIgnoreCase("reset")) {
+		}
+		
+		else if (args[0].equalsIgnoreCase("reset")) {
 			notifyCommandListener(sender, this, "wizardry.command.reset");
 
 			File moduleDirectory = new File(CommonProxy.directory, "modules");
@@ -170,43 +165,41 @@ public class CommandWizardry extends CommandBase {
 				if (files != null)
 					for (File file : files) {
 						String name = file.getName();
-						if (!file.delete()) {
+						if (!file.delete())
 							throw new CommandException("wizardry.command.fail", name);
-						} else {
+						else
 							notifyCommandListener(sender, this, "wizardry.command.success_delete", name);
-						}
 					}
 
-				if (!moduleDirectory.delete()) {
+				if (!moduleDirectory.delete())
 					throw new CommandException("wizardry.command.fail_dir_delete");
-
-				}
 			}
 			if (!moduleDirectory.exists())
-				if (!moduleDirectory.mkdirs()) {
+				if (!moduleDirectory.mkdirs())
 					throw new CommandException("wizardry.command.fail_dir_create");
-				}
 
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
 			ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
 			ModuleRegistry.INSTANCE.loadModules(CommonProxy.directory);
 
-			if (server.isDedicatedServer()) {
+			if (server.isDedicatedServer())
 				PacketHandler.NETWORK.sendToAll(new PacketSyncModules(ModuleRegistry.INSTANCE.modules));
-			}
 
 			notifyCommandListener(sender, this, "wizardry.command.success");
 
-		} else if (args[0].equalsIgnoreCase("listModules")) {
+		}
+		
+		else if (args[0].equalsIgnoreCase("listModules")) {
 
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " ________________________________________________\\\\");
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " | " + TextFormatting.GRAY + "Module List");
-			for (ModuleInstance module : ModuleRegistry.INSTANCE.modules) {
+			for (ModuleInstance module : ModuleRegistry.INSTANCE.modules)
 				notifyCommandListener(sender, this, TextFormatting.YELLOW + " | |_ " + TextFormatting.GREEN + module.getSubModuleID() + TextFormatting.RESET + ": " + TextFormatting.GRAY + module.getReadableName());
-			}
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 
-		} else if (args[0].equalsIgnoreCase("debug")) {
+		}
+		
+		else if (args[0].equalsIgnoreCase("debug")) {
 			if (args.length < 2) throw new WrongUsageException(getUsage(sender));
 
 			ModuleInstance module = ModuleRegistry.INSTANCE.getModule(args[1]);
@@ -242,8 +235,8 @@ public class CommandWizardry extends CommandBase {
 					notifyCommandListener(sender, this, TextFormatting.YELLOW + " |     |_ " + TextFormatting.DARK_GREEN + modifier.getSubModuleID());
 			}
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
-		} else {
-			throw new WrongUsageException(getUsage(sender));
 		}
+		
+		else throw new WrongUsageException(getUsage(sender));
 	}
 }

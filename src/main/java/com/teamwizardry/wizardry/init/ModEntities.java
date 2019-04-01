@@ -1,15 +1,40 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.render.entity.*;
-import com.teamwizardry.wizardry.common.entity.*;
+import com.teamwizardry.wizardry.client.render.entity.ModelNull;
+import com.teamwizardry.wizardry.client.render.entity.ModelSpiritBlight;
+import com.teamwizardry.wizardry.client.render.entity.ModelSpiritWight;
+import com.teamwizardry.wizardry.client.render.entity.ModelUnicorn;
+import com.teamwizardry.wizardry.client.render.entity.ModelZachriel;
+import com.teamwizardry.wizardry.client.render.entity.RenderBomb;
+import com.teamwizardry.wizardry.client.render.entity.RenderFairy;
+import com.teamwizardry.wizardry.client.render.entity.RenderHaloInfusionItem;
+import com.teamwizardry.wizardry.client.render.entity.RenderJumpPad;
+import com.teamwizardry.wizardry.client.render.entity.RenderSpellProjectile;
+import com.teamwizardry.wizardry.client.render.entity.RenderSpiritBlight;
+import com.teamwizardry.wizardry.client.render.entity.RenderSpiritWight;
+import com.teamwizardry.wizardry.client.render.entity.RenderSummonZombie;
+import com.teamwizardry.wizardry.client.render.entity.RenderUnicorn;
+import com.teamwizardry.wizardry.client.render.entity.RenderZachriel;
+import com.teamwizardry.wizardry.client.render.entity.RenderZachrielCorruption;
+import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
+import com.teamwizardry.wizardry.common.entity.EntityBomb;
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.common.entity.EntityHaloInfusionItem;
+import com.teamwizardry.wizardry.common.entity.EntityJumpPad;
+import com.teamwizardry.wizardry.common.entity.EntitySpiritBlight;
+import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
+import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
 import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityCorruptionProjectile;
 import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityZachriel;
 import com.teamwizardry.wizardry.common.entity.projectile.EntityLightningProjectile;
 import com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving.SpawnPlacementType;
+import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -20,6 +45,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class ModEntities {
 
+	private static final SpawnPlacementType UNDERWORLD_AIR = EnumHelper.addSpawnPlacementType("UNDERWORLD_AIR", (world, pos) ->
+	{
+		return world.getBiome(pos) == ModBiomes.BIOME_UNDERWORLD && world.isAirBlock(pos);
+	});
+	
+	private static final SpawnPlacementType UNDERWORLD_CLOUD = EnumHelper.addSpawnPlacementType("UNDERWORLD_CLOUD", (world, pos) ->
+	{
+		if (world.getBiome(pos) == ModBiomes.BIOME_UNDERWORLD)
+			if (world.isAirBlock(pos))
+				return world.getBlockState(pos.down()).getBlock() == ModBlocks.CLOUD;
+		return false;
+	});
+	
 	private static int i = 0;
 
 	public static void init() {
@@ -35,6 +73,10 @@ public class ModEntities {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "zachriel_corruption"), EntityCorruptionProjectile.class, "zachriel_corruption", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "summon_zombie"), EntityBackupZombie.class, "summon_zombie");
+		
+		EntitySpawnPlacementRegistry.setPlacementType(EntitySpiritWight.class, UNDERWORLD_CLOUD);
+		EntitySpawnPlacementRegistry.setPlacementType(EntityFairy.class, UNDERWORLD_AIR);
+		EntitySpawnPlacementRegistry.setPlacementType(EntityUnicorn.class, UNDERWORLD_CLOUD);
 	}
 
 	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName) {
