@@ -10,9 +10,6 @@ import javax.annotation.Nullable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.common.block.BlockCloud;
-import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
-import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
 import com.teamwizardry.wizardry.init.ModBlocks;
 
 import kotlin.Pair;
@@ -32,7 +29,6 @@ import net.minecraft.world.gen.NoiseGeneratorPerlin;
  */
 public class ChunkGeneratorUnderWorld implements IChunkGenerator
 {
-
 	private static final int UPPER_LEVEL = 102;
 	private static final int LOWER_LEVEL = 105;
 	private static final double UPPER_X_SCALE = 12.0;
@@ -123,7 +119,7 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator
 				chunk.setLightFor(EnumSkyBlock.BLOCK, lower.up(i), 15 - i);
 			}
 		});
-
+		
 		return chunk;
 	}
 
@@ -152,11 +148,7 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator
 	@Override
 	public List<Biome.SpawnListEntry> getPossibleCreatures(@Nonnull EnumCreatureType creatureType, @Nonnull BlockPos pos)
 	{
-		ArrayList<Biome.SpawnListEntry> list = new ArrayList<>();
-		list.add(new Biome.SpawnListEntry(EntityFairy.class, 5, 1, 3));
-		list.add(new Biome.SpawnListEntry(EntityUnicorn.class, 3, 1, 3));
-		list.add(new Biome.SpawnListEntry(EntitySpiritWight.class, 3, 1, 1));
-		return list;
+		return new ArrayList<>();
 	}
 
 	@Nullable

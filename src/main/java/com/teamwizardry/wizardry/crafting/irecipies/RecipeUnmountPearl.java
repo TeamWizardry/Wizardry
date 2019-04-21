@@ -53,8 +53,7 @@ public class RecipeUnmountPearl extends IForgeRegistryEntry.Impl<IRecipe> implem
 		if (foundStaff.isEmpty()) return ItemStack.EMPTY;
 
 		ItemStack infusedPearl = new ItemStack(ModItems.PEARL_NACRE);
-		SpellUtils.transferSpell(foundStaff, infusedPearl);
-		foundStaff.setItemDamage(0);
+		SpellUtils.copySpell(foundStaff, infusedPearl);
 
 		return infusedPearl;
 	}

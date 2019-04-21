@@ -31,10 +31,7 @@ import com.teamwizardry.wizardry.common.entity.projectile.EntityLightningProject
 import com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving.SpawnPlacementType;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,19 +42,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class ModEntities {
 
-	private static final SpawnPlacementType UNDERWORLD_AIR = EnumHelper.addSpawnPlacementType("UNDERWORLD_AIR", (world, pos) ->
-	{
-		return world.getBiome(pos) == ModBiomes.BIOME_UNDERWORLD && world.isAirBlock(pos);
-	});
-	
-	private static final SpawnPlacementType UNDERWORLD_CLOUD = EnumHelper.addSpawnPlacementType("UNDERWORLD_CLOUD", (world, pos) ->
-	{
-		if (world.getBiome(pos) == ModBiomes.BIOME_UNDERWORLD)
-			if (world.isAirBlock(pos))
-				return world.getBlockState(pos.down()).getBlock() == ModBlocks.CLOUD;
-		return false;
-	});
-	
 	private static int i = 0;
 
 	public static void init() {
@@ -73,10 +57,6 @@ public class ModEntities {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "zachriel_corruption"), EntityCorruptionProjectile.class, "zachriel_corruption", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "summon_zombie"), EntityBackupZombie.class, "summon_zombie");
-		
-		EntitySpawnPlacementRegistry.setPlacementType(EntitySpiritWight.class, UNDERWORLD_CLOUD);
-		EntitySpawnPlacementRegistry.setPlacementType(EntityFairy.class, UNDERWORLD_AIR);
-		EntitySpawnPlacementRegistry.setPlacementType(EntityUnicorn.class, UNDERWORLD_CLOUD);
 	}
 
 	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName) {
