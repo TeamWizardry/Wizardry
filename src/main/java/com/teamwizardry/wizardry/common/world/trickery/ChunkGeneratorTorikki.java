@@ -11,6 +11,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 
 import javax.annotation.Nonnull;
@@ -22,18 +23,21 @@ import java.util.*;
  */
 public class ChunkGeneratorTorikki implements IChunkGenerator {
 	protected static final IBlockState AIR = Blocks.AIR.getDefaultState();
-	protected static final IBlockState NETHERRACK = Blocks.NETHERRACK.getDefaultState();
-	protected static final IBlockState TORIKKIGRASS = Blocks.GRASS.getDefaultState();
+	protected static final IBlockState DIRT = Blocks.DIRT.getDefaultState();
+	protected static final IBlockState BEDROCK = Blocks.BEDROCK.getDefaultState();
 	//protected static final IBlockState TOR_CRYSTAL = figure out how to do this.getDefaultState();
 	private NoiseGeneratorPerlin noise;
+	private NoiseGeneratorOctaves lperlinNoise1;
+	private NoiseGeneratorOctaves lperlinNoise2;
 	private World world;
 	private final Random rand;
 	public ChunkGeneratorTorikki(World worldIn) {
 
 		this.world = worldIn;
-		noise = new NoiseGeneratorPerlin(RandUtil.random,4);
-
-		rand = new Random(world.getSeed());
+		this.rand= new Random(world.getSeed());
+		this.noise = new NoiseGeneratorPerlin(RandUtil.random,4);
+		this.lperlinNoise1 = new NoiseGeneratorOctaves(this.rand, 16);
+		this.lperlinNoise2 = new NoiseGeneratorOctaves(this.rand, 16);
 
 	}
 	public ChunkGeneratorTorikki(World world, long seed) {
@@ -66,54 +70,36 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 	 */
 	//0-15 for local, 16*chunk + 0-15 for noise
 	private void generate(int chunkX, int chunkZ, ChunkPrimer primer) {
-		//ok we doin this bois
 		//go through x
-		for(int locX = 0; locX <16; locX++){
+		for (int locX = 0; locX < 16; locX++) {
 			//go through y (irrelevant of chunk location)
-			for(int locY = 0; locY <256; locY++){
+			for (int locY = 0; locY < 256; locY++) {
 				//and now for z
-				for(int locZ = 0; locZ <16; locZ++){
-					if (locY<=64||locY>192){primer.setBlockState(locX,locY,locZ,TORIKKIGRASS);}
-
+				for (int locZ = 0; locZ < 16; locZ++) {
+					if ((locY <= 64 && locY > 1) || (locY > 192 && locY < 255)) {
+						primer.setBlockState(locX, locY, locZ, DIRT);
+					} else if (locY == 1 || locY == 255) {
+						primer.setBlockState(locX, locY, locZ, BEDROCK);
+					}
+				}
+				//if the noise <1, air, else torikki Grass?
+			}
+		}
+		//mirroring!
+		for (int locX = 0; locX < 16; locX++) {
+			for (int locY = 65; locY < 128; locY++) {
+				for (int locZ = 0; locZ < 16; locZ++) {
+					if(.5 <noise.getValue(chunkZ, chunkX)){
+						primer.setBlockState(locX,locY,locZ,DIRT);
+					}
 				}
 			}
 		}
 	}
-	//this is BO'P code that im using to figure out how ot MAKE THIS FUCKING WORK
-	/*
-	public Chunk generateChunk(int chunkX, int chunkZ) {
-		this.rand.setSeed((long) chunkX * 341873128712L + (long) chunkZ * 132897987541L);
-
-		// create the primer
-		ChunkPrimer chunkprimer = new ChunkPrimer();
-
-		// start off by adding the basic terrain shape with air netherrack and lava blocks
-		this.setChunkLavaNetherrack(chunkX, chunkZ, chunkprimer);
-
-		this.buildSurfaces(chunkX, chunkZ, chunkprimer);
-		this.genNetherCaves.generate(this.world, chunkX, chunkZ, chunkprimer);
-
-		if (this.generateStructures) {
-			this.genNetherBridge.generate(this.world, chunkX, chunkZ, chunkprimer);
-		}
-
-		Biome[] biomes = this.world.getBiomeProvider().getBiomes(null, chunkX * 16, chunkZ * 16, 16, 16);
-		this.replaceBlocksForBiome(chunkX, chunkZ, chunkprimer, biomes);
-
-		Chunk chunk = new Chunk(this.world, chunkprimer, chunkX, chunkZ);
-		byte[] chunkBiomes = chunk.getBiomeArray();
-
-		for (int i = 0; i < chunkBiomes.length; ++i) {
-			chunkBiomes[i] = (byte) Biome.getIdForBiome(biomes[i]);
-		}
-
-		chunk.resetRelightChecks();
-		return chunk;
-	}
-*/
 	@Nonnull
 	@Override
 	public Chunk generateChunk(int x, int z) {
+		this.rand.setSeed((long)x * 341873128712L + (long)z * 132897987541L);
 		ChunkPrimer chunkprimer = new ChunkPrimer();
 
 		generate(x, z, chunkprimer);
@@ -131,12 +117,7 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 
 	@Override
 	public void populate(int x, int z) {
-		if (x / 16 == 0 && z / 16 == 0) {
-			for (int i = -3; i < 3; i++)
-				for (int j = -3; j < 3; j++) {
-					world.setBlockState(new BlockPos(i, 50, j), Blocks.OBSIDIAN.getDefaultState());
-				}
-		}
+
 	}
 
 	@Override
