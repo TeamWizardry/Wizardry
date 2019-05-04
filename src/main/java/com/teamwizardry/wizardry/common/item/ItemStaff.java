@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
-import com.teamwizardry.wizardry.api.item.ICooldown;
+import com.teamwizardry.wizardry.api.item.ICooldownSpellCaster;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * Created by Demoniaque on 6/7/2016.
  */
-public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProduct, ICooldown, IPearlSwappable {
+public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProduct, ICooldownSpellCaster, IPearlSwappable {
 
 	public ItemStaff() {
 		super("staff", "staff", "staff_pearl");

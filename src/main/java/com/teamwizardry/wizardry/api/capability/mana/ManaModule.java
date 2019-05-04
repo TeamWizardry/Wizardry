@@ -14,10 +14,6 @@ public class ManaModule extends ModuleCapability<CustomWizardryCapability> {
 		super(WizardryCapabilityProvider.wizardryCapability, capability);
 	}
 
-	public ManaModule(double maxMana, double maxBurnout) {
-		this(new CustomWizardryCapability(maxMana, maxBurnout));
-	}
-
 	@Override
 	public boolean hasComparatorOutput() {
 		return true;

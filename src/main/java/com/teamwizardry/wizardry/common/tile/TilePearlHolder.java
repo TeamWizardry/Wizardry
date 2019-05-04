@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.item.ICooldown;
+import com.teamwizardry.wizardry.api.item.ICooldownSpellCaster;
 import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
@@ -29,7 +29,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by Demoniaque on 5/7/2016.
  */
 @TileRegister(Wizardry.MODID + ":pedestal")
-public class TilePearlHolder extends TileManaInteractor implements ICooldown {
+public class TilePearlHolder extends TileManaInteractor implements ICooldownSpellCaster {
 
 	@Module
 	public ModuleInventory inventory = new ModuleInventory(new ItemStackHandler() {

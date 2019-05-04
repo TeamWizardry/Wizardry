@@ -17,7 +17,7 @@ import java.util.Random;
 /**
  * Created by Demoniaque on 6/30/2016.
  */
-public interface IExplodable {
+public interface IPotionEffectExplodable {
 
 	List<Integer> potions = new ArrayList<>();
 
@@ -34,8 +34,8 @@ public interface IExplodable {
 
 		Random rand = new Random();
 		int range = 5;
-		List<EntityLivingBase> entitys = entityIn.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
-		for (EntityLivingBase e : entitys)
+		List<EntityLivingBase> entities = entityIn.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
+		for (EntityLivingBase e : entities)
 			e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
 
 		ClientRunnable.run(new ClientRunnable() {

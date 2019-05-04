@@ -84,16 +84,19 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	
 	@Nullable
 	public <T> T getData(@Nonnull DataField<T> key) {
-		return getData(key, null);
+		Object value = data.get(key);
+		if (key.getDataType().isInstance(value))
+			return (T) value;
+		return null;
 	}
 
 	@Nonnull
 	@SuppressWarnings("unchecked")
-	public <T> T getData(@Nonnull DataField<T> key, @Nonnull T def) {
+	public <T> T getData(@Nonnull DataField<T> key, @Nonnull T defaultValue) {
 		Object value = data.get(key);
 		if (key.getDataType().isInstance(value))
 			return (T)value;
-		return def;
+		return defaultValue;
 	}
 	
 	public <T> boolean hasData(@Nonnull DataField<T> key) {

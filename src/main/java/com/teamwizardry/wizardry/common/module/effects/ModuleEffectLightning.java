@@ -1,14 +1,13 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
-import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
@@ -265,7 +264,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 	{
 		RandUtilSeed rand = new RandUtilSeed(seed);
 		ArrayList<Vec3d> points = new ArrayList<>();
-		LightningGenerator.generate(rand, from, to, offshootRange).forEach(point -> points.add(point));
+		LightningGenerator.generate(rand, from, to, offshootRange).forEach(points::add);
 
 		world.playSound(null, new BlockPos(to), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
 		

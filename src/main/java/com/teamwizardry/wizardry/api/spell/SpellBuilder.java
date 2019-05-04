@@ -1,21 +1,13 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.*;
 
 public class SpellBuilder {
 
@@ -27,10 +19,10 @@ public class SpellBuilder {
 		this.inventory = inventory;
 		spell = toSpell(inventory, 1);
 	}
-	
-	public SpellBuilder(List<ItemStack> inventory, double pearlMultiplier) {
+
+	public SpellBuilder(List<ItemStack> inventory, double constructorFriendlyThing) {
 		this.inventory = inventory;
-		spell = toSpell(inventory, pearlMultiplier);
+		spell = toSpell(inventory, constructorFriendlyThing);
 	}
 
 	@Nonnull
@@ -47,7 +39,7 @@ public class SpellBuilder {
 		return branches;
 	}
 
-	private List<SpellRing> toSpell(List<ItemStack> inventory, double pearlMultiplier) {
+	private List<SpellRing> toSpell(List<ItemStack> inventory, double constructorFriendlyThing) {
 		List<SpellRing> spellList = new ArrayList<>();
 		Set<List<SpellRing>> spellChains = new HashSet<>();
 

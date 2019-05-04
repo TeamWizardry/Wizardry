@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.features.forgeevents.CustomWorldRenderEvent;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.ICooldown;
+import com.teamwizardry.wizardry.api.item.ICooldownSpellCaster;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
@@ -36,7 +36,8 @@ public class SpellVisualizationRenderer {
 
 		ItemStack hand = player.getHeldItemMainhand();
 		if (hand.isEmpty() || hand.getItem() != ModItems.STAFF) return;
-		if (hand.getItem() instanceof ICooldown && ((ICooldown) hand.getItem()).isCoolingDown(world, hand)) return;
+		if (hand.getItem() instanceof ICooldownSpellCaster && ((ICooldownSpellCaster) hand.getItem()).isCoolingDown(world, hand))
+			return;
 
 		List<SpellRing> chains = SpellUtils.getSpellChains(hand);
 

@@ -6,22 +6,23 @@ import baubles.api.IBauble;
 import baubles.api.cap.IBaublesItemHandler;
 import com.google.common.collect.ImmutableList;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.pearlswapping.FindPearlWheelEvent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public final class BaublesSupport {
-	
-	@SubscribeEvent
-	@Optional.Method(modid = "baubles")
-	public static void pearlInventory(FindPearlWheelEvent inventories) {
-		inventories.addItems(BaublesApi.getBaublesHandler(inventories.player), 5000);
+
+	public static <T> ItemStack getItem(EntityLivingBase entity, Class<T> clazz) {
+		for (ItemStack stack : getArmor(entity)) {
+			if (stack.getItem().getClass().isAssignableFrom(clazz)) {
+				return stack;
+			}
+		}
+		return ItemStack.EMPTY;
 	}
 
 	public static ItemStack getItem(EntityLivingBase entity, Item item) {

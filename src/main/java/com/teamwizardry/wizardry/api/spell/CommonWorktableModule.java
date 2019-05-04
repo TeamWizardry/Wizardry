@@ -12,6 +12,9 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * Server-friendly serializable worktable-convertable module data objects.
+ */
 public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 
 	public ModuleInstance module;

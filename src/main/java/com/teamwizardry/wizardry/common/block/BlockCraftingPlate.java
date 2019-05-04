@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
-import com.teamwizardry.wizardry.api.item.IInfusable;
+import com.teamwizardry.wizardry.api.item.IInfusableItem;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
@@ -117,14 +117,14 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					heldItem.shrink(subtractHand);
 					stack.setCount(oldCount - heldItem.getCount());
 
-					if (!plate.isInventoryEmpty() && stack.getItem() instanceof IInfusable) {
+					if (!plate.isInventoryEmpty() && stack.getItem() instanceof IInfusableItem) {
 						plate.inputPearl.getHandler().setStackInSlot(0, stack);
 						plate.markDirty();
 
 						playerIn.openContainer.detectAndSendChanges();
 						worldIn.notifyBlockUpdate(pos, state, state, 3);
 
-					} else if (!(stack.getItem() instanceof IInfusable)) {
+					} else if (!(stack.getItem() instanceof IInfusableItem)) {
 						ItemHandlerHelper.insertItem(plate.realInventory.getHandler(), stack, false);
 						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 						plate.markDirty();

@@ -4,7 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.item.IPotionEffectExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -101,13 +100,13 @@ public class ManaRecipes {
 		@Override
 		public boolean isValid(World world, BlockPos pos, List<EntityItem> items) {
 			Block at = world.getBlockState(pos).getBlock();
-			return at == fluid.getBlock() && items.stream().map(entity -> entity.getItem().getItem()).anyMatch(item -> item instanceof IExplodable);
+			return at == fluid.getBlock() && items.stream().map(entity -> entity.getItem().getItem()).anyMatch(item -> item instanceof IPotionEffectExplodable);
 		}
 
 		@Override
 		public void tick(World world, BlockPos pos, List<EntityItem> items) {
 			super.tick(world, pos, items);
-			EntityItem item = items.stream().filter(entity -> entity.getItem().getItem() instanceof IExplodable).findFirst().orElse(null);
+			EntityItem item = items.stream().filter(entity -> entity.getItem().getItem() instanceof IPotionEffectExplodable).findFirst().orElse(null);
 			if (item != null)
 				if (currentDuration % 40 == 0)
 					world.playSound(null, item.posX, item.posY, item.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
@@ -115,9 +114,9 @@ public class ManaRecipes {
 
 		@Override
 		public void finish(World world, BlockPos pos, List<EntityItem> items) {
-			EntityItem item = items.stream().filter(entity -> entity.getItem().getItem() instanceof IExplodable).findFirst().orElse(null);
+			EntityItem item = items.stream().filter(entity -> entity.getItem().getItem() instanceof IPotionEffectExplodable).findFirst().orElse(null);
 			if (item != null) {
-				((IExplodable) item.getItem().getItem()).explode(item);
+				((IPotionEffectExplodable) item.getItem().getItem()).explode(item);
 				world.setBlockToAir(pos);
 				world.removeEntity(item);
 				world.playSound(null, item.posX, item.posY, item.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);

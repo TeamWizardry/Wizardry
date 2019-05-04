@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public interface ICooldown {
+public interface ICooldownSpellCaster {
 
 	default void setCooldown(World world, @Nullable EntityPlayer player, @Nullable EnumHand hand, ItemStack stack, @Nonnull SpellData data) {
 		int maxCooldown = 0;

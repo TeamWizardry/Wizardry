@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
-import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlWheelHolder;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlStorageHolder;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotClient;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModKeybinds;
@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
-public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecayProduct {
+public interface IPearlBelt extends IPearlStorageHolder, INacreProduct.INacreDecayProduct {
 
 	default void addBeltColorProperty(Item item) {
 		item.addPropertyOverride(new ResourceLocation("slot"), new IItemPropertyGetter() {
@@ -56,7 +56,7 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 		if (world.isRemote) return;
 
 		ItemStack belt = player.getHeldItem(hand);
-		if (!shouldUse(belt)) return;
+		if (isDisabled(belt)) return;
 
 		if (player.isSneaking()) {
 			boolean changed = false;
