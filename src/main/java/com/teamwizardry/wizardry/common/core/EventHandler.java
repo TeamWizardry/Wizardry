@@ -210,7 +210,6 @@ public class EventHandler {
 		}
 
 		if (event.player.isServerWorld()) {
-			boolean hasLevOrbs = false;
 			for (ItemStack stack : event.player.inventory.mainInventory) {
 				if (stack.getItem() == ModItems.LEVITATION_ORB) {
 
@@ -219,14 +218,14 @@ public class EventHandler {
 						continue;
 					}
 
-					stack.setItemDamage(stack.getItemDamage() + 1);
-					hasLevOrbs = true;
+					if (event.player.world.getTotalWorldTime() % 10 == 0)
+						stack.setItemDamage(stack.getItemDamage() + 1);
+
+					if (!event.player.isPotionActive(ModPotions.LOW_GRAVITY)) {
+						event.player.addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, 3, 3, false, false));
+					}
 					break;
 				}
-			}
-
-			if (hasLevOrbs && !event.player.isPotionActive(ModPotions.LOW_GRAVITY)) {
-				event.player.addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, 3, 2, false, false));
 			}
 		}
 	}
@@ -242,7 +241,6 @@ public class EventHandler {
 			if (event.getSource() == DamageSource.FALL) {
 				fallResetter.remove(event.getEntity().getUniqueID());
 				event.setCanceled(true);
-				return;
 			}
 		}
 	}

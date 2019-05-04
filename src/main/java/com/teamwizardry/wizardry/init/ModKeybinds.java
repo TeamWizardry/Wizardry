@@ -7,11 +7,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
-@SideOnly(Side.CLIENT)
 public class ModKeybinds {
 
+	@SideOnly(Side.CLIENT)
 	public static KeyBinding pearlSwapping = new KeyBinding("key.pearl_swapping.desc", Keyboard.KEY_C, Wizardry.MODNAME);
 
+	// if true, button is down (server friendly)
+	public static boolean pearlSwappingState = false;
+
+	@SideOnly(Side.CLIENT)
 	public static void register() {
 		ClientRegistry.registerKeyBinding(pearlSwapping);
 	}

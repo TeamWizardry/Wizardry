@@ -65,7 +65,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
-		if (ModKeybinds.pearlSwapping.isKeyDown()) return false;
+		if (ModKeybinds.pearlSwappingState) return false;
 		if (isCoolingDown(playerIn.world, stack)) return false;
 		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return false;
@@ -83,7 +83,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {
-		if (ModKeybinds.pearlSwapping.isKeyDown()) return EnumActionResult.PASS;
+		if (ModKeybinds.pearlSwappingState) return EnumActionResult.PASS;
 
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
@@ -115,7 +115,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
-		if (ModKeybinds.pearlSwapping.isKeyDown()) {
+		if (ModKeybinds.pearlSwappingState) {
 			ItemStack stack = player.getHeldItem(hand);
 			swapOnRightClick(player, stack);
 			return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -159,7 +159,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
-		if (ModKeybinds.pearlSwapping.isKeyDown()) return;
+		if (ModKeybinds.pearlSwappingState) return;
 		if (isCoolingDown(player.world, stack)) return;
 		if (!(player instanceof EntityPlayer)) return;
 

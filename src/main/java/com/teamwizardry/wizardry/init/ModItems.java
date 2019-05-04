@@ -25,8 +25,8 @@ public class ModItems {
 
 	public static ToolMaterial UNICORN_HORN_MAT = EnumHelper.addToolMaterial("unicorn_horn", 0, 250, 0, -3, 15);
 	
-	//public static ItemGlassOrb GLASS_ORB;
 	public static ItemOrb ORB;
+	public static ItemLevitationOrb LEVITATION_ORB;
 	public static ItemNacrePearl PEARL_NACRE;
 
 	public static ItemStaff STAFF;
@@ -61,6 +61,7 @@ public class ModItems {
 
 	public static void init() {
 		ORB = new ItemOrb();
+		LEVITATION_ORB = new ItemLevitationOrb();
 		PEARL_NACRE = new ItemNacrePearl();
 
 		RING = new ItemRing();

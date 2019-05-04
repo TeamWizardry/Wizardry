@@ -19,6 +19,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.gui.worktable.TableModule;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
+import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetPearlSwapKeyState;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotServer;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModKeybinds;
@@ -134,62 +135,95 @@ public class PearlRadialUIRenderer {
 	}
 
 	@SubscribeEvent
-	public void onScroll(MouseEvent event) {
-		if (event.getDwheel() == 0 || !Keyboard.isCreated()) return;
+	public void onMouse(MouseEvent event) {
+		if (!Keyboard.isCreated()) return;
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null) return;
 
 		ItemStack heldItem = player.getHeldItemMainhand();
 
-		for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-			ItemStack invStack = player.inventory.getStackInSlot(i);
-			if (ItemStack.areItemStacksEqual(heldItem, invStack)) continue;
-			if (ItemNBTHelper.getInt(invStack, "scroll_slot", -1) == -1) continue;
-
-			ItemNBTHelper.setInt(invStack, "scroll_slot", -1);
-			PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(i, -1));
+		if (ModKeybinds.pearlSwapping.isKeyDown() && !ModKeybinds.pearlSwappingState) {
+			PacketHandler.NETWORK.sendToServer(new PacketSetPearlSwapKeyState(true));
+		} else if (!ModKeybinds.pearlSwapping.isKeyDown() && ModKeybinds.pearlSwappingState) {
+			PacketHandler.NETWORK.sendToServer(new PacketSetPearlSwapKeyState(false));
 		}
 
-		if (ModKeybinds.pearlSwapping.isKeyDown()) {
+		if (event.getDwheel() != 0) {
 
-			ItemStack beltStack;
-			if (heldItem.getItem() == ModItems.PEARL_BELT) {
-				beltStack = heldItem;
-			} else if (heldItem.getItem() == ModItems.STAFF) {
-				beltStack = BaublesSupport.getItem(player, ModItems.PEARL_BELT);
-				if (beltStack.isEmpty()) return;
-			} else return;
+			for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+				ItemStack invStack = player.inventory.getStackInSlot(i);
+				if (ItemStack.areItemStacksEqual(heldItem, invStack)) continue;
+				if (ItemNBTHelper.getInt(invStack, "scroll_slot", -1) == -1) continue;
 
-			IPearlBelt belt = (IPearlBelt) beltStack.getItem();
-
-			IItemHandler handler = belt.getPearls(beltStack);
-			if (handler == null) return;
-			List<ItemStack> temp = new ArrayList<>();
-			for (int i = 0; i < handler.getSlots(); i++) {
-				ItemStack pearl = handler.getStackInSlot(i);
-				if (pearl.isEmpty()) continue;
-				temp.add(pearl);
+				ItemNBTHelper.setInt(invStack, "scroll_slot", -1);
+				PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(i, -1));
 			}
-			newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
 
-			int rawCount = belt.getPearlCount(beltStack);
-			int count = Math.max(rawCount - 1, 0);
+			if (ModKeybinds.pearlSwapping.isKeyDown()) {
 
-			int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
+				ItemStack beltStack;
+				if (heldItem.getItem() == ModItems.PEARL_BELT) {
+					beltStack = heldItem;
+				} else if (heldItem.getItem() == ModItems.STAFF) {
+					beltStack = BaublesSupport.getItem(player, ModItems.PEARL_BELT);
+					if (beltStack.isEmpty()) return;
+				} else return;
 
-			scrollSlot = getScrollSlot(event, count, scrollSlot);
+				IPearlBelt belt = (IPearlBelt) beltStack.getItem();
 
-			if (scrollSlot >= 0) {
-				ItemNBTHelper.setInt(heldItem, "scroll_slot", scrollSlot);
-				PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(player.inventory.getSlotFor(heldItem), scrollSlot));
+				IItemHandler handler = belt.getPearls(beltStack);
+				if (handler == null) return;
+				List<ItemStack> temp = new ArrayList<>();
+				for (int i = 0; i < handler.getSlots(); i++) {
+					ItemStack pearl = handler.getStackInSlot(i);
+					if (pearl.isEmpty()) continue;
+					temp.add(pearl);
+				}
+				newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
 
+				int rawCount = belt.getPearlCount(beltStack);
+				int count = Math.max(rawCount - 1, 0);
+
+				int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
+
+				scrollSlot = getScrollSlot(event, count, scrollSlot);
+
+				if (scrollSlot >= 0) {
+					ItemNBTHelper.setInt(heldItem, "scroll_slot", scrollSlot);
+					PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(player.inventory.getSlotFor(heldItem), scrollSlot));
+
+					for (int i = 0; i < slotAnimations.length; i++) {
+						BasicAnimation animation = slotAnimations[i];
+						if (animation != null)
+							ANIMATOR.removeAnimations(animation);
+
+						if (i == scrollSlot) continue;
+						BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
+						newAnimation.setTo(0);
+						newAnimation.setEasing(Easing.easeOutQuint);
+						newAnimation.setDuration(20f);
+						ANIMATOR.add(newAnimation);
+
+						slotAnimations[i] = newAnimation;
+					}
+
+					BasicAnimation<PearlRadialUIRenderer> animation = new BasicAnimation<>(INSTANCE, "slotRadii[" + scrollSlot + "]");
+					animation.setTo(SELECTOR_SHIFT * 10);
+					animation.setEasing(Easing.easeOutQuint);
+					animation.setDuration(20f);
+					ANIMATOR.add(animation);
+
+					slotAnimations[scrollSlot] = animation;
+
+					event.setCanceled(true);
+				}
+			} else {
 				for (int i = 0; i < slotAnimations.length; i++) {
 					BasicAnimation animation = slotAnimations[i];
 					if (animation != null)
 						ANIMATOR.removeAnimations(animation);
 
-					if (i == scrollSlot) continue;
 					BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
 					newAnimation.setTo(0);
 					newAnimation.setEasing(Easing.easeOutQuint);
@@ -198,30 +232,6 @@ public class PearlRadialUIRenderer {
 
 					slotAnimations[i] = newAnimation;
 				}
-
-				BasicAnimation<PearlRadialUIRenderer> animation = new BasicAnimation<>(INSTANCE, "slotRadii[" + scrollSlot + "]");
-				animation.setTo(SELECTOR_SHIFT * 10);
-				animation.setEasing(Easing.easeOutQuint);
-				animation.setDuration(20f);
-				ANIMATOR.add(animation);
-
-				slotAnimations[scrollSlot] = animation;
-
-				event.setCanceled(true);
-			}
-		} else {
-			for (int i = 0; i < slotAnimations.length; i++) {
-				BasicAnimation animation = slotAnimations[i];
-				if (animation != null)
-					ANIMATOR.removeAnimations(animation);
-
-				BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
-				newAnimation.setTo(0);
-				newAnimation.setEasing(Easing.easeOutQuint);
-				newAnimation.setDuration(20f);
-				ANIMATOR.add(newAnimation);
-
-				slotAnimations[i] = newAnimation;
 			}
 		}
 	}
