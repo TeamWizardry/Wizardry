@@ -659,7 +659,7 @@ public class PearlRadialUIRenderer {
 
 			int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
 
-			if (scrollSlot > -1) {
+			if (scrollSlot > -1 && !pearls.isEmpty()) {
 				String name = pearls.get(scrollSlot).getDisplayName();
 				FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
 				List<String> list = renderer.listFormattedStringToWidth(name, 100);

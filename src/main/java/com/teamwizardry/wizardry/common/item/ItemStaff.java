@@ -15,8 +15,6 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.module.defaults.IModuleOverrides;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModKeybinds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -65,7 +63,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
-		if (ModKeybinds.getPearlSwappingState(playerIn.getUniqueID())) return false;
 		if (isCoolingDown(playerIn.world, stack)) return false;
 		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return false;
@@ -83,8 +80,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {
-		if (ModKeybinds.getPearlSwappingState(player.getUniqueID())) return EnumActionResult.PASS;
-
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
 			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
@@ -115,12 +110,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
-		if (ModKeybinds.getPearlSwappingState(player.getUniqueID())) {
-			ItemStack stack = player.getHeldItem(hand);
-			swapOnRightClick(player, stack);
-			return new ActionResult<>(EnumActionResult.PASS, stack);
-		}
-
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
 			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
@@ -131,13 +120,13 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 		}
 
 		boolean hasHalo = BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty();
-		if (isCoolingDown(world, stack) || hasHalo || (world.isRemote && (Minecraft.getMinecraft().currentScreen != null))) {
+		if (isCoolingDown(world, stack) || hasHalo) {
 			return new ActionResult<>(EnumActionResult.FAIL, stack);
 		} else {
 			if (requiresBowAction(stack))
 				player.setActiveHand(hand);
 			else {
-				SpellData spell = new SpellData(player.world);
+				SpellData spell = new SpellData(world);
 				spell.processEntity(player, true);
 				SpellUtils.runSpell(stack, spell);
 				setCooldown(world, player, hand, stack, spell);
@@ -159,7 +148,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
-		if (ModKeybinds.getPearlSwappingState(player.getUniqueID())) return;
 		if (isCoolingDown(player.world, stack)) return;
 		if (!(player instanceof EntityPlayer)) return;
 

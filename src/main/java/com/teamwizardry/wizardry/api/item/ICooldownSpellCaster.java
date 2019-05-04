@@ -56,6 +56,7 @@ public interface ICooldownSpellCaster {
 		long lastCast = ItemNBTHelper.getLong(stack, Constants.NBT.LAST_CAST, 0);
 		long currentCast = world.getTotalWorldTime();
 
-		return currentCast - lastCast <= lastCooldown;
+		long sub = currentCast - lastCast;
+		return sub <= lastCooldown;
 	}
 }
