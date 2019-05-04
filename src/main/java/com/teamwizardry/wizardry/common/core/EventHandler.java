@@ -18,6 +18,7 @@ import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.network.PacketBounce;
 import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
+import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,6 +26,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -60,6 +62,9 @@ public class EventHandler {
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.DIAMOND));
 	}
 
+	//Added hashmap to work in servers
+	HashMap<Integer, Boolean> passmap = new HashMap<>();
+
 	/**
 	 * Code "borrowed" from Tinker's construct slime boots
 	 * https://github.com/SlimeKnights/TinkersConstruct/blob/23034cb63e98bba06faf1cdc4074009daf93be1f/src/main/java/slimeknights/tconstruct/gadgets/item/ItemSlimeBoots.java
@@ -73,32 +78,14 @@ public class EventHandler {
 			return;
 		}
 
-		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> {
-			if (bouncyBlock.getWorld() == entity.getEntityWorld().provider.getDimension()) {
-				return entity.getEntityWorld().getTotalWorldTime() - bouncyBlock.getTime() >= bouncyBlock.getExpiry();
-			}
-			return false;
-		});
+		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> entity.getEntityWorld().getTotalWorldTime() - bouncyBlock.getTime() >= bouncyBlock.getExpiry());
 
-		boolean success = false;
-		if (entity.isPotionActive(ModPotions.BOUNCING)) success = true;
-		else {
-			BlockPos entityPos = new BlockPos(entity.getPositionVector().add(0, -1, 0));
-			for (BounceHandler.BouncyBlock block : BounceHandler.bouncingBlocks) {
-				if (block.getPos().equals(entityPos)) {
-					success = true;
-					break;
-				}
-			}
-		}
-
-		if (success) {
-			boolean isClient = entity.getEntityWorld().isRemote;
+		if (shouldBounce(entity)) {
 			if (event.getDistance() > 0.5) {
 				event.setDamageMultiplier(0);
 				entity.fallDistance = 0;
-				if (isClient) {
-					entity.motionY *= -0.9;
+				if (entity.getEntityWorld().isRemote) {
+					entity.motionY *= -0.8;
 					entity.isAirBorne = true;
 					entity.onGround = false;
 					double f = 0.91d + 0.04d;
@@ -127,26 +114,9 @@ public class EventHandler {
 			return;
 		}
 
-		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> {
-			if (bouncyBlock.getWorld() == entity.getEntityWorld().provider.getDimension()) {
-				return entity.getEntityWorld().getTotalWorldTime() - bouncyBlock.getTime() >= bouncyBlock.getExpiry();
-			}
-			return false;
-		});
+		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> entity.getEntityWorld().getTotalWorldTime() - bouncyBlock.getTime() >= bouncyBlock.getExpiry());
 
-		boolean success = false;
-		if (entity.isPotionActive(ModPotions.BOUNCING)) success = true;
-		else {
-			BlockPos entityPos = new BlockPos(entity.getPositionVector().add(0, -1, 0));
-			for (BounceHandler.BouncyBlock block : BounceHandler.bouncingBlocks) {
-				if (block.getPos().equals(entityPos)) {
-					success = true;
-					break;
-				}
-			}
-		}
-
-		if (success) {
+		if (shouldBounce(entity)) {
 			boolean isClient = entity.getEntityWorld().isRemote;
 			if (event.getDistance() > 0.5) {
 				entity.fallDistance = 0;
@@ -192,8 +162,22 @@ public class EventHandler {
 			FluidTracker.INSTANCE.tick(event.world);
 		}
 	}
-	//Added hashmap to work in servers
-	HashMap<Integer, Boolean> passmap = new HashMap<Integer, Boolean>();
+
+	private boolean shouldBounce(EntityLivingBase entity) {
+		boolean success = false;
+		if (entity.isPotionActive(ModPotions.BOUNCING)) success = true;
+		else {
+			BlockPos entityPos = entity.getPosition().add(0, -1, 0);
+			for (BounceHandler.BouncyBlock block : BounceHandler.bouncingBlocks) {
+				if (block.getPos().equals(entityPos)) {
+					success = true;
+					break;
+				}
+			}
+		}
+		return success;
+	}
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void playerTick(TickEvent.PlayerTickEvent event) {
 		//Leaving the underowrld
@@ -210,7 +194,7 @@ public class EventHandler {
 		}
 		//adds pass to check if player on bedrock after reached velocity
 		if (event.player.getEntityWorld().provider.getDimension() == 0 && ConfigValues.underworldFallSpeed <= 0) {
-			if (event.player.motionY < ConfigValues.underworldFallSpeed || passmap.get(event.player.getEntityId()) != null)  {
+			if (event.player.motionY < ConfigValues.underworldFallSpeed || passmap.get(event.player.getEntityId()) != null) {
 				passmap.put(event.player.getEntityId(), true);
 				BlockPos location = event.player.getPosition();
 				BlockPos bedrock = PosUtils.checkNeighborBlocksThoroughly(event.player.getEntityWorld(), location, Blocks.BEDROCK);
@@ -222,6 +206,27 @@ public class EventHandler {
 				} else if (event.player.motionY > ConfigValues.underworldFallSpeed) {//resets pass if stopped falling or slowed down alot
 					passmap.remove(event.player.getEntityId());
 				}
+			}
+		}
+
+		if (event.player.isServerWorld()) {
+			boolean hasLevOrbs = false;
+			for (ItemStack stack : event.player.inventory.mainInventory) {
+				if (stack.getItem() == ModItems.LEVITATION_ORB) {
+
+					if (stack.getItemDamage() + 1 > stack.getMaxDamage()) {
+						stack.shrink(1);
+						continue;
+					}
+
+					stack.setItemDamage(stack.getItemDamage() + 1);
+					hasLevOrbs = true;
+					break;
+				}
+			}
+
+			if (hasLevOrbs && !event.player.isPotionActive(ModPotions.LOW_GRAVITY)) {
+				event.player.addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, 3, 2, false, false));
 			}
 		}
 	}
