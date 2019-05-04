@@ -6,17 +6,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Demoniaque.
@@ -26,12 +21,6 @@ public class PotionSlippery extends PotionBase {
 	public PotionSlippery() {
 		super("slippery", false, 0xABFCF0);
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@Nonnull
-	@Override
-	public List<ItemStack> getCurativeItems() {
-		return new ArrayList<>();
 	}
 
 	@SuppressWarnings("unused")

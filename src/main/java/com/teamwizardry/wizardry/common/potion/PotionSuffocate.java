@@ -1,12 +1,6 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 
 /**
@@ -18,12 +12,6 @@ public class PotionSuffocate extends PotionBase {
 		super("suffocate", true, 0x00003C);
 	}
 
-	@Nonnull
-	@Override
-	public List<ItemStack> getCurativeItems() {
-		return new ArrayList<>();
-	}
-	
 	@Override
 	public boolean isReady(int duration, int amplifier) {
 		return duration % 20 == 0;

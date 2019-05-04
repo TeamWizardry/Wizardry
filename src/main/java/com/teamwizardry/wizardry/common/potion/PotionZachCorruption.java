@@ -3,13 +3,10 @@ package com.teamwizardry.wizardry.common.potion;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -22,12 +19,6 @@ public class PotionZachCorruption extends PotionBase {
 	public PotionZachCorruption() {
 		super("zach_corruption", false, 0x469CD6);
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@Nonnull
-	@Override
-	public List<ItemStack> getCurativeItems() {
-		return new ArrayList<>();
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.potion;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -10,8 +9,6 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Demoniaque.
@@ -21,12 +18,6 @@ public class PotionLowGrav extends PotionBase {
 	public PotionLowGrav() {
 		super("low_gravity", false, 0x469CD6);
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@Nonnull
-	@Override
-	public List<ItemStack> getCurativeItems() {
-		return new ArrayList<>();
 	}
 
 	@Override

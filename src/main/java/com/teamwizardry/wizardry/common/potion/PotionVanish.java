@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -30,8 +29,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Demoniaque.
@@ -42,12 +39,6 @@ public class PotionVanish extends PotionBase {
 	public PotionVanish() {
 		super("vanish", false, 0xA9F3A9);
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@Nonnull
-	@Override
-	public List<ItemStack> getCurativeItems() {
-		return new ArrayList<>();
 	}
 
 	@Override

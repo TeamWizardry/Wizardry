@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -16,8 +15,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Demoniaque.
@@ -27,12 +24,6 @@ public class PotionTimeSlow extends PotionBase {
 
 	public PotionTimeSlow() {
 		super("time_slow", false, 0xE8CA0D);
-	}
-
-	@Nonnull
-	@Override
-	public List<ItemStack> getCurativeItems() {
-		return new ArrayList<>();
 	}
 
 	@Override
