@@ -72,7 +72,7 @@ public interface IPearlBelt extends IPearlStorageHolder, INacreProduct.INacreDec
 				ItemNBTHelper.setInt(belt, "scroll_slot", -1);
 				player.playSound(ModSounds.BELL_TING, 1f, 1f);
 			}
-		} else if (ModKeybinds.pearlSwappingState) {
+		} else if (ModKeybinds.getPearlSwappingState(player.getUniqueID())) {
 			int scrollSlot = ItemNBTHelper.getInt(belt, "scroll_slot", -1);
 			if (scrollSlot == -1) return;
 

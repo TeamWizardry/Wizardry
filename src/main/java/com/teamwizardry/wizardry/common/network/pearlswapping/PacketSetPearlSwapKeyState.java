@@ -23,6 +23,6 @@ public class PacketSetPearlSwapKeyState extends PacketBase {
 
 	@Override
 	public void handle(@NotNull MessageContext ctx) {
-		ModKeybinds.pearlSwappingState = keyState;
+		ModKeybinds.putPearlSwappingState(ctx.getServerHandler().player.getUniqueID(), keyState);
 	}
 }

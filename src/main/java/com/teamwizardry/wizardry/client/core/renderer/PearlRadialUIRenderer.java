@@ -20,12 +20,12 @@ import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.gui.worktable.TableModule;
-import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetPearlSwapKeyState;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotServer;
 import com.teamwizardry.wizardry.init.ModKeybinds;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -52,6 +52,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -405,12 +406,6 @@ public class PearlRadialUIRenderer {
 
 		ItemStack heldItem = player.getHeldItemMainhand();
 
-		if (ModKeybinds.pearlSwapping.isKeyDown() && !ModKeybinds.pearlSwappingState) {
-			PacketHandler.NETWORK.sendToServer(new PacketSetPearlSwapKeyState(true));
-		} else if (!ModKeybinds.pearlSwapping.isKeyDown() && ModKeybinds.pearlSwappingState) {
-			PacketHandler.NETWORK.sendToServer(new PacketSetPearlSwapKeyState(false));
-		}
-
 		if (event.getDwheel() != 0) {
 
 			for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
@@ -430,7 +425,7 @@ public class PearlRadialUIRenderer {
 					pearlStorageStack = heldItem;
 					pearlStorage = (IPearlStorageHolder) heldItem.getItem();
 				} else if (heldItem.getItem() instanceof IPearlSwappable) {
-					ItemStack storageStack = BaublesSupport.getItem(player, IPearlSwappable.class);
+					ItemStack storageStack = BaublesSupport.getItem(player, IPearlStorageHolder.class);
 					if (!storageStack.isEmpty()) {
 						pearlStorageStack = storageStack;
 						pearlStorage = (IPearlStorageHolder) storageStack.getItem();
@@ -517,8 +512,8 @@ public class PearlRadialUIRenderer {
 			if (heldItem.getItem() instanceof IPearlStorageHolder) {
 				pearlStorageStack = heldItem;
 				pearlStorage = (IPearlStorageHolder) heldItem.getItem();
-			} else if (heldItem.getItem() instanceof IPearlSwappable) {
-				ItemStack storageStack = BaublesSupport.getItem(player, IPearlSwappable.class);
+			} else if (heldItem.getItem() instanceof IPearlSwappable && ModKeybinds.pearlSwapping.isKeyDown()) {
+				ItemStack storageStack = BaublesSupport.getItem(player, IPearlStorageHolder.class);
 				if (!storageStack.isEmpty()) {
 					pearlStorageStack = storageStack;
 					pearlStorage = (IPearlStorageHolder) storageStack.getItem();
@@ -661,6 +656,21 @@ public class PearlRadialUIRenderer {
 
 
 			// ------------- ANIMATIONS ------------- //
+
+			int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
+
+			if (scrollSlot > -1) {
+				String name = pearls.get(scrollSlot).getDisplayName();
+				FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+				List<String> list = renderer.listFormattedStringToWidth(name, 100);
+				StringBuilder builder = new StringBuilder();
+				for (String line : list) {
+					builder.append("\n").append(line);
+				}
+				centerText = builder.toString();
+
+			}
+
 			if (colorAnim.getFinished()) {
 				colorAnim = new BasicAnimation<>(INSTANCE, "color");
 				colorAnim.setTo(INSTANCE.color + 0.25f > 1f ? 0.25f : INSTANCE.color + 0.25f);
@@ -971,7 +981,7 @@ public class PearlRadialUIRenderer {
 		}
 
 		@Override
-		public void setQuadOrientation(EnumFacing orientation) {
+		public void setQuadOrientation(@NotNull EnumFacing orientation) {
 		}
 
 		@Override
@@ -979,7 +989,7 @@ public class PearlRadialUIRenderer {
 		}
 
 		@Override
-		public void setTexture(TextureAtlasSprite texture) {
+		public void setTexture(@NotNull TextureAtlasSprite texture) {
 		}
 	}
 }

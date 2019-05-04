@@ -18,7 +18,7 @@ public final class BaublesSupport {
 
 	public static <T> ItemStack getItem(EntityLivingBase entity, Class<T> clazz) {
 		for (ItemStack stack : getArmor(entity)) {
-			if (stack.getItem().getClass().isAssignableFrom(clazz)) {
+			if (!stack.isEmpty() && clazz.isInstance(stack.getItem())) {
 				return stack;
 			}
 		}
