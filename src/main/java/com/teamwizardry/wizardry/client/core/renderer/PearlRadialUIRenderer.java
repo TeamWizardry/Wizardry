@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.client.core.renderer;
 
-import baubles.api.BaublesApi;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.animator.Animator;
 import com.teamwizardry.librarianlib.features.animator.Easing;
@@ -14,24 +13,18 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
-import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
-import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlWheelHolder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
-import com.teamwizardry.wizardry.api.util.PearlHandlingUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.gui.worktable.TableModule;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotServer;
-import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSwapPearlServer;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModKeybinds;
-import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -42,36 +35,33 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
-import net.minecraftforge.client.settings.KeyBindingMap;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("Duplicates")
 @SideOnly(Side.CLIENT)
-public class PearlRadialUIRenderer extends GuiScreen {
+public class PearlRadialUIRenderer {
 
 	public static final PearlRadialUIRenderer INSTANCE = new PearlRadialUIRenderer();
 
@@ -110,7 +100,6 @@ public class PearlRadialUIRenderer extends GuiScreen {
 	private static boolean changing = false;
 	private static boolean wasEmpty = true;
 	private static boolean init = false;
-	private static boolean hasBeenSelected = false;
 
 	@Nonnull
 	private static String centerText = "Shift + Right Click to\nattach all pearls in your\ninventory to this belt";
@@ -126,35 +115,16 @@ public class PearlRadialUIRenderer extends GuiScreen {
 	public float itemExpansion = 0;
 
 	private PearlRadialUIRenderer() {
-		super();
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@Override
-	public boolean doesGuiPauseGame() {
-		return false;
-	}
-
-	@Override
-	public boolean isFocused() {
-		return isKeyDown(ModKeybinds.pearlSwapping);
-	}
-
-	private boolean isKeyDown(KeyBinding keybind) {
-		int key = keybind.getKeyCode();
-		if(key < 0) {
-			int button = 100 + key;
-			return Mouse.isButtonDown(button);
-		}
-		return Keyboard.isKeyDown(key);
-	}
-
-	private static int getScrollSlot(int scrollAmt, int count, int scrollSlot) {
-		if(scrollAmt > 0){
-			scrollSlot = scrollSlot + 1;
-			if(scrollSlot > count) scrollSlot = 0;
-		}else if (scrollAmt < 0) {
-			scrollSlot = scrollSlot - 1;
-			if(scrollSlot < 0) scrollSlot = count;
+	private static int getScrollSlot(MouseEvent event, int count, int scrollSlot) {
+		if (event.getDwheel() < 0) {
+			if (scrollSlot == count) scrollSlot = 0;
+			else scrollSlot = MathHelper.clamp(scrollSlot + 1, 0, count);
+		} else {
+			if (scrollSlot == 0) scrollSlot = count;
+			else scrollSlot = MathHelper.clamp(scrollSlot - 1, 0, count);
 		}
 		return scrollSlot;
 	}
@@ -163,9 +133,9 @@ public class PearlRadialUIRenderer extends GuiScreen {
 		renderLitItem(Minecraft.getMinecraft().getRenderItem(), model, color, stack);
 	}
 
-	@Override
-	public void updateScreen() {
-		//if (Mouse.getDWheel() == 0 || !Keyboard.isCreated()) return;
+	@SubscribeEvent
+	public void onScroll(MouseEvent event) {
+		if (event.getDwheel() == 0 || !Keyboard.isCreated()) return;
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null) return;
@@ -181,7 +151,8 @@ public class PearlRadialUIRenderer extends GuiScreen {
 			PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(i, -1));
 		}
 
-		if (isKeyDown(ModKeybinds.pearlSwapping)) {
+		if (ModKeybinds.pearlSwapping.isKeyDown()) {
+
 			ItemStack beltStack;
 			if (heldItem.getItem() == ModItems.PEARL_BELT) {
 				beltStack = heldItem;
@@ -207,8 +178,7 @@ public class PearlRadialUIRenderer extends GuiScreen {
 
 			int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
 
-			int mouseWheel = Mouse.getDWheel();
-			scrollSlot = getScrollSlot(mouseWheel, count, scrollSlot);
+			scrollSlot = getScrollSlot(event, count, scrollSlot);
 
 			if (scrollSlot >= 0) {
 				ItemNBTHelper.setInt(heldItem, "scroll_slot", scrollSlot);
@@ -237,19 +207,7 @@ public class PearlRadialUIRenderer extends GuiScreen {
 
 				slotAnimations[scrollSlot] = animation;
 
-				if(Mouse.isButtonDown(1) && !hasBeenSelected) {
-					// If applicable, swap selected pearl with one attached to held item
-					if(heldItem != beltStack) {
-						PearlHandlingUtils.swapPearl(player, heldItem, beltStack, scrollSlot);
-						PacketHandler.NETWORK.sendToServer(new PacketSwapPearlServer(player.inventory.getSlotFor(heldItem),
-								BaublesApi.isBaubleEquipped(player, beltStack.getItem()), scrollSlot));
-					}
-					else {
-						PearlHandlingUtils.swapPearl(player, null, beltStack, scrollSlot);
-						PacketHandler.NETWORK.sendToServer(new PacketSwapPearlServer(-1, player.inventory.getSlotFor(heldItem), scrollSlot));
-					}
-					hasBeenSelected = true;
-				}else hasBeenSelected = false;
+				event.setCanceled(true);
 			}
 		} else {
 			for (int i = 0; i < slotAnimations.length; i++) {
@@ -265,10 +223,6 @@ public class PearlRadialUIRenderer extends GuiScreen {
 
 				slotAnimations[i] = newAnimation;
 			}
-
-			// Disable gui if key isn't held
-			setFocused(false);
-			mc.displayGuiScreen(null);
 		}
 	}
 
@@ -483,433 +437,435 @@ public class PearlRadialUIRenderer extends GuiScreen {
 		segment.clear();
 	}
 
-	@Override
-	public void drawScreen(int mx, int my, float partialTicks) {
-		super.drawScreen(mx, my, partialTicks);
+	@SubscribeEvent
+	public void renderHud(RenderGameOverlayEvent.Pre event) {
 		if (!init) {
 			ANIMATOR.add(centerRadiusAnim, colorAnim, heartBeatAnim, parasolGradientAnim, itemExpansionAnim);
 			init = true;
 			return;
 		}
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		ItemStack stack = player.getHeldItemMainhand();
+		if (event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
+			EntityPlayer player = Minecraft.getMinecraft().player;
+			ItemStack stack = player.getHeldItemMainhand();
 
-		IPearlBelt belt;
-		if (stack.getItem() == ModItems.PEARL_BELT) {
+			IPearlBelt belt;
+			if (stack.getItem() == ModItems.PEARL_BELT) {
 
-			belt = (IPearlBelt) stack.getItem();
+				belt = (IPearlBelt) stack.getItem();
 
-		} else if (stack.getItem() == ModItems.STAFF) {
-			ItemStack beltStack = BaublesSupport.getItem(player, ModItems.PEARL_BELT);
-			if (beltStack.isEmpty()) return;
+			} else if (stack.getItem() == ModItems.STAFF && ModKeybinds.pearlSwapping.isKeyDown()) {
+				ItemStack beltStack = BaublesSupport.getItem(player, ModItems.PEARL_BELT);
+				if (beltStack.isEmpty()) return;
 
-			belt = (IPearlBelt) beltStack.getItem();
-			stack = beltStack;
-		} else return;
+				belt = (IPearlBelt) beltStack.getItem();
+				stack = beltStack;
+			} else return;
 
-		IItemHandler handler = belt.getPearls(stack);
-		if (handler == null) return;
+			IItemHandler handler = belt.getPearls(stack);
+			if (handler == null) return;
+			//	event.setCanceled(true);
 
-		ScaledResolution resolution = new ScaledResolution(mc);
-		int width = resolution.getScaledWidth();
-		int height = resolution.getScaledHeight();
+			ScaledResolution resolution = event.getResolution();
+			int width = resolution.getScaledWidth();
+			int height = resolution.getScaledHeight();
 
-		Tessellator tess = Tessellator.getInstance();
-		BufferBuilder bb = tess.getBuffer();
+			Tessellator tess = Tessellator.getInstance();
+			BufferBuilder bb = tess.getBuffer();
 
-		// ------------- CENTER CIRCLE ------------- //
-		{
-			GlStateManager.pushMatrix();
-			int thing1 = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
-			float thing2 = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
+			// ------------- CENTER CIRCLE ------------- //
+			{
+				GlStateManager.pushMatrix();
+				int thing1 = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
+				float thing2 = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
 
-			GlStateManager.enableBlend();
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			GlStateManager.disableTexture2D();
-			GlStateManager.disableCull();
-			GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
-			GlStateManager.translate(width / 2.0, height / 2.0, 0);
-			GlStateManager.glLineWidth(2);
+				GlStateManager.enableBlend();
+				GlStateManager.shadeModel(GL11.GL_SMOOTH);
+				GlStateManager.disableTexture2D();
+				GlStateManager.disableCull();
+				GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
+				GlStateManager.translate(width / 2.0, height / 2.0, 0);
+				GlStateManager.glLineWidth(2);
 
-			double vertexCount = 100.0;
-			double x;
-			double y;
+				double vertexCount = 100.0;
+				double x;
+				double y;
 
-			Color transitioningColor = new Color(Color.HSBtoRGB(INSTANCE.color, 0.25f, 1f));
-			Color color = new Color(transitioningColor.getRed() / 255f, transitioningColor.getBlue() / 255f, transitioningColor.getGreen() / 255f, MathHelper.clamp(1f - (float) (INSTANCE.heartBeatRadius / INSTANCE.centerRadius), 0f, 1f));
-			bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
-			bb.pos(0.0, 0.0, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
-			for (int i = 0; i < vertexCount; i++) {
-				double angle = i * 2.0 * Math.PI / vertexCount;
+				Color transitioningColor = new Color(Color.HSBtoRGB(INSTANCE.color, 0.25f, 1f));
+				Color color = new Color(transitioningColor.getRed() / 255f, transitioningColor.getBlue() / 255f, transitioningColor.getGreen() / 255f, MathHelper.clamp(1f - (float) (INSTANCE.heartBeatRadius / INSTANCE.centerRadius), 0f, 1f));
+				bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+				bb.pos(0.0, 0.0, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
+				for (int i = 0; i < vertexCount; i++) {
+					double angle = i * 2.0 * Math.PI / vertexCount;
 
-				x = MathHelper.cos((float) angle) * INSTANCE.heartBeatRadius;
-				y = MathHelper.sin((float) angle) * INSTANCE.heartBeatRadius;
+					x = MathHelper.cos((float) angle) * INSTANCE.heartBeatRadius;
+					y = MathHelper.sin((float) angle) * INSTANCE.heartBeatRadius;
 
-				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-			}
-			x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.heartBeatRadius;
-			y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.heartBeatRadius;
-			bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-
-			tess.draw();
-
-			color = new Color(transitioningColor.getRed() / 255f, transitioningColor.getBlue() / 255f, transitioningColor.getGreen() / 255f, 0.5f);
-			bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
-			bb.pos(0.0, 0.0, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-			for (int i = 0; i < vertexCount; i++) {
-				double angle = i * 2.0 * Math.PI / vertexCount;
-
-				x = MathHelper.cos((float) angle) * INSTANCE.centerRadius;
-				y = MathHelper.sin((float) angle) * INSTANCE.centerRadius;
-
-				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-			}
-			x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
-			y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
-			bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-
-			tess.draw();
-
-			// OUTER CIRCLE;
-			color = Color.DARK_GRAY;
-			bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-			//	bb.pos(centerX, centerY, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
-			for (int i = 0; i < vertexCount; i++) {
-				double angle = i * 2.0 * Math.PI / vertexCount;
-
-				x = MathHelper.cos((float) angle) * INSTANCE.centerRadius;
-				y = MathHelper.sin((float) angle) * INSTANCE.centerRadius;
-
-				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
-			}
-			x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
-			y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
-			bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
-
-			tess.draw();
-
-			GlStateManager.alphaFunc(thing1, thing2);
-			GlStateManager.enableTexture2D();
-			GlStateManager.popMatrix();
-		}
-		renderText(width, height, centerText);
-		// ------------- CENTER CIRCLE ------------- //
-
-
-		// ------------- PEARL UPDATER ------------- //
-		List<ItemStack> temp = new ArrayList<>();
-		for (int i = 0; i < handler.getSlots(); i++) {
-			ItemStack pearl = handler.getStackInSlot(i);
-			if (pearl.isEmpty()) continue;
-			temp.add(pearl);
-		}
-		newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
-
-		if (!changing)
-			if (!newPearls.getFirst().equals(snapshotPearls.getFirst())) {
-				if (newPearls.getSecond().isEmpty()) {
-					pearls = snapshotPearls.getSecond();
-					changing = true;
-
-					final Pair<Integer, List<ItemStack>> tmp = newPearls;
-					ScheduledEventAnimation timer = new ScheduledEventAnimation(16, () -> {
-						snapshotPearls = tmp;
-						pearls = tmp.getSecond();
-						changing = false;
-					});
-					ANIMATOR.add(timer);
-
-				} else if (snapshotPearls.getSecond().isEmpty()) {
-
-					final Pair<Integer, List<ItemStack>> tmp = newPearls;
-					pearls = tmp.getSecond();
-					snapshotPearls = tmp;
-
-				} else {
-					final Pair<Integer, List<ItemStack>> tmp = newPearls;
-
-					changing = true;
-
-					ANIMATOR.add(new ScheduledEventAnimation(8, () -> pearls = tmp.getSecond()));
-
-					ANIMATOR.add(new ScheduledEventAnimation(16, () -> {
-						snapshotPearls = tmp;
-						changing = false;
-					}));
+					bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 				}
+				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.heartBeatRadius;
+				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.heartBeatRadius;
+				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+
+				tess.draw();
+
+				color = new Color(transitioningColor.getRed() / 255f, transitioningColor.getBlue() / 255f, transitioningColor.getGreen() / 255f, 0.5f);
+				bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+				bb.pos(0.0, 0.0, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				for (int i = 0; i < vertexCount; i++) {
+					double angle = i * 2.0 * Math.PI / vertexCount;
+
+					x = MathHelper.cos((float) angle) * INSTANCE.centerRadius;
+					y = MathHelper.sin((float) angle) * INSTANCE.centerRadius;
+
+					bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				}
+				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
+				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
+				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+
+				tess.draw();
+
+				// OUTER CIRCLE;
+				color = Color.DARK_GRAY;
+				bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+				//	bb.pos(centerX, centerY, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+				for (int i = 0; i < vertexCount; i++) {
+					double angle = i * 2.0 * Math.PI / vertexCount;
+
+					x = MathHelper.cos((float) angle) * INSTANCE.centerRadius;
+					y = MathHelper.sin((float) angle) * INSTANCE.centerRadius;
+
+					bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+				}
+				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
+				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
+				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+
+				tess.draw();
+
+				GlStateManager.alphaFunc(thing1, thing2);
+				GlStateManager.enableTexture2D();
+				GlStateManager.popMatrix();
 			}
-		// ------------- PEARL UPDATER ------------- //
+			renderText(width, height, centerText);
+			// ------------- CENTER CIRCLE ------------- //
 
 
-		// ------------- ANIMATIONS ------------- //
-		if (colorAnim.getFinished()) {
-			colorAnim = new BasicAnimation<>(INSTANCE, "color");
-			colorAnim.setTo(INSTANCE.color + 0.25f > 1f ? 0.25f : INSTANCE.color + 0.25f);
-			colorAnim.setEasing(Easing.linear);
-			colorAnim.setDuration(100f);
-			ANIMATOR.add(colorAnim);
-		}
+			// ------------- PEARL UPDATER ------------- //
+			List<ItemStack> temp = new ArrayList<>();
+			for (int i = 0; i < handler.getSlots(); i++) {
+				ItemStack pearl = handler.getStackInSlot(i);
+				if (pearl.isEmpty()) continue;
+				temp.add(pearl);
+			}
+			newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
 
-		if (centerRadiusAnim.getFinished() && parasolGradientAnim.getFinished())
-			if (newPearls.getSecond().isEmpty()) {
-				if (!wasEmpty) {
-					centerText = "Shift + Right Click to\nattach all pearls in your\ninventory to this belt";
+			if (!changing)
+				if (!newPearls.getFirst().equals(snapshotPearls.getFirst())) {
+					if (newPearls.getSecond().isEmpty()) {
+						pearls = snapshotPearls.getSecond();
+						changing = true;
 
-					centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
-					centerRadiusAnim.setTo(100.0);
-					centerRadiusAnim.setEasing(Easing.easeInOutQuart);
-					centerRadiusAnim.setDuration(16);
-					ANIMATOR.add(centerRadiusAnim);
+						final Pair<Integer, List<ItemStack>> tmp = newPearls;
+						ScheduledEventAnimation timer = new ScheduledEventAnimation(16, () -> {
+							snapshotPearls = tmp;
+							pearls = tmp.getSecond();
+							changing = false;
+						});
+						ANIMATOR.add(timer);
+
+					} else if (snapshotPearls.getSecond().isEmpty()) {
+
+						final Pair<Integer, List<ItemStack>> tmp = newPearls;
+						pearls = tmp.getSecond();
+						snapshotPearls = tmp;
+
+					} else {
+						final Pair<Integer, List<ItemStack>> tmp = newPearls;
+
+						changing = true;
+
+						ANIMATOR.add(new ScheduledEventAnimation(8, () -> pearls = tmp.getSecond()));
+
+						ANIMATOR.add(new ScheduledEventAnimation(16, () -> {
+							snapshotPearls = tmp;
+							changing = false;
+						}));
+					}
+				}
+			// ------------- PEARL UPDATER ------------- //
+
+
+			// ------------- ANIMATIONS ------------- //
+			if (colorAnim.getFinished()) {
+				colorAnim = new BasicAnimation<>(INSTANCE, "color");
+				colorAnim.setTo(INSTANCE.color + 0.25f > 1f ? 0.25f : INSTANCE.color + 0.25f);
+				colorAnim.setEasing(Easing.linear);
+				colorAnim.setDuration(100f);
+				ANIMATOR.add(colorAnim);
+			}
+
+			if (centerRadiusAnim.getFinished() && parasolGradientAnim.getFinished())
+				if (newPearls.getSecond().isEmpty()) {
+					if (!wasEmpty) {
+						centerText = "Shift + Right Click to\nattach all pearls in your\ninventory to this belt";
+
+						centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
+						centerRadiusAnim.setTo(100.0);
+						centerRadiusAnim.setEasing(Easing.easeInOutQuart);
+						centerRadiusAnim.setDuration(16);
+						ANIMATOR.add(centerRadiusAnim);
+
+						parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
+						parasolGradientAnim.setTo(100.0);
+						parasolGradientAnim.setEasing(Easing.easeOutQuart);
+						parasolGradientAnim.setDuration(16);
+						ANIMATOR.add(parasolGradientAnim);
+
+						itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
+						itemExpansionAnim.setTo(0);
+						itemExpansionAnim.setEasing(Easing.easeOutQuart);
+						itemExpansionAnim.setDuration(16);
+						ANIMATOR.add(itemExpansionAnim);
+
+						wasEmpty = true;
+					}
+
+					if (centerRadiusAnim.getFinished() && heartBeatAnim.getFinished()) {
+						heartBeatAnim = new BasicAnimation<>(INSTANCE, "heartBeatRadius");
+						heartBeatAnim.setTo(INSTANCE.centerRadius);
+						heartBeatAnim.setFrom(0.0);
+						heartBeatAnim.setEasing(Easing.easeOutQuint);
+						heartBeatAnim.setDuration(100f);
+						ANIMATOR.add(heartBeatAnim);
+					}
+
+				} else if (!snapshotPearls.getSecond().isEmpty() && changing) {
 
 					parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
-					parasolGradientAnim.setTo(100.0);
+					parasolGradientAnim.setTo(INSTANCE.centerRadius);
 					parasolGradientAnim.setEasing(Easing.easeOutQuart);
-					parasolGradientAnim.setDuration(16);
+					parasolGradientAnim.setCompletion(() -> {
+						parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
+						parasolGradientAnim.setTo(120);
+						parasolGradientAnim.setEasing(Easing.easeOutQuart);
+						parasolGradientAnim.setDuration(8);
+						ANIMATOR.add(parasolGradientAnim);
+					});
+					parasolGradientAnim.setDuration(8);
 					ANIMATOR.add(parasolGradientAnim);
 
 					itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
 					itemExpansionAnim.setTo(0);
 					itemExpansionAnim.setEasing(Easing.easeOutQuart);
-					itemExpansionAnim.setDuration(16);
+					itemExpansionAnim.setDuration(8);
+					itemExpansionAnim.setCompletion(() -> {
+						itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
+						itemExpansionAnim.setTo(1f);
+						itemExpansionAnim.setEasing(Easing.easeOutQuart);
+						itemExpansionAnim.setDuration(8);
+						ANIMATOR.add(itemExpansionAnim);
+					});
 					ANIMATOR.add(itemExpansionAnim);
 
-					wasEmpty = true;
-				}
+				} else if (wasEmpty) {
+					centerText = ModKeybinds.pearlSwapping.getDisplayName() + " + Scroll to select\na pearl.\n\nRight Click to pull\nthe pearl out.";
 
-				if (centerRadiusAnim.getFinished() && heartBeatAnim.getFinished()) {
-					heartBeatAnim = new BasicAnimation<>(INSTANCE, "heartBeatRadius");
-					heartBeatAnim.setTo(INSTANCE.centerRadius);
-					heartBeatAnim.setFrom(0.0);
-					heartBeatAnim.setEasing(Easing.easeOutQuint);
-					heartBeatAnim.setDuration(100f);
-					ANIMATOR.add(heartBeatAnim);
-				}
+					centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
+					centerRadiusAnim.setTo(SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0);
+					centerRadiusAnim.setEasing(Easing.easeOutQuart);
+					centerRadiusAnim.setDuration(16);
+					ANIMATOR.add(centerRadiusAnim);
 
-			} else if (!snapshotPearls.getSecond().isEmpty() && changing) {
-
-				parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
-				parasolGradientAnim.setTo(INSTANCE.centerRadius);
-				parasolGradientAnim.setEasing(Easing.easeOutQuart);
-				parasolGradientAnim.setCompletion(() -> {
 					parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
-					parasolGradientAnim.setTo(120);
+					parasolGradientAnim.setTo(INSTANCE.centerRadius + 20);
+					parasolGradientAnim.setFrom(INSTANCE.centerRadius);
 					parasolGradientAnim.setEasing(Easing.easeOutQuart);
-					parasolGradientAnim.setDuration(8);
+					parasolGradientAnim.setDuration(16);
 					ANIMATOR.add(parasolGradientAnim);
-				});
-				parasolGradientAnim.setDuration(8);
-				ANIMATOR.add(parasolGradientAnim);
 
-				itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
-				itemExpansionAnim.setTo(0);
-				itemExpansionAnim.setEasing(Easing.easeOutQuart);
-				itemExpansionAnim.setDuration(8);
-				itemExpansionAnim.setCompletion(() -> {
 					itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
 					itemExpansionAnim.setTo(1f);
 					itemExpansionAnim.setEasing(Easing.easeOutQuart);
-					itemExpansionAnim.setDuration(8);
+					itemExpansionAnim.setDuration(16);
 					ANIMATOR.add(itemExpansionAnim);
-				});
-				ANIMATOR.add(itemExpansionAnim);
 
-			} else if (wasEmpty) {
-				centerText = ModKeybinds.pearlSwapping.getDisplayName() + " + Scroll to select\na pearl.\n\nRight Click to pull\nthe pearl out.";
-
-				centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
-				centerRadiusAnim.setTo(SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0);
-				centerRadiusAnim.setEasing(Easing.easeOutQuart);
-				centerRadiusAnim.setDuration(16);
-				ANIMATOR.add(centerRadiusAnim);
-
-				parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
-				parasolGradientAnim.setTo(INSTANCE.centerRadius + 20);
-				parasolGradientAnim.setFrom(INSTANCE.centerRadius);
-				parasolGradientAnim.setEasing(Easing.easeOutQuart);
-				parasolGradientAnim.setDuration(16);
-				ANIMATOR.add(parasolGradientAnim);
-
-				itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
-				itemExpansionAnim.setTo(1f);
-				itemExpansionAnim.setEasing(Easing.easeOutQuart);
-				itemExpansionAnim.setDuration(16);
-				ANIMATOR.add(itemExpansionAnim);
-
-				wasEmpty = false;
-			}
-		// ------------- ANIMATIONS ------------- //
-
-
-		// ------------- PARASOL AND PEARL RENDERING ------------- //
-		if (!pearls.isEmpty()) {
-
-			int numSegmentsPerArc = (int) Math.ceil(360d / pearls.size());
-			float anglePerColor = (float) (2 * Math.PI / pearls.size());
-			float anglePerSegment = anglePerColor / (numSegmentsPerArc);
-			float angle = 0;
-
-			for (int j = 0; j < pearls.size(); j++) {
-				ItemStack pearl = pearls.get(j);
-				if (!(pearl.getItem() instanceof INacreProduct)) continue;
-				INacreProduct product = (INacreProduct) pearl.getItem();
-				Function2<ItemStack, Integer, Integer> function = product.getItemColorFunction();
-				if (function == null) continue;
-
-				int colorInt = function.invoke(pearl, 0);
-				Color color = new Color(colorInt);
-
-				double innerRadius = INSTANCE.centerRadius + 0.5;
-				double outerRadius = INSTANCE.parasolGradientRadius + (INSTANCE.slotRadii[j]);// + (scrollSlot == j ? SELECTOR_SHIFT : 0);
-
-				GlStateManager.pushMatrix();
-				int thing1 = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
-				float thing2 = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
-
-				GlStateManager.enableAlpha();
-				GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
-				GlStateManager.enableBlend();
-				GlStateManager.disableTexture2D();
-				GlStateManager.shadeModel(GL11.GL_SMOOTH);
-
-				GlStateManager.translate(width / 2.0, height / 2.0, 0);
-
-				bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-				for (int i = 0; i < numSegmentsPerArc; i++) {
-					float currentAngle = i * anglePerSegment + angle;
-					bb.pos(innerRadius * MathHelper.cos(currentAngle), innerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), (int) (INSTANCE.itemExpansion * 255)).endVertex();
-					bb.pos(innerRadius * MathHelper.cos(currentAngle + anglePerSegment), innerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), (int) (INSTANCE.itemExpansion * 255)).endVertex();
-					bb.pos(outerRadius * MathHelper.cos(currentAngle + anglePerSegment), outerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
-					bb.pos(outerRadius * MathHelper.cos(currentAngle), outerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
+					wasEmpty = false;
 				}
-				tess.draw();
+			// ------------- ANIMATIONS ------------- //
 
-				float centerAngle = angle + anglePerColor / 2;
-				Vec3d inner = new Vec3d(innerRadius * MathHelper.cos(centerAngle), innerRadius * MathHelper.sin(centerAngle), 0);
-				Vec3d outer = new Vec3d(outerRadius * MathHelper.cos(centerAngle), outerRadius * MathHelper.sin(centerAngle), 0);
 
-				Vec3d center = new Vec3d((inner.x + outer.x) / 2, (inner.y + outer.y) / 2, 0);
-				Vec3d normal = center.normalize();
+			// ------------- PARASOL AND PEARL RENDERING ------------- //
+			if (!pearls.isEmpty()) {
 
-				Vec3d pearlOffset = normal.scale(INSTANCE.centerRadius / 2).scale(INSTANCE.itemExpansion);
+				int numSegmentsPerArc = (int) Math.ceil(360d / pearls.size());
+				float anglePerColor = (float) (2 * Math.PI / pearls.size());
+				float anglePerSegment = anglePerColor / (numSegmentsPerArc);
+				float angle = 0;
 
-				{
-					RenderHelper.enableGUIStandardItemLighting();
-					GlStateManager.enableRescaleNormal();
-					GlStateManager.enableTexture2D();
+				for (int j = 0; j < pearls.size(); j++) {
+					ItemStack pearl = pearls.get(j);
+					if (!(pearl.getItem() instanceof INacreProduct)) continue;
+					INacreProduct product = (INacreProduct) pearl.getItem();
+					Function2<ItemStack, Integer, Integer> function = product.getItemColorFunction();
+					if (function == null) continue;
 
-					GlStateManager.scale(2, 2, 2);
-					GlStateManager.translate(pearlOffset.x - 8, pearlOffset.y - 8, 10);
-					GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
+					int colorInt = function.invoke(pearl, 0);
+					Color color = new Color(colorInt);
 
-					IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(pearl, null, Minecraft.getMinecraft().player);
+					double innerRadius = INSTANCE.centerRadius + 0.5;
+					double outerRadius = INSTANCE.parasolGradientRadius + (INSTANCE.slotRadii[j]);// + (scrollSlot == j ? SELECTOR_SHIFT : 0);
 
 					GlStateManager.pushMatrix();
-					Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-					Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-					GlStateManager.enableRescaleNormal();
+					int thing1 = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
+					float thing2 = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
+
 					GlStateManager.enableAlpha();
-					GlStateManager.alphaFunc(516, 0.1F);
+					GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
 					GlStateManager.enableBlend();
-					GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+					GlStateManager.disableTexture2D();
+					GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
-					GlStateManager.translate(8.0F, 8.0F, 0.0F);
-					GlStateManager.scale(1.0F, -1.0F, 1.0F);
-					GlStateManager.scale(16.0F, 16.0F, 16.0F);
+					GlStateManager.translate(width / 2.0, height / 2.0, 0);
 
-					if (model.isGui3d()) GlStateManager.enableLighting();
-					else GlStateManager.disableLighting();
+					bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+					for (int i = 0; i < numSegmentsPerArc; i++) {
+						float currentAngle = i * anglePerSegment + angle;
+						bb.pos(innerRadius * MathHelper.cos(currentAngle), innerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), (int) (INSTANCE.itemExpansion * 255)).endVertex();
+						bb.pos(innerRadius * MathHelper.cos(currentAngle + anglePerSegment), innerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), (int) (INSTANCE.itemExpansion * 255)).endVertex();
+						bb.pos(outerRadius * MathHelper.cos(currentAngle + anglePerSegment), outerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
+						bb.pos(outerRadius * MathHelper.cos(currentAngle), outerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
+					}
+					tess.draw();
 
-					ForgeHooksClient.handleCameraTransforms(model, ItemCameraTransforms.TransformType.GUI, false);
+					float centerAngle = angle + anglePerColor / 2;
+					Vec3d inner = new Vec3d(innerRadius * MathHelper.cos(centerAngle), innerRadius * MathHelper.sin(centerAngle), 0);
+					Vec3d outer = new Vec3d(outerRadius * MathHelper.cos(centerAngle), outerRadius * MathHelper.sin(centerAngle), 0);
 
-					if (!pearl.isEmpty()) {
+					Vec3d center = new Vec3d((inner.x + outer.x) / 2, (inner.y + outer.y) / 2, 0);
+					Vec3d normal = center.normalize();
+
+					Vec3d pearlOffset = normal.scale(INSTANCE.centerRadius / 2).scale(INSTANCE.itemExpansion);
+
+					{
+						RenderHelper.enableGUIStandardItemLighting();
+						GlStateManager.enableRescaleNormal();
+						GlStateManager.enableTexture2D();
+
+						GlStateManager.scale(2, 2, 2);
+						GlStateManager.translate(pearlOffset.x - 8, pearlOffset.y - 8, 10);
+						GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
+
+						IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(pearl, null, Minecraft.getMinecraft().player);
+
 						GlStateManager.pushMatrix();
-						GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+						Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+						Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+						GlStateManager.enableRescaleNormal();
+						GlStateManager.enableAlpha();
+						GlStateManager.alphaFunc(516, 0.1F);
+						GlStateManager.enableBlend();
+						GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
-						if (model.isBuiltInRenderer()) {
-							GlStateManager.enableRescaleNormal();
-							pearl.getItem().getTileEntityItemStackRenderer().renderByItem(pearl);
-						} else {
-							renderModel(model, 0xFFFFFF | (((int) (INSTANCE.itemExpansion * 255)) << 24), pearl);
+						GlStateManager.translate(8.0F, 8.0F, 0.0F);
+						GlStateManager.scale(1.0F, -1.0F, 1.0F);
+						GlStateManager.scale(16.0F, 16.0F, 16.0F);
 
-							if (pearl.hasEffect()) {
-								renderEffect(model);
+						if (model.isGui3d()) GlStateManager.enableLighting();
+						else GlStateManager.disableLighting();
+
+						ForgeHooksClient.handleCameraTransforms(model, ItemCameraTransforms.TransformType.GUI, false);
+
+						if (!pearl.isEmpty()) {
+							GlStateManager.pushMatrix();
+							GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+
+							if (model.isBuiltInRenderer()) {
+								GlStateManager.enableRescaleNormal();
+								pearl.getItem().getTileEntityItemStackRenderer().renderByItem(pearl);
+							} else {
+								renderModel(model, 0xFFFFFF | (((int) (INSTANCE.itemExpansion * 255)) << 24), pearl);
+
+								if (pearl.hasEffect()) {
+									renderEffect(model);
+								}
 							}
+
+							GlStateManager.popMatrix();
 						}
 
+						GlStateManager.scale(1, 1, 1);
+
+						GlStateManager.disableAlpha();
+						GlStateManager.disableRescaleNormal();
+						GlStateManager.disableLighting();
 						GlStateManager.popMatrix();
+
+						GlStateManager.translate(-pearlOffset.x + 8, -pearlOffset.y + 8, 0);
+						Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+						Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+						GlStateManager.disableRescaleNormal();
+						RenderHelper.disableStandardItemLighting();
 					}
 
+					GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
 					GlStateManager.scale(1, 1, 1);
 
-					GlStateManager.disableAlpha();
-					GlStateManager.disableRescaleNormal();
-					GlStateManager.disableLighting();
-					GlStateManager.popMatrix();
+					List<SpellRing> rings = SpellUtils.getSpellChains(pearl);
+					float startAngle = angle + 0.25f;
+					float endAngle = angle + anglePerColor - 0.25f;
+					float anglePerRing = (endAngle - startAngle) / (rings.size() + 1);
+					float size = 10;
+					for (int i = 0; i < rings.size(); i++) {
+						float currentAngle = startAngle + (i + 1) * anglePerRing;
+						double x = MathHelper.cos(currentAngle);
+						double y = MathHelper.sin(currentAngle);
+						Vec3d chainNormal = new Vec3d(x, y, 0).normalize();
+						Vec3d chainOffset = chainNormal.scale((INSTANCE.centerRadius / 2.0) * INSTANCE.itemExpansion).add(chainNormal.scale(size).scale(INSTANCE.itemExpansion));
 
-					GlStateManager.translate(-pearlOffset.x + 8, -pearlOffset.y + 8, 0);
-					Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-					Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-					GlStateManager.disableRescaleNormal();
-					RenderHelper.disableStandardItemLighting();
-				}
+						List<SpellRing> allSpellRings = SpellUtils.getAllSpellRings(rings.get(i));
+						for (int k = 0; k < allSpellRings.size(); k++) {
+							SpellRing ring = allSpellRings.get(k);
+							ModuleInstance module = ring.getModule();
+							if (module == null) continue;
+							Sprite moduleSprite = new Sprite(module.getIconLocation());
 
-				GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
-				GlStateManager.scale(1, 1, 1);
+							Vec3d moduleVec = chainOffset.add(chainNormal.scale(size * 1.5).scale(k).scale(INSTANCE.itemExpansion));
 
-				List<SpellRing> rings = SpellUtils.getSpellChains(pearl);
-				float startAngle = angle + 0.25f;
-				float endAngle = angle + anglePerColor - 0.25f;
-				float anglePerRing = (endAngle - startAngle) / (rings.size() + 1);
-				float size = 10;
-				for (int i = 0; i < rings.size(); i++) {
-					float currentAngle = startAngle + (i + 1) * anglePerRing;
-					double x = MathHelper.cos(currentAngle);
-					double y = MathHelper.sin(currentAngle);
-					Vec3d chainNormal = new Vec3d(x, y, 0).normalize();
-					Vec3d chainOffset = chainNormal.scale((INSTANCE.centerRadius / 2.0) * INSTANCE.itemExpansion).add(chainNormal.scale(size).scale(INSTANCE.itemExpansion));
+							SpritePlate.bind();
+							SpritePlate.draw(0, (float) moduleVec.x - (size / 2f), (float) moduleVec.y - (size / 2f), size, size);
 
-					List<SpellRing> allSpellRings = SpellUtils.getAllSpellRings(rings.get(i));
-					for (int k = 0; k < allSpellRings.size(); k++) {
-						SpellRing ring = allSpellRings.get(k);
-						ModuleInstance module = ring.getModule();
-						if (module == null) continue;
-						Sprite moduleSprite = new Sprite(module.getIconLocation());
+							moduleSprite.bind();
+							moduleSprite.draw(0, (float) moduleVec.x - ((size - 1) / 2f), (float) moduleVec.y - ((size - 1) / 2f), size - 1, size - 1);
 
-						Vec3d moduleVec = chainOffset.add(chainNormal.scale(size * 1.5).scale(k).scale(INSTANCE.itemExpansion));
+							if (k + 1 < allSpellRings.size()) {
+								SpellRing linksTo = allSpellRings.get(k + 1);
+								ModuleInstance linksToModule = linksTo.getModule();
+								if (linksToModule == null) continue;
+								Vec3d linksToVec = chainOffset.add(chainNormal.scale(size * 1.5).scale(k + 1).scale(INSTANCE.itemExpansion));
 
-						SpritePlate.bind();
-						SpritePlate.draw(0, (float) moduleVec.x - (size / 2f), (float) moduleVec.y - (size / 2f), size, size);
-
-						moduleSprite.bind();
-						moduleSprite.draw(0, (float) moduleVec.x - ((size - 1) / 2f), (float) moduleVec.y - ((size - 1) / 2f), size - 1, size - 1);
-
-						if (k + 1 < allSpellRings.size()) {
-							SpellRing linksTo = allSpellRings.get(k + 1);
-							ModuleInstance linksToModule = linksTo.getModule();
-							if (linksToModule == null) continue;
-							Vec3d linksToVec = chainOffset.add(chainNormal.scale(size * 1.5).scale(k + 1).scale(INSTANCE.itemExpansion));
-
-							TableModule.drawWire(
-									new Vec2d(moduleVec.x, moduleVec.y),
-									new Vec2d(linksToVec.x, linksToVec.y),
-									TableModule.getColorForModule(module.getModuleType()),
-									TableModule.getColorForModule(linksToModule.getModuleType()));
+								TableModule.drawWire(
+										new Vec2d(moduleVec.x, moduleVec.y),
+										new Vec2d(linksToVec.x, linksToVec.y),
+										TableModule.getColorForModule(module.getModuleType()),
+										TableModule.getColorForModule(linksToModule.getModuleType()));
+							}
 						}
 					}
+
+
+					GlStateManager.disableBlend();
+					GlStateManager.disableAlpha();
+					GlStateManager.alphaFunc(thing1, thing2);
+
+					GlStateManager.translate(-width / 2.0, -height / 2.0, 0);
+					GlStateManager.popMatrix();
+
+					angle += anglePerColor;
 				}
-
-
-				GlStateManager.disableBlend();
-				GlStateManager.disableAlpha();
-				GlStateManager.alphaFunc(thing1, thing2);
-
-				GlStateManager.translate(-width / 2.0, -height / 2.0, 0);
-				GlStateManager.popMatrix();
-
-				angle += anglePerColor;
 			}
+			// ------------- PARASOL AND PEARL RENDERING ------------- //
 		}
-		// ------------- PARASOL AND PEARL RENDERING ------------- //
 	}
 
 	private static void renderEffect(IBakedModel model) {
