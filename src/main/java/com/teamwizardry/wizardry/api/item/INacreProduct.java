@@ -18,7 +18,8 @@ import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
- * Created by Demoniaque on 6/7/2016.
+ * Implement this to make your item change it's color light nacre products.
+ * Nacre Pearls use this.
  */
 public interface INacreProduct extends IItemColorProvider {
 

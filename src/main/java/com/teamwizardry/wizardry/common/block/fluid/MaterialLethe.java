@@ -8,12 +8,5 @@ public class MaterialLethe extends MaterialLiquid
 	public MaterialLethe(MapColor color)
 	{
 		super(color);
-		setNoPushMobility();
-	}
-	
-	@Override
-	public boolean blocksMovement()
-	{
-		return true;
 	}
 }

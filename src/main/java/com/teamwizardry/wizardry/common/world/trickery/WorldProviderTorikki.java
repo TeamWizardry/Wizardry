@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.world.trickery;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.world.biome.BiomeUnderWorld;
+import com.teamwizardry.wizardry.common.world.biome.BiomeTorikki;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -32,19 +32,19 @@ public class WorldProviderTorikki extends WorldProvider {
 	@Nonnull
 	@Override
 	public IChunkGenerator createChunkGenerator() {
-		return new ChunkGeneratorTorikki(world);
+		return new ChunkGeneratorTorikki(world, getSeed());
 	}
 
 	@Nonnull
 	@Override
 	public DimensionType getDimensionType() {
-		return Wizardry.underWorld;
+		return Wizardry.torikki;
 	}
 
 	@Nonnull
 	@Override
 	public Biome getBiomeForCoords(@Nonnull BlockPos pos) {
-		return new BiomeUnderWorld(new Biome.BiomeProperties("torikki"));
+		return new BiomeTorikki(new Biome.BiomeProperties("torikki"));
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class WorldProviderTorikki extends WorldProvider {
 
 	@Override
 	public int getHeight() {
-		return 0;
+		return 255;
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class WorldProviderTorikki extends WorldProvider {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderHandler getSkyRenderer() {
-		return UnderworldSky.INSTANCE;
+		return TorikkiSky.INSTANCE;
 	}
 
 	@Nonnull
@@ -115,10 +115,20 @@ public class WorldProviderTorikki extends WorldProvider {
 	public String getSaveFolder() {
 		return "torikki";
 	}
+	
+	@Override
+	protected void generateLightBrightnessTable()
+	{
+		// Fixed vanilla algorithm to use correct scaling
+		float offset = 2/9F;
+		
+		for (int i = 0; i < 16; i++)
+			this.lightBrightnessTable[i] = i / (60F - 3*i) * (1 - offset) + offset;
+	}
 
 	@SideOnly(Side.CLIENT)
-	public static class UnderworldSky extends IRenderHandler {
-		public static UnderworldSky INSTANCE = new UnderworldSky();
+	public static class TorikkiSky extends IRenderHandler {
+		public static TorikkiSky INSTANCE = new TorikkiSky();
 
 		@Override
 		public void render(float partialTicks, WorldClient world, Minecraft mc) {

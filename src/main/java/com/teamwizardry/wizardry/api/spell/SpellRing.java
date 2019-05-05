@@ -98,7 +98,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * A module override handler.
 	 */
-	@Nonnull
 	private ModuleOverrideHandler lazy_overrideHandler = null;	// "lazy" means, that access to variable should be done only over getter
 
 	/**
@@ -160,8 +159,25 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	public boolean isContinuous() {
-		return module.getModuleClass() instanceof IContinuousModule;
+	/**
+	 * Returns a normalized NBT tag compound for information from a source.
+	 *
+	 * @param informationNbt a source NBT compound
+	 * @return normalized information NBT compound
+	 */
+	private static NBTTagCompound sortInformationTag(NBTTagCompound informationNbt) {
+		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationNbt.getSize());
+		for (String key : informationNbt.getKeySet()) {
+			sortedInformationList.add(Pair.of(key, FixedPointUtils.getFixedFromNBT(informationNbt, key)));
+		}
+		sortedInformationList.sort(Comparator.comparing(Pair::getKey));
+
+		NBTTagCompound newInformationTag = new NBTTagCompound();
+		for (Pair<String, Long> entry : sortedInformationList) {
+			FixedPointUtils.setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
+		}
+
+		return newInformationTag;
 	}
 
 
@@ -268,42 +284,28 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	
 	/**
 	 * Returns a normalized NBT tag compound for information from a source.
-	 * 
-	 * @param informationNbt a source NBT compound
-	 * @return normalized information NBT compound
-	 */
-	private static final NBTTagCompound sortInformationTag(NBTTagCompound informationNbt) {
-		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationNbt.getSize());
-		for (String key : informationNbt.getKeySet()) {
-			sortedInformationList.add( Pair.of(key, FixedPointUtils.getFixedFromNBT(informationNbt, key)) );
-		}
-		Collections.sort(sortedInformationList, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
-		
-		NBTTagCompound newInformationTag = new NBTTagCompound();
-		for( Pair<String, Long> entry : sortedInformationList ) {
-			FixedPointUtils.setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
-		}
-		
-		return newInformationTag;
-	}
-	
-	/**
-	 * Returns a normalized NBT tag compound for information from a source.
-	 * 
+	 *
 	 * @param informationMap a source key-value list, storing information.
 	 * @return normalized information NBT compound
 	 */
-	private static final NBTTagCompound sortInformationTag(Map<String, Double> informationMap) {
+	private static NBTTagCompound sortInformationTag(Map<String, Double> informationMap) {
 		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationMap.size());
 		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, FixedPointUtils.doubleToFixed(val))));
-		Collections.sort(sortedInformationList, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
-		
+		sortedInformationList.sort(Comparator.comparing(Pair::getKey));
+
 		NBTTagCompound newInformationTag = new NBTTagCompound();
 		for( Pair<String, Long> entry : sortedInformationList ) {
 			FixedPointUtils.setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
 		}
-		
+
 		return newInformationTag;
+	}
+
+	public boolean isContinuous() {
+		if (module != null) {
+			return module.getModuleClass() instanceof IContinuousModule;
+		}
+		return false;
 	}
 	
 //	public final float getCapeReduction(EntityLivingBase caster) {
@@ -502,7 +504,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public int getCooldownTime(@Nullable SpellData data) {
-		if (data != null && module.getModuleClass() instanceof IOverrideCooldown)
+		if (module != null && data != null && module.getModuleClass() instanceof IOverrideCooldown)
 			return ((IOverrideCooldown) module.getModuleClass()).getNewCooldown(data, this);
 
 		return (int) FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.COOLDOWN.getNbtName());

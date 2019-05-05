@@ -30,11 +30,6 @@ public class BlockManaVacuum extends BlockModContainer implements IStructure
 		return new TileManaVacuum();
 	}
 	
-	private TileManaVacuum getTE(IBlockAccess world, BlockPos pos)
-	{
-		return (TileManaVacuum) world.getTileEntity(pos);
-	}
-	
 	@Override
 	public boolean isFullCube(IBlockState state)
 	{

@@ -10,11 +10,5 @@ import net.minecraft.block.material.MaterialLiquid;
 public class MaterialMana extends MaterialLiquid {
 	public MaterialMana(MapColor color) {
 		super(color);
-		setNoPushMobility();
-	}
-
-	@Override
-	public boolean blocksMovement() {
-		return true;
 	}
 }

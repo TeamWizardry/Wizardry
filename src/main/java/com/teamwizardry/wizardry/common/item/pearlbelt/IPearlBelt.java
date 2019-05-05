@@ -4,10 +4,10 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
-import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlWheelHolder;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlStorageHolder;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotClient;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModKeybinds;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
-public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecayProduct {
+public interface IPearlBelt extends IPearlStorageHolder, INacreProduct.INacreDecayProduct {
 
 	default void addBeltColorProperty(Item item) {
 		item.addPropertyOverride(new ResourceLocation("slot"), new IItemPropertyGetter() {
@@ -52,11 +52,11 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 		});
 	}
 
-	default void onRightClick(World world, EntityPlayer player, EnumHand hand) {
+	default void onRightClick(World world, EntityPlayer player, EnumHand hand, boolean isKeybindDown) {
 		if (world.isRemote) return;
 
 		ItemStack belt = player.getHeldItem(hand);
-		if (!shouldUse(belt)) return;
+		if (isDisabled(belt)) return;
 
 		if (player.isSneaking()) {
 			boolean changed = false;
@@ -72,7 +72,7 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 				ItemNBTHelper.setInt(belt, "scroll_slot", -1);
 				player.playSound(ModSounds.BELL_TING, 1f, 1f);
 			}
-		} else if (ModKeybinds.pearlSwapping.isKeyDown()) {
+		} else if (isKeybindDown) {
 			int scrollSlot = ItemNBTHelper.getInt(belt, "scroll_slot", -1);
 			if (scrollSlot == -1) return;
 
@@ -85,7 +85,7 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 
 
 		if (player instanceof EntityPlayerMP)
-			PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(player.inventory.getSlotFor(belt), -1), (EntityPlayerMP) player);
+			PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(Utils.getSlotFor(player, belt), -1), (EntityPlayerMP) player);
 	}
 
 	default IItemHandler getBeltPearls(ItemStack stack) {

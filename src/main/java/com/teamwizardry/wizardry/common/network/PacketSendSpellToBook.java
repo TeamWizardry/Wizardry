@@ -10,15 +10,11 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.server.management.PlayerList;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Created by Demoniaque.
@@ -28,22 +24,18 @@ public class PacketSendSpellToBook extends PacketBase {
 	@Save
 	public NBTTagList commonModules;
 	@Save
-	private UUID playerUUID;
-	@Save
 	public NBTTagList moduleList;
 
 	public PacketSendSpellToBook() {
 	}
 
-	public PacketSendSpellToBook(UUID playerUUID, List<List<ModuleInstance>> compiledSpell, Set<CommonWorktableModule> commonModules) {
-		this.playerUUID = playerUUID;
+	public PacketSendSpellToBook(List<List<ModuleInstance>> compiledSpell, Set<CommonWorktableModule> commonModules) {
 		if (compiledSpell == null || commonModules == null) return;
 
 		NBTTagList compiledList = new NBTTagList();
 		for (List<ModuleInstance> moduleList : compiledSpell) {
 			for (ModuleInstance module : moduleList)
 				compiledList.appendTag(module.serialize());
-			compiledList.appendTag(new NBTTagString());
 		}
 		moduleList = compiledList;
 
@@ -56,8 +48,7 @@ public class PacketSendSpellToBook extends PacketBase {
 
 	@Override
 	public void handle(@Nonnull MessageContext messageContext) {
-		PlayerList players = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
-		EntityPlayer player = players.getPlayerByUUID(playerUUID);
+		EntityPlayer player = messageContext.getServerHandler().player;
 
 		for (ItemStack stack : player.inventory.mainInventory) {
 			if (stack.getItem() == ModItems.BOOK) {

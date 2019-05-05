@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.block;
+package com.teamwizardry.wizardry.common.block;
 
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;

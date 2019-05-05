@@ -352,13 +352,13 @@ public class WorktableGui extends GuiBase {
 				for (CommonWorktableModule commonModule : commonModules) {
 					commonList.appendTag(commonModule.serializeNBT());
 				}
-				for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
-					if (stack.getItem() == ModItems.BOOK) {
-						ItemNBTHelper.setList(stack, "common_modules", commonList);
-					}
-				}
+				//	for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
+				//		if (stack.getItem() == ModItems.BOOK) {
+				//			ItemNBTHelper.setList(stack, "common_modules", commonList);
+				//		}
+				//	}
 
-				PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(Minecraft.getMinecraft().player.getUniqueID(), chains, commonModules));
+				PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(chains, commonModules));
 
 				playSaveAnimation(null);
 			});
@@ -736,20 +736,7 @@ public class WorktableGui extends GuiBase {
 	public void playSaveAnimation(@Nullable Runnable finish) {
 		animationPlaying = true;
 
-		if (selectedModule != null) {
-			Vec2d toSize = new Vec2d(16, 16);
-			BasicAnimation<TableModule> animSize = new BasicAnimation<>(selectedModule, "size");
-			animSize.setDuration(5);
-			animSize.setEasing(Easing.easeOutCubic);
-			animSize.setTo(toSize);
-			selectedModule.add(animSize);
-
-			BasicAnimation<TableModule> animPos = new BasicAnimation<>(selectedModule, "pos");
-			animPos.setDuration(5);
-			animPos.setEasing(Easing.easeOutCubic);
-			animPos.setTo(selectedModule.getPos().add((selectedModule.getSize().sub(toSize)).mul(0.5f)));
-			selectedModule.add(animPos);
-		}
+		resetSelectedModule();
 
 		Runnable runnable = () -> {
 			ComponentVoid fakePaper = new ComponentVoid(180, 19, 180, 188);
@@ -926,9 +913,7 @@ public class WorktableGui extends GuiBase {
 		} else runnable.run();
 	}
 
-	public void playClearAnimation(@Nullable Runnable finish) {
-		animationPlaying = true;
-
+	private void resetSelectedModule() {
 		if (selectedModule != null) {
 			Vec2d toSize = new Vec2d(16, 16);
 			BasicAnimation<TableModule> animSize = new BasicAnimation<>(selectedModule, "size");
@@ -943,6 +928,12 @@ public class WorktableGui extends GuiBase {
 			animPos.setTo(selectedModule.getPos().add((selectedModule.getSize().sub(toSize)).mul(0.5f)));
 			selectedModule.add(animPos);
 		}
+	}
+
+	public void playClearAnimation(@Nullable Runnable finish) {
+		animationPlaying = true;
+
+		resetSelectedModule();
 
 		Runnable runnable = () -> {
 			// PAPER ITEMS ANIMATION
@@ -1013,20 +1004,7 @@ public class WorktableGui extends GuiBase {
 	public void playLoadAnimation(Set<CommonWorktableModule> commonModules, @Nullable Runnable finish) {
 		animationPlaying = true;
 
-		if (selectedModule != null) {
-			Vec2d toSize = new Vec2d(16, 16);
-			BasicAnimation<TableModule> animSize = new BasicAnimation<>(selectedModule, "size");
-			animSize.setDuration(5);
-			animSize.setEasing(Easing.easeOutCubic);
-			animSize.setTo(toSize);
-			selectedModule.add(animSize);
-
-			BasicAnimation<TableModule> animPos = new BasicAnimation<>(selectedModule, "pos");
-			animPos.setDuration(5);
-			animPos.setEasing(Easing.easeOutCubic);
-			animPos.setTo(selectedModule.getPos().add((selectedModule.getSize().sub(toSize)).mul(0.5f)));
-			selectedModule.add(animPos);
-		}
+		resetSelectedModule();
 
 		ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
 		paper.add(bookIconMask);

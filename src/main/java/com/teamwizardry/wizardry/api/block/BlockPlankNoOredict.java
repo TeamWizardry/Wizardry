@@ -7,6 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockPlankNoOredict extends BlockMod {
 	public BlockPlankNoOredict(String name) {
@@ -16,11 +17,11 @@ public class BlockPlankNoOredict extends BlockMod {
 		setResistance(5);
 	}
 
-	public String getHarvestTool(IBlockState state) {
+	public String getHarvestTool(@NotNull IBlockState state) {
 		return "axe";
 	}
 
-	public boolean isToolEffective(String type, IBlockState state) {
+	public boolean isToolEffective(String type, @NotNull IBlockState state) {
 		return type.equals("axe");
 	}
 

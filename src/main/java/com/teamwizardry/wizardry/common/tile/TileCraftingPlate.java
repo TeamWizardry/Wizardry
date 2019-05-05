@@ -12,7 +12,7 @@ import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.item.IInfusable;
+import com.teamwizardry.wizardry.api.item.IInfusableItem;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -96,7 +96,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
 			markDirty();
-			if (stack.getItem() instanceof IInfusable)
+			if (stack.getItem() instanceof IInfusableItem)
 				return 1;
 			else return 0;
 		}
@@ -112,7 +112,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
 			markDirty();
-			if (stack.getItem() instanceof IInfusable)
+			if (stack.getItem() instanceof IInfusableItem)
 				return 1;
 			else return 0;
 		}
@@ -181,7 +181,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 			if (entityItem.getItem().isEmpty()) continue;
 			if (hasInputPearl()) break;
 
-			if (!isInventoryEmpty() && entityItem.getItem().getItem() instanceof IInfusable) {
+			if (!isInventoryEmpty() && entityItem.getItem().getItem() instanceof IInfusableItem) {
 
 				ItemStack stack = entityItem.getItem().copy();
 				stack.setCount(1);
@@ -189,7 +189,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 
 				inputPearl.getHandler().setStackInSlot(0, stack);
 
-			} else if (!(entityItem.getItem().getItem() instanceof IInfusable)) {
+			} else if (!(entityItem.getItem().getItem() instanceof IInfusableItem)) {
 
 				ItemStack stack = entityItem.getItem().copy();
 				stack.setCount(1);

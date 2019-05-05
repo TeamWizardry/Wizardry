@@ -30,7 +30,7 @@ public class GenHandler implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		if (ConfigValues.manaPoolRarity > 0)
-			if (IntStream.of(ConfigValues.manaPoolDimWhitelist).boxed().anyMatch(dim -> dim == world.provider.getDimension()))
+			if (ConfigValues.isDimBlacklist ^ IntStream.of(ConfigValues.manaPoolDimWhitelist).boxed().anyMatch(dim -> dim == world.provider.getDimension()))
 				generateMana(world, random, chunkX, chunkZ);
 	}
 }

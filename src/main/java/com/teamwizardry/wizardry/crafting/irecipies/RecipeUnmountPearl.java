@@ -53,8 +53,7 @@ public class RecipeUnmountPearl extends IForgeRegistryEntry.Impl<IRecipe> implem
 		if (foundStaff.isEmpty()) return ItemStack.EMPTY;
 
 		ItemStack infusedPearl = new ItemStack(ModItems.PEARL_NACRE);
-		SpellUtils.transferSpell(foundStaff, infusedPearl);
-		foundStaff.setItemDamage(0);
+		SpellUtils.copySpell(foundStaff, infusedPearl);
 
 		return infusedPearl;
 	}
@@ -75,14 +74,10 @@ public class RecipeUnmountPearl extends IForgeRegistryEntry.Impl<IRecipe> implem
 	public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
 		NonNullList<ItemStack> remainingItems = ForgeHooks.defaultRecipeGetRemainingItems(inv);
 
-		ItemStack staff;
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack.getItem() == ModItems.STAFF) {
-				staff = stack.copy();
-				staff.setItemDamage(0);
-				remainingItems.set(i, staff);
-				break;
+				remainingItems.set(i, new ItemStack(ModItems.STAFF));
 			}
 		}
 

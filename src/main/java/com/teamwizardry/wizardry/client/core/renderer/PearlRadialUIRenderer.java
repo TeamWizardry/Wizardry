@@ -13,18 +13,19 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlStorageHolder;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.gui.worktable.TableModule;
-import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotServer;
-import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModKeybinds;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -51,6 +52,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -65,10 +67,19 @@ public class PearlRadialUIRenderer {
 
 	public static final PearlRadialUIRenderer INSTANCE = new PearlRadialUIRenderer();
 
+	/**
+	 * Reimplement vanilla item so we can draw pearl stacks with opacity support.
+	 */
 	private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+	/**
+	 * Reimplement vanilla item so we can draw pearl stacks with opacity support.
+	 */
 	private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
 
-	private static final Sprite SpritePlate = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate.png"));
+	/**
+	 * Background base for spell component icons.
+	 */
+	private static final Sprite spritePlate = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate.png"));
 
 	private static final int SELECTOR_RADIUS = 90;
 	private static final int SELECTOR_WIDTH = 50;
@@ -129,101 +140,30 @@ public class PearlRadialUIRenderer {
 		return scrollSlot;
 	}
 
+	/**
+	 * Reimplement vanilla item so we can draw pearl stacks with opacity support.
+	 */
 	private static void renderModel(IBakedModel model, int color, ItemStack stack) {
 		renderLitItem(Minecraft.getMinecraft().getRenderItem(), model, color, stack);
 	}
 
-	@SubscribeEvent
-	public void onScroll(MouseEvent event) {
-		if (event.getDwheel() == 0 || !Keyboard.isCreated()) return;
+	/**
+	 * Reimplement vanilla item so we can draw pearl stacks with opacity support.
+	 */
+	private static int getColorMultiplier(ItemStack stack, int tintIndex) {
+		if (tintIndex == -1 || stack.isEmpty()) return 0xFFFFFFFF;
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		if (player == null) return;
+		int colorMultiplier = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, tintIndex);
 
-		ItemStack heldItem = player.getHeldItemMainhand();
-
-		for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-			ItemStack invStack = player.inventory.getStackInSlot(i);
-			if (ItemStack.areItemStacksEqual(heldItem, invStack)) continue;
-			if (ItemNBTHelper.getInt(invStack, "scroll_slot", -1) == -1) continue;
-
-			ItemNBTHelper.setInt(invStack, "scroll_slot", -1);
-			PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(i, -1));
+		if (EntityRenderer.anaglyphEnable) {
+			colorMultiplier = TextureUtil.anaglyphColor(colorMultiplier);
 		}
 
-		if (ModKeybinds.pearlSwapping.isKeyDown()) {
+		// FUCK YOU
+		//	// Always full opacity
+		//	colorMultiplier |= 0xff << 24; // -16777216
 
-			ItemStack beltStack;
-			if (heldItem.getItem() == ModItems.PEARL_BELT) {
-				beltStack = heldItem;
-			} else if (heldItem.getItem() == ModItems.STAFF) {
-				beltStack = BaublesSupport.getItem(player, ModItems.PEARL_BELT);
-				if (beltStack.isEmpty()) return;
-			} else return;
-
-			IPearlBelt belt = (IPearlBelt) beltStack.getItem();
-
-			IItemHandler handler = belt.getPearls(beltStack);
-			if (handler == null) return;
-			List<ItemStack> temp = new ArrayList<>();
-			for (int i = 0; i < handler.getSlots(); i++) {
-				ItemStack pearl = handler.getStackInSlot(i);
-				if (pearl.isEmpty()) continue;
-				temp.add(pearl);
-			}
-			newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
-
-			int rawCount = belt.getPearlCount(beltStack);
-			int count = Math.max(rawCount - 1, 0);
-
-			int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
-
-			scrollSlot = getScrollSlot(event, count, scrollSlot);
-
-			if (scrollSlot >= 0) {
-				ItemNBTHelper.setInt(heldItem, "scroll_slot", scrollSlot);
-				PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(player.inventory.getSlotFor(heldItem), scrollSlot));
-
-				for (int i = 0; i < slotAnimations.length; i++) {
-					BasicAnimation animation = slotAnimations[i];
-					if (animation != null)
-						ANIMATOR.removeAnimations(animation);
-
-					if (i == scrollSlot) continue;
-					BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
-					newAnimation.setTo(0);
-					newAnimation.setEasing(Easing.easeOutQuint);
-					newAnimation.setDuration(20f);
-					ANIMATOR.add(newAnimation);
-
-					slotAnimations[i] = newAnimation;
-				}
-
-				BasicAnimation<PearlRadialUIRenderer> animation = new BasicAnimation<>(INSTANCE, "slotRadii[" + scrollSlot + "]");
-				animation.setTo(SELECTOR_SHIFT * 10);
-				animation.setEasing(Easing.easeOutQuint);
-				animation.setDuration(20f);
-				ANIMATOR.add(animation);
-
-				slotAnimations[scrollSlot] = animation;
-
-				event.setCanceled(true);
-			}
-		} else {
-			for (int i = 0; i < slotAnimations.length; i++) {
-				BasicAnimation animation = slotAnimations[i];
-				if (animation != null)
-					ANIMATOR.removeAnimations(animation);
-
-				BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
-				newAnimation.setTo(0);
-				newAnimation.setEasing(Easing.easeOutQuint);
-				newAnimation.setDuration(20f);
-				ANIMATOR.add(newAnimation);
-
-				slotAnimations[i] = newAnimation;
-			}
-		}
+		return colorMultiplier;
 	}
 
 	private static int genSnapshotHashcode(List<ItemStack> pearls) {
@@ -305,24 +245,9 @@ public class PearlRadialUIRenderer {
 		}
 	}
 
-	private static int getColorMultiplier(ItemStack stack, int tintIndex) {
-		if (tintIndex == -1 || stack.isEmpty()) return 0xFFFFFFFF;
-
-		int colorMultiplier = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, tintIndex);
-
-		if (EntityRenderer.anaglyphEnable) {
-			colorMultiplier = TextureUtil.anaglyphColor(colorMultiplier);
-		}
-
-		// FUCK YOU
-		//	// Always full opacity
-		//	colorMultiplier |= 0xff << 24; // -16777216
-
-		return colorMultiplier;
-	}
-
-
-	//					colorMultiplier = (newColorMultiplier & 0xFFFFFF) | ((int)(INSTANCE.itemExpansion * 255) << 24);
+	/**
+	 * Reimplement vanilla item so we can draw pearl stacks with opacity support.
+	 */
 	private static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) {
 		List<BakedQuad> allquads = new ArrayList<>();
 
@@ -386,7 +311,7 @@ public class PearlRadialUIRenderer {
 			if (lightingDirty || colorDirty) {
 				if (i > 0) // Make sure this isn't the first quad being processed
 				{
-					drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
+					drawSegment(color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
 				}
 				segmentBlockLight = bl;
 				segmentSkyLight = sl;
@@ -397,7 +322,7 @@ public class PearlRadialUIRenderer {
 			segment.add(q);
 		}
 
-		drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
+		drawSegment(color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
 
 		// Clean up render state if necessary
 		if (hasLighting) {
@@ -406,7 +331,10 @@ public class PearlRadialUIRenderer {
 		}
 	}
 
-	private static void drawSegment(RenderItem ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor) {
+	/**
+	 * Reimplement vanilla item so we can draw pearl stacks with opacity support.
+	 */
+	private static void drawSegment(int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor) {
 		BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 
@@ -437,6 +365,137 @@ public class PearlRadialUIRenderer {
 		segment.clear();
 	}
 
+	/**
+	 * Reimplement vanilla item so we can draw pearl stacks with opacity support.
+	 */
+	private static void renderEffect(IBakedModel model) {
+		GlStateManager.depthMask(false);
+		GlStateManager.depthFunc(514);
+		GlStateManager.disableLighting();
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(RES_ITEM_GLINT);
+		GlStateManager.matrixMode(5890);
+		GlStateManager.pushMatrix();
+		GlStateManager.scale(8.0F, 8.0F, 8.0F);
+		float f = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
+		GlStateManager.translate(f, 0.0F, 0.0F);
+		GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
+		renderModel(model, -8372020, ItemStack.EMPTY);
+		GlStateManager.popMatrix();
+		GlStateManager.pushMatrix();
+		GlStateManager.scale(8.0F, 8.0F, 8.0F);
+		float f1 = (float) (Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
+		GlStateManager.translate(-f1, 0.0F, 0.0F);
+		GlStateManager.rotate(10.0F, 0.0F, 0.0F, 1.0F);
+		renderModel(model, -8372020, ItemStack.EMPTY);
+		GlStateManager.popMatrix();
+		GlStateManager.matrixMode(5888);
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		GlStateManager.enableLighting();
+		GlStateManager.depthFunc(515);
+		GlStateManager.depthMask(true);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+	}
+
+	@SubscribeEvent
+	public void onMouse(MouseEvent event) {
+		if (!Keyboard.isCreated()) return;
+
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player == null) return;
+
+		ItemStack heldItem = player.getHeldItemMainhand();
+
+		if (event.getDwheel() != 0) {
+
+			for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+				ItemStack invStack = player.inventory.getStackInSlot(i);
+				if (ItemStack.areItemStacksEqual(heldItem, invStack)) continue;
+				if (ItemNBTHelper.getInt(invStack, "scroll_slot", -1) == -1) continue;
+
+				ItemNBTHelper.setInt(invStack, "scroll_slot", -1);
+				PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(i, -1));
+			}
+
+			if (ModKeybinds.pearlSwapping.isKeyDown()) {
+
+				ItemStack pearlStorageStack;
+				IPearlStorageHolder pearlStorage;
+				if (heldItem.getItem() instanceof IPearlStorageHolder) {
+					pearlStorageStack = heldItem;
+					pearlStorage = (IPearlStorageHolder) heldItem.getItem();
+				} else if (heldItem.getItem() instanceof IPearlSwappable) {
+					ItemStack storageStack = BaublesSupport.getItem(player, IPearlStorageHolder.class);
+					if (!storageStack.isEmpty()) {
+						pearlStorageStack = storageStack;
+						pearlStorage = (IPearlStorageHolder) storageStack.getItem();
+					} else return;
+				} else return;
+
+				IItemHandler handler = pearlStorage.getPearls(pearlStorageStack);
+				if (handler == null) return;
+				List<ItemStack> temp = new ArrayList<>();
+				for (int i = 0; i < handler.getSlots(); i++) {
+					ItemStack pearl = handler.getStackInSlot(i);
+					if (pearl.isEmpty()) continue;
+					temp.add(pearl);
+				}
+				newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
+
+				int rawCount = pearlStorage.getPearlCount(pearlStorageStack);
+				int count = Math.max(rawCount - 1, 0);
+
+				int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
+
+				scrollSlot = getScrollSlot(event, count, scrollSlot);
+
+				if (scrollSlot >= 0) {
+					ItemNBTHelper.setInt(heldItem, "scroll_slot", scrollSlot);
+					PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(player.inventory.getSlotFor(heldItem), scrollSlot));
+
+					for (int i = 0; i < slotAnimations.length; i++) {
+						BasicAnimation animation = slotAnimations[i];
+						if (animation != null)
+							ANIMATOR.removeAnimations(animation);
+
+						if (i == scrollSlot) continue;
+						BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
+						newAnimation.setTo(0);
+						newAnimation.setEasing(Easing.easeOutQuint);
+						newAnimation.setDuration(20f);
+						ANIMATOR.add(newAnimation);
+
+						slotAnimations[i] = newAnimation;
+					}
+
+					BasicAnimation<PearlRadialUIRenderer> animation = new BasicAnimation<>(INSTANCE, "slotRadii[" + scrollSlot + "]");
+					animation.setTo(SELECTOR_SHIFT * 10);
+					animation.setEasing(Easing.easeOutQuint);
+					animation.setDuration(20f);
+					ANIMATOR.add(animation);
+
+					slotAnimations[scrollSlot] = animation;
+
+					event.setCanceled(true);
+				}
+			} else {
+				for (int i = 0; i < slotAnimations.length; i++) {
+					BasicAnimation animation = slotAnimations[i];
+					if (animation != null)
+						ANIMATOR.removeAnimations(animation);
+
+					BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
+					newAnimation.setTo(0);
+					newAnimation.setEasing(Easing.easeOutQuint);
+					newAnimation.setDuration(20f);
+					ANIMATOR.add(newAnimation);
+
+					slotAnimations[i] = newAnimation;
+				}
+			}
+		}
+	}
+
 	@SubscribeEvent
 	public void renderHud(RenderGameOverlayEvent.Pre event) {
 		if (!init) {
@@ -446,22 +505,22 @@ public class PearlRadialUIRenderer {
 		}
 		if (event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
 			EntityPlayer player = Minecraft.getMinecraft().player;
-			ItemStack stack = player.getHeldItemMainhand();
+			ItemStack heldItem = player.getHeldItemMainhand();
 
-			IPearlBelt belt;
-			if (stack.getItem() == ModItems.PEARL_BELT) {
-
-				belt = (IPearlBelt) stack.getItem();
-
-			} else if (stack.getItem() == ModItems.STAFF && ModKeybinds.pearlSwapping.isKeyDown()) {
-				ItemStack beltStack = BaublesSupport.getItem(player, ModItems.PEARL_BELT);
-				if (beltStack.isEmpty()) return;
-
-				belt = (IPearlBelt) beltStack.getItem();
-				stack = beltStack;
+			ItemStack pearlStorageStack;
+			IPearlStorageHolder pearlStorage;
+			if (heldItem.getItem() instanceof IPearlStorageHolder) {
+				pearlStorageStack = heldItem;
+				pearlStorage = (IPearlStorageHolder) heldItem.getItem();
+			} else if (heldItem.getItem() instanceof IPearlSwappable && ModKeybinds.pearlSwapping.isKeyDown()) {
+				ItemStack storageStack = BaublesSupport.getItem(player, IPearlStorageHolder.class);
+				if (!storageStack.isEmpty()) {
+					pearlStorageStack = storageStack;
+					pearlStorage = (IPearlStorageHolder) storageStack.getItem();
+				} else return;
 			} else return;
 
-			IItemHandler handler = belt.getPearls(stack);
+			IItemHandler handler = pearlStorage.getPearls(pearlStorageStack);
 			if (handler == null) return;
 			//	event.setCanceled(true);
 
@@ -597,6 +656,21 @@ public class PearlRadialUIRenderer {
 
 
 			// ------------- ANIMATIONS ------------- //
+
+			int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
+
+			if (scrollSlot > -1 && !pearls.isEmpty()) {
+				String name = pearls.get(scrollSlot).getDisplayName();
+				FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+				List<String> list = renderer.listFormattedStringToWidth(name, 100);
+				StringBuilder builder = new StringBuilder();
+				for (String line : list) {
+					builder.append("\n").append(line);
+				}
+				centerText = builder.toString();
+
+			}
+
 			if (colorAnim.getFinished()) {
 				colorAnim = new BasicAnimation<>(INSTANCE, "color");
 				colorAnim.setTo(INSTANCE.color + 0.25f > 1f ? 0.25f : INSTANCE.color + 0.25f);
@@ -832,8 +906,8 @@ public class PearlRadialUIRenderer {
 
 							Vec3d moduleVec = chainOffset.add(chainNormal.scale(size * 1.5).scale(k).scale(INSTANCE.itemExpansion));
 
-							SpritePlate.bind();
-							SpritePlate.draw(0, (float) moduleVec.x - (size / 2f), (float) moduleVec.y - (size / 2f), size, size);
+							spritePlate.bind();
+							spritePlate.draw(0, (float) moduleVec.x - (size / 2f), (float) moduleVec.y - (size / 2f), size, size);
 
 							moduleSprite.bind();
 							moduleSprite.draw(0, (float) moduleVec.x - ((size - 1) / 2f), (float) moduleVec.y - ((size - 1) / 2f), size - 1, size - 1);
@@ -868,35 +942,9 @@ public class PearlRadialUIRenderer {
 		}
 	}
 
-	private static void renderEffect(IBakedModel model) {
-		GlStateManager.depthMask(false);
-		GlStateManager.depthFunc(514);
-		GlStateManager.disableLighting();
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(RES_ITEM_GLINT);
-		GlStateManager.matrixMode(5890);
-		GlStateManager.pushMatrix();
-		GlStateManager.scale(8.0F, 8.0F, 8.0F);
-		float f = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
-		GlStateManager.translate(f, 0.0F, 0.0F);
-		GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
-		renderModel(model, -8372020, ItemStack.EMPTY);
-		GlStateManager.popMatrix();
-		GlStateManager.pushMatrix();
-		GlStateManager.scale(8.0F, 8.0F, 8.0F);
-		float f1 = (float) (Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
-		GlStateManager.translate(-f1, 0.0F, 0.0F);
-		GlStateManager.rotate(10.0F, 0.0F, 0.0F, 1.0F);
-		renderModel(model, -8372020, ItemStack.EMPTY);
-		GlStateManager.popMatrix();
-		GlStateManager.matrixMode(5888);
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		GlStateManager.enableLighting();
-		GlStateManager.depthFunc(515);
-		GlStateManager.depthMask(true);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-	}
-
+	/**
+	 * Reimplement vanilla item so we can draw pearl stacks with opacity support.
+	 */
 	private static class LightGatheringTransformer extends QuadGatheringTransformer {
 
 		private static final VertexFormat FORMAT = new VertexFormat().addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.TEX_2S);
@@ -933,7 +981,7 @@ public class PearlRadialUIRenderer {
 		}
 
 		@Override
-		public void setQuadOrientation(EnumFacing orientation) {
+		public void setQuadOrientation(@NotNull EnumFacing orientation) {
 		}
 
 		@Override
@@ -941,7 +989,7 @@ public class PearlRadialUIRenderer {
 		}
 
 		@Override
-		public void setTexture(TextureAtlasSprite texture) {
+		public void setTexture(@NotNull TextureAtlasSprite texture) {
 		}
 	}
 }

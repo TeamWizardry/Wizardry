@@ -6,6 +6,9 @@ import com.teamwizardry.wizardry.common.item.dusts.ItemDevilDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemFairyDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemSkyDust;
 import com.teamwizardry.wizardry.common.item.halos.*;
+import com.teamwizardry.wizardry.common.item.mob.ItemBlackenedSpirit;
+import com.teamwizardry.wizardry.common.item.mob.ItemFairyWings;
+import com.teamwizardry.wizardry.common.item.mob.ItemUnicornHorn;
 import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBelt;
 import com.teamwizardry.wizardry.common.item.tools.ItemUnicornDagger;
 import net.minecraft.item.Item;
@@ -22,8 +25,8 @@ public class ModItems {
 
 	public static ToolMaterial UNICORN_HORN_MAT = EnumHelper.addToolMaterial("unicorn_horn", 0, 250, 0, -3, 15);
 	
-	//public static ItemGlassOrb GLASS_ORB;
 	public static ItemOrb ORB;
+	public static ItemLevitationOrb LEVITATION_ORB;
 	public static ItemNacrePearl PEARL_NACRE;
 
 	public static ItemStaff STAFF;
@@ -57,8 +60,8 @@ public class ModItems {
 	public static ItemWisdomStick WISDOM_STICK;
 
 	public static void init() {
-		//GLASS_ORB = new ItemGlassOrb();
 		ORB = new ItemOrb();
+		LEVITATION_ORB = new ItemLevitationOrb();
 		PEARL_NACRE = new ItemNacrePearl();
 
 		RING = new ItemRing();
@@ -67,6 +70,7 @@ public class ModItems {
 		SYRINGE = new ItemSyringe();
 		BOMB = new ItemBomb();
 		BLACKENED_SPIRIT = new ItemBlackenedSpirit();
+		JAR = new ItemJar();
 
 		STAFF = new ItemStaff();
 

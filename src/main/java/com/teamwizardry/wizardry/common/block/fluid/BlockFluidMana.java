@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.base.fluid.ModFluid;
 import com.teamwizardry.librarianlib.features.forgeevents.EntityUpdateEvent;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
-import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.item.IPotionEffectExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
@@ -121,7 +121,7 @@ public class BlockFluidMana extends BlockModFluid {
 					});
 			// Explode explodable items
 			run(world, pos, state.getBlock(), entityIn,
-					entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() instanceof IExplodable,
+					entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() instanceof IPotionEffectExplodable,
 					entity -> FluidTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), new ManaRecipes.ExplodableCrafter()));
 		}
 

@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.item.ICooldown;
+import com.teamwizardry.wizardry.api.item.ICooldownSpellCaster;
 import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
@@ -29,16 +29,18 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by Demoniaque on 5/7/2016.
  */
 @TileRegister(Wizardry.MODID + ":pedestal")
-public class TilePearlHolder extends TileManaInteractor implements ICooldown {
+public class TilePearlHolder extends TileManaInteractor implements ICooldownSpellCaster {
 
 	@Module
 	public ModuleInventory inventory = new ModuleInventory(new ItemStackHandler() {
 		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-			if (stack.getItem() instanceof IManaCell
-					|| stack.getItem() instanceof ItemNacrePearl)
-				return super.getStackLimit(slot, stack);
-			else return 0;
+			if (stack.getItem() instanceof IManaCell || stack.getItem() instanceof ItemNacrePearl) {
+				//Max number of orbs the pearl holder can hold
+				return 1;
+			} else {
+				return 0;
+			}
 		}
 	});
 

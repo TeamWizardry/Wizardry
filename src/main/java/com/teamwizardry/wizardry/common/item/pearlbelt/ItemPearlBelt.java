@@ -5,13 +5,8 @@ import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.item.ProxiedItemStackHandler;
 import kotlin.jvm.functions.Function2;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,14 +25,6 @@ public class ItemPearlBelt extends ItemModBauble implements IPearlBelt {
 		setMaxStackSize(1);
 
 		addBeltColorProperty(this);
-	}
-
-	@NotNull
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand) {
-		onRightClick(world, player, hand);
-
-		return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
 	}
 
 	@Nonnull

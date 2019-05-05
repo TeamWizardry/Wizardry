@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiPredicate;
 
-public class TileManaInteractor extends TileCachable implements ITickable, IManaInteractable {
+public class TileManaInteractor extends TileCachable implements ITickable {
 
 	private static Set<SuckRule> suckRules = new HashSet<>();
 
@@ -76,7 +76,7 @@ public class TileManaInteractor extends TileCachable implements ITickable, IMana
 		for (SuckRule suckRule : suckRules) {
 			if (getClass().isAssignableFrom(suckRule.thisClazz)) {
 
-				ArrayList<TileManaInteractor> interactables = new ArrayList<>(getNearestTiles(suckRule.fromClazz));
+				ArrayList<TileManaInteractor> interactables = new ArrayList<TileManaInteractor>(getNearestTiles(suckRule.fromClazz));
 				interactables.sort(Comparator.comparingDouble(this::getCachedDistanceSq));
 
 				int i = 0;

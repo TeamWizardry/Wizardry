@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public interface ICooldown {
+public interface ICooldownSpellCaster {
 
 	default void setCooldown(World world, @Nullable EntityPlayer player, @Nullable EnumHand hand, ItemStack stack, @Nonnull SpellData data) {
 		int maxCooldown = 0;
@@ -56,6 +56,7 @@ public interface ICooldown {
 		long lastCast = ItemNBTHelper.getLong(stack, Constants.NBT.LAST_CAST, 0);
 		long currentCast = world.getTotalWorldTime();
 
-		return currentCast - lastCast <= lastCooldown;
+		long sub = currentCast - lastCast;
+		return sub <= lastCooldown;
 	}
 }

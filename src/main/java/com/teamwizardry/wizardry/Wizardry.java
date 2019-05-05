@@ -20,46 +20,46 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, dependencies = Wizardry.DEPENDENCIES)
 public class Wizardry {
 
-	public static final String MODID = "wizardry";
-	public static final String MODNAME = "Wizardry";
-	public static final String VERSION = "GRADLE:VERSION";
-	public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
-	public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
-	public static final String DEPENDENCIES = "required-after:librarianlib";
-	public static Logger logger;
-	public static DimensionType underWorld;
+    public static final String MODID = "wizardry";
+    public static final String MODNAME = "Wizardry";
+    public static final String VERSION = "GRADLE:VERSION";
+    public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
+    public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
+    public static final String DEPENDENCIES = "required-after:librarianlib";
+    public static Logger logger;
+    public static DimensionType underWorld;
+    public static DimensionType torikki;
+    @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
+    public static CommonProxy proxy;
+    @Mod.Instance
+    public static Wizardry instance;
 
-	@SidedProxy(clientSide = CLIENT, serverSide = SERVER)
-	public static CommonProxy proxy;
-	@Mod.Instance
-	public static Wizardry instance;
+    static {
+        UnsafeKt.hookIntoUnsafe();
+        FluidRegistry.enableUniversalBucket();
+    }
 
-	static {
-		UnsafeKt.hookIntoUnsafe();
-		FluidRegistry.enableUniversalBucket();
-	}
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        logger = event.getModLog();
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		logger = event.getModLog();
+        Wizardry.logger.info("IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
-		Wizardry.logger.info("IT'S LEVI-OH-SA, NOT LEVIOSAA");
+        proxy.preInit(event);
+    }
 
-		proxy.preInit(event);
-	}
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent e) {
+        proxy.init(e);
+    }
 
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent e) {
-		proxy.init(e);
-	}
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent e) {
+        proxy.postInit(e);
+    }
 
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent e) {
-		proxy.postInit(e);
-	}
-
-	@Mod.EventHandler
-	public void serverLoad(FMLServerStartingEvent event) {
-		event.registerServerCommand(new CommandWizardry());
-	}
+    @Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandWizardry());
+    }
 }

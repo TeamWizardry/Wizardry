@@ -52,10 +52,6 @@ public class BounceHandler {
 		bouncingBlocks.add(new BouncyBlock(world, pos, duration));
 	}
 
-	public static void addBounceHandler(EntityLivingBase entity) {
-		addBounceHandler(entity, 0d);
-	}
-
 	public static void addBounceHandler(EntityLivingBase entity, double bounce) {
 		if (!(entity instanceof EntityPlayer) || entity instanceof FakePlayer) {
 			return;

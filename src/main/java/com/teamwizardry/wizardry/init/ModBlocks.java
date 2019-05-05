@@ -48,8 +48,6 @@ public class ModBlocks {
 
 	public static BlockTorikkiGrass TORIKKI_GRASS;
 
-	public static BlockUnicornTrail UNICORN_TRAIL;
-
 	public static void init() {
 
 		ModFluids.init();
@@ -81,8 +79,6 @@ public class ModBlocks {
 		WISDOM_SAPLING = new BlockWisdomSapling();
 
 		TORIKKI_GRASS = new BlockTorikkiGrass();
-
-		UNICORN_TRAIL = new BlockUnicornTrail();
 	}
 
 	@SubscribeEvent
@@ -93,6 +89,9 @@ public class ModBlocks {
 		event.getMappings().stream()
 				.filter(mapping -> mapping.key.getPath().equals("nacre"))
 				.forEach(mapping -> mapping.remap(ModFluids.NACRE.getActualBlock()));
+//		event.getMappings().stream()
+//				.filter(mapping -> mapping.key.getPath().equals("lethe"))
+//				.forEach(mapping -> mapping.remap(ModFluids.LETHE.getActualBlock()));
 	}
 
 	@SubscribeEvent

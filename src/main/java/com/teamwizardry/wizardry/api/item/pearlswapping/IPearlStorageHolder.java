@@ -1,21 +1,17 @@
 package com.teamwizardry.wizardry.api.item.pearlswapping;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Iterator;
 
 /**
- * @author WireSegal
- * Created at 12:23 PM on 3/4/18.
+ * Implement this for any item with functionality similar to the Pearl Belt.
  */
-public interface IPearlWheelHolder {
+public interface IPearlStorageHolder {
 
 	@Nullable
 	IItemHandler getPearls(ItemStack stack);
@@ -39,7 +35,7 @@ public interface IPearlWheelHolder {
 	 * @return If true, adding the pearl was successful
 	 */
 	default ItemStack removePearl(ItemStack holder, int slot) {
-		if (!shouldUse(holder)) return ItemStack.EMPTY;
+		if (isDisabled(holder)) return ItemStack.EMPTY;
 
 		IItemHandler handler = getPearls(holder);
 		if (handler == null) return ItemStack.EMPTY;
@@ -72,7 +68,7 @@ public interface IPearlWheelHolder {
 	 * @return If true, adding the pearl was successful
 	 */
 	default boolean addPearl(ItemStack holder, ItemStack pearl) {
-		if (!shouldUse(holder)) return false;
+		if (isDisabled(holder)) return false;
 
 		IItemHandler handler = getPearls(holder);
 		if (handler == null) return false;
@@ -86,27 +82,9 @@ public interface IPearlWheelHolder {
 	}
 
 	/**
-	 * Return false when this belt is disabled for some reason.
+	 * Return true when this belt is disabled for some reason.
 	 */
-	default boolean shouldUse(ItemStack stack) {
-		return true;
-	}
-
-	static ItemStack getPearlHolder(EntityPlayer player) {
-		FindPearlWheelEvent event = new FindPearlWheelEvent(player);
-
-		event.addItems(player.inventory.mainInventory, 0);
-		event.addItems(player.inventory.armorInventory, 1);
-		event.addItems(player.inventory.offHandInventory, 10000);
-
-		MinecraftForge.EVENT_BUS.post(event);
-
-		Iterator<ItemStack> stacks = event.getCombinedIterator();
-		while (stacks.hasNext()) {
-			ItemStack next = stacks.next();
-			if (next.getItem() instanceof IPearlWheelHolder && ((IPearlWheelHolder) next.getItem()).shouldUse(next))
-				return next;
-		}
-		return ItemStack.EMPTY;
+	default boolean isDisabled(ItemStack stack) {
+		return false;
 	}
 }

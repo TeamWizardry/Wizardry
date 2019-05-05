@@ -7,9 +7,9 @@ import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.item.IExplodable;
-import com.teamwizardry.wizardry.api.item.IInfusable;
+import com.teamwizardry.wizardry.api.item.IInfusableItem;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
+import com.teamwizardry.wizardry.api.item.IPotionEffectExplodable;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import net.minecraft.client.gui.GuiScreen;
@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by Demoniaque on 6/28/2016.
  */
-public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, INacreProduct {
+public class ItemNacrePearl extends ItemMod implements IInfusableItem, IPotionEffectExplodable, INacreProduct {
 
 	public ItemNacrePearl() {
 		super("nacre_pearl");

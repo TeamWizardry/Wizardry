@@ -1,5 +1,19 @@
 0.10.0
+Fixed unicorns not spawning
+Fixed staff losing spell data when not removing pearl
+Fixed Sonic Scream crashing servers
+Fixed /wizardry tpunderworld
+Fixed Illumination sometimes replacing blocks
+Underworld now generates based on world seed
+Fixed Wisdom Wood Sapling not growing
+Initial work on Torikki (extremely WIP)
+Mana and Nacre now no longer disable swimming
+Fixed not being able to go to the underworld while in creative or while not taking fall damage / having fly
+Added mana pool dim blacklist/whitelist toggle config
+Makes pearl holder only hold one pearl at a time and not a stack
+Fix null deserialization error
 Added pearl belt to hold multiple pearls (yes you can actually stop bugging us about it now)
+Fix Break spell Enchantment crash
 Fix teleport sounds for the substitute spell
 
 0.9.9

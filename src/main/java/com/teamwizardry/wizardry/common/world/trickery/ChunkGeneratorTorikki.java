@@ -2,17 +2,17 @@ package com.teamwizardry.wizardry.common.world.trickery;
 
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.gen.NoiseGeneratorOctaves;
+import net.minecraft.world.gen.NoiseGeneratorPerlin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,34 +22,29 @@ import java.util.*;
  * Created by Demoniaque44
  */
 public class ChunkGeneratorTorikki implements IChunkGenerator {
-
+	protected static final IBlockState AIR = Blocks.AIR.getDefaultState();
+	protected static final IBlockState DIRT = Blocks.DIRT.getDefaultState();
+	protected static final IBlockState BEDROCK = Blocks.BEDROCK.getDefaultState();
+	//protected static final IBlockState TOR_CRYSTAL = figure out how to do this.getDefaultState();
+	private NoiseGeneratorPerlin noise;
+	private NoiseGeneratorOctaves lperlinNoise1;
+	private NoiseGeneratorOctaves lperlinNoise2;
 	private World world;
-
+	private final Random rand;
 	public ChunkGeneratorTorikki(World worldIn) {
+
 		this.world = worldIn;
+		this.rand= new Random(world.getSeed());
+		this.noise = new NoiseGeneratorPerlin(RandUtil.random,4);
+		this.lperlinNoise1 = new NoiseGeneratorOctaves(this.rand, 16);
+		this.lperlinNoise2 = new NoiseGeneratorOctaves(this.rand, 16);
+
 	}
+	public ChunkGeneratorTorikki(World world, long seed) {
+		this.world = world;
+		rand = new Random(world.getSeed());
+		noise = new NoiseGeneratorPerlin(rand, 4);
 
-	private void generateCloud(Set<BlockPos> poses, BlockPos center, float weight, Random seed) {
-		if (poses.contains(center)) {
-			return;
-		}
-		poses.add(center);
-
-		if (weight > 1) {
-			List<EnumFacing> directions = new ArrayList<>();
-			Set<EnumFacing> horizontals = new HashSet<>();
-			Collections.addAll(directions, EnumFacing.VALUES);
-			Collections.addAll(horizontals, EnumFacing.HORIZONTALS);
-			while (!directions.isEmpty()) {
-				int i = seed.nextInt(directions.size());
-				EnumFacing dir;
-				if (horizontals.contains(directions.get(i))) {
-					if (RandUtil.nextBoolean()) dir = directions.get(i);
-					else dir = directions.remove(i);
-				} else dir = directions.remove(i);
-				generateCloud(poses, center.offset(dir), weight - seed.nextFloat() - 1, seed);
-			}
-		}
 	}
 
 	private boolean isChunkCenter(int chunkX, int chunkZ) {
@@ -66,29 +61,45 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 		return rand;
 	}
 
+	/**
+	 * ok so
+	 * this is supposed to work by genning everything below 128
+	 * and then mirroring it over y - 128
+	 * y = y > 128 ? 256 - y : y is the gud code
+	 * idk how to make it work
+	 */
+	//0-15 for local, 16*chunk + 0-15 for noise
 	private void generate(int chunkX, int chunkZ, ChunkPrimer primer) {
-		for (int cx = -1; cx <= 1; cx++) {
-			for (int cz = -1; cz <= 1; cz++) {
-				if (isChunkCenter(chunkX + cx, chunkZ + cz)) {
-					Random rand = getRandomForChunk(chunkX + cx, chunkZ + cz);
-					Set<BlockPos> poses = new HashSet<>();
-					generateCloud(poses, new BlockPos(8 + cx * 16, 50, 8 + cz * 16), 20, rand);
-
-					for (BlockPos pos : poses) {
-						if (pos.getX() >= 0 && pos.getX() <= 15
-								&& pos.getZ() >= 0 && pos.getZ() <= 15) {
-							IBlockState block = ModBlocks.CLOUD.getDefaultState();
-							primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), block);
-						}
+		//go through x
+		for (int locX = 0; locX < 16; locX++) {
+			//go through y (irrelevant of chunk location)
+			for (int locY = 0; locY < 256; locY++) {
+				//and now for z
+				for (int locZ = 0; locZ < 16; locZ++) {
+					if ((locY <= 64 && locY > 1) || (locY > 192 && locY < 255)) {
+						primer.setBlockState(locX, locY, locZ, DIRT);
+					} else if (locY == 1 || locY == 255) {
+						primer.setBlockState(locX, locY, locZ, BEDROCK);
+					}
+				}
+				//if the noise <1, air, else torikki Grass?
+			}
+		}
+		//mirroring!
+		for (int locX = 0; locX < 16; locX++) {
+			for (int locY = 65; locY < 128; locY++) {
+				for (int locZ = 0; locZ < 16; locZ++) {
+					if(.5 <noise.getValue(chunkZ, chunkX)){
+						primer.setBlockState(locX,locY,locZ,DIRT);
 					}
 				}
 			}
 		}
 	}
-
 	@Nonnull
 	@Override
 	public Chunk generateChunk(int x, int z) {
+		this.rand.setSeed((long)x * 341873128712L + (long)z * 132897987541L);
 		ChunkPrimer chunkprimer = new ChunkPrimer();
 
 		generate(x, z, chunkprimer);
@@ -106,12 +117,7 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 
 	@Override
 	public void populate(int x, int z) {
-		if (x / 16 == 0 && z / 16 == 0) {
-			for (int i = -3; i < 3; i++)
-				for (int j = -3; j < 3; j++) {
-					world.setBlockState(new BlockPos(i, 50, j), Blocks.OBSIDIAN.getDefaultState());
-				}
-		}
+
 	}
 
 	@Override
