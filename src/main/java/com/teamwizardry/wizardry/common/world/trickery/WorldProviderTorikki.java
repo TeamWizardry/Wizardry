@@ -1,10 +1,7 @@
 package com.teamwizardry.wizardry.common.world.trickery;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.world.biome.BiomeTorikki;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -24,6 +21,8 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Demoniaque44
@@ -82,7 +81,7 @@ public class WorldProviderTorikki extends WorldProvider {
 
 	@Override
 	public int getHeight() {
-		return 0;
+		return 255;
 	}
 
 	@Override
