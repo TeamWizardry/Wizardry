@@ -79,7 +79,7 @@ public class PotionPhase extends PotionBase {
 					} else {
 						x += 0.05D;
 					}
-				}
+				} else x = 0.0D;
 			}
 
 			for (; z != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(0.0D, (double) (-entity.stepHeight), z)).isEmpty(); d4 = z) {
@@ -89,7 +89,7 @@ public class PotionPhase extends PotionBase {
 					} else {
 						z += 0.05D;
 					}
-				}
+				}else z = 0.0D;
 			}
 
 			for (; x != 0.0D && z != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(x, (double) (-entity.stepHeight), z)).isEmpty(); d4 = z) {
@@ -99,7 +99,7 @@ public class PotionPhase extends PotionBase {
 					} else {
 						x += 0.05D;
 					}
-				}
+				}else x = 0.0D;
 
 				d2 = x;
 
@@ -109,7 +109,7 @@ public class PotionPhase extends PotionBase {
 					} else {
 						z += 0.05D;
 					}
-				}
+				}else y = 0.0D;
 			}
 		}
 

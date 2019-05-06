@@ -201,8 +201,8 @@ public class EntitySpellProjectile extends EntityMod {
 
 		Vec3d origin = spellData.getOrigin();
 
-		rotationPitch = spellData.getData(PITCH, 0F);
-		rotationYaw = spellData.getData(YAW, 0F);
+		rotationPitch = spellData.getPitch();
+		rotationYaw = spellData.getYaw();
 		Vec3d look = spellData.getData(LOOK);
 
 		if (look == null) {

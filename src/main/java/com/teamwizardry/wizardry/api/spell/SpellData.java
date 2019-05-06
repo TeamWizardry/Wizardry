@@ -81,22 +81,20 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	public <T> void removeData(@Nonnull DataField<T> key) {
 		this.data.remove(key);
 	}
-	
+
 	@Nullable
+  @SuppressWarnings("unchecked")
 	public <T> T getData(@Nonnull DataField<T> key) {
-		Object value = data.get(key);
-		if (key.getDataType().isInstance(value))
-			return (T) value;
-		return null;
+        Object value = data.get(key);
+        if (key.getDataType().isInstance(value))
+            return (T)value;
+        return null;
 	}
 
 	@Nonnull
-	@SuppressWarnings("unchecked")
-	public <T> T getData(@Nonnull DataField<T> key, @Nonnull T defaultValue) {
-		Object value = data.get(key);
-		if (key.getDataType().isInstance(value))
-			return (T)value;
-		return defaultValue;
+	public <T> T getDataWithFallback(@Nonnull DataField<T> key, @Nonnull T fallback) {
+		T value = getData(key);
+		return value != null ? value : fallback;
 	}
 	
 	public <T> boolean hasData(@Nonnull DataField<T> key) {
@@ -230,11 +228,11 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public float getPitch() {
-		return getData(DefaultKeys.PITCH, 0f);
+		return getDataWithFallback(DefaultKeys.PITCH, 0f);
 	}
 
 	public float getYaw() {
-		return getData(DefaultKeys.YAW, 0f);
+		return getDataWithFallback(DefaultKeys.YAW, 0f);
 	}
 
 	@Nullable
