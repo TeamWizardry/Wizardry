@@ -5,8 +5,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketPearlSwappingKeybindState;
-import com.teamwizardry.wizardry.common.network.pearlswapping.PacketRightClickPearlBelt;
-import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSwapOnRightClick;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -58,22 +56,24 @@ public class ModKeybinds {
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void rightClickItem(PlayerInteractEvent.RightClickItem event) {
-		if (!event.getWorld().isRemote) return;
-		if (getPearlSwapping(event.getEntityPlayer().getUniqueID())) {
-			if (event.getItemStack().getItem() instanceof IPearlSwappable) {
-				PacketHandler.NETWORK.sendToServer(new PacketSwapOnRightClick());
-				event.setCancellationResult(EnumActionResult.FAIL);
-				event.setResult(Event.Result.DENY);
-				event.setCanceled(true);
+
+		if (event.getItemStack().getItem() instanceof IPearlSwappable) {
+			if (!event.getWorld().isRemote) {
+				((IPearlSwappable) event.getItemStack().getItem()).swapOnRightClick(event.getEntityPlayer(), event.getItemStack());
 			}
+			event.setCancellationResult(EnumActionResult.PASS);
+			event.setResult(Event.Result.DENY);
+			event.setCanceled(true);
 		}
 
+
 		if (event.getItemStack().getItem() instanceof IPearlBelt) {
-			PacketHandler.NETWORK.sendToServer(new PacketRightClickPearlBelt(pearlSwapping.isKeyDown()));
-			event.setCancellationResult(EnumActionResult.FAIL);
+			if (!event.getWorld().isRemote) {
+				((IPearlBelt) event.getItemStack().getItem()).onRightClick(event.getWorld(), event.getEntityPlayer(), event.getHand(), true);
+			}
+			event.setCancellationResult(EnumActionResult.PASS);
 			event.setResult(Event.Result.DENY);
 			event.setCanceled(true);
 		}

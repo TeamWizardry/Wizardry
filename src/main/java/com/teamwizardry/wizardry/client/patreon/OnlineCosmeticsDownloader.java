@@ -6,15 +6,14 @@ import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import static com.teamwizardry.wizardry.common.core.version.VersionChecker.onlineVersion;
+import java.nio.file.StandardCopyOption;
 
 public class OnlineCosmeticsDownloader extends Thread {
 
@@ -29,26 +28,32 @@ public class OnlineCosmeticsDownloader extends Thread {
 		Wizardry.logger.info("Downloading capes...");
 		try {
 			URL url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/capes/capes.json");
-			BufferedReader r = new BufferedReader(new InputStreamReader(url.openStream()));
 
 			String s = IOUtils.toString(url, Charset.defaultCharset());
 			JsonElement json = new JsonParser().parse(s);
 			if (json != null && json.isJsonArray()) {
+				ResourceLocation dir = new ResourceLocation(Wizardry.MODID, "wizardry_capes/");
+				File file = new File(dir.getPath());
+				file.mkdirs();
+
 				for (JsonElement element : json.getAsJsonArray()) {
 					if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
 						String capeName = element.getAsJsonPrimitive().getAsString();
 
 						try (InputStream in = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/capes/" + capeName + ".png").openStream()) {
-							Files.copy(in, Paths.get(new ResourceLocation(Wizardry.MODID, "textures/capes/" + capeName + ".png").getPath()));
+							Files.copy(in, Paths.get(new ResourceLocation(Wizardry.MODID, "wizardry_capes/" + capeName + ".png").getPath()), StandardCopyOption.REPLACE_EXISTING);
+						} catch (Exception e) {
+							Wizardry.logger.error("Failed to download and save cape with name " + capeName);
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 
-			r.close();
-			Wizardry.logger.error("Cape downloads complete! -> " + onlineVersion);
-		} catch (Exception e) {
+			Wizardry.logger.info("Cape downloads complete!");
+		} catch (IOException e) {
 			Wizardry.logger.error("Failed to download capes! :(");
+			e.printStackTrace();
 		}
 	}
 }

@@ -307,6 +307,7 @@ public final class CapeHandler {
 			ItemStack stack = BaublesSupport.getItem(player, ModItems.CAPE);
 			String cape = null;
 
+
 			if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getUniqueID().toString().replace("-", "") + ".png") == null) {
 				UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
 				if (uuid != null) {
