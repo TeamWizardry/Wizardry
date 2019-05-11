@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.capability.chunk.WizardryChunkCapability;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
-import com.teamwizardry.wizardry.api.spell.DataInitException;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -36,8 +35,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -98,7 +95,6 @@ public class CommonProxy {
 		PacketHandler.register(PacketSendSpellToBook.class, Side.SERVER);
 		PacketHandler.register(PacketRenderSpell.class, Side.CLIENT);
 		PacketHandler.register(PacketExplode.class, Side.CLIENT);
-		PacketHandler.register(PacketSyncModules.class, Side.CLIENT);
 		PacketHandler.register(PacketFreezePlayer.class, Side.CLIENT);
 		PacketHandler.register(PacketRenderLightningBolt.class, Side.CLIENT);
 		PacketHandler.register(PacketSyncCooldown.class, Side.CLIENT);
@@ -159,11 +155,5 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-	}
-
-	@SubscribeEvent
-	public void worldJoin(PlayerEvent.PlayerLoggedInEvent event) {
-		Wizardry.logger.info("Sending module list to " + event.player.getName());
-		//PacketHandler.NETWORK.sendTo(new PacketSyncModules(ModuleRegistry.INSTANCE.modules), (EntityPlayerMP) event.player);
 	}
 }

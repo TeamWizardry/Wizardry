@@ -1,9 +1,7 @@
 package com.teamwizardry.wizardry.common.command;
 
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.SpellRingCache;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.common.network.PacketSyncModules;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -31,9 +29,6 @@ public class CommandReloadModules extends CommandBase {
 		ModuleRegistry.INSTANCE.loadOverrideDefaults();
 		ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
 		ModuleRegistry.INSTANCE.loadModules(CommonProxy.directory);
-
-		if (server.isDedicatedServer())
-			PacketHandler.NETWORK.sendToAll(new PacketSyncModules(ModuleRegistry.INSTANCE.modules));
 
 		notifyCommandListener(sender, this, "wizardry.command." + getName() + ".success");
 	}

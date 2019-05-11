@@ -1,10 +1,14 @@
 package com.teamwizardry.wizardry.api.item.pearlswapping;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
+import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotClient;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -38,5 +42,8 @@ public interface IPearlSwappable {
 		}
 
 		ItemNBTHelper.setInt(pearlHolder, "scroll_slot", Math.max(scrollSlot - 1, 0));
+
+		if (player instanceof EntityPlayerMP)
+			PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(Utils.getSlotFor(player, pearlHolder), -1), (EntityPlayerMP) player);
 	}
 }

@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.command;
 
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.common.network.PacketSyncModules;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -53,9 +51,6 @@ public class CommandResetModules extends CommandBase {
 		ModuleRegistry.INSTANCE.loadUnprocessedModules();
 		ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
 		ModuleRegistry.INSTANCE.loadModules(CommonProxy.directory);
-
-		if (server.isDedicatedServer())
-			PacketHandler.NETWORK.sendToAll(new PacketSyncModules(ModuleRegistry.INSTANCE.modules));
 
 		notifyCommandListener(sender, this, "wizardry.command" + getName() + ".success");
 	}

@@ -19,6 +19,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.client.gui.worktable.TableModule;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotServer;
 import com.teamwizardry.wizardry.init.ModKeybinds;
@@ -60,6 +61,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings("Duplicates")
 @SideOnly(Side.CLIENT)
@@ -102,11 +104,11 @@ public class PearlRadialUIRenderer {
 	private static BasicAnimation<PearlRadialUIRenderer> itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
 
 	@Nonnull
-	private static Pair<Integer, List<ItemStack>> snapshotPearls = new Pair<>(0, new ArrayList<>());
+	private static Pair<String, List<ItemStack>> snapshotPearls = new Pair<>("", new ArrayList<>());
 	@Nonnull
 	private static List<ItemStack> pearls = new ArrayList<>();
 	@Nonnull
-	private static Pair<Integer, List<ItemStack>> newPearls = new Pair<>(0, new ArrayList<>());
+	private static Pair<String, List<ItemStack>> newPearls = new Pair<>("", new ArrayList<>());
 
 	private static boolean changing = false;
 	private static boolean wasEmpty = true;
@@ -166,15 +168,17 @@ public class PearlRadialUIRenderer {
 		return colorMultiplier;
 	}
 
-	private static int genSnapshotHashcode(List<ItemStack> pearls) {
-		int hashcode = 0;
-		for (ItemStack stack : pearls) {
-			List<SpellRing> rings = SpellUtils.getAllSpellRings(stack);
-			for (SpellRing ring : rings) {
-				hashcode += ring.hashCode();
+	private static String genSnapshotHashcode(List<ItemStack> pearls) {
+		StringBuilder hashcode = new StringBuilder();
+		for (int i = 0; i < pearls.size(); i++) {
+			ItemStack stack = pearls.get(i);
+			List<SpellRing> chains = SpellUtils.getSpellChains(stack);
+			hashcode.append(i).append("-");
+			for (SpellRing chain : chains) {
+				hashcode.append(chain.hashCode()).append("--");
 			}
 		}
-		return hashcode;
+		return hashcode.toString();
 	}
 
 	private static void renderText(double width, double height, String string) {
@@ -397,9 +401,42 @@ public class PearlRadialUIRenderer {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 	}
 
+	private static boolean isDisabled() {
+		UUID uuid = Minecraft.getMinecraft().player.getUniqueID();
+		return (ModKeybinds.pearlSwapping.isKeyDown() && !ModKeybinds.getPearlSwapping(uuid)) || (!ModKeybinds.pearlSwapping.isKeyDown() && ModKeybinds.getPearlSwapping(uuid));
+	}
+
+	private static void reset() {
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player == null) return;
+
+		ItemStack heldItem = player.getHeldItemMainhand();
+
+		int slot = Utils.getSlotFor(player, heldItem);
+		if (ItemNBTHelper.getInt(heldItem, "scroll_slot", -1) > -1) {
+
+			ItemNBTHelper.setInt(heldItem, "scroll_slot", -1);
+			PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(slot, -1));
+		}
+
+		for (int i = 0; i < slotAnimations.length; i++) {
+			BasicAnimation animation = slotAnimations[i];
+			if (animation != null)
+				ANIMATOR.removeAnimations(animation);
+
+			BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
+			newAnimation.setTo(0);
+			newAnimation.setEasing(Easing.easeOutQuint);
+			newAnimation.setDuration(20f);
+			ANIMATOR.add(newAnimation);
+
+			slotAnimations[i] = newAnimation;
+		}
+	}
+
 	@SubscribeEvent
 	public void onMouse(MouseEvent event) {
-		if (!Keyboard.isCreated()) return;
+		if (!Keyboard.isCreated() || isDisabled()) return;
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null) return;
@@ -408,14 +445,12 @@ public class PearlRadialUIRenderer {
 
 		if (event.getDwheel() != 0) {
 
-			for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-				ItemStack invStack = player.inventory.getStackInSlot(i);
-				if (ItemStack.areItemStacksEqual(heldItem, invStack)) continue;
-				if (ItemNBTHelper.getInt(invStack, "scroll_slot", -1) == -1) continue;
-
-				ItemNBTHelper.setInt(invStack, "scroll_slot", -1);
-				PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(i, -1));
-			}
+			//	if (ItemNBTHelper.getInt(heldItem, "scroll_slot", -1) > -1) {
+			//		int slot = Utils.getSlotFor(player, heldItem);
+//
+			//		ItemNBTHelper.setInt(heldItem, "scroll_slot", -1);
+			//		PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(slot, -1));
+			//	}
 
 			if (ModKeybinds.pearlSwapping.isKeyDown()) {
 
@@ -619,13 +654,15 @@ public class PearlRadialUIRenderer {
 			}
 			newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
 
+			Minecraft.getMinecraft().player.sendChatMessage((newPearls.getFirst().equals(snapshotPearls.getFirst())) + "");
 			if (!changing)
 				if (!newPearls.getFirst().equals(snapshotPearls.getFirst())) {
+					reset();
 					if (newPearls.getSecond().isEmpty()) {
 						pearls = snapshotPearls.getSecond();
 						changing = true;
 
-						final Pair<Integer, List<ItemStack>> tmp = newPearls;
+						final Pair<String, List<ItemStack>> tmp = newPearls;
 						ScheduledEventAnimation timer = new ScheduledEventAnimation(16, () -> {
 							snapshotPearls = tmp;
 							pearls = tmp.getSecond();
@@ -635,12 +672,12 @@ public class PearlRadialUIRenderer {
 
 					} else if (snapshotPearls.getSecond().isEmpty()) {
 
-						final Pair<Integer, List<ItemStack>> tmp = newPearls;
+						final Pair<String, List<ItemStack>> tmp = newPearls;
 						pearls = tmp.getSecond();
 						snapshotPearls = tmp;
 
 					} else {
-						final Pair<Integer, List<ItemStack>> tmp = newPearls;
+						final Pair<String, List<ItemStack>> tmp = newPearls;
 
 						changing = true;
 

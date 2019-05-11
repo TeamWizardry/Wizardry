@@ -81,7 +81,7 @@ public class WorldProviderTorikki extends WorldProvider {
 
 	@Override
 	public int getHeight() {
-		return 255;
+		return 256;
 	}
 
 	@Override
