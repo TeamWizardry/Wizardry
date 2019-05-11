@@ -158,8 +158,8 @@ public class ModuleEffectLightning implements IModuleEffect {
 		World world = data.world;
 		if (world.isRemote) return;
 		Entity caster = data.getCaster();
-		float yaw = data.getData(YAW, 0F);
-		float pitch = data.getData(PITCH, 0F);
+		float yaw = data.getYaw();
+		float pitch = data.getPitch();
 		Vec3d origin = data.getOriginHand();
 
 		if (origin == null) return;
@@ -185,8 +185,8 @@ public class ModuleEffectLightning implements IModuleEffect {
 			ovdSuper.invoke(true, data, shape);
 
 		World world = data.world;
-		float yaw = data.getData(YAW, 0F);
-		float pitch = data.getData(PITCH, 0F);
+		float yaw = data.getYaw();
+		float pitch = data.getPitch();
 		Vec3d origin = data.getOriginHand();
 		Entity caster = data.getCaster();
 		

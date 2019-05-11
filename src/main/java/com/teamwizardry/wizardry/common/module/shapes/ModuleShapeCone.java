@@ -68,8 +68,8 @@ public class ModuleShapeCone implements IModuleShape {
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
+		float yaw = spell.getYaw();
+		float pitch = spell.getPitch();
 		Entity caster = spell.getCaster();
 
 		Vec3d origin = spell.getOriginHand();
