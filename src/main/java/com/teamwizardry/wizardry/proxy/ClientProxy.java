@@ -6,7 +6,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.client.core.renderer.PearlRadialUIRenderer;
 import com.teamwizardry.wizardry.client.cosmetics.CapeHandler;
-import com.teamwizardry.wizardry.client.cosmetics.CosmeticsManager;
 import com.teamwizardry.wizardry.client.render.item.RenderHaloEntity;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModEntities;
@@ -98,8 +97,6 @@ public class ClientProxy extends CommonProxy {
 				((RenderLiving<?>) entityRenderer).addLayer(new RenderHaloEntity(renderer));
 			}
 		}
-
-		new CosmeticsManager().initClient();
 	}
 
 	@Override

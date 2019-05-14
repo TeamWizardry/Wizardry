@@ -13,9 +13,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 
+import javax.annotation.Nonnull;
+
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public final class BaublesSupport {
 
+	@Nonnull
 	public static <T> ItemStack getItem(EntityLivingBase entity, Class<T> clazz) {
 		for (ItemStack stack : getArmor(entity)) {
 			if (!stack.isEmpty() && clazz.isInstance(stack.getItem())) {
@@ -25,6 +28,7 @@ public final class BaublesSupport {
 		return ItemStack.EMPTY;
 	}
 
+	@Nonnull
 	public static ItemStack getItem(EntityLivingBase entity, Item item) {
 		for (ItemStack stack : getArmor(entity)) {
 			if (stack.getItem() == item) {
@@ -34,6 +38,7 @@ public final class BaublesSupport {
 		return ItemStack.EMPTY;
 	}
 
+	@Nonnull
 	public static ItemStack getItem(EntityLivingBase entity, Item... items) {
 		for (ItemStack stack : getArmor(entity)) {
 			for (Item item : items)

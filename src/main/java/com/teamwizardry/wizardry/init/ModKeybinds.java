@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketPearlSwappingKeybindState;
@@ -60,12 +61,14 @@ public class ModKeybinds {
 	public static void rightClickItem(PlayerInteractEvent.RightClickItem event) {
 
 		if (event.getItemStack().getItem() instanceof IPearlSwappable) {
-			if (!event.getWorld().isRemote) {
-				((IPearlSwappable) event.getItemStack().getItem()).swapOnRightClick(event.getEntityPlayer(), event.getItemStack());
+			if (!BaublesSupport.getItem(event.getEntityLiving(), IPearlBelt.class).isEmpty()) {
+				if (!event.getWorld().isRemote) {
+					((IPearlSwappable) event.getItemStack().getItem()).swapOnRightClick(event.getEntityPlayer(), event.getItemStack());
+				}
+				event.setCancellationResult(EnumActionResult.PASS);
+				event.setResult(Event.Result.DENY);
+				event.setCanceled(true);
 			}
-			event.setCancellationResult(EnumActionResult.PASS);
-			event.setResult(Event.Result.DENY);
-			event.setCanceled(true);
 		}
 
 
