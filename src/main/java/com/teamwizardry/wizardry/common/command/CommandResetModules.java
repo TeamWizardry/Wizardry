@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.command;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -28,7 +28,7 @@ public class CommandResetModules extends CommandBase {
 	public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String[] args) throws CommandException {
 		notifyCommandListener(sender, this, "wizardry.command." + getName() + ".warning");
 
-		File moduleDirectory = new File(CommonProxy.directory, "modules");
+		File moduleDirectory = new File(Wizardry.proxy.getWizardryDirectory(), "modules");
 		if (moduleDirectory.exists()) {
 
 			File[] files = moduleDirectory.listFiles();
@@ -49,8 +49,8 @@ public class CommandResetModules extends CommandBase {
 				throw new CommandException("wizardry.command" + getName() + ".fail_dir_create");
 
 		ModuleRegistry.INSTANCE.loadUnprocessedModules();
-		ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
-		ModuleRegistry.INSTANCE.loadModules(CommonProxy.directory);
+		ModuleRegistry.INSTANCE.copyMissingModules(Wizardry.proxy.getWizardryDirectory());
+		ModuleRegistry.INSTANCE.loadModules(Wizardry.proxy.getWizardryDirectory());
 
 		notifyCommandListener(sender, this, "wizardry.command" + getName() + ".success");
 	}

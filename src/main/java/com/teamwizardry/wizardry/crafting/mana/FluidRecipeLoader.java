@@ -108,8 +108,8 @@ public class FluidRecipeLoader {
 
 	@SuppressWarnings("deprecation")
 	public void processRecipes(Map<String, FluidCrafter> recipeRegistry, Multimap<Ingredient, FluidCrafter> recipes) {
-		Wizardry.logger.info("<<========================================================================>>");
-		Wizardry.logger.info("> Starting fluid recipe loading.");
+		Wizardry.LOGGER.info("<<========================================================================>>");
+		Wizardry.LOGGER.info("> Starting fluid recipe loading.");
 
 		JsonContext context = new JsonContext("minecraft");
 
@@ -132,7 +132,7 @@ public class FluidRecipeLoader {
 		for (File file : recipeFiles) {
 			try {
 				if (!file.exists()) {
-					Wizardry.logger.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
+					Wizardry.LOGGER.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
 					continue;
 				}
 
@@ -140,17 +140,17 @@ public class FluidRecipeLoader {
 				try {
 					element = new JsonParser().parse(new FileReader(file));
 				} catch (FileNotFoundException e) {
-					Wizardry.logger.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
+					Wizardry.LOGGER.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
 					continue;
 				}
 
 				if (element == null) {
-					Wizardry.logger.error("  > SOMETHING WENT WRONG! Could not parse " + file.getPath() + ". Ignoring file...");
+					Wizardry.LOGGER.error("  > SOMETHING WENT WRONG! Could not parse " + file.getPath() + ". Ignoring file...");
 					continue;
 				}
 
 				if (!element.isJsonObject()) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT contain a JsonObject. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT contain a JsonObject. Ignoring file...: " + element.toString());
 					continue;
 				}
 
@@ -167,22 +167,22 @@ public class FluidRecipeLoader {
 				boolean instant = true;
 
 				if (recipeRegistry.containsKey(file.getPath())) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " already exists in the recipe map. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " already exists in the recipe map. Ignoring file...: " + element.toString());
 					continue;
 				}
 
 				if (!fileObject.has("output")) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT specify a recipe output. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT specify a recipe output. Ignoring file...: " + element.toString());
 					continue;
 				}
 
 				if (!fileObject.get("output").isJsonObject()) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output. Ignoring file...: " + element.toString());
 					continue;
 				}
 
 				if (!fileObject.has("input")) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide an initial input item. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide an initial input item. Ignoring file...: " + element.toString());
 					continue;
 				}
 
@@ -190,20 +190,20 @@ public class FluidRecipeLoader {
 				Ingredient inputItem = CraftingHelper.getIngredient(inputObject, context);
 
 				if (inputItem == Ingredient.EMPTY) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid input item. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide a valid input item. Ignoring file...: " + element.toString());
 					continue;
 				}
 
 				if (fileObject.has("extraInputs")) {
 					if (!fileObject.get("extraInputs").isJsonArray()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " has extra inputs NOT in a JsonArray format. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " has extra inputs NOT in a JsonArray format. Ignoring file...: " + element.toString());
 						continue;
 					}
 					JsonArray extraInputArray = fileObject.get("extraInputs").getAsJsonArray();
 					for (JsonElement extraInput : extraInputArray) {
 						Ingredient ingredient = CraftingHelper.getIngredient(extraInput, context);
 						if (ingredient == Ingredient.EMPTY) {
-							Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid extra input item. Ignoring file...: " + element.toString());
+							Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide a valid extra input item. Ignoring file...: " + element.toString());
 							continue fileLoop;
 						}
 						extraInputs.add(ingredient);
@@ -212,7 +212,7 @@ public class FluidRecipeLoader {
 
 				if (fileObject.has("fluid")) {
 					if (!fileObject.get("fluid").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("fluid").isString()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give rfluid as a string. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give rfluid as a string. Ignoring file...: " + element.toString());
 						continue;
 					}
 					fluid = FluidRegistry.getFluid(fileObject.get("fluid").getAsString());
@@ -220,7 +220,7 @@ public class FluidRecipeLoader {
 
 				if (fileObject.has("duration")) {
 					if (!fileObject.get("duration").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("duration").isNumber()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give duration as a number. Ignoring file...:" + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give duration as a number. Ignoring file...:" + element.toString());
 						continue;
 					}
 					duration = fileObject.get("duration").getAsInt();
@@ -228,7 +228,7 @@ public class FluidRecipeLoader {
 
 				if (fileObject.has("required")) {
 					if (!fileObject.get("required").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("required").isNumber()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give required as a number. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give required as a number. Ignoring file...: " + element.toString());
 						continue;
 					}
 					required = fileObject.get("required").getAsInt();
@@ -236,7 +236,7 @@ public class FluidRecipeLoader {
 
 				if (fileObject.has("consume")) {
 					if (!fileObject.get("consume").isJsonPrimitive()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give consume as a boolean. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give consume as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
 					consume = fileObject.get("consume").getAsBoolean();
@@ -244,7 +244,7 @@ public class FluidRecipeLoader {
 
 				if (fileObject.has("explode")) {
 					if (!fileObject.get("explode").isJsonPrimitive()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give explode as a boolean. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give explode as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
 					explode = fileObject.get("explode").getAsBoolean();
@@ -252,7 +252,7 @@ public class FluidRecipeLoader {
 
 				if (fileObject.has("harp")) {
 					if (!fileObject.get("harp").isJsonPrimitive()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give harp as a boolean. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give harp as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
 					harp = fileObject.get("harp").getAsBoolean();
@@ -260,7 +260,7 @@ public class FluidRecipeLoader {
 
 				if (fileObject.has("bubbling")) {
 					if (!fileObject.get("bubbling").isJsonPrimitive()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give bubbling as a boolean. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give bubbling as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
 					bubbling = fileObject.get("bubbling").getAsBoolean();
@@ -268,7 +268,7 @@ public class FluidRecipeLoader {
 				
 				if (fileObject.has("instant")) {
 					if (!fileObject.get("instant").isJsonPrimitive()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give instant as a boolean. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give instant as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
 					instant = fileObject.get("instant").getAsBoolean();
@@ -282,7 +282,7 @@ public class FluidRecipeLoader {
 					ItemStack outputItem = CraftingHelper.getItemStack(output, context);
 
 					if (outputItem.isEmpty()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output item. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output item. Ignoring file...: " + element.toString());
 						continue;
 					}
 
@@ -300,7 +300,7 @@ public class FluidRecipeLoader {
 
 					Block block = name != null ? ForgeRegistries.BLOCKS.getValue(new ResourceLocation(name.getAsString())) : null;
 					if (block == null) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output block. Ignoring file...: " + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output block. Ignoring file...: " + element.toString());
 						continue;
 					}
 
@@ -318,13 +318,13 @@ public class FluidRecipeLoader {
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				} else
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " specifies an invalid recipe output type. Valid recipe types: \"item\" \"block\". Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " specifies an invalid recipe output type. Valid recipe types: \"item\" \"block\". Ignoring file...: " + element.toString());
 			} catch (Exception jsonException) {
-				Wizardry.logger.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
+				Wizardry.LOGGER.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
 			}
 		}
-		Wizardry.logger.info("> Finished mana recipe loading.");
-		Wizardry.logger.info("<<========================================================================>>");
+		Wizardry.LOGGER.info("> Finished mana recipe loading.");
+		Wizardry.LOGGER.info("<<========================================================================>>");
 	}
 
 	private FluidCrafter buildFluidCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, Fluid fluid, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp, boolean instant) {

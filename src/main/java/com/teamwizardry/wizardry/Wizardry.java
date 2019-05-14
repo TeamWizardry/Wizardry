@@ -26,7 +26,7 @@ public class Wizardry {
     public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
     public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
     public static final String DEPENDENCIES = "required-after:librarianlib";
-    public static Logger logger;
+    public static Logger LOGGER;
     public static DimensionType underWorld;
     public static DimensionType torikki;
     @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
@@ -41,9 +41,9 @@ public class Wizardry {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        logger = event.getModLog();
+        LOGGER = event.getModLog();
 
-        Wizardry.logger.info("IT'S LEVI-OH-SA, NOT LEVIOSAA");
+        Wizardry.LOGGER.info("IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
         proxy.preInit(event);
     }

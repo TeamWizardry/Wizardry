@@ -5,10 +5,9 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
-import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
@@ -19,9 +18,6 @@ import com.teamwizardry.wizardry.client.fx.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -79,6 +75,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 	@SubscribeEvent
 	public static void tick(TickEvent.PlayerTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
+		if (event.side == Side.SERVER) return;
 
 		ItemStack stack = event.player.getHeldItemMainhand();
 		beamTickMap.keySet().removeIf(itemStack -> !ItemStack.areItemStacksEqual(itemStack, stack));
@@ -134,33 +131,6 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 		ticker.ticks = beamOffset;
 		return true;
-	}
-
-	private NBTTagList serializeBeamTicks() {
-		NBTTagList list = new NBTTagList();
-		beamTickMap.forEach((stack, beamTicker) -> {
-			NBTTagCompound compound = new NBTTagCompound();
-			compound.setTag("stack", stack.serializeNBT());
-			compound.setDouble("tick", beamTicker.ticks);
-			compound.setBoolean("cast", beamTicker.cast);
-			list.appendTag(compound);
-		});
-		return list;
-	}
-
-	private void deserializeBeamTicks(NBTTagList list) {
-		for (NBTBase base : list) {
-			if (base instanceof NBTTagCompound) {
-				NBTTagCompound compound = (NBTTagCompound) base;
-				if (compound.hasKey("stack") && compound.hasKey("tick") && compound.hasKey("cast")) {
-					ItemStack itemStack = new ItemStack((NBTTagCompound) compound.getTag("stack"));
-					BeamTicker ticker = new BeamTicker();
-					ticker.ticks = compound.getDouble("tick");
-					ticker.cast = compound.getBoolean("cast");
-					beamTickMap.put(itemStack, ticker);
-				}
-			}
-		}
 	}
 
 	@NotNull

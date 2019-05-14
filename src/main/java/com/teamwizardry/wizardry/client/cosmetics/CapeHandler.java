@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.core;
+package com.teamwizardry.wizardry.client.cosmetics;
 
 import com.google.common.base.Ticker;
 import com.google.common.cache.CacheBuilder;
@@ -6,7 +6,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ClientConfigValues;
@@ -21,6 +20,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,11 +70,11 @@ public final class CapeHandler {
 			RenderCape cape = getCape(player);
 			if (cape.isPresent(player)) {
 				cape.render(
-					player,
-					player.posX - cape.posX - TileEntityRendererDispatcher.staticPlayerX,
-					player.posY - cape.posY - TileEntityRendererDispatcher.staticPlayerY,
-					player.posZ - cape.posZ - TileEntityRendererDispatcher.staticPlayerZ,
-					delta
+						player,
+						player.posX - cape.posX - TileEntityRendererDispatcher.staticPlayerX,
+						player.posY - cape.posY - TileEntityRendererDispatcher.staticPlayerY,
+						player.posZ - cape.posZ - TileEntityRendererDispatcher.staticPlayerZ,
+						delta
 				);
 			}
 		}
@@ -183,8 +184,8 @@ public final class CapeHandler {
 				}
 			}
 			points.sort((a, b) -> Double.compare(
-				MathHelper.sqrt(b.posX * b.posX + b.posY + b.posY),
-				MathHelper.sqrt(a.posX * a.posX + a.posY + a.posY)
+					MathHelper.sqrt(b.posX * b.posX + b.posY + b.posY),
+					MathHelper.sqrt(a.posX * a.posX + a.posY + a.posY)
 			));
 			return new RenderCape(ImmutableList.copyOf(points), quads.build());
 		}
@@ -305,20 +306,30 @@ public final class CapeHandler {
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
 			ItemStack stack = BaublesSupport.getItem(player, ModItems.CAPE);
-			String cape = null;
 
-
-			if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getUniqueID().toString().replace("-", "") + ".png") == null) {
-				UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
-				if (uuid != null) {
-					RandUtilSeed seed = new RandUtilSeed(uuid.hashCode());
-					cape = "cape_normal_" + seed.nextInt(1, 4);
-				}
+			ResourceLocation fallBackCape;
+			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
+			if (uuid != null) {
+				RandUtilSeed seed = new RandUtilSeed(uuid.hashCode());
+				fallBackCape = new ResourceLocation(Wizardry.MODID, "textures/capes/cape_normal_" + seed.nextInt(1, 4) + ".png");
 			} else {
-				cape = "cape_" + player.getUniqueID().toString().replace("-", "");
+				fallBackCape = new ResourceLocation(Wizardry.MODID, "textures/capes/cape_normal_3.png");
 			}
 
-			Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape + ".png"));
+			String capeName = "cape_" + player.getUniqueID().toString().replace("-", "");
+			ResourceLocation loc = new ResourceLocation(Wizardry.MODID, "capes/" + capeName);
+
+			ResourceLocation finalFallBackCape = fallBackCape;
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				ITextureObject itextureobject = Minecraft.getMinecraft().getTextureManager().getTexture(loc);
+
+				if (itextureobject == null) {
+					ThreadDownloadImageData threaddownloadimagedata = new ThreadDownloadImageData(null, "https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/capes/" + capeName + ".png", finalFallBackCape, null);
+					Minecraft.getMinecraft().getTextureManager().loadTexture(loc, threaddownloadimagedata);
+				}
+			});
+
+			Minecraft.getMinecraft().getTextureManager().bindTexture(loc);
 
 			tes.draw();
 			GlStateManager.enableCull();

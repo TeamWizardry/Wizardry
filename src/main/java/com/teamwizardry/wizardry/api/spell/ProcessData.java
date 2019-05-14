@@ -55,13 +55,13 @@ public class ProcessData {
 			try {
 				Class<?> storageTypeClass2 = Class.forName(storageTypeClassName);
 				if( !NBTBase.class.isAssignableFrom(storageTypeClass2) ) {
-					Wizardry.logger.error("Storage Class '" + storageTypeClassName + "' is not derived from NBTBase.");
+					Wizardry.LOGGER.error("Storage Class '" + storageTypeClassName + "' is not derived from NBTBase.");
 					return null;
 				}
 				storageTypeClass = (Class<? extends NBTBase>)storageTypeClass2;
 			}
 			catch (ClassNotFoundException e) {
-				Wizardry.logger.error("Storage Class '" + storageTypeClassName + "' not existing.", e);
+				Wizardry.LOGGER.error("Storage Class '" + storageTypeClassName + "' not existing.", e);
 				return null;
 			}
 			
@@ -70,7 +70,7 @@ public class ProcessData {
 				dataTypeClass = Class.forName(dataTypeClassName);
 			}
 			catch(ClassNotFoundException e) {
-				Wizardry.logger.error("Storage Class '" + dataTypeClassName + "' not existing.", e);
+				Wizardry.LOGGER.error("Storage Class '" + dataTypeClassName + "' not existing.", e);
 				return null;
 			}
 			
@@ -79,13 +79,13 @@ public class ProcessData {
 				Constructor<?>  ctor = clazz.getConstructor();
 				Object object = ctor.newInstance();
 				if( !(object instanceof Process) ) {
-					Wizardry.logger.error("Data type class is not derived from ProcessData.Process");
+					Wizardry.LOGGER.error("Data type class is not derived from ProcessData.Process");
 					return null;
 				}					
 					
 				registerDataType(dataTypeClass, storageTypeClass, (Process)object);
 			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | DataInitException e) {
-				Wizardry.logger.error("Something went wrong when creating instance of '" + clazz + "'.", e);
+				Wizardry.LOGGER.error("Something went wrong when creating instance of '" + clazz + "'.", e);
 				return null;
 			}
 

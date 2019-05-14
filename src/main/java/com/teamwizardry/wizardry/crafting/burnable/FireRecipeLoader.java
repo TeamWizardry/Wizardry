@@ -27,8 +27,8 @@ public class FireRecipeLoader {
 	}
 
 	public void processRecipes(Map<Ingredient, FireRecipe> recipes) {
-		Wizardry.logger.info("<<========================================================================>>");
-		Wizardry.logger.info("> Starting fire recipe loading.");
+		Wizardry.LOGGER.info("<<========================================================================>>");
+		Wizardry.LOGGER.info("> Starting fire recipe loading.");
 
 		JsonContext context = new JsonContext("minecraft");
 
@@ -50,7 +50,7 @@ public class FireRecipeLoader {
 		for (File file : recipeFiles) {
 			try {
 				if (!file.exists()) {
-					Wizardry.logger.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
+					Wizardry.LOGGER.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
 					continue;
 				}
 
@@ -58,17 +58,17 @@ public class FireRecipeLoader {
 				try {
 					element = new JsonParser().parse(new FileReader(file));
 				} catch (FileNotFoundException e) {
-					Wizardry.logger.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
+					Wizardry.LOGGER.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
 					continue;
 				}
 
 				if (element == null) {
-					Wizardry.logger.error("  > SOMETHING WENT WRONG! Could not parse " + file.getPath() + ". Ignoring file...");
+					Wizardry.LOGGER.error("  > SOMETHING WENT WRONG! Could not parse " + file.getPath() + ". Ignoring file...");
 					continue;
 				}
 
 				if (!element.isJsonObject()) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT contain a JsonObject. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT contain a JsonObject. Ignoring file...: " + element.toString());
 					continue;
 				}
 
@@ -77,7 +77,7 @@ public class FireRecipeLoader {
 				int duration = 200;
 
 				if (!fileObject.has("input")) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide an initial input item. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide an initial input item. Ignoring file...: " + element.toString());
 					continue;
 				}
 
@@ -85,17 +85,17 @@ public class FireRecipeLoader {
 				Ingredient input = CraftingHelper.getIngredient(inputObject, context);
 
 				if (input == Ingredient.EMPTY) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid input. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide a valid input. Ignoring file...: " + element.toString());
 					continue;
 				}
 
 				if (!fileObject.has("output")) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT specify a recipe output. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT specify a recipe output. Ignoring file...: " + element.toString());
 					continue;
 				}
 
 				if (!fileObject.get("output").isJsonObject()) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output. Ignoring file...: " + element.toString());
 					continue;
 				}
 
@@ -103,13 +103,13 @@ public class FireRecipeLoader {
 				ItemStack output = CraftingHelper.getItemStack(outputObject, context);
 
 				if (output.isEmpty()) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output. Ignoring file...: " + element.toString());
+					Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output. Ignoring file...: " + element.toString());
 					continue;
 				}
 
 				if (fileObject.has("duration")) {
 					if (!fileObject.get("duration").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("duration").isNumber()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give duration as a number. Ignoring file...:" + element.toString());
+						Wizardry.LOGGER.error("  > WARNING! " + file.getPath() + " does NOT give duration as a number. Ignoring file...:" + element.toString());
 						continue;
 					}
 					duration = fileObject.get("duration").getAsInt();
@@ -117,10 +117,10 @@ public class FireRecipeLoader {
 
 				recipes.put(input, new FireRecipe(output, duration));
 			} catch (JsonParseException jsonException) {
-				Wizardry.logger.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
+				Wizardry.LOGGER.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
 			}
 		}
-		Wizardry.logger.info("> Finished fire recipe loading.");
-		Wizardry.logger.info("<<========================================================================>>");
+		Wizardry.LOGGER.info("> Finished fire recipe loading.");
+		Wizardry.LOGGER.info("<<========================================================================>>");
 	}
 }

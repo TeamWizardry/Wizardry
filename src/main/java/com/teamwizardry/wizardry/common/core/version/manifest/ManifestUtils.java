@@ -1,12 +1,5 @@
 package com.teamwizardry.wizardry.common.core.version.manifest;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.common.io.Files;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,6 +8,13 @@ import com.google.gson.JsonParser;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import com.teamwizardry.wizardry.Wizardry;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ManifestUtils {
 	private ManifestUtils() {}
@@ -51,8 +51,8 @@ public class ManifestUtils {
 
 				manifestMap.putIfAbsent(category, new HashMap<>());
 				if( verbose ) {
-					Wizardry.logger.info("    >  |");
-					Wizardry.logger.info("    >  |_ Category found: " + category);
+					Wizardry.LOGGER.info("    >  |");
+					Wizardry.LOGGER.info("    >  |_ Category found: " + category);
 				}
 
 				if (categoryElement.isJsonArray()) {
@@ -68,7 +68,7 @@ public class ManifestUtils {
 
 						manifestMap.get(category).put(id, hash);
 						if( verbose ) {
-							Wizardry.logger.info("    >  | |_ " + id + ": " + hash);
+							Wizardry.LOGGER.info("    >  | |_ " + id + ": " + hash);
 						}
 					}
 				}
@@ -80,7 +80,7 @@ public class ManifestUtils {
 		try (JsonWriter writer = new JsonWriter(Files.newWriter(file, Charset.defaultCharset()))) {
 			Streams.write(object, writer);
 		} catch (IOException e) {
-			Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create or write to file! Customizations to recipes and modules will be reset every time you load the game!");
+			Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not create or write to file! Customizations to recipes and modules will be reset every time you load the game!");
 			e.printStackTrace();
 		}
 	}

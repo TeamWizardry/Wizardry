@@ -66,7 +66,7 @@ public class SpellRingCache {
 			return other;
 		} else {
 			if (other == null)
-				Wizardry.logger.info("SpellRing cache miss for " + spellRing);
+				Wizardry.LOGGER.info("SpellRing cache miss for " + spellRing);
 			return spellRing;
 		}
 	}

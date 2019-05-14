@@ -22,7 +22,7 @@ public class ThreadVersionChecker extends Thread {
 
 	@Override
 	public void run() {
-		Wizardry.logger.info("Checking for new updates...");
+		Wizardry.LOGGER.info("Checking for new updates...");
 		try {
 			BufferedReader r;
 			URL url;
@@ -52,10 +52,10 @@ public class ThreadVersionChecker extends Thread {
 
 			VersionChecker.updateMessage = text.toString();
 			r.close();
-			Wizardry.logger.error("New version found! -> " + onlineVersion);
-			Wizardry.logger.error("Message: " + VersionChecker.updateMessage);
+			Wizardry.LOGGER.error("New version found! -> " + onlineVersion);
+			Wizardry.LOGGER.error("Message: " + VersionChecker.updateMessage);
 		} catch (Exception e) {
-			Wizardry.logger.error("Failed to check for updates! :(");
+			Wizardry.LOGGER.error("Failed to check for updates! :(");
 		}
 		VersionChecker.doneChecking = true;
 	}

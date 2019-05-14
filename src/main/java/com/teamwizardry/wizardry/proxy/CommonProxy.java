@@ -43,7 +43,11 @@ import java.io.File;
 
 public class CommonProxy {
 
-	public static File directory;
+	private File directory;
+
+	public File getWizardryDirectory() {
+		return directory;
+	}
 
 	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 	}
@@ -51,7 +55,7 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		directory = new File(event.getModConfigurationDirectory(), Wizardry.MODID);
 		if (!directory.exists()) if (!directory.mkdirs())
-			Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config folder!!");
+			Wizardry.LOGGER.fatal("    > SOMETHING WENT WRONG! Could not create config folder!!");
 
 		new SpellData.DefaultKeys();
 
@@ -113,7 +117,7 @@ public class CommonProxy {
 			File recipeDirectory = new File(directory, "fluid_recipes");
 			if (!recipeDirectory.exists()) {
 				if (!recipeDirectory.mkdirs()) {
-					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
+					Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break manaRecipeLoading;
 				}
 			}
@@ -126,7 +130,7 @@ public class CommonProxy {
 			File recipeDirectory = new File(directory, "fire_recipes");
 			if (!recipeDirectory.exists()) {
 				if (!recipeDirectory.mkdirs()) {
-					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
+					Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break fireRecipeLoading;
 				}
 			}
@@ -140,7 +144,7 @@ public class CommonProxy {
 			File moduleDirectory = new File(directory, "wizmodules");
 			if (!moduleDirectory.exists())
 				if (!moduleDirectory.mkdirs()) {
-					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + moduleDirectory.getPath());
+					Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not create directory " + moduleDirectory.getPath());
 					break moduleLoading;
 				}
 

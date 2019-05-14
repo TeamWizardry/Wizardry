@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.common.core.version.manifest;
 
+import com.teamwizardry.wizardry.Wizardry;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-
-import com.teamwizardry.wizardry.Wizardry;
 
 public class ManifestUpgrader {
 	private final File directory;
@@ -24,7 +24,7 @@ public class ManifestUpgrader {
 		if( isFinalized )
 			throw new IllegalStateException("Upgrade is already finalized");
 
-		Wizardry.logger.info("    > Starting to upgrade manifest ...");
+		Wizardry.LOGGER.info("    > Starting to upgrade manifest ...");
 		
 		try {
 			// Read manifest file
@@ -32,7 +32,7 @@ public class ManifestUpgrader {
 			if (externalManifest.exists()) {
 	
 				if (!externalManifest.canRead()) {
-					Wizardry.logger.error("    > SOMETHING WENT WRONG! Can't access manifest file for reading! No upgrade possible.");
+					Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Can't access manifest file for reading! No upgrade possible.");
 					hasErrors = true;
 					return;
 				}
@@ -42,7 +42,7 @@ public class ManifestUpgrader {
 			}
 		}
 		catch(IOException exc) {
-			Wizardry.logger.error("    > SOMETHING WENT WRONG! Can't read manifest file! No upgrade possible.");
+			Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Can't read manifest file! No upgrade possible.");
 			hasErrors = true;
 		}
 	}
@@ -88,12 +88,12 @@ public class ManifestUpgrader {
 				externalManifest.createNewFile();
 				
 				ManifestUtils.writeJsonToFile(ManifestUtils.generateManifestJson(manifestMap), externalManifest);
-				
-				Wizardry.logger.info("    > Successfully updated manifest file");
+
+				Wizardry.LOGGER.info("    > Successfully updated manifest file");
 			}
 			
 			if( !hasFolderChanged && !hasManifestChanged )
-				Wizardry.logger.info("    > Manifest is up-to-date. No changes were performed.");
+				Wizardry.LOGGER.info("    > Manifest is up-to-date. No changes were performed.");
 		}
 		catch(IOException exc) {
 			exc.printStackTrace();

@@ -233,7 +233,7 @@ public class PotionVanish extends PotionBase {
 
 			GlStateManager.disableRescaleNormal();
 		} catch (Exception exception) {
-			Wizardry.logger.error("Couldn\'t render entity", exception);
+			Wizardry.LOGGER.error("Couldn\'t render entity", exception);
 		}
 
 		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);

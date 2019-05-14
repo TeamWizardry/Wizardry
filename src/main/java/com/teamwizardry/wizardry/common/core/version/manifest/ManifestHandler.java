@@ -81,7 +81,7 @@ public class ManifestHandler {
 
 				try {
 					if (!externalManifest.createNewFile()) {
-						Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create manifest file! Customizations to recipes and modules will be reset every time you load the game!");
+						Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not create manifest file! Customizations to recipes and modules will be reset every time you load the game!");
 						return;
 					}
 				} catch (IOException e) {
@@ -90,7 +90,7 @@ public class ManifestHandler {
 			}
 			ManifestUtils.writeJsonToFile(ManifestUtils.generateManifestJson(internalManifestMap), externalManifest);
 			externalManifestMap.putAll(internalManifestMap);
-			Wizardry.logger.info("    > Successfully generated new manifest file");
+			Wizardry.LOGGER.info("    > Successfully generated new manifest file");
 		}
 	}
 
@@ -105,7 +105,7 @@ public class ManifestHandler {
 
 						InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), category + "/" + fileName);
 						if (stream == null) {
-							Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read " + fileName + " in " + category + " from mod jar! Report this to the devs on Github!");
+							Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not read " + fileName + " in " + category + " from mod jar! Report this to the devs on Github!");
 							continue;
 						}
 						try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()))) {
@@ -129,20 +129,20 @@ public class ManifestHandler {
 		String modId = fileToMod.get(category).get(key);
 		if (modId == null) {
 			// NOTE: If some bad state occurred in ManifestHandler.processComparisons()
-			Wizardry.logger.error("    > SOMETHING WENT WRONG! Expected file " + key + ".json in " + category + " in config folder! Report this to the devs on Github!");
+			Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Expected file " + key + ".json in " + category + " in config folder! Report this to the devs on Github!");
 			return;
 		}
 
 		InputStream stream = LibrarianLib.PROXY.getResource(modId, category + "/" + key + ".json");
 		if (stream == null) {
-			Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read under " + category + " in " + key + " from mod jar! Report this to the devs on Github!");
+			Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not read under " + category + " in " + key + " from mod jar! Report this to the devs on Github!");
 			return;
 		}
 
 		try {
 			FileUtils.copyInputStreamToFile(stream, new File(directory + "/" + category + "/", key + ".json"));
 			if (ConfigValues.debugInfo)
-				Wizardry.logger.info("    > " + category + " in " + key + " copied successfully from mod jar.");
+				Wizardry.LOGGER.info("    > " + category + " in " + key + " copied successfully from mod jar.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -153,9 +153,9 @@ public class ManifestHandler {
 		if (!file.exists()) return;
 
 		if (!file.delete()) {
-			Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not delete " + category + " file " + key + " from folder!");
+			Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not delete " + category + " file " + key + " from folder!");
 		} else {
-			Wizardry.logger.info("    > " + category + " in " + key + " successfully deleted.");
+			Wizardry.LOGGER.info("    > " + category + " in " + key + " successfully deleted.");
 		}
 	}
 
@@ -169,25 +169,25 @@ public class ManifestHandler {
 			if (!externalManifest.exists()) {
 
 				if (!externalManifest.createNewFile()) {
-					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create manifest file! Customizations to recipes and modules will be reset every time you load the game!");
+					Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not create manifest file! Customizations to recipes and modules will be reset every time you load the game!");
 					return;
 				}
 
 				ManifestUtils.writeJsonToFile(ManifestUtils.generateManifestJson(internalManifestMap), externalManifest);
 				externalManifestMap.putAll(internalManifestMap);
 				generatedNewManifest = true;
-				Wizardry.logger.info("    > Successfully generated new manifest file");
+				Wizardry.LOGGER.info("    > Successfully generated new manifest file");
 				return;
 			}
 
 			if (!externalManifest.canRead()) {
-				Wizardry.logger.error("    > SOMETHING WENT WRONG! Can't read manifest file! Customizations to recipes and modules will be reset every time you load the game!");
+				Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Can't read manifest file! Customizations to recipes and modules will be reset every time you load the game!");
 				return;
 			}
 
-			Wizardry.logger.info("    > Found manifest file. Reading...");
+			Wizardry.LOGGER.info("    > Found manifest file. Reading...");
 			ManifestUtils.loadManifestFile(externalManifest, externalManifestMap, ConfigValues.debugInfo);
-			Wizardry.logger.info("    >  |____________________________________/");
+			Wizardry.LOGGER.info("    >  |____________________________________/");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -217,6 +217,6 @@ public class ManifestHandler {
 		fileToMod.putIfAbsent(category, new HashMap<>());
 		String prevModId = fileToMod.get(category).put(id, modId);
 		if (prevModId != null)
-			Wizardry.logger.warn("    > File name conflict for " + category + "/" + id + ".json occurring in mods '" + modId + "' and '" + prevModId + "'. Some stuff wont be available.");
+			Wizardry.LOGGER.warn("    > File name conflict for " + category + "/" + id + ".json occurring in mods '" + modId + "' and '" + prevModId + "'. Some stuff wont be available.");
 	}
 }

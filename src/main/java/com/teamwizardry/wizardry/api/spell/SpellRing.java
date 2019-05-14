@@ -274,7 +274,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 				informationMap.put(modifier.getAttribute().getNbtName(), newValue);
 
-				if (ConfigValues.debugInfo) Wizardry.logger.info(module == null ? "<null module>" : module.getSubModuleID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
+				if (ConfigValues.debugInfo)
+					Wizardry.LOGGER.info(module == null ? "<null module>" : module.getSubModuleID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
 			}
 		}
 		

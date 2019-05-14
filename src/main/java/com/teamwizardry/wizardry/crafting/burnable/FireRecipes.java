@@ -5,7 +5,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -35,13 +34,13 @@ public class FireRecipes {
 
 			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fire_recipes/" + recipeName);
 			if (stream == null) {
-				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
+				Wizardry.LOGGER.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
 				continue;
 			}
 
 			try {
 				FileUtils.copyInputStreamToFile(stream, file);
-				Wizardry.logger.info("    > Fire recipe " + recipeName + " copied successfully from mod jar.");
+				Wizardry.LOGGER.info("    > Fire recipe " + recipeName + " copied successfully from mod jar.");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -57,13 +56,13 @@ public class FireRecipes {
 	
 				InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), "fire_recipes/" + recipeName);
 				if (stream == null) {
-					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
+					Wizardry.LOGGER.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
 					continue;
 				}
 				
 				try {
 					FileUtils.copyInputStreamToFile(stream, new File(directory, recipeName));
-					Wizardry.logger.info("    > Fire recipe " + recipeName + " copied successfully from mod jar.");
+					Wizardry.LOGGER.info("    > Fire recipe " + recipeName + " copied successfully from mod jar.");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

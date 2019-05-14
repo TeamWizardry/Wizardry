@@ -56,13 +56,13 @@ public class ManaRecipes {
 
 			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fluid_recipes/" + recipeName);
 			if (stream == null) {
-				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
+				Wizardry.LOGGER.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
 				continue;
 			}
 
 			try {
 				FileUtils.copyInputStreamToFile(stream, file);
-				Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
+				Wizardry.LOGGER.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -78,13 +78,13 @@ public class ManaRecipes {
 	
 				InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), "fluid_recipes/" + recipeName);
 				if (stream == null) {
-					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
+					Wizardry.LOGGER.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
 					continue;
 				}
 	
 				try {
 					FileUtils.copyInputStreamToFile(stream, new File(directory, recipeName));
-					Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
+					Wizardry.LOGGER.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
