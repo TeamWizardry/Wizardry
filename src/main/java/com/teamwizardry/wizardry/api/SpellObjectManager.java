@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api;
 
 import com.google.common.collect.ImmutableMap;
+import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import net.minecraft.nbt.NBTTagCompound;
@@ -148,7 +149,8 @@ public final class SpellObjectManager {
 
 		@Override
 		public void stop() {
-			ring.runSpellRing(world, data, false);
+			if (ring.getModule() != null && ring.getModule().getModuleClass() instanceof IDelayedModule)
+				((IDelayedModule) ring.getModule().getModuleClass()).runDelayedEffect(world, data, ring);
 		}
 
 		@Override
