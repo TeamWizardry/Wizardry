@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -29,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -40,16 +40,15 @@ public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
 	}
 
 	@Override
-	public boolean runOnce(ModuleInstance instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity entity = spell.getVictim();
-		World world = spell.world;
+	public boolean runOnce(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity entity = spell.getVictim(world);
 		BlockPos pos = spell.getTargetPos();
 
 		if (pos == null) return true;
 
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
+		double time = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		world.playSound(null, pos, ModSounds.GRACE, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
 		if (entity instanceof EntityLivingBase) {
@@ -60,15 +59,14 @@ public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity target = spell.getVictim();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity target = spell.getVictim(world);
 
 		if (!(target instanceof EntityLivingBase)) return;
 		if (!((EntityLivingBase) target).isPotionActive(ModPotions.GRACE)) return;
@@ -86,8 +84,8 @@ public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
 	}
 
 	@Override
-	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
+	public int getLingeringTime(World world, SpellData spell, SpellRing spellRing) {
+		double time = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 		return (int) time;
 	}
 }

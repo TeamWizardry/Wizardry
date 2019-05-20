@@ -27,6 +27,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -49,20 +50,19 @@ public class ModuleEffectZoom implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity entityHit = spell.getVictim();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity entityHit = spell.getVictim(world);
 		Vec3d look = spell.getData(LOOK);
 		Vec3d origin = spell.getData(ORIGIN);
 
 		if (entityHit == null) return true;
 		else {
-			if (!spellRing.taxCaster(spell, true)) return false;
+			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			if (look == null) return true;
 			if (origin == null) return true;
 
-			double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+			double range = spellRing.getAttributeValue(world, AttributeRegistry.RANGE, spell);
 			RayTraceResult trace = new RayTrace(world, look, origin, range)
 					.setEntityFilter(input -> input != entityHit)
 					.setIgnoreBlocksWithoutBoundingBoxes(true)
@@ -88,10 +88,9 @@ public class ModuleEffectZoom implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 
-		Entity entity = spell.getVictim();
+		Entity entity = spell.getVictim(world);
 		if (entity == null) return;
 
 		Vec3d origin = spell.getData(ORIGINAL_LOC);

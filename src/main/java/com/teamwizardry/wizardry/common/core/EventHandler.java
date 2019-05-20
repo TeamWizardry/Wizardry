@@ -1,31 +1,25 @@
 
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.BounceHandler;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
-import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.common.network.PacketBounce;
 import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -34,14 +28,11 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -60,79 +51,6 @@ public class EventHandler {
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SMOKE));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.DIAMOND));
-	}
-
-	//Added hashmap to work in servers
-	HashMap<Integer, Boolean> passmap = new HashMap<>();
-
-	/**
-	 * Code "borrowed" from Tinker's construct slime boots
-	 * https://github.com/SlimeKnights/TinkersConstruct/blob/23034cb63e98bba06faf1cdc4074009daf93be1f/src/main/java/slimeknights/tconstruct/gadgets/item/ItemSlimeBoots.java
-	 * <p>
-	 * I don't feel like re-inventing the wheel. Shut up.
-	 */
-	@SubscribeEvent
-	public void onFallBounce(LivingFallEvent event) {
-		EntityLivingBase entity = event.getEntityLiving();
-		if (entity == null) {
-			return;
-		}
-
-		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> entity.getEntityWorld().getTotalWorldTime() - bouncyBlock.getTime() >= bouncyBlock.getExpiry());
-
-		if (shouldBounce(entity)) {
-			if (event.getDistance() > 0.5) {
-				event.setDamageMultiplier(0);
-				entity.fallDistance = 0;
-				if (entity.getEntityWorld().isRemote) {
-					entity.motionY *= -0.8;
-					entity.isAirBorne = true;
-					entity.onGround = false;
-					double f = 0.91d + 0.04d;
-					entity.motionX /= f;
-					entity.motionZ /= f;
-					PacketHandler.NETWORK.sendToServer(new PacketBounce());
-				} else {
-					event.setCanceled(true);
-				}
-				entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
-				BounceHandler.addBounceHandler(entity, entity.motionY);
-			}
-		}
-	}
-
-	/**
-	 * Code "borrowed" from Tinker's construct slime boots
-	 * https://github.com/SlimeKnights/TinkersConstruct/blob/23034cb63e98bba06faf1cdc4074009daf93be1f/src/main/java/slimeknights/tconstruct/gadgets/item/ItemSlimeBoots.java
-	 * <p>
-	 * I don't feel like re-inventing the wheel. Shut up.
-	 */
-	@SubscribeEvent
-	public void flyableFallBounce(PlayerFlyableFallEvent event) {
-		EntityLivingBase entity = event.getEntityLiving();
-		if (entity == null) {
-			return;
-		}
-
-		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> entity.getEntityWorld().getTotalWorldTime() - bouncyBlock.getTime() >= bouncyBlock.getExpiry());
-
-		if (shouldBounce(entity)) {
-			boolean isClient = entity.getEntityWorld().isRemote;
-			if (event.getDistance() > 0.5) {
-				entity.fallDistance = 0;
-				if (isClient) {
-					entity.motionY *= -0.9;
-					entity.isAirBorne = true;
-					entity.onGround = false;
-					double f = 0.91d + 0.04d;
-					entity.motionX /= f;
-					entity.motionZ /= f;
-					PacketHandler.NETWORK.sendToServer(new PacketBounce());
-				}
-				entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
-				BounceHandler.addBounceHandler(entity, entity.motionY);
-			}
-		}
 	}
 
 
@@ -156,26 +74,14 @@ public class EventHandler {
 		}
 	}
 
+	//Added hashmap to work in servers
+	HashMap<Integer, Boolean> passmap = new HashMap<>();
+
 	@SubscribeEvent
-	public void tickEvent(WorldTickEvent event) {
-		if (event.phase == Phase.END) {
+	public void tickEvent(TickEvent.WorldTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
 			FluidTracker.INSTANCE.tick(event.world);
 		}
-	}
-
-	private boolean shouldBounce(EntityLivingBase entity) {
-		boolean success = false;
-		if (entity.isPotionActive(ModPotions.BOUNCING)) success = true;
-		else {
-			BlockPos entityPos = entity.getPosition().add(0, -1, 0);
-			for (BounceHandler.BouncyBlock block : BounceHandler.bouncingBlocks) {
-				if (block.getPos().equals(entityPos)) {
-					success = true;
-					break;
-				}
-			}
-		}
-		return success;
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -264,7 +170,7 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void fairyAmbush(SpellCastEvent event) {
-		Entity caster = event.getSpellData().getData(SpellData.DefaultKeys.CASTER);
+		Entity caster = event.getSpellData().getCaster(event.getWorld());
 		int chance = 5;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(event.getSpellRing()))
 			if (spellRing.getModule() != null && spellRing.getModule().getModuleClass() instanceof IContinuousModule) {
@@ -272,7 +178,7 @@ public class EventHandler {
 				break;
 			}
 		if (RandUtil.nextInt(chance) == 0 && caster != null) {
-			List<EntityFairy> fairyList = event.getSpellData().world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).grow(64, 64, 64));
+			List<EntityFairy> fairyList = event.getWorld().getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).grow(64, 64, 64));
 			if (fairyList.isEmpty()) return;
 			EntityFairy fairy = fairyList.get(RandUtil.nextInt(fairyList.size() - 1));
 			if (fairy == null) return;

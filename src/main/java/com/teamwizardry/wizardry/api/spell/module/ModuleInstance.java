@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.SpellObjectManager;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorld;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -18,7 +19,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import com.teamwizardry.wizardry.api.util.RenderUtils;
-import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -28,9 +28,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.nbt.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -131,12 +129,12 @@ public abstract class ModuleInstance {
 	 */
 	@Nonnull
 	@SideOnly(Side.CLIENT)
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		return standardRenderVisualization(data, ring, previousData);
 	}
 
 	public final SpellData standardRenderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		return new SpellData(data.world);
+		return new SpellData();
 	}
 
 	@Nullable
@@ -562,7 +560,7 @@ public abstract class ModuleInstance {
 	/**
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		return true;
 	}
 
@@ -570,71 +568,67 @@ public abstract class ModuleInstance {
 	 * This method runs client side when the spellData runs. Spawn particles here.
 	 */
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 	}
 
 	/**
 	 * Use this to run the module properly.
 	 *
-	 * @param spell       The spellData associated with it.
-	 * @param spellRing   The SpellRing made with this.
-	 * @param doRendering if rendering needs to be performed.
+	 * @param data     The spellData associated with it.
+	 * @param ring The SpellRing made with this.
+	 * @param runOnce
 	 * @return If the spellData has succeeded.
 	 */
-	public final boolean castSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing, boolean doRendering) {
-		boolean success = true;
-		if (!spell.world.isRemote) {
-			boolean alreadyCasted = false;
+	public final boolean castSpell(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring, boolean runOnce) {
+		if (world.isRemote) return true;
 
-			// Lingering execution
-			if (moduleClass instanceof ILingeringModule) {
-				boolean alreadyLingering = false;
-				WizardryWorld worldCap = WizardryWorldCapability.get(spell.world);
-				for (SpellTicker.LingeringObject lingeringObject : worldCap.getLingeringObjects()) {
-					if (lingeringObject.getSpellRing() == spellRing
-							|| lingeringObject.getSpellData() == spell) {
-						alreadyLingering = true;
-						break;
-					}
-				}
+		boolean success;
 
-				if (!alreadyLingering) {
-					success = internalCastSpell(spell, spellRing) && ((ILingeringModule) moduleClass).runOnce(this, spell, spellRing);
-
-					if (success) {
-						worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
-					}
-
-					alreadyCasted = true;
+		boolean ranOnce = false;
+		NBTTagList list = data.getDataWithFallback(SpellData.DefaultKeys.TAG_LIST, new NBTTagList());
+		for (NBTBase base : list) {
+			if (base instanceof NBTTagString) {
+				if (((NBTTagString) base).getString().equals(ring.getUniqueID().toString())) {
+					ranOnce = true;
+					break;
 				}
 			}
+		}
+		if (moduleClass instanceof ILingeringModule && !ranOnce) {
+			WizardryWorld worldCap = WizardryWorldCapability.get(world);
 
-			if (!alreadyCasted) {
-				success = internalCastSpell(spell, spellRing);
-				alreadyCasted = true;
+			list.appendTag(new NBTTagString(ring.getUniqueID().toString()));
+			data.addData(SpellData.DefaultKeys.TAG_LIST, list);
+			success = internalCastSpell(world, data, ring) && ((ILingeringModule) moduleClass).runOnce(world, data, ring);
+
+			if (success) {
+				worldCap.getSpellObjectManager().addLingering(new SpellObjectManager.LingeringObject(world, data, ring), ((ILingeringModule) moduleClass).getLingeringTime(world, data, ring));
 			}
+
+		} else {
+			success = internalCastSpell(world, data, ring);
 		}
 
 		if (success || ignoreResultsForRendering()) {
-			sendRenderPacket(spell, spellRing);
+			sendRenderPacket(world, data, ring);
 		}
 
 		return success;
 	}
 
-	private final boolean internalCastSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
+	private boolean internalCastSpell(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		SpellCastEvent event = new SpellCastEvent(world, spellRing, spell);
 		MinecraftForge.EVENT_BUS.post(event);
 
-		return !event.isCanceled() && run(spell, spellRing);
+		return !event.isCanceled() && run(world, spell, spellRing);
 	}
 
-	public final void sendRenderPacket(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Vec3d target = spell.getTargetWithFallback();
+	public final void sendRenderPacket(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d target = spell.getTargetWithFallback(world);
 
 		if (target != null)
 			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spell, spellRing),
-					new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.x, target.y, target.z, 60));
+					new NetworkRegistry.TargetPoint(world.provider.getDimension(), target.x, target.y, target.z, 256));
 	}
 
 	@Nonnull

@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
@@ -18,7 +16,6 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,6 +28,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @RegisterModule(ID = "effect_sonic")
 public class ModuleEffectSonic implements IModuleEffect {
@@ -41,18 +41,17 @@ public class ModuleEffectSonic implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity targetEntity = spell.getVictim();
-		Entity caster = spell.getCaster();
-		World world = spell.world;
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity targetEntity = spell.getVictim(world);
+		Entity caster = spell.getCaster(world);
 		BlockPos pos = spell.getTargetPos();
 
 		if (pos == null) return false;
 
-		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
-		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 2;
+		double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell) / 2;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetEntity instanceof EntityLivingBase) {
 			world.playSound(null, pos, ModSounds.SOUND_BOMB, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.8f, 1.2f));
@@ -86,9 +85,8 @@ public class ModuleEffectSonic implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity target = spell.getVictim();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity target = spell.getVictim(world);
 		Vec3d look = spell.getData(SpellData.DefaultKeys.LOOK);
 
 		if (target == null || look == null) return;
@@ -104,7 +102,7 @@ public class ModuleEffectSonic implements IModuleEffect {
 		Vec3d entityOrigin = target.getPositionVector().add(target.width / 2.0, target.height / 2.0, target.width / 2.0);
 		InterpCircle circle = new InterpCircle(Vec3d.ZERO, new Vec3d(0, 1, 0), target.width);
 
-		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
+		double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell) / 2;
 		for (Vec3d origin : circle.list(50)) {
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(entityOrigin.add(origin)), 5, 0, (aFloat, particleBuilder) -> {
 				particleBuilder.setLifetime(RandUtil.nextInt(50, 100));

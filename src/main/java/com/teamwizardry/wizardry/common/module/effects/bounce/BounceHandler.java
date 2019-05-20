@@ -1,21 +1,14 @@
-package com.teamwizardry.wizardry.api;
+package com.teamwizardry.wizardry.common.module.effects.bounce;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Code "borrowed" from Tinker's Construct BounceHandler
@@ -26,55 +19,59 @@ import java.util.Set;
 public class BounceHandler {
 
 	private static final IdentityHashMap<Entity, BounceHandler> bouncingEntities = new IdentityHashMap<>();
-	public static Set<BouncyBlock> bouncingBlocks = new HashSet<>();
 
 	public final EntityLivingBase entityLiving;
-
 	private int timer;
 	private boolean wasInAir;
 	private double bounce;
-	private boolean bounced;
+	private int bounceTick;
 
 	private double lastMovX;
 	private double lastMovZ;
 
-	public BounceHandler(EntityLivingBase entityLiving, double bounce) {
+	private BounceHandler(EntityLivingBase entityLiving, double bounce) {
 		this.entityLiving = entityLiving;
 		timer = 0;
 		wasInAir = false;
 		this.bounce = bounce;
-		bounced = bounce == 0;
+
+		if (bounce != 0) {
+			bounceTick = entityLiving.ticksExisted;
+		} else {
+			bounceTick = 0;
+		}
 
 		bouncingEntities.put(entityLiving, this);
 	}
 
-	public static void addBounceHandler(World world, BlockPos pos, int duration) {
-		bouncingBlocks.add(new BouncyBlock(world, pos, duration));
-	}
-
 	public static void addBounceHandler(EntityLivingBase entity, double bounce) {
+		// only supports actual players as it uses the PlayerTick event
 		if (!(entity instanceof EntityPlayer) || entity instanceof FakePlayer) {
 			return;
 		}
 		BounceHandler handler = bouncingEntities.get(entity);
 		if (handler == null) {
+			// wasn't bouncing yet, register it
 			MinecraftForge.EVENT_BUS.register(new BounceHandler(entity, bounce));
 		} else if (bounce != 0) {
+			// updated bounce if needed
 			handler.bounce = bounce;
-			handler.bounced = false;
+			handler.bounceTick = entity.ticksExisted;
 		}
 	}
 
 	@SubscribeEvent
 	public void playerTickPost(TickEvent.PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END && event.player == entityLiving) {
-			if (!bounced) {
+		// this is only relevant for the local player
+		if (event.phase == TickEvent.Phase.END && event.player == entityLiving && !event.player.isElytraFlying()) {
+			// bounce up. This is to pcircumvent the logic that resets y motion after landing
+			if (event.player.ticksExisted == bounceTick) {
 				event.player.motionY = bounce;
-				bounced = true;
+				bounceTick = 0;
 			}
 
 			// preserve motion
-			if (!entityLiving.onGround) {
+			if (!entityLiving.onGround && entityLiving.ticksExisted != bounceTick) {
 				if (lastMovX != entityLiving.motionX || lastMovZ != entityLiving.motionZ) {
 					double f = 0.91d + 0.025d;
 					entityLiving.motionX /= f;
@@ -97,53 +94,6 @@ public class BounceHandler {
 				timer = 0;
 				wasInAir = true;
 			}
-		}
-	}
-
-	public static class BouncyBlock {
-
-		private final int world;
-		@Nonnull
-		private final BlockPos pos;
-		private final long time;
-		private final int expiry;
-
-		BouncyBlock(World world, @NotNull BlockPos pos, int expiry) {
-			this.world = world.provider.getDimension();
-			this.pos = pos;
-			this.time = world.getTotalWorldTime();
-			this.expiry = expiry;
-		}
-
-		public int getWorld() {
-			return world;
-		}
-
-		@NotNull
-		public BlockPos getPos() {
-			return pos;
-		}
-
-		public long getTime() {
-			return time;
-		}
-
-		public int getExpiry() {
-			return expiry;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			BouncyBlock that = (BouncyBlock) o;
-			return world == that.world &&
-					Objects.equals(pos, that.pos);
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash(world, pos);
 		}
 	}
 }

@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 
 /**
  * Interface for module features related to rendering. <br />
@@ -19,14 +20,14 @@ public interface IRenderableModule<InstanceType extends ModuleInstance> {
 	 * Will render whatever GL code is specified here while the spell is being held by the
 	 * player's hand.
 	 */
-	default SpellData renderVisualization(InstanceType instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	default SpellData renderVisualization(@Nonnull World world, InstanceType instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		return instance.standardRenderVisualization(data, ring, previousData);
 	}
 
 	/**
 	 * This method runs client side when the spellData runs. Spawn particles here.
 	 */
-	default void renderSpell(InstanceType instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	default void renderSpell(World world, InstanceType instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		
 	}
 	

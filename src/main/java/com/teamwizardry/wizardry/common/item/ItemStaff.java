@@ -70,10 +70,10 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 			return false;
 		if (requiresBowAction(stack)) return false;
 
-		SpellData spell = new SpellData(playerIn.world);
+		SpellData spell = new SpellData();
 		spell.processEntity(playerIn, true);
 		spell.processEntity(target, false);
-		SpellUtils.runSpell(stack, spell);
+		SpellUtils.runSpell(playerIn.world, stack, spell);
 
 		setCooldown(playerIn.world, playerIn, hand, stack, spell);
 		return true;
@@ -100,10 +100,10 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 		if (BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return EnumActionResult.PASS;
 
-		SpellData spell = new SpellData(world);
+		SpellData spell = new SpellData();
 		spell.processEntity(player, true);
 		spell.processBlock(pos, side, new Vec3d(pos).add(0.5, 0.5, 0.5));
-		SpellUtils.runSpell(stack, spell);
+		SpellUtils.runSpell(world, stack, spell);
 
 		setCooldown(world, player, hand, stack, spell);
 
@@ -130,9 +130,9 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 			if (requiresBowAction(stack))
 				player.setActiveHand(hand);
 			else {
-				SpellData spell = new SpellData(world);
+				SpellData spell = new SpellData();
 				spell.processEntity(player, true);
-				SpellUtils.runSpell(stack, spell);
+				SpellUtils.runSpell(world, stack, spell);
 				setCooldown(world, player, hand, stack, spell);
 			}
 			return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -158,16 +158,16 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 		if (isContinuousSpell(stack)) {
 
-			SpellData spell = new SpellData(player.world);
+			SpellData spell = new SpellData();
 			spell.processEntity(player, true);
-			SpellUtils.runSpell(stack, spell);
+			SpellUtils.runSpell(player.world, stack, spell);
 		} else {
 			int chargeup = getChargeupTime(stack);
 			if (72000 - count >= chargeup) {
 
-				SpellData spell = new SpellData(player.world);
+				SpellData spell = new SpellData();
 				spell.processEntity(player, true);
-				SpellUtils.runSpell(stack, spell);
+				SpellUtils.runSpell(player.world, stack, spell);
 
 				setCooldown(player.world, (EntityPlayer) player, player.getActiveHand(), stack, spell);
 			}

@@ -9,7 +9,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.SpellRingCache;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.util.PosUtils;
@@ -52,7 +51,7 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 
 	protected SpellRing getChildRing() {
 		NBTTagCompound compound = getDataManager().get(CHILD_RING);
-		return SpellRingCache.INSTANCE.getSpellRingByNBT(compound);
+		return SpellRing.deserializeRing(compound);
 	}
 
 	protected void setChildRing(SpellRing ring) {
@@ -69,9 +68,9 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 		SpellRing spellRing = getSpellRing();
 		SpellRing childRing = getChildRing();
 
-		double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
-		double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
-		double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
+		double range = childRing.getAttributeValue(world, AttributeRegistry.RANGE, data);
+		double potency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data);
+		double duration = childRing.getAttributeValue(world, AttributeRegistry.DURATION, data);
 		double maxPotency = childRing.getModule() != null ? childRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY).max : 0;
 
 		if (data == null || spellRing == null) {
@@ -123,7 +122,7 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 
 			Vec3d to = dir.rotatePitch(pitch).rotateYaw(yaw).normalize().scale(rand.nextDouble(maxPotency * 5) < potency ? range : 1.0 / 2.0).add(getPositionVector());
 
-			ModuleEffectLightning.doLightning(rand.nextLong(100, 100000), world, data.getCaster(), getPositionVector(), to, range, potency, duration);
+			ModuleEffectLightning.doLightning(rand.nextLong(100, 100000), world, data.getCaster(world), getPositionVector(), to, range, potency, duration);
 		}
 	}
 
@@ -134,12 +133,12 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 			return;
 		}
 
-		double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
-		double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
-		double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
+		double range = childRing.getAttributeValue(world, AttributeRegistry.RANGE, data);
+		double potency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data);
+		double duration = childRing.getAttributeValue(world, AttributeRegistry.DURATION, data);
 		AttributeRange potencyRange = childRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY);
 		Vec3d origin = this.getPositionVector();
-		Entity caster = data.getCaster();
+		Entity caster = data.getCaster(world);
 
 		for (int i = 0; i < potency; i += ((int) potencyRange.min >> 2)) {
 			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
@@ -157,7 +156,7 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 		super.readCustomNBT(compound);
 
 		if (compound.hasKey("child_ring")) {
-			setChildRing(SpellRingCache.INSTANCE.getSpellRingByNBT(compound.getCompoundTag("child_ring")));
+			setChildRing(SpellRing.deserializeRing(compound.getCompoundTag("child_ring")));
 		}
 	}
 

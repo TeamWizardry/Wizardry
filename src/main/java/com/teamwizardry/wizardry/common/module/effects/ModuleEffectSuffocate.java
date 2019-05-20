@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -9,12 +7,15 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.init.ModPotions;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @RegisterModule(ID="effect_suffocate")
 public class ModuleEffectSuffocate implements IModuleEffect {
@@ -25,12 +26,12 @@ public class ModuleEffectSuffocate implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity entity = spell.getVictim();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity entity = spell.getVictim(world);
 
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
+		double time = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (entity instanceof EntityLivingBase)
 			((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.SUFFOCATE, (int) time));
@@ -40,9 +41,9 @@ public class ModuleEffectSuffocate implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		// TODO: EffectSuffocate Particles
-//		World world = spell.world;
+//		;
 //		Vec3d position = spell.getTarget();
 //
 //		if (position == null) return;

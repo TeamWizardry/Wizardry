@@ -41,15 +41,15 @@ public class ModuleEffectBreak implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		EnumFacing facing = spell.getData(FACE_HIT);
-		Entity targetEntity = spell.getVictim();
-		Entity caster = spell.getCaster();
+		Entity targetEntity = spell.getVictim(world);
+		Entity caster = spell.getCaster(world);
 
-		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
-		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+		double range = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
+		double strength = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
 
 		if (targetEntity instanceof EntityLivingBase)
 			for (ItemStack stack : targetEntity.getArmorInventoryList())
@@ -68,7 +68,7 @@ public class ModuleEffectBreak implements IModuleEffect {
 		});
 		for (BlockPos pos : blocks)
 		{
-			if (!spellRing.taxCaster(spell, 1 / range, false)) continue;
+			if (!spellRing.taxCaster(world, spell, 1 / range, false)) continue;
 			BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 		}
 		
@@ -77,9 +77,8 @@ public class ModuleEffectBreak implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 
@@ -88,18 +87,18 @@ public class ModuleEffectBreak implements IModuleEffect {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
 			return previousData;
 
-		World world = data.world;
+
 		BlockPos targetPos = data.getData(BLOCK_HIT);
 		EnumFacing facing = data.getData(FACE_HIT);
 
-		double range = ring.getAttributeValue(AttributeRegistry.AREA, data);
-		double strength = ring.getAttributeValue(AttributeRegistry.POTENCY, data);
+		double range = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
+		double strength = ring.getAttributeValue(world, AttributeRegistry.POTENCY, data);
 
 		if (targetPos == null || facing == null) return previousData;
 		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range)+1)/2), pos ->
@@ -119,7 +118,7 @@ public class ModuleEffectBreak implements IModuleEffect {
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
 			for (EnumFacing face : EnumFacing.VALUES) {
 					mutable.move(face);
-					IBlockState adjStat = instance.getCachableBlockstate(data.world, mutable, previousData);
+				IBlockState adjStat = instance.getCachableBlockstate(world, mutable, previousData);
 					if (adjStat.getBlock() != state.getBlock() || !blocks.contains(mutable)) {
 						instance.drawFaceOutline(mutable, face.getOpposite());
 				}

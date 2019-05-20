@@ -16,6 +16,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -32,13 +33,12 @@ public class ModuleEffectTimeLock implements IModuleEffect, IDelayedModule {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity targetEntity = spell.getVictim();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity targetEntity = spell.getVictim(world);
 
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell);
+		double time = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell);
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetEntity != null) {
 			targetEntity.setFire((int) time);
@@ -48,15 +48,14 @@ public class ModuleEffectTimeLock implements IModuleEffect, IDelayedModule {
 	}
 
 	@Override
-	public void runDelayedEffect(SpellData spell, SpellRing spellRing) {
+	public void runDelayedEffect(@Nonnull World world, SpellData spell, SpellRing spellRing) {
 
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 

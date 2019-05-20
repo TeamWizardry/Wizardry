@@ -22,6 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -34,22 +35,22 @@ public class ModuleEffectDisarm implements IModuleEffect {
 	private Function1<EntityLiving, Object> inventoryHandsDropChances = MethodHandleHelper.wrapperForGetter(EntityLiving.class, "inventoryHandsDropChances", "field_184655_bs", "bs");
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity targetEntity = spell.getVictim();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity targetEntity = spell.getVictim(world);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			if (!spell.world.isRemote) {
-				if (!spellRing.taxCaster(spell, true)) return false;
+			if (!world.isRemote) {
+				if (!spellRing.taxCaster(world, spell, true)) return false;
 
 				ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
 
 				if (targetEntity instanceof EntityPlayer) {
 					ItemStack copy = held.copy();
 					held.setCount(0);
-					EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, copy);
+					EntityItem item = new EntityItem(world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, copy);
 					item.setDefaultPickupDelay();
-					spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
-					return spell.world.spawnEntity(item);
+					world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
+					return world.spawnEntity(item);
 				} else {
 					ItemStack stack = held.copy();
 					held.setCount(0);
@@ -70,10 +71,10 @@ public class ModuleEffectDisarm implements IModuleEffect {
 					boolean flag = dropChance > 1.0;
 
 					if (!held.isEmpty() && flag && RandUtil.nextDouble() < dropChance) {
-						EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
+						EntityItem item = new EntityItem(world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
 						item.setPickupDelay(5);
-						spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
-						return spell.world.spawnEntity(item);
+						world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
+						return world.spawnEntity(item);
 					}
 				}
 			}
@@ -84,9 +85,8 @@ public class ModuleEffectDisarm implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 

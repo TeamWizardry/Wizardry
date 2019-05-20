@@ -16,7 +16,6 @@ public class CommandWizardry extends CommandTreeBase {
 	public CommandWizardry() {
 		addSubcommand(new CommandListModules());
 		addSubcommand(new CommandResetModules());
-		addSubcommand(new CommandReloadModules());
 		addSubcommand(new CommandGenStaff());
 		addSubcommand(new CommandGenPearl());
 		addSubcommand(new CommandDebug());

@@ -85,11 +85,10 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
+	public boolean run(@NotNull World world, ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d look = spell.getData(LOOK);
-		Vec3d position = spell.getOrigin();
-		Entity caster = spell.getCaster();
+		Vec3d position = spell.getOrigin(world);
+		Entity caster = spell.getCaster(world);
 
 		if (look == null || position == null || caster == null) return false;
 		ItemStack stack = ((EntityLivingBase) caster).getHeldItemMainhand();
@@ -98,21 +97,21 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 		BeamTicker ticker = beamTickMap.get(stack);
 
-		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
-		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+		double range = spellRing.getAttributeValue(world, AttributeRegistry.RANGE, spell);
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
 
 		double beamOffset = ticker.ticks + potency;
 		ticker.cast = false;
 
 		if (beamOffset >= ConfigValues.beamTimer) {
 			beamOffset %= ConfigValues.beamTimer;
-			if (!spellRing.taxCaster(spell, true)) {
+			if (!spellRing.taxCaster(world, spell, true)) {
 				ticker.ticks = beamOffset;
 				return false;
 			}
 
 			IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-			overrides.onRunBeam(spell, spellRing);
+			overrides.onRunBeam(world, spell, spellRing);
 
 			RayTraceResult trace = new RayTrace(world, look, position, range)
 					.setEntityFilter(input -> input != caster)
@@ -123,10 +122,10 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 			spell.processTrace(trace, look.scale(range));
 
 			if (spellRing.getChildRing() != null)
-				spellRing.getChildRing().runSpellRing(spell);
+				spellRing.getChildRing().runSpellRing(world, spell, true);
 
 			ticker.cast = true;
-			instance.sendRenderPacket(spell, spellRing);	// Is already executed via SpellRing.runSpellRing() ??? 
+			instance.sendRenderPacket(world, spell, spellRing);    // Is already executed via SpellRing.runSpellRing() ???
 		}
 
 		ticker.ticks = beamOffset;
@@ -135,15 +134,15 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		World world = data.world;
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+
 		Vec3d look = data.getData(LOOK);
-		Vec3d position = data.getOrigin();
-		Entity caster = data.getCaster();
+		Vec3d position = data.getOrigin(world);
+		Entity caster = data.getCaster(world);
 
 		if (look == null || position == null || caster == null) return previousData;
 
-		double range = ring.getAttributeValue(AttributeRegistry.RANGE, data);
+		double range = ring.getAttributeValue(world, AttributeRegistry.RANGE, data);
 
 		RayTraceResult trace = new RayTrace(world, look, position, range)
 				.setEntityFilter(input -> input != caster)
@@ -157,21 +156,20 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(World world, ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-		if( overrides.onRenderBeam(spell, spellRing) )
+		if (overrides.onRenderBeam(world, spell, spellRing))
 			return;
 
-		World world = spell.world;
 		Vec3d look = spell.getData(LOOK);
-		Vec3d position = spell.getOrigin();
-		Entity caster = spell.getCaster();
+		Vec3d position = spell.getOrigin(world);
+		Entity caster = spell.getCaster(world);
 
 		if (look == null || position == null || caster == null) return;
 		ItemStack stack = ((EntityLivingBase) caster).getHeldItemMainhand();
 		if (stack.isEmpty()) return;
 
-		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+		double range = spellRing.getAttributeValue(world, AttributeRegistry.RANGE, spell);
 
 		RayTraceResult trace = new RayTrace(world, look, position, range)
 				.setEntityFilter(input -> input != caster)
@@ -183,7 +181,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 		if (target == null) return;
 
-		LibParticles.SHAPE_BEAM(world, target, spell.getOriginHand(), RandUtil.nextBoolean() ? spellRing.getPrimaryColor() : spellRing.getSecondaryColor());
+		LibParticles.SHAPE_BEAM(world, target, spell.getOriginHand(world), RandUtil.nextBoolean() ? spellRing.getPrimaryColor() : spellRing.getSecondaryColor());
 	}
 
 	public static class BeamTicker {
@@ -198,13 +196,13 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 	///////////
 	
 	@ModuleOverride("shape_beam_render")
-	public boolean onRenderBeam(SpellData data, SpellRing shape) {
+	public boolean onRenderBeam(World world, SpellData data, SpellRing shape) {
 		// Default implementation
 		return false;
 	}
 	
 	@ModuleOverride("shape_beam_run")
-	public void onRunBeam(@ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape) {
+	public void onRunBeam(World world, @ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 }

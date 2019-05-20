@@ -27,6 +27,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -42,32 +43,31 @@ public class ModuleEffectThrive implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		BlockPos targetPos = spell.getTargetPos();
-		Entity targetEntity = spell.getVictim();
-		Entity caster = spell.getCaster();
-		Vec3d pos = spell.getTarget();
+		Entity targetEntity = spell.getVictim(world);
+		Entity caster = spell.getCaster(world);
+		Vec3d pos = spell.getTarget(world);
 
 		if (pos != null)
-			spell.world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 		if (targetEntity instanceof EntityLivingBase) {
-			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
+			double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 2;
 
-			if (!spellRing.taxCaster(spell, true)) return false;
+			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			((EntityLivingBase) targetEntity).heal((float) potency);
 		}
 
 		if (targetPos != null) {
 			if (world.getBlockState(targetPos).getBlock() instanceof IGrowable) {
-				if (!spellRing.taxCaster(spell, true)) return false;
+				if (!spellRing.taxCaster(world, spell, true)) return false;
 				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)))
 					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, targetPos);
 			} else if (world.getBlockState(targetPos).getBlock() instanceof IPlantable) {
 				IBlockState state = world.getBlockState(targetPos);
 				Block block = state.getBlock();
-				if (!spellRing.taxCaster(spell, true)) return false;
+				if (!spellRing.taxCaster(world, spell, true)) return false;
 				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster))) {
 					while (world.getBlockState(targetPos.up()).getBlock() == block) {
 						targetPos = targetPos.up();
@@ -83,9 +83,8 @@ public class ModuleEffectThrive implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 		LibParticles.EFFECT_REGENERATE(world, position, instance.getPrimaryColor());

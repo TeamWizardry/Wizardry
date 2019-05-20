@@ -15,6 +15,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -30,13 +31,13 @@ public class ModuleEffectVanish implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity targetEntity = spell.getVictim();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity targetEntity = spell.getVictim(world);
 
-		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
+		double duration = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 20;
 
 		if (targetEntity instanceof EntityLivingBase) {
-			if (!spellRing.taxCaster(spell, true)) return false;
+			if (!spellRing.taxCaster(world, spell, true)) return false;
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, (int) duration, 0, true, false));
 		}
 		return true;
@@ -44,9 +45,8 @@ public class ModuleEffectVanish implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 

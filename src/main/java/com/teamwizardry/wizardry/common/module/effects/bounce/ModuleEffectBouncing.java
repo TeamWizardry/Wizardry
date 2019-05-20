@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.module.effects;
+package com.teamwizardry.wizardry.common.module.effects.bounce;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
@@ -10,7 +10,6 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.BounceHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -18,17 +17,14 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.network.PacketAddBouncyBlock;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -37,6 +33,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -49,36 +46,37 @@ public class ModuleEffectBouncing implements IModuleEffect, ILingeringModule {
 	}
 
 	@Override
-	public boolean runOnce(ModuleInstance instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity entity = spell.getVictim();
-		World world = spell.world;
+	public boolean runOnce(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity entity = spell.getVictim(world);
+
 		BlockPos pos = spell.getTargetPos();
+		if (pos == null) return true;
 
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
+		double time = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (entity instanceof EntityLivingBase) {
-			world.playSound(null, entity.getPosition(), ModSounds.SLIME_SQUISHING, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
-			((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.BOUNCING, (int) time, 0, true, false));
+			BounceManager.INSTANCE.forEntity((EntityLivingBase) entity, (int) time);
 		} else {
-			BounceHandler.addBounceHandler(world, pos, (int) time);
+			BounceManager.INSTANCE.forBlock(world, pos, (int) time);
 			PacketHandler.NETWORK.sendToAll(new PacketAddBouncyBlock(world, pos, (int) time));
 		}
 
+		world.playSound(null, pos, ModSounds.SLIME_SQUISHING, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
 		return true;
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity target = spell.getVictim();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+
+		Entity target = spell.getVictim(world);
 		BlockPos pos = spell.getTargetPos();
 
 		if (ClientTickHandler.getTicks() % 10 == 0) return;
@@ -105,6 +103,7 @@ public class ModuleEffectBouncing implements IModuleEffect, ILingeringModule {
 			ParticleBuilder glitter = new ParticleBuilder(30);
 			glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			//	glitter.enableMotionCalculation();
 
 			AxisAlignedBB aabb = world.getBlockState(pos).getSelectedBoundingBox(world, pos);
 			double ix = aabb.minX;
@@ -140,8 +139,8 @@ public class ModuleEffectBouncing implements IModuleEffect, ILingeringModule {
 	}
 
 	@Override
-	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
+	public int getLingeringTime(World world, SpellData spell, SpellRing spellRing) {
+		double time = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 		return (int) time;
 	}
 }

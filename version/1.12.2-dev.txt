@@ -1,4 +1,7 @@
 0.10.1
+Fixed a bug where lingering spells casted from lingering spells couldn't coexist
+Fixed bug where lingering spells of the same type couldn't co-exist (yes, this is different)
+Fixed spells not working on servers.
 Fixed vulnerability with spell book syncing
 Redid /wizardry command
 Added levitation orbs for funsies

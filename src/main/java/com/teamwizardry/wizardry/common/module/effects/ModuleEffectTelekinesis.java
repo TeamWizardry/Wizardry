@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -42,23 +43,22 @@ public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d targetPos = spell.getTarget();
-		Entity caster = spell.getCaster();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d targetPos = spell.getTarget(world);
+		Entity caster = spell.getCaster(world);
 
-		double potency = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
 
 		if (targetPos == null) return false;
 
 		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).grow(potency, potency, potency));
 
 		if (RandUtil.nextInt(10) == 0)
-			spell.world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
+			world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);
 			if (dist > potency) continue;
-			if (!spellRing.taxCaster(spell, true)) return false;
+			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			final double upperMag = 1;
 			final double scale = 1;
@@ -78,9 +78,8 @@ public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 

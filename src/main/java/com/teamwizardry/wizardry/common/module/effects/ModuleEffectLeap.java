@@ -18,14 +18,15 @@ import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 
 /**
@@ -40,8 +41,8 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 	}
 
 	@Override
-	public int getNewCooldown(@Nonnull SpellData spell, SpellRing ring) {
-		Entity target = spell.getData(ENTITY_HIT);
+	public int getNewCooldown(World world, @Nonnull SpellData spell, SpellRing ring) {
+		Entity target = spell.getVictim(world);
 		if (!(target instanceof EntityLivingBase))
 			return 50;
 
@@ -69,9 +70,9 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d lookVec = spell.getData(LOOK);
-		Entity target = spell.getVictim();
+		Entity target = spell.getVictim(world);
 
 		if (target == null) return true;
 		if (!(target instanceof EntityLivingBase)) return true;
@@ -81,8 +82,8 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 		if (lookVec == null) return true;
 
 		if (!target.hasNoGravity()) {
-			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
-			if (!spellRing.taxCaster(spell, true)) return false;
+			double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
+			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			if (!ItemNBTHelper.verifyExistence(stack, "jump_count")
 					|| !ItemNBTHelper.verifyExistence(stack, "max_jumps")
@@ -97,20 +98,20 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 			target.motionZ += lookVec.z;
 
 			target.velocityChanged = true;
-			target.fallDistance /= (1 + MathHelper.ceil(spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 8));
+			target.fallDistance /= (1 + MathHelper.ceil(spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 8));
 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));
-			spell.world.playSound(null, target.getPosition(), ModSounds.FLY, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, target.getPosition(), ModSounds.FLY, SoundCategory.NEUTRAL, 1, 1);
 		}
 		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Vec3d position = spell.getTarget();
-		Entity entityHit = spell.getVictim();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
+		Entity entityHit = spell.getVictim(world);
 
 		if (position == null) return;
 		if (entityHit == null) return;
@@ -118,7 +119,7 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 		if (!entityHit.hasNoGravity()) {
 			Vec3d normal = new Vec3d(entityHit.motionX, entityHit.motionY, entityHit.motionZ).normalize().scale(1 / 2.0);
 
-			LibParticles.AIR_THROTTLE(spell.world, position, normal, instance.getPrimaryColor(), instance.getSecondaryColor(), 0.5);
+			LibParticles.AIR_THROTTLE(world, position, normal, instance.getPrimaryColor(), instance.getSecondaryColor(), 0.5);
 
 		}
 	}

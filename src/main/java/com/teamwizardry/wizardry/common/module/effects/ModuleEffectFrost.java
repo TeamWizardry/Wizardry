@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -34,6 +34,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -49,26 +50,25 @@ public class ModuleEffectFrost implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity targetEntity = spell.getVictim();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity targetEntity = spell.getVictim(world);
 		BlockPos targetPos = spell.getTargetPos();
-		Entity caster = spell.getCaster();
+		Entity caster = spell.getCaster(world);
 
-		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
+		double range = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell) / 2;
+		double time = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetEntity != null) {
-			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
 			targetEntity.extinguish();
 			if (targetEntity instanceof EntityLivingBase)
 				((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 0, true, false));
 		}
 
 		if (targetPos != null) {
-			spell.world.playSound(null, targetPos, ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, targetPos, ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
 			for (int x = (int) range; x >= -range; x--)
 				for (int y = (int) range; y >= -range; y--)
 					for (int z = (int) range; z >= -range; z--) {
@@ -99,9 +99,8 @@ public class ModuleEffectFrost implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 

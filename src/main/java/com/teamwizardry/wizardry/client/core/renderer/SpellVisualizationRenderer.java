@@ -45,7 +45,7 @@ public class SpellVisualizationRenderer {
 
 		for (SpellRing chain : chains) {
 
-			SpellData data = new SpellData(world);
+			SpellData data = new SpellData();
 			data.processEntity(player, true);
 
 			SpellRing ring = chain;
@@ -55,14 +55,14 @@ public class SpellVisualizationRenderer {
 						untransientModules.add(ring.getModule());
 
 						SpellData oldTickData = previousTickCache.get(ring.getModule());
-						SpellData newTickData = ring.getModule().renderVisualization(data, ring, oldTickData);
+						SpellData newTickData = ring.getModule().renderVisualization(world, data, ring, oldTickData);
 
 						if (newTickData != oldTickData) {
 							previousTickCache.put(ring.getModule(), newTickData);
 						}
 					} else {
 
-						SpellData newTickData = ring.getModule().renderVisualization(data, ring, new SpellData(world));
+						SpellData newTickData = ring.getModule().renderVisualization(world, data, ring, new SpellData());
 						previousTickCache.put(ring.getModule(), newTickData);
 					}
 				}

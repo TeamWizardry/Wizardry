@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.network;
+package com.teamwizardry.wizardry.common.module.effects.bounce;
 
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 @PacketRegister(Side.SERVER)
 public class PacketBounce extends PacketBase {
+
+	public PacketBounce() {
+	}
 
 	@Override
 	public void handle(@NotNull MessageContext ctx) {

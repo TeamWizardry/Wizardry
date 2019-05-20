@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -30,6 +29,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -71,16 +71,15 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 
 	@Override
 	@SuppressWarnings("unused")
-	public boolean runOnce(ModuleInstance instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
+	public boolean runOnce(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		BlockPos targetPos = spell.getTargetPos();
-		Entity targetEntity = spell.getVictim();
-		Entity caster = spell.getCaster();
+		Entity targetEntity = spell.getVictim(world);
+		Entity caster = spell.getCaster(world);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
-			double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
-			if (!spellRing.taxCaster(spell, true)) return false;
+			double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
+			double duration = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
+			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) potency, true, false));
 		}
@@ -88,15 +87,14 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity victim = spell.getVictim();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity victim = spell.getVictim(world);
 
 		if (victim == null) return;
 
@@ -129,8 +127,8 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 	}
 
 	@Override
-	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
+	public int getLingeringTime(World world, SpellData spell, SpellRing spellRing) {
+		double duration = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 		return (int) duration;
 	}
 }

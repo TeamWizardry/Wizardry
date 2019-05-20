@@ -38,10 +38,9 @@ import java.util.List;
 
 /**
  * Modules ala IBlockStates. <br />
- * <b>NOTE</b>: Is read only. Use {@link SpellRingCache} or {@link SpellBuilder} to create new SpellRing instances. <br/>
  * <b>IMPORTANT</b>: All new NBT fields, which are float or double should be stored in their fixed point form.
- *                   Also lists and compounds must be sorted by some arbitrary, but fixed, order.
- *                   This way it is assured that the {@link NBTBase#equals} in the resulting NBT is reliable.   
+ * Also lists and compounds must be sorted by some arbitrary, but fixed, order.
+ * This way it is assured that the {@link NBTBase#equals} in the resulting NBT is reliable.
  */
 public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
@@ -50,7 +49,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * <b>NOTE</b>: Must be initialized only by {@link #serializeNBT()} to have a normalized key!
 	 */
 	private NBTTagCompound serializedTag = null;
-	
+
 	/**
 	 * Store all processed modifier info and any extra you want here.
 	 * Used by modifier processing and the WorktableGUI to save GUI in TileWorktable <br/>
@@ -58,13 +57,13 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * to have normalized keys, used for cache nbt!
 	 */
 	private NBTTagCompound informationTag = new NBTTagCompound();
-	
+
 	/**
 	 * A map holding compile time modifiers.
 	 */
 	@Nonnull
 	private ArrayListMultimap<Operation, AttributeModifierSpellRing> compileTimeModifiers = ArrayListMultimap.create();
-	
+
 	/**
 	 * Primary rendering color.
 	 */
@@ -98,7 +97,13 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * A module override handler.
 	 */
-	private ModuleOverrideHandler lazy_overrideHandler = null;	// "lazy" means, that access to variable should be done only over getter
+	private ModuleOverrideHandler lazy_overrideHandler = null;    // "lazy" means, that access to variable should be done only over getter
+
+	/**
+	 * Differentiate between spellrings easily.
+	 */
+	@Nonnull
+	private UUID uniqueID = UUID.randomUUID();
 
 	/**
 	 * The constructor.<br/>
@@ -110,7 +115,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * The constructor. <br/>
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
-	 * 
+	 *
 	 * @param module the module to construct the spell from.
 	 */
 	SpellRing(@Nonnull ModuleInstance module) {
@@ -118,13 +123,13 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * Deserializes a spell ring from given NBT. <br /> 
-	 * <b>NOTE</b>: Called only by {@link SpellRingCache}.
-	 * 
+	 * Deserializes a spell ring from given NBT. <br/>
+	 * Please don't misuse this.
+	 *
 	 * @param compound the tag compound to deserialize from
 	 * @return A created spell ring.
 	 */
-	static SpellRing deserializeRing(NBTTagCompound compound) {
+	public static SpellRing deserializeRing(NBTTagCompound compound) {
 		SpellRing ring = new SpellRing();
 		ring.deserializeNBT(compound);
 
@@ -135,28 +140,27 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			lastRing = lastRing.getChildRing();
 		}
 		if (lastRing != null) lastRing.updateColorChain();
-		
+
 		return ring;
 	}
 
 	/**
-	 * Will run the spellData from this ring and down to it's children including rendering.
+	 * Returns a normalized NBT tag compound for information from a source.
 	 *
-	 * @param data The SpellData object.
+	 * @param informationMap a source key-value list, storing information.
+	 * @return normalized information NBT compound
 	 */
-	public void runSpellRing(SpellData data) {
-		if (module == null)
-			return;
+	private static NBTTagCompound sortInformationTag(Map<String, Double> informationMap) {
+		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationMap.size());
+		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, FixedPointUtils.doubleToFixed(val))));
+		sortedInformationList.sort(Comparator.comparing(Pair::getKey));
 
-		if (data.getCaster() != null)
-			data.processCastTimeModifiers(data.getCaster(), this);
-		
-		boolean success = module.castSpell(data, this, true);
-
-		if (success && module.shouldRunChildren()) {
-			if (getChildRing() != null) 
-				getChildRing().runSpellRing(data);
+		NBTTagCompound newInformationTag = new NBTTagCompound();
+		for (Pair<String, Long> entry : sortedInformationList) {
+			FixedPointUtils.setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
 		}
+
+		return newInformationTag;
 	}
 
 	/**
@@ -180,58 +184,57 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return newInformationTag;
 	}
 
+	/**
+	 * Returns a normalized modifier tag list.
+	 *
+	 * @param modifierList the modifier list.
+	 * @return the normalized tag list.
+	 */
+	private static NBTTagList sortModifierList(List<NBTTagCompound> modifierList) {
+		NBTTagList attribs = new NBTTagList();
 
-	//TODO: pearl holders
-	public boolean taxCaster(SpellData data, double multiplier, boolean failSound) {
-		Entity caster = data.getCaster();
-		if (caster == null) return false;
-
-		double manaDrain = getManaDrain(data) * multiplier;
-		double burnoutFill = getBurnoutFill(data) * multiplier;
-
-		boolean fail = false;
-
-		try (CapManager.CapManagerBuilder mgr = CapManager.forObject(caster)) {
-			if (mgr.getMana() < manaDrain) fail = true;
-
-			mgr.removeMana(manaDrain);
-			mgr.addBurnout(burnoutFill);
+		modifierList.sort(SpellRing::compareModifierCompounds);
+		for (NBTTagCompound modifierCompound : modifierList) {
+			attribs.appendTag(modifierCompound);
 		}
 
-		if (fail && failSound) {
-			World world = data.world;
-			Vec3d origin = data.getOriginWithFallback();
-			if (origin != null)
-				world.playSound(null, new BlockPos(origin), ModSounds.SPELL_FAIL, SoundCategory.NEUTRAL, 1f, 1f);
-		}
-
-		return !fail;
+		return attribs;
 	}
 
-	public boolean taxCaster(SpellData data, boolean failSound) {
-		return taxCaster(data, 1, failSound);
+	private static int compareModifierCompounds(NBTTagCompound nbt1, NBTTagCompound nbt2) {
+		int op1 = nbt1.getInteger("operation");
+		int op2 = nbt2.getInteger("operation");
+
+		if (op1 != op2)
+			return (op1 - op2) > 0 ? 1 : -1;
+
+		return nbt1.getString("attribute").compareTo(nbt2.getString("attribute"));
 	}
 
 	/**
-	 * Get a modifier in this ring between the range. Returns the attribute value, modified by burnout and multipliers, for use in a spell.
+	 * Will run the spellData from this ring and down to it's children including rendering.
 	 *
-	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
-	 * @param data      The data of the spell being cast, used to get caster-specific modifiers.
-	 * @return The {@code double} potency of a modifier.
+	 * @param world
+	 * @param data                 The SpellData object.
+	 * @param makeSpellIndependant This field will make the spell run with another unique id so it doesn't
 	 */
-	public final double getAttributeValue(Attribute attribute, SpellData data) {
-		if (module == null) return 0;
+	public void runSpellRing(@Nonnull World world, SpellData data, boolean makeSpellIndependant) {
+		if (module == null)
+			return;
 
-		double current = FixedPointUtils.getDoubleFromNBT(informationTag, attribute.getNbtName());
+		SpellRing modifRing = makeSpellIndependant ? changeUUID() : this;
+		SpellData modifData = makeSpellIndependant ? data.copy() : data;
 
-		AttributeRange range = module.getAttributeRanges().get(attribute);
+		if (modifData.getCaster(world) != null)
+			modifData.processCastTimeModifiers(modifData.getCaster(world), modifRing);
 
-		current = MathHelper.clamp(current, range.min, range.max);
-		current = data.getCastTimeValue(attribute, current);
-		current *= getPlayerBurnoutMultiplier(data);
-		current *= getPowerMultiplier();
-		
-		return current;
+		boolean success = module.castSpell(world, modifData, modifRing, true);
+
+		if (success && module.shouldRunChildren()) {
+			if (getChildRing() != null) {
+				getChildRing().runSpellRing(world, modifData, makeSpellIndependant);
+			}
+		}
 	}
 
 	/**
@@ -249,57 +252,36 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		return MathHelper.clamp(current, range.min, range.max);
 	}
-	
-	/**
-	 * Will process all modifiers and attributes set.
-	 * WILL RESET THE INFORMATION TAG. <br/>
-	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
-	 */
-	void processModifiers() {
-		HashMap<String, Double> informationMap = new HashMap<>();
 
-		if (module != null) {
-			module.getAttributeRanges().forEach((attribute, range) -> {
-				informationMap.put(attribute.getNbtName(), range.base);
-			});
+	//TODO: pearl holders
+	public boolean taxCaster(@Nonnull World world, SpellData data, double multiplier, boolean failSound) {
+		Entity caster = data.getCaster(world);
+		if (caster == null) return false;
+
+		double manaDrain = getManaDrain(data) * multiplier;
+		double burnoutFill = getBurnoutFill(data) * multiplier;
+
+		boolean fail = false;
+
+		try (CapManager.CapManagerBuilder mgr = CapManager.forObject(caster)) {
+			if (mgr.getMana() < manaDrain) fail = true;
+
+			mgr.removeMana(manaDrain);
+			mgr.addBurnout(burnoutFill);
 		}
 
-		for (Operation op : Operation.values()) {
-			for (AttributeModifier modifier : compileTimeModifiers.get(op)) {
+		if (fail && failSound) {
 
-				Double current = informationMap.get(modifier.getAttribute().getNbtName());
-				if( current == null )
-					continue;
-				double newValue = modifier.apply(current);
-
-				informationMap.put(modifier.getAttribute().getNbtName(), newValue);
-
-				if (ConfigValues.debugInfo)
-					Wizardry.LOGGER.info(module == null ? "<null module>" : module.getSubModuleID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
-			}
+			Vec3d origin = data.getOriginWithFallback(world);
+			if (origin != null)
+				world.playSound(null, new BlockPos(origin), ModSounds.SPELL_FAIL, SoundCategory.NEUTRAL, 1f, 1f);
 		}
-		
-		// Output a sorted list of tags to informationTag
-		informationTag = sortInformationTag(informationMap);
+
+		return !fail;
 	}
-	
-	/**
-	 * Returns a normalized NBT tag compound for information from a source.
-	 *
-	 * @param informationMap a source key-value list, storing information.
-	 * @return normalized information NBT compound
-	 */
-	private static NBTTagCompound sortInformationTag(Map<String, Double> informationMap) {
-		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationMap.size());
-		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, FixedPointUtils.doubleToFixed(val))));
-		sortedInformationList.sort(Comparator.comparing(Pair::getKey));
 
-		NBTTagCompound newInformationTag = new NBTTagCompound();
-		for( Pair<String, Long> entry : sortedInformationList ) {
-			FixedPointUtils.setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
-		}
-
-		return newInformationTag;
+	public boolean taxCaster(@Nonnull World world, SpellData data, boolean failSound) {
+		return taxCaster(world, data, 1, failSound);
 	}
 
 	public boolean isContinuous() {
@@ -308,7 +290,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		}
 		return false;
 	}
-	
+
 //	public final float getCapeReduction(EntityLivingBase caster) {
 //		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
 //		if (stack != ItemStack.EMPTY) {
@@ -334,19 +316,66 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return childRings;
 	}
 
+	/**
+	 * Get a modifier in this ring between the range. Returns the attribute value, modified by burnout and multipliers, for use in a spell.
+	 *
+	 *
+	 * @param world
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
+	 * @param data      The data of the spell being cast, used to get caster-specific modifiers.
+	 * @return The {@code double} potency of a modifier.
+	 */
+	public final double getAttributeValue(World world, Attribute attribute, SpellData data) {
+		if (module == null) return 0;
+
+		double current = FixedPointUtils.getDoubleFromNBT(informationTag, attribute.getNbtName());
+
+		AttributeRange range = module.getAttributeRanges().get(attribute);
+
+		current = MathHelper.clamp(current, range.min, range.max);
+		current = data.getCastTimeValue(attribute, current);
+		current *= getPlayerBurnoutMultiplier(world, data);
+		current *= getPowerMultiplier();
+
+		return current;
+	}
+
 	@Nullable
 	public SpellRing getChildRing() {
 		return childRing;
 	}
 
 	/**
-	 * Sets a child ring.<br/>
+	 * Will process all modifiers and attributes set.
+	 * WILL RESET THE INFORMATION TAG. <br/>
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
-	 * 
-	 * @param childRing the child ring.
 	 */
-	void setChildRing(@Nonnull SpellRing childRing) {
-		this.childRing = childRing;
+	void processModifiers() {
+		HashMap<String, Double> informationMap = new HashMap<>();
+
+		if (module != null) {
+			module.getAttributeRanges().forEach((attribute, range) -> {
+				informationMap.put(attribute.getNbtName(), range.base);
+			});
+		}
+
+		for (Operation op : Operation.values()) {
+			for (AttributeModifier modifier : compileTimeModifiers.get(op)) {
+
+				Double current = informationMap.get(modifier.getAttribute().getNbtName());
+				if (current == null)
+					continue;
+				double newValue = modifier.apply(current);
+
+				informationMap.put(modifier.getAttribute().getNbtName(), newValue);
+
+				if (ConfigValues.debugInfo)
+					Wizardry.LOGGER.info(module == null ? "<null module>" : module.getSubModuleID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
+			}
+		}
+
+		// Output a sorted list of tags to informationTag
+		informationTag = sortInformationTag(informationMap);
 	}
 
 	@Nullable
@@ -354,50 +383,34 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return parentRing;
 	}
 
+	public SpellRing changeUUID() {
+		uniqueID = UUID.randomUUID();
+		return this;
+	}
+
 	/**
-	 * Sets a parent ring.<br/>
+	 * Sets a child ring.<br/>
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
-	 * 
-	 * @param parentRing the parent ring to set
+	 *
+	 * @param childRing the child ring.
 	 */
-	void setParentRing(@Nullable SpellRing parentRing) {
-		this.parentRing = parentRing;
+	void setChildRing(@Nonnull SpellRing childRing) {
+		this.childRing = childRing;
 	}
-	
-	/**
-	 * Returns the handler to invoke overrides of the whole spell chain. 
-	 * 
-	 * @return the override handler of the spell chain.
-	 */
-	@Nonnull
-	public synchronized ModuleOverrideHandler getOverrideHandler() {
-		if( lazy_overrideHandler == null ) {
-			if( parentRing != null )
-				lazy_overrideHandler = parentRing.getOverrideHandler();
-			else {
-				lazy_overrideHandler = new ModuleOverrideHandler(this);
-			}
-		}
-		
-		return lazy_overrideHandler;
-	}
-	
+
 	@Nullable
 	public ModuleInstance getModule() {
 		return module;
 	}
 
 	/**
-	 * Sets a module.<br/>
-	 * <b>NOTE</b>: Called from constructor and implicitly only by {@link SpellBuilder}.
-	 * 
-	 * @param module the module to set 
+	 * Sets a parent ring.<br/>
+	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
+	 *
+	 * @param parentRing the parent ring to set
 	 */
-	void setModule(@Nonnull ModuleInstance module) {
-		this.module = module;
-
-		setPrimaryColor(module.getPrimaryColor());
-		setSecondaryColor(module.getSecondaryColor());
+	void setParentRing(@Nullable SpellRing parentRing) {
+		this.parentRing = parentRing;
 	}
 
 	@Nonnull
@@ -406,14 +419,21 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * Sets a primary color.<br/>
-	 * <b>NOTE</b>: Called implicitly only by {@link SpellBuilder}.
-	 * 
-	 * @param primaryColor the primary color to set
+	 * Returns the handler to invoke overrides of the whole spell chain.
+	 *
+	 * @return the override handler of the spell chain.
 	 */
-	void setPrimaryColor(@Nonnull Color primaryColor) {
-		this.primaryColor = primaryColor;
-		updateColorChain();
+	@Nonnull
+	public synchronized ModuleOverrideHandler getOverrideHandler() {
+		if (lazy_overrideHandler == null) {
+			if (parentRing != null)
+				lazy_overrideHandler = parentRing.getOverrideHandler();
+			else {
+				lazy_overrideHandler = new ModuleOverrideHandler(this);
+			}
+		}
+
+		return lazy_overrideHandler;
 	}
 
 	@Nonnull
@@ -422,13 +442,16 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * Sets a secondary color.<br/>
-	 * <b>NOTE</b>: Called implicitly only by {@link SpellBuilder}.
-	 * 
-	 * @param secondaryColor 
+	 * Sets a module.<br/>
+	 * <b>NOTE</b>: Called from constructor and implicitly only by {@link SpellBuilder}.
+	 *
+	 * @param module the module to set
 	 */
-	void setSecondaryColor(@Nonnull Color secondaryColor) {
-		this.secondaryColor = secondaryColor;
+	void setModule(@Nonnull ModuleInstance module) {
+		this.module = module;
+
+		setPrimaryColor(module.getPrimaryColor());
+		setSecondaryColor(module.getSecondaryColor());
 	}
 
 	/**
@@ -456,15 +479,36 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
+	 * Sets a primary color.<br/>
+	 * <b>NOTE</b>: Called implicitly only by {@link SpellBuilder}.
+	 *
+	 * @param primaryColor the primary color to set
+	 */
+	void setPrimaryColor(@Nonnull Color primaryColor) {
+		this.primaryColor = primaryColor;
+		updateColorChain();
+	}
+
+	/**
+	 * Sets a secondary color.<br/>
+	 * <b>NOTE</b>: Called implicitly only by {@link SpellBuilder}.
+	 *
+	 * @param secondaryColor
+	 */
+	void setSecondaryColor(@Nonnull Color secondaryColor) {
+		this.secondaryColor = secondaryColor;
+	}
+
+	/**
 	 * Returns mana drain value. If spell data is passed, then the value is modified additionally by runtime data,
 	 * e.g. by cape and halo attributes of caster.
-	 * 
+	 *
 	 * @param data runtime data of active spell. Can be <code>null</code>.
 	 * @return mana drain value
 	 */
 	public double getManaDrain(SpellData data) {
 		double value = FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.MANA.getNbtName());
-		if( data != null )
+		if (data != null)
 			value = data.getCastTimeValue(AttributeRegistry.MANA, value);
 		return value * getManaMultiplier();
 	}
@@ -472,22 +516,22 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Returns burnout fill value. If spell data is passed, then the value is modified additionally by runtime data,
 	 * e.g. by cape and halo attributes of caster.
-	 * 
+	 *
 	 * @param data runtime data of active spell. Can be <code>null</code>.
 	 * @return burnout fill value
 	 */
 	public double getBurnoutFill(SpellData data) {
 		double value = FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.BURNOUT.getNbtName());
-		if( data != null )
-			value = data.getCastTimeValue(AttributeRegistry.BURNOUT, value); 
+		if (data != null)
+			value = data.getCastTimeValue(AttributeRegistry.BURNOUT, value);
 		return value * getBurnoutMultiplier();
 	}
 
 	/**
 	 * Adds a modifier module to spell ring. <br/>
-	 * <b>NOTE</b>: In actual implementation, only attributes are overtaken. <br/> 
+	 * <b>NOTE</b>: In actual implementation, only attributes are overtaken. <br/>
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
-	 * 
+	 *
 	 * @param moduleModifier the modifier module instance
 	 */
 	void addModifier(ModuleInstanceModifier moduleModifier) {
@@ -497,41 +541,22 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Adds an attribute modifier to spell ring. <br/>
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
-	 * 
+	 *
 	 * @param attributeModifier the attribute modifier
 	 */
 	void addModifier(AttributeModifier attributeModifier) {
 		compileTimeModifiers.put(attributeModifier.getOperation(), new AttributeModifierSpellRing(attributeModifier));
 	}
 
-	public int getCooldownTime(@Nullable SpellData data) {
-		if (module != null && data != null && module.getModuleClass() instanceof IOverrideCooldown)
-			return ((IOverrideCooldown) module.getModuleClass()).getNewCooldown(data, this);
-
-		return (int) FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.COOLDOWN.getNbtName());
-	}
-
-	public int getCooldownTime() {
-		return getCooldownTime(null);
-	}
-
 	public int getChargeUpTime() {
 		return (int) FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.CHARGEUP.getNbtName());
 	}
 
-	/**
-	 * All non mana, burnout, and multiplier attributes are reduced based on the caster's burnout level. This returns how much to reduce them by.
-	 *
-	 * @return The INVERTED burnout multiplier.
-	 */
-	public double getPlayerBurnoutMultiplier(SpellData data) {
-		Entity caster = data.getCaster();
-		if (caster == null || caster instanceof EntityLivingBase && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
-			return 1;
+	public int getCooldownTime(@Nullable World world, @Nullable SpellData data) {
+		if (module != null && data != null && world != null && module.getModuleClass() instanceof IOverrideCooldown)
+			return ((IOverrideCooldown) module.getModuleClass()).getNewCooldown(world, data, this);
 
-		double multiplier = CapManager.getBurnout(caster) / CapManager.getMaxBurnout(caster);
-		double burnoutLimit = 0.5; //TODO: Probably put this into config, limit to [0, 1)
-		return Math.min(1, 1 - (multiplier - burnoutLimit) / (1 - burnoutLimit));
+		return (int) FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.COOLDOWN.getNbtName());
 	}
 
 	@Nullable
@@ -541,6 +566,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	public NBTTagCompound getInformationTag() {
 		return informationTag;
+	}
+
+	public int getCooldownTime() {
+		return getCooldownTime(null, null);
 	}
 
 	@Override
@@ -556,17 +585,37 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return builder.toString();
 	}
 
+	/**
+	 * All non mana, burnout, and multiplier attributes are reduced based on the caster's burnout level. This returns how much to reduce them by.
+	 *
+	 * @return The INVERTED burnout multiplier.
+	 */
+	public double getPlayerBurnoutMultiplier(World world, SpellData data) {
+		Entity caster = data.getCaster(world);
+		if (caster == null || caster instanceof EntityLivingBase && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
+			return 1;
+
+		double multiplier = CapManager.getBurnout(caster) / CapManager.getMaxBurnout(caster);
+		double burnoutLimit = 0.5; //TODO: Probably put this into config, limit to [0, 1)
+		return Math.min(1, 1 - (multiplier - burnoutLimit) / (1 - burnoutLimit));
+	}
+
+	@Nonnull
+	public UUID getUniqueID() {
+		return uniqueID;
+	}
+
 	@Override
 	public NBTTagCompound serializeNBT() {
-		if( serializedTag == null ) {
+		if (serializedTag == null) {
 			serializedTag = internalSerializeNBT();
 		}
 		return serializedTag;
 	}
-	
+
 	/**
 	 * Core of {@link #serializeNBT()}. Doesn't set serializedTag.
-	 * 
+	 *
 	 * @return the serialized tag.
 	 */
 	private NBTTagCompound internalSerializeNBT() {
@@ -583,7 +632,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 				FixedPointUtils.setFixedToNBT(modifierCompound, "modifier", modifier.getModifierFixed());
 				modifierList.add(modifierCompound);
 			});
-			
+
 			// Sort and store them
 			NBTTagList attribs = sortModifierList(modifierList);
 			compound.setTag("modifiers", attribs);
@@ -596,40 +645,15 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (childRing != null) compound.setTag("child_ring", this.childRing.serializeNBT());
 		if (module != null) compound.setString("module", module.getSubModuleID());
 
+		compound.setString("uuid", uniqueID.toString());
+
 		return compound;
-	}
-	
-	/**
-	 * Returns a normalized modifier tag list.
-	 * 
-	 * @param modifierList the modifier list.
-	 * @return the normalized tag list. 
-	 */
-	private static NBTTagList sortModifierList(List<NBTTagCompound> modifierList) {
-		NBTTagList attribs = new NBTTagList();
-
-		modifierList.sort(SpellRing::compareModifierCompounds);
-		for( NBTTagCompound modifierCompound : modifierList ) {
-			attribs.appendTag(modifierCompound);
-		}
-
-		return attribs; 
-	}
-	
-	private static int compareModifierCompounds(NBTTagCompound nbt1, NBTTagCompound nbt2) {
-		int op1 = nbt1.getInteger("operation");
-		int op2 = nbt2.getInteger("operation");
-		
-		if( op1 != op2 )
-			return (op1 - op2) > 0?1:-1;
-		
-		return nbt1.getString("attribute").compareTo(nbt2.getString("attribute"));
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
 		// NOTE: Don't store nbt argument to serializedNBT. This one must be generated only by serializeNBT()
-		
+
 		if (nbt.hasKey("module")) this.module = ModuleInstance.deserialize(nbt.getString("module"));
 		if (nbt.hasKey("extra")) informationTag = sortInformationTag(nbt.getCompoundTag("extra"));
 		if (nbt.hasKey("primary_color")) primaryColor = Color.decode(nbt.getString("primary_color"));
@@ -650,12 +674,15 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 				}
 			}
 		}
-		
+
 		if (nbt.hasKey("child_ring")) {
 			SpellRing childRing = deserializeRing(nbt.getCompoundTag("child_ring"));
 			childRing.setParentRing(this);
 			setChildRing(childRing);
 		}
+
+		if (nbt.hasKey("uuid")) uniqueID = UUID.fromString(nbt.getString("uuid"));
+
 	}
 
 	@Override
@@ -663,32 +690,27 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		SpellRing ring = (SpellRing) o;
-		return Objects.equals(serializedTag, ring.serializedTag) &&
-				Objects.equals(informationTag, ring.informationTag) &&
-				Objects.equals(primaryColor, ring.primaryColor) &&
-				Objects.equals(secondaryColor, ring.secondaryColor) &&
-				Objects.equals(module, ring.module) &&
-				Objects.equals(parentRing, ring.parentRing);
+		return Objects.equals(uniqueID, ring.uniqueID);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(serializedTag, informationTag, primaryColor, secondaryColor, module, parentRing);
+		return Objects.hash(uniqueID);
 	}
 
 	////////////////////
-		
+
 	/**
 	 * Storage class for attribute modifiers. An extension class to {@link AttributeModifier}
 	 * is necessary to store values in their fixed value form to avoid conversions and roundup errors. <br />
 	 * <b>NOTE</b>: Helps to avoid using double values in NBT. As the {@link #equals(Object)} method isn't reliable for them.
-	 * 
+	 *
 	 * @author Avatair
 	 */
 	private static class AttributeModifierSpellRing extends AttributeModifier {
-		
+
 		private long modifierFixed;
-		
+
 		public AttributeModifierSpellRing(AttributeModifier modifier) {
 			this(modifier.getAttribute(), modifier.getModifier(), modifier.getOperation());
 		}
@@ -697,7 +719,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			super(attribute, modifier, op);
 			this.modifierFixed = FixedPointUtils.doubleToFixed(modifier);
 		}
-		
+
 		public AttributeModifierSpellRing(Attribute attribute, long modifierFixed, Operation op) {
 			super(attribute, FixedPointUtils.fixedToDouble(modifierFixed), op);
 		}
@@ -714,7 +736,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		public void setModifierFixed(long newValueFixed) {
 			this.modifierFixed = newValueFixed;
 		}
-		
+
 		@Override
 		public AttributeModifier copy() {
 			return new AttributeModifierSpellRing(getAttribute(), modifierFixed, getOperation());

@@ -28,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -41,18 +42,17 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 		BlockPos pos = spell.getTargetPos();
 
 		if (position == null || pos == null) return true;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
-		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
 
-		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
 
 		if (world.getTotalWorldTime() % 2 == 0)
 			world.playSound(null, pos, ModSounds.FIZZING_LOOP, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.1f, 4f));
@@ -71,8 +71,8 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 
@@ -82,12 +82,12 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
 		else glitter.setColor(instance.getSecondaryColor());
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SMOKE));
 
-		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 20, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), 20, 0, (aFloat, particleBuilder) -> {
 			particleBuilder.setLifetime(RandUtil.nextInt(10, 40));
 			particleBuilder.setScale(RandUtil.nextFloat(5, 10));
 			particleBuilder.setAlpha(RandUtil.nextFloat(0.3f, 0.5f));
 			particleBuilder.setAlphaFunction(new InterpFloatInOut(0.3f, 0.4f));
-			double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+			double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
 			double r = area * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
@@ -99,7 +99,7 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
 	}
 
 	@Override
-	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		return (int) (spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10);
+	public int getLingeringTime(World world, SpellData spell, SpellRing spellRing) {
+		return (int) (spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10);
 	}
 }

@@ -46,15 +46,14 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
-		Entity caster = spell.getCaster();
+		Entity caster = spell.getCaster(world);
 		EnumFacing facing = spell.getData(FACE_HIT);
 
 		if (facing == null || targetPos == null) return false;
 
-		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
 
 		if (caster instanceof EntityPlayer) {
 			IBlockState selected = instance.getSelectedBlockState((EntityPlayer) caster);
@@ -80,7 +79,7 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 			}
 
 			for (BlockPos areaPos : blocks) {
-				if (!spellRing.taxCaster(spell, 1 / area, false)) return false;
+				if (!spellRing.taxCaster(world, spell, 1 / area, false)) return false;
 				
 				BlockPos pos = blocks.size() > 1 ? areaPos.offset(facing) : areaPos;
 
@@ -91,7 +90,7 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 				BlockUtils.placeBlock(world, pos, facing, availableStack);
 				world.playSound(null, pos, selected.getBlock().getSoundType(selected, world, pos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
-				((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
+				((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, world.rand, 0)));
 			}
 
 		} else {
@@ -104,7 +103,7 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 			if (item == null) return true;
 
 			if (item.getItem().getItem() instanceof ItemBlock) {
-				if (!spellRing.taxCaster(spell, true)) return false;
+				if (!spellRing.taxCaster(world, spell, true)) return false;
 				BlockUtils.placeBlock(world, targetPos, facing, item.getItem());
 				world.playSound(null, targetPos, ((ItemBlock) item.getItem().getItem()).getBlock().getSoundType(((ItemBlock) item.getItem().getItem()).getBlock().getDefaultState(), world, targetPos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 			}
@@ -114,9 +113,8 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 
@@ -125,7 +123,7 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
@@ -133,17 +131,17 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
 		EnumFacing facing = data.getFaceHit();
-		Entity caster = data.getCaster();
+		Entity caster = data.getCaster(world);
 
 		if (facing == null || targetPos == null) return previousData;
 
-		double area = ring.getAttributeValue(AttributeRegistry.AREA, data);
+		double area = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 
 		if (caster instanceof EntityPlayer) {
 			IBlockState selected = instance.getSelectedBlockState((EntityPlayer) caster);
 			if (selected == null) return previousData;
 
-			IBlockState targetState = data.world.getBlockState(targetPos);
+			IBlockState targetState = world.getBlockState(targetPos);
 			List<ItemStack> stacks = instance.getAllOfStackFromInventory((EntityPlayer) caster, selected);
 			if (stacks.isEmpty()) return previousData;
 
@@ -152,16 +150,16 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 				if (BlockUtils.isAnyAir(targetState)) return true;
 
 				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
-				IBlockState adjacentState = instance.getCachableBlockstate(data.world, mutable.offset(facing), previousData);
+				IBlockState adjacentState = instance.getCachableBlockstate(world, mutable.offset(facing), previousData);
 				if (adjacentState.getBlock() != Blocks.AIR) return true;
 
-				IBlockState state = instance.getCachableBlockstate(data.world, pos, previousData);
+				IBlockState state = instance.getCachableBlockstate(world, pos, previousData);
 				return state.getBlock() != targetState.getBlock();
 			});
 
 			if (blocks.isEmpty()) {
 				if (targetState.getBlock() == Blocks.AIR)
-					instance.drawCubeOutline(data.world, targetPos, targetState);
+					instance.drawCubeOutline(world, targetPos, targetState);
 				else instance.drawFaceOutline(targetPos, facing);
 			} else
 				for (BlockPos areaPos : blocks) {

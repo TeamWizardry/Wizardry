@@ -28,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -40,21 +41,21 @@ public class ModuleEffectDecay implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-//		World world = spell.world;
-		Entity targetEntity = spell.getVictim();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+//		;
+		Entity targetEntity = spell.getVictim(world);
 		BlockPos targetPos = spell.getTargetPos();
-//		Entity caster = spell.getCaster();
+//		Entity caster = spell.getCaster(world);
 
 		if (targetPos == null) return false;
 
-		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 5;
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 5;
 //		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
+		double time = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
-		spell.world.playSound(null, targetPos, ModSounds.SLOW_MOTION_IN, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.1f, 0.5f));
+		world.playSound(null, targetPos, ModSounds.SLOW_MOTION_IN, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.1f, 0.5f));
 
 		if (targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase target = (EntityLivingBase) targetEntity;
@@ -70,9 +71,8 @@ public class ModuleEffectDecay implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 

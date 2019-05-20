@@ -6,8 +6,6 @@ import com.teamwizardry.librarianlib.features.saving.SaveMethodGetter;
 import com.teamwizardry.librarianlib.features.saving.SaveMethodSetter;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.SpellRingCache;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -44,7 +42,7 @@ public class PacketRenderSpell extends PacketBase {
 	@SaveMethodSetter(saveName = "module_saver")
 	public void setter(NBTTagCompound compound) {
 		if (compound.hasKey("spell_data")) spellData = compound.getCompoundTag("spell_data");
-		if (compound.hasKey("spell_ring")) spellRing = SpellRingCache.INSTANCE.getSpellRingByNBT(compound.getCompoundTag("spell_ring"));
+		if (compound.hasKey("spell_ring")) spellRing = SpellRing.deserializeRing(compound.getCompoundTag("spell_ring"));
 	}
 
 	@Override
@@ -53,11 +51,11 @@ public class PacketRenderSpell extends PacketBase {
 		World world = LibrarianLib.PROXY.getClientPlayer().world;
 		if (world == null || spellRing == null || spellData == null) return;
 
-		SpellData data = new SpellData(world);
+		SpellData data = new SpellData();
 		data.deserializeNBT(spellData);
 
 		if (spellRing.getModule() != null) {
-			spellRing.getModule().renderSpell(data, spellRing);
+			spellRing.getModule().renderSpell(world, data, spellRing);
 		}
 	}
 }

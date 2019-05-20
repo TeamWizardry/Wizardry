@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
@@ -27,6 +27,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -45,22 +46,21 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return false;
 
-		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(area, area, area))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
 			if (dist > area) continue;
-			if (!spellRing.taxCaster(spell, false)) return false;
+			if (!spellRing.taxCaster(world, spell, false)) return false;
 
-			final double upperMag = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 50.0;
+			final double upperMag = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 50.0;
 			final double scale = 1.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -72,7 +72,7 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 			entity.fallDistance = 0;
 			entity.velocityChanged = true;
 
-			spell.addData(ENTITY_HIT, entity);
+			spell.addData(ENTITY_HIT, entity.getEntityId());
 			if (entity instanceof EntityPlayerMP)
 				((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(entity));
 		}
@@ -82,14 +82,14 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d position = spell.getData(ORIGIN);
 
 		if (position == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(0);
 		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
-		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 10, 10, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), 10, 10, (aFloat, particleBuilder) -> {
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -110,7 +110,7 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 	}
 
 	@Override
-	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		return (int) (spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10);
+	public int getLingeringTime(World world, SpellData spell, SpellRing spellRing) {
+		return (int) (spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10);
 	}
 }

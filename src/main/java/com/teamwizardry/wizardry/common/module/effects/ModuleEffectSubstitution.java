@@ -59,17 +59,16 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity targetEntity = spell.getVictim();
-		Entity caster = spell.getCaster();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity targetEntity = spell.getVictim(world);
+		Entity caster = spell.getCaster(world);
 		BlockPos targetBlock = spell.getTargetPos();
 		EnumFacing facing = spell.getFaceHit();
-		World world = spell.world;
 
 		if (caster == null) return false;
 
 		if (targetEntity instanceof EntityLivingBase) {
-			if (!spellRing.taxCaster(spell, true)) return false;
+			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			Vec3d posTarget = new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ),
 					posCaster = new Vec3d(caster.posX, caster.posY, caster.posZ);
@@ -106,7 +105,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+				double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
@@ -133,7 +132,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 				for (BlockPos pos : blocks) {
 					if (stackBlock.isEmpty()) return true;
-					if (!spellRing.taxCaster(spell, 1 / area, false)) return false;
+					if (!spellRing.taxCaster(world, spell, 1 / area, false)) return false;
 					if (world.isAirBlock(pos)) continue;
 					if (world.getBlockState(pos).getBlock() == state.getBlock()) continue;
 
@@ -152,11 +151,10 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity caster = spell.getCaster();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity caster = spell.getCaster(world);
 		BlockPos targetBlock = spell.getTargetPos();
-		Entity targetEntity = spell.getVictim();
+		Entity targetEntity = spell.getVictim(world);
 
 		if (targetEntity != null && caster != null) {
 
@@ -207,16 +205,16 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
 			return previousData;
 
-		Entity caster = data.getCaster();
+		Entity caster = data.getCaster(world);
 		BlockPos targetBlock = data.getTargetPos();
 		EnumFacing facing = data.getFaceHit();
-		World world = data.world;
+
 
 		if (!(caster instanceof EntityLivingBase)) return previousData;
 		ItemStack hand = ((EntityLivingBase) caster).getHeldItemMainhand();
@@ -230,10 +228,10 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 				if (compound == null) return previousData;
 
 				IBlockState state = NBTUtil.readBlockState(compound);
-				IBlockState targetState = instance.getCachableBlockstate(data.world, targetBlock, previousData);
+				IBlockState targetState = instance.getCachableBlockstate(world, targetBlock, previousData);
 				if (targetState.getBlock() == state.getBlock()) return previousData;
 
-				double area = ring.getAttributeValue(AttributeRegistry.AREA, data);
+				double area = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
@@ -261,7 +259,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 				HashMap<BlockPos, IBlockState> blockStateCache = new HashMap<>();
 				for (BlockPos pos : blocks) {
-					blockStateCache.put(pos, data.world.getBlockState(pos));
+					blockStateCache.put(pos, world.getBlockState(pos));
 				}
 
 				HashMap<BlockPos, IBlockState> tmpCache = new HashMap<>(blockStateCache);
@@ -278,7 +276,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 						IBlockState adjState;
 						if (!blockStateCache.containsKey(mutable)) {
-							adjState = data.world.getBlockState(mutable);
+							adjState = world.getBlockState(mutable);
 							blockStateCache.put(mutable.toImmutable(), adjState);
 						} else adjState = blockStateCache.get(mutable);
 

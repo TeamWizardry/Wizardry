@@ -5,7 +5,6 @@ import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterDataType;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,9 +93,33 @@ public class ProcessData {
 	}
 	
 	////////////////
+
+	public interface DataType {
+		@Nonnull
+		NBTBase serialize(@Nullable Object object);
+
+		@Nonnull
+		Object deserialize(@Nonnull NBTBase object);
+	}
+
+	////////////////
+
+	public static boolean isClassEqual(Class<?> clsA, Class<?> clsB) {
+		return clsA.isAssignableFrom(clsB) && clsB.isAssignableFrom(clsA);
+	}
+
+	////////////////
+
+	public interface Process<T extends NBTBase, E> {
+		@Nonnull
+		T serialize(@Nullable E object);
+
+		@Nullable
+		E deserialize(@Nonnull T object);
+	}
 	
 	public static class DatatypeEntry<T extends NBTBase, E> implements DataType {
-		
+
 		private final String dataTypeName;
 		private final Class<E> dataTypeClazz;
 		private final Class<T> storageTypeClazz;
@@ -116,7 +139,7 @@ public class ProcessData {
 		public Class<E> getDataTypeClazz() {
 			return dataTypeClazz;
 		}
-		
+
 		public Class<T> getStorageTypeClazz() {
 			return storageTypeClazz;
 		}
@@ -131,14 +154,14 @@ public class ProcessData {
 			}
 			return ioProcess.serialize((E)object);
 		}
-		
+
 		@Override
 		@SuppressWarnings("unchecked")
 		@Nonnull
-		public Object deserialize(@Nullable World world, @Nonnull NBTBase object) {
+		public Object deserialize(@Nonnull NBTBase object) {
 			if( !isClassEqual(storageTypeClazz, object.getClass()) )
 				throw new DataSerializationException("Storage object to deserialize must be of class '" + storageTypeClazz + "'");
-			E obj = ioProcess.deserialize(world, (T) object);
+			E obj = ioProcess.deserialize((T) object);
 			if( obj != null ) {
 				if( !dataTypeClazz.isInstance(obj) )
 					throw new DataSerializationException("Deserialized object must be of class '" + dataTypeClazz + "', but is actually of '" + obj.getClass() + "'");
@@ -147,30 +170,6 @@ public class ProcessData {
 //WORKAROUND				throw new DataSerializationException("Deserialized object is null.");
 			return obj;
 		}
-	}
-	
-	////////////////
-	
-	public static boolean isClassEqual(Class<?> clsA, Class<?> clsB) {
-		return clsA.isAssignableFrom(clsB) && clsB.isAssignableFrom(clsA);
-	}
-	
-	////////////////
-	
-	public interface DataType {
-		@Nonnull
-		NBTBase serialize(@Nullable Object object);
-		
-		@Nonnull
-		Object deserialize(@Nullable World world, @Nonnull NBTBase object);
-	}
-	
-	public interface Process<T extends NBTBase, E> {
-		@Nonnull
-		T serialize(@Nullable E object);
-
-		@Nullable
-		E deserialize(@Nullable World world, @Nonnull T object);
 	}
 }
 

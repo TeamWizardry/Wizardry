@@ -22,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -37,22 +38,22 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 public class ModuleShapeTouch implements IModuleShape {
 
 	@Override
-	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(@NotNull World world, ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d look = spell.getData(LOOK);
 
-		Entity caster = spell.getCaster();
-		Vec3d origin = spell.getOrigin();
+		Entity caster = spell.getCaster(world);
+		Vec3d origin = spell.getOrigin(world);
 
 		if (look == null) return false;
 		if (caster == null) return false;
 		if (origin == null) return false;
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-		overrides.onRunTouch(spell, spellRing);
+		overrides.onRunTouch(world, spell, spellRing);
 		
 		RayTraceResult result = new RayTrace(
-				spell.world, look, origin,
+				world, look, origin,
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
@@ -65,17 +66,17 @@ public class ModuleShapeTouch implements IModuleShape {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		Vec3d look = data.getData(LOOK);
 
-		Entity caster = data.getCaster();
-		Vec3d origin = data.getOrigin();
+		Entity caster = data.getCaster(world);
+		Vec3d origin = data.getOrigin(world);
 
 		if (look == null) return previousData;
 		if (caster == null) return previousData;
 		if (origin == null) return previousData;
 
-		RayTraceResult result = new RayTrace(data.world, look, caster.getPositionVector().add(0, caster.getEyeHeight(), 0),
+		RayTraceResult result = new RayTrace(world, look, caster.getPositionVector().add(0, caster.getEyeHeight(), 0),
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
@@ -88,7 +89,7 @@ public class ModuleShapeTouch implements IModuleShape {
 		if (pos == null) return previousData;
 
 //		EnumFacing facing = result.sideHit;
-//		IBlockState state = getCachableBlockstate(data.world, result.getBlockPos(), previousData);
+//		IBlockState state = getCachableBlockstate(world, result.getBlockPos(), previousData);
 
 		previousData.processTrace(result);
 
@@ -97,17 +98,17 @@ public class ModuleShapeTouch implements IModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(World world, ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-		if( overrides.onRenderTouch(spell, spellRing) ) return;
+		if (overrides.onRenderTouch(world, spell, spellRing)) return;
 
-		Entity targetEntity = spell.getVictim();
+		Entity targetEntity = spell.getVictim(world);
 
 		if (targetEntity == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(1);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(targetEntity.getPositionVector().add(0, targetEntity.height / 2.0, 0), new Vec3d(0, 1, 0), 1, 10), 50, RandUtil.nextInt(10, 15), (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new InterpCircle(targetEntity.getPositionVector().add(0, targetEntity.height / 2.0, 0), new Vec3d(0, 1, 0), 1, 10), 50, RandUtil.nextInt(10, 15), (aFloat, particleBuilder) -> {
 			if (RandUtil.nextBoolean()) {
 				glitter.setColor(spellRing.getPrimaryColor());
 				glitter.setMotion(new Vec3d(0, RandUtil.nextDouble(0.01, 0.1), 0));
@@ -126,12 +127,12 @@ public class ModuleShapeTouch implements IModuleShape {
 	//////////////////
 	
 	@ModuleOverride("shape_touch_run")
-	public void onRunTouch(SpellData data, SpellRing shape) {
+	public void onRunTouch(World world, SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 	
 	@ModuleOverride("shape_touch_render")
-	public boolean onRenderTouch(SpellData data, SpellRing shape) {
+	public boolean onRenderTouch(World world, SpellData data, SpellRing shape) {
 		// Default implementation
 		return false;
 	}

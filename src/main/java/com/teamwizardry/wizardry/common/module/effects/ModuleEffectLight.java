@@ -29,6 +29,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -39,17 +40,16 @@ import javax.annotation.Nonnull;
 public class ModuleEffectLight implements IModuleEffect {
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		BlockPos targetPos = spell.getTargetPos();
 		EnumFacing facing = spell.getFaceHit();
-		Entity caster = spell.getCaster();
+		Entity caster = spell.getCaster(world);
 
 		BlockPos finalPos = targetPos;
 		if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
 		if (!world.isAirBlock(finalPos)) return false;
-		
-		if (!spellRing.taxCaster(spell, true)) return false;
+
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetPos == null) return true;
 
@@ -67,8 +67,7 @@ public class ModuleEffectLight implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		BlockPos position = spell.getTargetPos();
 		EnumFacing facing = spell.getFaceHit();
 

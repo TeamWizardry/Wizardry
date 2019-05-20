@@ -11,7 +11,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.SpellRingCache;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -37,7 +36,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 
 /**
  * Created by Demoniaque.
@@ -94,7 +93,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 	protected SpellData getSpellData() {
 		NBTTagCompound compound = getDataManager().get(SPELL_DATA);
-		return SpellData.deserializeData(world, compound);
+		return SpellData.deserializeData(compound);
 	}
 
 	protected void setSpellData(SpellData data) {
@@ -104,7 +103,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 	protected SpellRing getSpellRing() {
 		NBTTagCompound compound = getDataManager().get(SPELL_RING);
-		return SpellRingCache.INSTANCE.getSpellRingByNBT(compound);
+		return SpellRing.deserializeRing(compound);
 	}
 
 	protected void setSpellRing(SpellRing ring) {
@@ -168,7 +167,7 @@ public class EntitySpellProjectile extends EntityMod {
 				@SideOnly(Side.CLIENT)
 				public void runIfClient() {
 					IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-					if (overrides.onRenderProjectile(spellData, spellRing))
+					if (overrides.onRenderProjectile(world, spellData, spellRing))
 						return;
 
 					ParticleBuilder glitter = new ParticleBuilder(10);
@@ -199,7 +198,7 @@ public class EntitySpellProjectile extends EntityMod {
 			return;
 		}
 
-		Vec3d origin = spellData.getOrigin();
+		Vec3d origin = spellData.getOrigin(world);
 
 		rotationPitch = spellData.getPitch();
 		rotationYaw = spellData.getYaw();
@@ -242,7 +241,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox());
 		if (!entities.isEmpty()) {
-			Entity caster = spellData.getCaster();
+			Entity caster = spellData.getCaster(world);
 
 			// Don't collide with other spell projectiles
 			for (Entity entity : entities) {
@@ -271,7 +270,7 @@ public class EntitySpellProjectile extends EntityMod {
 		motionZ = 0;
 
 		if (spellRing.getChildRing() != null)
-			spellRing.getChildRing().runSpellRing(data);
+			spellRing.getChildRing().runSpellRing(world, data, true);
 
 		if (doesRender())
 			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), spellRing.getPrimaryColor(), spellRing.getSecondaryColor(), 0.3, 0.3, RandUtil.nextInt(30, 50), 10, 25, true),
@@ -299,11 +298,11 @@ public class EntitySpellProjectile extends EntityMod {
 	@Override
 	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey("spell_ring")) {
-			setSpellRing(SpellRingCache.INSTANCE.getSpellRingByNBT(compound.getCompoundTag("spell_ring")));
+			setSpellRing(SpellRing.deserializeRing(compound.getCompoundTag("spell_ring")));
 		}
 
 		if (world != null && compound.hasKey("spell_data")) {
-			setSpellData(SpellData.deserializeData(world, compound.getCompoundTag("spell_data")));
+			setSpellData(SpellData.deserializeData(compound.getCompoundTag("spell_data")));
 		}
 
 		if (compound.hasKey("gravity")) {

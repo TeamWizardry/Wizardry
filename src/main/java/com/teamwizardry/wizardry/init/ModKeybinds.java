@@ -71,7 +71,6 @@ public class ModKeybinds {
 			}
 		}
 
-
 		if (event.getItemStack().getItem() instanceof IPearlBelt) {
 			if (!event.getWorld().isRemote) {
 				((IPearlBelt) event.getItemStack().getItem()).onRightClick(event.getWorld(), event.getEntityPlayer(), event.getHand(), true);

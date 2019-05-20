@@ -96,11 +96,11 @@ public class TilePearlHolder extends TileManaInteractor implements ICooldownSpel
 			if (closestMagnet == null) return;
 
 			Vec3d direction = new Vec3d(closestMagnet).subtract(new Vec3d(getPos())).normalize();
-			SpellData spell = new SpellData(getWorld());
+			SpellData spell = new SpellData();
 			spell.addData(LOOK, direction);
 			spell.addData(ORIGIN, new Vec3d(getPos()).add(0.5, 1.5, 0.5));
 			spell.addData(CAPABILITY, pearlCap);
-			SpellUtils.runSpell(getItemStack(), spell);
+			SpellUtils.runSpell(world, getItemStack(), spell);
 			setCooldown(world, null, null, getItemStack(), spell);
 		}
 	}

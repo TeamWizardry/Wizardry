@@ -1,17 +1,16 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import java.awt.Color;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+import java.awt.*;
 
 public class ModuleInstanceEvent extends ModuleInstance {
 	
@@ -38,7 +37,7 @@ public class ModuleInstanceEvent extends ModuleInstance {
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		return ((IModuleEvent)moduleClass).run(this, spell, spellRing);
+	public boolean run(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return ((IModuleEvent) moduleClass).run(world, this, spell, spellRing);
 	}
 }

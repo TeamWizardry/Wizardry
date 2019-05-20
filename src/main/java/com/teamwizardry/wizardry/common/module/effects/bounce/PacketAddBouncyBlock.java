@@ -1,9 +1,8 @@
-package com.teamwizardry.wizardry.common.network;
+package com.teamwizardry.wizardry.common.module.effects.bounce;
 
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.BounceHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -35,6 +34,6 @@ public class PacketAddBouncyBlock extends PacketBase {
 	public void handle(@NotNull MessageContext ctx) {
 		if (pos == null) return;
 		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
-		BounceHandler.addBounceHandler(world, pos, time);
+		BounceManager.INSTANCE.forBlock(world, pos, time);
 	}
 }

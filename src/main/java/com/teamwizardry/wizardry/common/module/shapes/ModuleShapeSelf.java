@@ -1,17 +1,15 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
-import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
@@ -24,6 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -34,14 +33,14 @@ import javax.annotation.Nonnull;
 public class ModuleShapeSelf implements IModuleShape {
 
 	@Override
-	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity caster = spell.getCaster();
+	public boolean run(@NotNull World world, ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity caster = spell.getCaster(world);
 		if (caster == null) return false;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 		
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-		overrides.onRunSelf(spell, spellRing);
+		overrides.onRunSelf(world, spell, spellRing);
 		
 		spell.processEntity(caster, false);
 
@@ -50,12 +49,11 @@ public class ModuleShapeSelf implements IModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(World world, ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-		if( overrides.onRenderSelf(spell, spellRing) ) return;
+		if (overrides.onRenderSelf(world, spell, spellRing)) return;
 
-		Entity caster = spell.getCaster();
-		World world = spell.world;
+		Entity caster = spell.getCaster(world);
 
 		if (caster == null) return;
 
@@ -92,12 +90,12 @@ public class ModuleShapeSelf implements IModuleShape {
 	///////////////////
 	
 	@ModuleOverride("shape_self_run")
-	public void onRunSelf(SpellData data, SpellRing shape) {
+	public void onRunSelf(World world, SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 	
 	@ModuleOverride("shape_self_render")
-	public boolean onRenderSelf(SpellData data, SpellRing shape) {
+	public boolean onRenderSelf(World world, SpellData data, SpellRing shape) {
 		// Default implementation
 		return false;
 	}

@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -107,15 +108,15 @@ public class SpellUtils {
 		return lastColor;
 	}
 
-	public static void runSpell(@Nonnull ItemStack spellHolder, @Nonnull SpellData data) {
-		if (data.world.isRemote) return;
+	public static void runSpell(@Nonnull World world, @Nonnull ItemStack spellHolder, @Nonnull SpellData data) {
+		if (world.isRemote) return;
 
-		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
+		Entity caster = data.getCaster(world);
 		if (caster instanceof EntityLivingBase && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return;
 
 		for (SpellRing spellRing : getSpellChains(spellHolder)) {
-			spellRing.runSpellRing(data);
+			spellRing.runSpellRing(world, data, false);
 		}
 	}
 
@@ -146,7 +147,7 @@ public class SpellUtils {
 		ArrayList<SpellRing> rings = new ArrayList<>();
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
-			SpellRing ring = SpellRingCache.INSTANCE.getSpellRingByNBT(compound);
+			SpellRing ring = SpellRing.deserializeRing(compound);
 			if (ring == null) continue;
 			rings.add(ring);
 		}

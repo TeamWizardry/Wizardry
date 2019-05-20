@@ -1,19 +1,18 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import java.awt.Color;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import java.awt.*;
 
 public class ModuleInstanceShape extends ModuleInstance {
 
@@ -49,8 +48,8 @@ public class ModuleInstanceShape extends ModuleInstance {
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		return ((IModuleShape)moduleClass).run(this, spell, spellRing);
+	public boolean run(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return ((IModuleShape) moduleClass).run(world, this, spell, spellRing);
 	}
 
 	/**
@@ -60,8 +59,8 @@ public class ModuleInstanceShape extends ModuleInstance {
 	@Override
 	@Nonnull
 	@SideOnly(Side.CLIENT)
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		return ((IModuleShape)moduleClass).renderVisualization(this, data, ring, previousData);
+	public SpellData renderVisualization(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		return ((IModuleShape) moduleClass).renderVisualization(world, this, data, ring, previousData);
 	}
 	
 	/**
@@ -69,7 +68,7 @@ public class ModuleInstanceShape extends ModuleInstance {
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		((IModuleShape)moduleClass).renderSpell(this, spell, spellRing);
+	public void renderSpell(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		((IModuleShape) moduleClass).renderSpell(world, this, spell, spellRing);
 	}
 }

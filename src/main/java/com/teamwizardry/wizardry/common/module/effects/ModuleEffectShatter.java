@@ -29,6 +29,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -41,16 +42,16 @@ public class ModuleEffectShatter implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity targetEntity = spell.getVictim();
-		Entity caster = spell.getCaster();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity targetEntity = spell.getVictim(world);
+		Entity caster = spell.getCaster(world);
 		BlockPos pos = spell.getTargetPos();
 
 		if (pos == null) return false;
 
-		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 2;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetEntity instanceof EntityLivingBase) {
 			
@@ -66,8 +67,8 @@ public class ModuleEffectShatter implements IModuleEffect {
 			int invTime = targetEntity.hurtResistantTime;
 			targetEntity.hurtResistantTime = 0;
 
-			spell.world.playSound(null, pos, ModSounds.MARBLE_EXPLOSION, SoundCategory.NEUTRAL, 2, RandUtil.nextFloat(0.8f, 1.2f));
-			spell.world.playSound(null, pos, ModSounds.FIREWORK, SoundCategory.NEUTRAL, 2, RandUtil.nextFloat(0.8f, 1.2f));
+			world.playSound(null, pos, ModSounds.MARBLE_EXPLOSION, SoundCategory.NEUTRAL, 2, RandUtil.nextFloat(0.8f, 1.2f));
+			world.playSound(null, pos, ModSounds.FIREWORK, SoundCategory.NEUTRAL, 2, RandUtil.nextFloat(0.8f, 1.2f));
 			if (caster instanceof EntityLivingBase)
 			{
 				((EntityLivingBase) caster).setLastAttackedEntity(targetEntity);
@@ -91,9 +92,8 @@ public class ModuleEffectShatter implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 

@@ -25,6 +25,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -42,15 +43,15 @@ public class ModuleEffectBackup implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d targetPos = spell.getTarget();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+
+		Vec3d targetPos = spell.getTarget(world);
 		EnumFacing facing = spell.getData(FACE_HIT);
-		Entity caster = spell.getCaster();
+		Entity caster = spell.getCaster(world);
 
-		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
+		double duration = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 20;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetPos == null) return true;
 		if (!(caster instanceof EntityLivingBase)) return true;
@@ -68,9 +69,8 @@ public class ModuleEffectBackup implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 

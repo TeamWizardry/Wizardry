@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
@@ -29,6 +29,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -44,14 +45,13 @@ public class ModuleEffectLeech implements IModuleEffect {
 	}
 
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Entity targetEntity = spell.getVictim();
-		Entity caster = spell.getCaster();
+	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Entity targetEntity = spell.getVictim(world);
+		Entity caster = spell.getCaster(world);
 
-		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 2;
 
-		if (!spellRing.taxCaster(spell, true)) return false;
+		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetEntity instanceof EntityLivingBase) {
 			int invTime = targetEntity.hurtResistantTime;
@@ -88,7 +88,7 @@ public class ModuleEffectLeech implements IModuleEffect {
 			targetEntity.hurtResistantTime = invTime;
 		}
 
-		Vec3d target = spell.getTargetWithFallback();
+		Vec3d target = spell.getTargetWithFallback(world);
 		if (target != null)
 			world.playSound(null, new BlockPos(target), ModSounds.CHAINY_ZAP, SoundCategory.NEUTRAL, 0.5f, 1f);
 		return true;
@@ -96,9 +96,8 @@ public class ModuleEffectLeech implements IModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		Vec3d position = spell.getTarget();
+	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d position = spell.getTarget(world);
 
 		if (position == null) return;
 
