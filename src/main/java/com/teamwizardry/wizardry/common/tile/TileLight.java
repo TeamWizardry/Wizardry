@@ -26,55 +26,55 @@ import java.awt.*;
  */
 @TileRegister(Wizardry.MODID + ":light")
 public class TileLight extends TileMod implements ITickable {
-	
+
 	ModuleInstance module = null;
-	
+
 	public void setModule(ModuleInstance module) {
-		this.module = module;	// The light color is inherited from this given module
+		this.module = module;    // The light color is inherited from this given module
 	}
-	
+
 	public ModuleInstance getModule() {
 		return this.module;
 	}
 
 	@Override
 	public void update() {
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient() {
-				if (RandUtil.nextInt(4) == 0) {
-					Color primaryColor;
-					Color secondaryColor;
-					if( module != null ) {
-						primaryColor = module.getPrimaryColor();
-						secondaryColor = module.getSecondaryColor();
-					}
-					else {
-						// NOTE: Usually should never happen, if tile entity is initialized correctly in ModuleEffectLight.
-						primaryColor = new Color(0xAA00AA);	// Purple color.
-						secondaryColor = new Color(0x000000);
-					}
-					
-					ParticleBuilder glitter = new ParticleBuilder(30);
-					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-					glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
-					glitter.setColorFunction(new InterpColorHSV(Color.CYAN, Color.BLUE));
-					glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(1, 3), 0));
-					ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos).add(0.5, 0.5, 0.5)), 1, 0, (i, build) -> {
-						build.setMotion(new Vec3d(
-								RandUtil.nextDouble(-0.01, 0.01),
-								RandUtil.nextDouble(0, 0.03),
-								RandUtil.nextDouble(-0.01, 0.01)));
-
-						if (RandUtil.nextBoolean()) {
-							build.setColorFunction(new InterpColorHSV(primaryColor, secondaryColor));
+		if (world.isRemote)
+			ClientRunnable.run(new ClientRunnable() {
+				@Override
+				@SideOnly(Side.CLIENT)
+				public void runIfClient() {
+					if (RandUtil.nextInt(4) == 0) {
+						Color primaryColor;
+						Color secondaryColor;
+						if (module != null) {
+							primaryColor = module.getPrimaryColor();
+							secondaryColor = module.getSecondaryColor();
 						} else {
-							build.setColorFunction(new InterpColorHSV(secondaryColor, primaryColor));
+							// NOTE: Usually should never happen, if tile entity is initialized correctly in ModuleEffectLight.
+							primaryColor = new Color(0xAA00AA);    // Purple color.
+							secondaryColor = new Color(0x000000);
 						}
-					});
+
+						ParticleBuilder glitter = new ParticleBuilder(30);
+						glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+						glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
+						glitter.setColorFunction(new InterpColorHSV(Color.CYAN, Color.BLUE));
+						glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(1, 3), 0));
+						ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos).add(0.5, 0.5, 0.5)), 1, 0, (i, build) -> {
+							build.setMotion(new Vec3d(
+									RandUtil.nextDouble(-0.01, 0.01),
+									RandUtil.nextDouble(0, 0.03),
+									RandUtil.nextDouble(-0.01, 0.01)));
+
+							if (RandUtil.nextBoolean()) {
+								build.setColorFunction(new InterpColorHSV(primaryColor, secondaryColor));
+							} else {
+								build.setColorFunction(new InterpColorHSV(secondaryColor, primaryColor));
+							}
+						});
+					}
 				}
-			}
-		});
+			});
 	}
 }
