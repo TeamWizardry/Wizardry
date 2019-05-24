@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import java.util.function.Consumer;
-
 import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler.OverridePointer;
+
+import java.util.function.Consumer;
 
 /**
  * An object to perform invokes on an overwritten super method and to help handling exceptions. 
@@ -56,7 +56,7 @@ public class ModuleOverrideSuper {
 	 * The caught exception is cleared afterwards.
 	 * 
 	 * @param exceptionType the exception type to be caught.
-	 * @param lambda a passed exception handler, e.g. as a lambda expression.
+	 * @param handler a passed exception handler, e.g. as a lambda expression.
 	 */
 	@SuppressWarnings("unchecked")
 	public <ET extends Exception> void catchException(Class<ET> exceptionType, Consumer<ET> handler) {

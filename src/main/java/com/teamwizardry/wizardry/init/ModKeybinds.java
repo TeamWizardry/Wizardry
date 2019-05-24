@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlStorageHolder;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -46,7 +48,7 @@ public class ModKeybinds {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null) return;
 
-		if (pearlSwapping.isKeyDown() && player.getHeldItemMainhand().getItem() instanceof IPearlSwappable) {
+		if (pearlSwapping.isKeyDown() && player.getHeldItemMainhand().getItem() instanceof IPearlSwappable && !BaublesSupport.getItem(player, IPearlStorageHolder.class).isEmpty()) {
 			player.openGui(Wizardry.instance, 1, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
 		}
 	}

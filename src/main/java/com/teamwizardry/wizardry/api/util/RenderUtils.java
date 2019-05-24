@@ -94,10 +94,13 @@ public class RenderUtils {
 				}
 			}
 
+			GlStateManager.translate(0.5F, 0.5F, 0.5F);
 			GlStateManager.popMatrix();
 		}
 
-		GlStateManager.scale(1, 1, 1);
+		GlStateManager.translate(-8.0F, -8.0F, -0.0F);
+		GlStateManager.scale(1 / 16.0F, 1 / 16.0F, 1 / 16.0F);
+		GlStateManager.scale(1 / 2.0, 1 / 2.0, 1 / 2.0);
 
 		GlStateManager.disableAlpha();
 		GlStateManager.disableRescaleNormal();
@@ -308,6 +311,7 @@ public class RenderUtils {
 		GlStateManager.depthFunc(515);
 		GlStateManager.depthMask(true);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		GlStateManager.scale(1 / 8.0F, 1 / 8.0F, 1 / 8.0F);
 	}
 
 	/**

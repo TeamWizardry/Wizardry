@@ -21,6 +21,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.client.gui.worktable.TableModule;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketRemovePearlFromBelt;
 import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSuccPearlsToStorageHolder;
@@ -406,14 +407,12 @@ public class GuiPearlSwap extends GuiBase {
 				Vec3d pearlOffset = normal.scale(radius / 2).scale(itemDilaters[j]);
 				//	GlStateManager.translate(pearlOffset.x, pearlOffset.y, 0);
 
-				//	RenderUtils.renderItemStackWithOpacity(pearl, itemExpansion, () -> {
-				//		GlStateManager.translate(pearlOffset.x - 8, pearlOffset.y - 8, 0);
-				//	});
-				//	GlStateManager.translate(-pearlOffset.x + 8, -pearlOffset.y + 8, 0);
+				RenderUtils.renderItemStackWithOpacity(pearl, itemDilaters[j], () -> GlStateManager.translate(pearlOffset.x - 8, pearlOffset.y - 8, 0));
+				GlStateManager.translate(-pearlOffset.x + 8, -pearlOffset.y + 8, 0);
 
 				GlStateManager.translate(0, 0, 20);
 				GlStateManager.color(1f, 1f, 1f, itemDilaters[j]);
-				GlStateManager.scale(2, 2, 2);
+				//	GlStateManager.scale(2.0, 2.0, 2.0);
 
 				GlStateManager.enableTexture2D();
 

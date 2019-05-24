@@ -14,6 +14,7 @@ import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -64,7 +65,7 @@ public class TableModule extends GuiComponent {
 	private Vec2d initialPos;
 
 	public TableModule(@Nonnull WorktableGui worktable, @Nonnull ModuleInstance module, boolean draggable, boolean benign) {
-		super(0, 0, PLATE.getWidth(), PLATE.getHeight());
+		super(0, 0, 16, 16);
 		this.worktable = worktable;
 		this.module = module;
 		this.draggable = draggable;
@@ -275,7 +276,7 @@ public class TableModule extends GuiComponent {
 				txt.add(TextFormatting.GOLD + module.getReadableName());
 				if (GuiScreen.isShiftKeyDown()) {
 					txt.add(TextFormatting.GRAY + module.getDescription());
-					if (module.getAttributeRanges().keySet().stream().anyMatch(attribute -> attribute.hasDetailedText()))
+					if (module.getAttributeRanges().keySet().stream().anyMatch(AttributeRegistry.Attribute::hasDetailedText))
 						if (GuiScreen.isCtrlKeyDown())
 							module.getDetailedInfo().forEach(info -> txt.add(TextFormatting.GRAY + info));
 						else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.ctrl"));
