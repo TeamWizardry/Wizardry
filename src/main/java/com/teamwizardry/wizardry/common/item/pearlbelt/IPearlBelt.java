@@ -4,16 +4,12 @@ import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlStorageHolder;
-import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -46,42 +42,6 @@ public interface IPearlBelt extends IPearlStorageHolder, INacreProduct.INacreDec
 				return MathHelper.clamp(total, 0, 6);
 			}
 		});
-	}
-
-	default void onRightClick(World world, EntityPlayer player, EnumHand hand, boolean isKeybindDown) {
-		if (world.isRemote) return;
-
-		ItemStack belt = player.getHeldItem(hand);
-		if (isDisabled(belt)) return;
-
-		if (player.isSneaking()) {
-			boolean changed = false;
-			for (ItemStack stack : player.inventory.mainInventory)
-				if (stack.getItem() == ModItems.PEARL_NACRE)
-					if (NBTHelper.getBoolean(stack, "infused", false))
-						if (addPearl(belt, stack.copy(), true)) {
-							stack.shrink(1);
-							changed = true;
-						}
-
-			if (changed) {
-				NBTHelper.setInt(belt, "scroll_slot", -1);
-				player.playSound(ModSounds.BELL_TING, 1f, 1f);
-			}
-		} else if (isKeybindDown) {
-			int scrollSlot = NBTHelper.getInt(belt, "scroll_slot", -1);
-			if (scrollSlot == -1) return;
-
-			ItemStack output = removePearl(belt, scrollSlot, true);
-			if (output.isEmpty()) return;
-
-			player.addItemStackToInventory(output);
-			NBTHelper.setInt(belt, "scroll_slot", Math.max(scrollSlot - 1, 0));
-		}
-
-
-		//	if (player instanceof EntityPlayerMP)
-		//		PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(Utils.getSlotFor(player, belt), -1), (EntityPlayerMP) player);
 	}
 
 	default IItemHandler getBeltPearls(ItemStack stack) {

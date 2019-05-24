@@ -102,11 +102,14 @@ public interface IPearlStorageHolder {
 		boolean changed = false;
 		for (ItemStack stack : player.inventory.mainInventory)
 			if (stack.getItem() == ModItems.PEARL_NACRE)
-				if (NBTHelper.getBoolean(stack, "infused", false))
+				if (NBTHelper.getBoolean(stack, "infused", false)) {
+					if (getPearlCount(belt) >= ConfigValues.pearlBeltInvSize) break;
+
 					if (addPearl(belt, stack.copy(), true)) {
 						stack.shrink(1);
 						changed = true;
 					}
+				}
 
 		return changed;
 	}

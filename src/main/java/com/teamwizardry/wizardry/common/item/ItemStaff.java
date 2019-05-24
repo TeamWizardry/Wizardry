@@ -53,7 +53,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public ItemStack swapPearl(ItemStack pearlHolder, ItemStack stackSwipeTo) {
-		ItemStack extractedPearl = pearlHolder.copy();
+		ItemStack extractedPearl = new ItemStack(ModItems.PEARL_NACRE);
 		SpellUtils.copySpell(pearlHolder, extractedPearl);
 
 		SpellUtils.copySpell(stackSwipeTo, pearlHolder);

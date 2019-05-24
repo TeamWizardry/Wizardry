@@ -56,10 +56,6 @@ public class GuiPearlSwap extends GuiBase {
 	private static final Sprite spritePlate = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate.png"));
 	public final float[] slotRadii = new float[ConfigValues.pearlBeltInvSize];
 	public final float[] itemDilaters = new float[ConfigValues.pearlBeltInvSize];
-	private final int SELECTOR_RADIUS = 90;
-	private final int SELECTOR_WIDTH = 50;
-	private final int SELECTOR_SHIFT = 5;
-	private final float SELECTOR_ALPHA = 0.7F;
 	private final Animator ANIMATOR = new Animator();
 	private final BasicAnimation[] slotRadiusAnimations = new BasicAnimation[ConfigValues.pearlBeltInvSize];
 	private final BasicAnimation[] itemDilationAnimations = new BasicAnimation[ConfigValues.pearlBeltInvSize];
@@ -234,7 +230,6 @@ public class GuiPearlSwap extends GuiBase {
 		unlock();
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
-		player.playSound(ModSounds.POP, 1f, 1f);
 
 		if (originalPearlCount != newPearlCount) {
 			if (originalPearlCount == 0) {
@@ -245,9 +240,13 @@ public class GuiPearlSwap extends GuiBase {
 				if (newPearlCount != 0)
 					ANIMATOR.add(new ScheduledEventAnimation(10, this::dilateItems));
 			}
+			player.playSound(ModSounds.POP, 1f, 1f);
 		} else if (newPearlCount != 0 && index != -1) {
 			contractItem(index);
 			ANIMATOR.add(new ScheduledEventAnimation(10, () -> dilateItem(index)));
+			player.playSound(ModSounds.POP, 1f, 1f);
+		} else {
+			player.playSound(ModSounds.SPELL_FAIL, 1f, 1f);
 		}
 
 		double centerRad = newPearlCount == 0 ? getGuiHeight() : getGuiHeight() * 0.75;
