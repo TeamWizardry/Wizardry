@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
@@ -30,7 +30,7 @@ public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implemen
 					foundBaseItem = true;
 			}
 			if (stack.getItem() == ModItems.PEARL_NACRE) {
-				if (ItemNBTHelper.getBoolean(stack, "infused", false))
+				if (NBTHelper.getBoolean(stack, "infused", false))
 					foundPearl = true;
 			}
 
@@ -51,7 +51,7 @@ public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implemen
 					staff = stack;
 			}
 			if (stack.getItem() == ModItems.PEARL_NACRE)
-				if (ItemNBTHelper.getBoolean(stack, "infused", false))
+				if (NBTHelper.getBoolean(stack, "infused", false))
 					pearl = stack;
 		}
 

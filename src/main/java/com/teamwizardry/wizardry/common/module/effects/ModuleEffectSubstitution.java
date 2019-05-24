@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
@@ -95,9 +95,9 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 			if (hand.isEmpty()) return false;
 
 			world.playSound(null, targetBlock, ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
-			if (ItemNBTHelper.verifyExistence(hand, "selected")) {
+			if (NBTHelper.hasNBTEntry(hand, "selected")) {
 
-				NBTTagCompound compound = ItemNBTHelper.getCompound(hand, "selected");
+				NBTTagCompound compound = NBTHelper.getCompound(hand, "selected");
 				if (compound == null) return false;
 
 				IBlockState state = NBTUtil.readBlockState(compound);
@@ -223,8 +223,8 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 		if (targetBlock != null && caster instanceof EntityPlayer) {
 			if (facing == null) return previousData;
-			if (ItemNBTHelper.verifyExistence(hand, "selected")) {
-				NBTTagCompound compound = ItemNBTHelper.getCompound(hand, "selected");
+			if (NBTHelper.hasNBTEntry(hand, "selected")) {
+				NBTTagCompound compound = NBTHelper.getCompound(hand, "selected");
 				if (compound == null) return previousData;
 
 				IBlockState state = NBTUtil.readBlockState(compound);

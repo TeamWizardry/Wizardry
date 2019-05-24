@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.item;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
@@ -15,18 +15,18 @@ import java.util.UUID;
 public interface ICape {
 
 	default void tickCape(ItemStack stack) {
-		int tick = ItemNBTHelper.getInt(stack, "maxTick", 0);
+		int tick = NBTHelper.getInt(stack, "maxTick", 0);
 
-		if (tick < 1000000) ItemNBTHelper.setInt(stack, "maxTick", ++tick);
+		if (tick < 1000000) NBTHelper.setInt(stack, "maxTick", ++tick);
 
-		if (!ItemNBTHelper.verifyExistence(stack, "uuid"))
-			ItemNBTHelper.setUUID(stack, "uuid", UUID.randomUUID());
+		if (!NBTHelper.hasNBTEntry(stack, "uuid"))
+			NBTHelper.setUniqueId(stack, "uuid", UUID.randomUUID());
 	}
 
 	default List<String> getCapeTooltip(ItemStack stack) {
 		List<String> list = new ArrayList<>();
 
-		double tick = ItemNBTHelper.getInt(stack, "maxTick", 0) / 1000000.0;
+		double tick = NBTHelper.getInt(stack, "maxTick", 0) / 1000000.0;
 		double percentage = Math.round(MathHelper.clamp(tick, 0, 0.75) * 100.0);
 
 		list.add(TextFormatting.GRAY.toString() + "Spell Cost Reduction: ");

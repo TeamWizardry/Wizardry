@@ -5,9 +5,8 @@ import com.teamwizardry.librarianlib.features.animator.Animator;
 import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
@@ -21,7 +20,6 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.client.gui.worktable.TableModule;
-import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotServer;
 import com.teamwizardry.wizardry.init.ModKeybinds;
 import kotlin.Pair;
 import kotlin.jvm.functions.Function2;
@@ -48,7 +46,6 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -128,7 +125,6 @@ public class PearlRadialUIRenderer {
 	public float itemExpansion = 0;
 
 	private PearlRadialUIRenderer() {
-		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	private static int getScrollSlot(MouseEvent event, int count, int scrollSlot) {
@@ -413,10 +409,10 @@ public class PearlRadialUIRenderer {
 		ItemStack heldItem = player.getHeldItemMainhand();
 
 		int slot = Utils.getSlotFor(player, heldItem);
-		if (ItemNBTHelper.getInt(heldItem, "scroll_slot", -1) > -1) {
+		if (NBTHelper.getInt(heldItem, "scroll_slot", -1) > -1) {
 
-			ItemNBTHelper.setInt(heldItem, "scroll_slot", -1);
-			PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(slot, -1));
+			NBTHelper.setInt(heldItem, "scroll_slot", -1);
+			//	PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(slot, -1));
 		}
 
 		for (int i = 0; i < slotAnimations.length; i++) {
@@ -445,10 +441,10 @@ public class PearlRadialUIRenderer {
 
 		if (event.getDwheel() != 0) {
 
-			//	if (ItemNBTHelper.getInt(heldItem, "scroll_slot", -1) > -1) {
+			//	if (NBTHelper.getInt(heldItem, "scroll_slot", -1) > -1) {
 			//		int slot = Utils.getSlotFor(player, heldItem);
 //
-			//		ItemNBTHelper.setInt(heldItem, "scroll_slot", -1);
+			//		NBTHelper.setInt(heldItem, "scroll_slot", -1);
 			//		PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(slot, -1));
 			//	}
 
@@ -480,13 +476,13 @@ public class PearlRadialUIRenderer {
 				int rawCount = pearlStorage.getPearlCount(pearlStorageStack);
 				int count = Math.max(rawCount - 1, 0);
 
-				int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
+				int scrollSlot = NBTHelper.getInt(heldItem, "scroll_slot", -1);
 
 				scrollSlot = getScrollSlot(event, count, scrollSlot);
 
 				if (scrollSlot >= 0) {
-					ItemNBTHelper.setInt(heldItem, "scroll_slot", scrollSlot);
-					PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(player.inventory.getSlotFor(heldItem), scrollSlot));
+					NBTHelper.setInt(heldItem, "scroll_slot", scrollSlot);
+					//	PacketHandler.NETWORK.sendToServer(new PacketSetScrollSlotServer(player.inventory.getSlotFor(heldItem), scrollSlot));
 
 					for (int i = 0; i < slotAnimations.length; i++) {
 						BasicAnimation animation = slotAnimations[i];
@@ -694,7 +690,7 @@ public class PearlRadialUIRenderer {
 
 			// ------------- ANIMATIONS ------------- //
 
-			int scrollSlot = ItemNBTHelper.getInt(heldItem, "scroll_slot", -1);
+			int scrollSlot = NBTHelper.getInt(heldItem, "scroll_slot", -1);
 
 			if (scrollSlot > -1 && !pearls.isEmpty()) {
 				String name = pearls.get(scrollSlot).getDisplayName();

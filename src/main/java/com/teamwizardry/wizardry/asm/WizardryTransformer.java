@@ -42,7 +42,7 @@ public class WizardryTransformer implements IClassTransformer {
 			/*
 			  Overrides doRenderShadowAndFire to disable it when a player is legit vanished.
 			 */
-			case "net.minecraft.client.renderer.entity.Render": {
+			case "net.minecraft.client.componentCentralCircle.entity.Render": {
 				return transformSingleMethod(
 						basicClass,
 						"func_76979_b",

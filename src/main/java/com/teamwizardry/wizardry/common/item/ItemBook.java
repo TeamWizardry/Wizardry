@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBook;
 import com.teamwizardry.librarianlib.features.gui.provided.book.IBookGui;
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.book.Book;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
@@ -58,10 +58,10 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 				if (stack.getItem() != ModItems.BOOK)
 					continue;
 
-				if (!ItemNBTHelper.getBoolean(stack, "has_spell", false))
+				if (!NBTHelper.getBoolean(stack, "has_spell", false))
 					return;
 
-				NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+				NBTTagList moduleList = NBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 				if (moduleList == null)
 					return;
 
@@ -70,7 +70,7 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 					List<List<ModuleInstance>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 					List<ItemStack> spellItems = SpellUtils.getSpellItems(spellModules);
 
-					int page = ItemNBTHelper.getInt(stack, "page", 0);
+					int page = NBTHelper.getInt(stack, "page", 0);
 
 					int maxPages = 0;
 					int row = 0;
@@ -87,16 +87,16 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 							maxPages++;
 
 							if (maxPages > page) {
-								ItemNBTHelper.setInt(stack, "page", page + 1);
+								NBTHelper.setInt(stack, "page", page + 1);
 							}
 						}
 					}
 
 				} else {
 
-					int page = ItemNBTHelper.getInt(stack, "page", 0);
+					int page = NBTHelper.getInt(stack, "page", 0);
 
-					ItemNBTHelper.setInt(stack, "page", Math.max(page - 1, 0));
+					NBTHelper.setInt(stack, "page", Math.max(page - 1, 0));
 				}
 
 				event.setCanceled(true);

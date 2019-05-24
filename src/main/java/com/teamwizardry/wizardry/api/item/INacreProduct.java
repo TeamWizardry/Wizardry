@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import kotlin.jvm.functions.Function2;
@@ -27,16 +27,16 @@ public interface INacreProduct extends IItemColorProvider {
 
 	default void colorableOnUpdate(ItemStack stack, World world) {
 		if (!world.isRemote) {
-			if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
-				ItemNBTHelper.setFloat(stack, NBT.RAND, (world.getTotalWorldTime() / 140f) % 140f);
+			if (!NBTHelper.hasNBTEntry(stack, NBT.RAND))
+				NBTHelper.setFloat(stack, NBT.RAND, (world.getTotalWorldTime() / 140f) % 140f);
 
-			if (!ItemNBTHelper.verifyExistence(stack, NBT.PURITY)) {
-				ItemNBTHelper.setInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
-				ItemNBTHelper.setFloat(stack, NBT.PURITY_OVERRIDE, 1f);
+			if (!NBTHelper.hasNBTEntry(stack, NBT.PURITY)) {
+				NBTHelper.setInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+				NBTHelper.setFloat(stack, NBT.PURITY_OVERRIDE, 1f);
 			}
 
-			if (!ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false))
-				ItemNBTHelper.setBoolean(stack, NBT.COMPLETE, true);
+			if (!NBTHelper.getBoolean(stack, NBT.COMPLETE, false))
+				NBTHelper.setBoolean(stack, NBT.COMPLETE, true);
 		}
 	}
 
@@ -44,28 +44,28 @@ public interface INacreProduct extends IItemColorProvider {
 		if (entityItem.world.isRemote) return;
 		ItemStack stack = entityItem.getItem();
 
-		if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
-			ItemNBTHelper.setFloat(stack, NBT.RAND, entityItem.world.rand.nextFloat());
+		if (!NBTHelper.hasNBTEntry(stack, NBT.RAND))
+			NBTHelper.setFloat(stack, NBT.RAND, entityItem.world.rand.nextFloat());
 
 		IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
 
-		if (state.getBlock() == ModFluids.NACRE.getActualBlock() && !ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
-			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, 0);
+		if (state.getBlock() == ModFluids.NACRE.getActualBlock() && !NBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
+			int purity = NBTHelper.getInt(stack, NBT.PURITY, 0);
 			purity = Math.min(purity + 1, NBT.NACRE_PURITY_CONVERSION * 2);
-			ItemNBTHelper.setInt(stack, NBT.PURITY, purity);
-		} else if (ItemNBTHelper.getInt(stack, NBT.PURITY, 0) > 0)
-			ItemNBTHelper.setBoolean(stack, NBT.COMPLETE, true);
+			NBTHelper.setInt(stack, NBT.PURITY, purity);
+		} else if (NBTHelper.getInt(stack, NBT.PURITY, 0) > 0)
+			NBTHelper.setBoolean(stack, NBT.COMPLETE, true);
 	}
 
 	default float getQuality(ItemStack stack) {
 		if (!stack.hasTagCompound())
 			return 1f;
-		float override = ItemNBTHelper.getFloat(stack, NBT.PURITY_OVERRIDE, -1f);
+		float override = NBTHelper.getFloat(stack, NBT.PURITY_OVERRIDE, -1f);
 		if (override > 0)
 			return override;
 
 		float timeConstant = NBT.NACRE_PURITY_CONVERSION;
-		int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+		int purity = NBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
 		if (purity > NBT.NACRE_PURITY_CONVERSION + 1)
 			return Math.max(0, 2f - purity / timeConstant);
 		else if (purity < NBT.NACRE_PURITY_CONVERSION - 1)
@@ -79,14 +79,14 @@ public interface INacreProduct extends IItemColorProvider {
 	@SideOnly(Side.CLIENT)
 	default Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return (stack, tintIndex) -> {
-			//float hue = ItemNBTHelper.getFloat(stack, "hue", 0);
-			//float sat = ItemNBTHelper.getFloat(stack, "saturation", 0);
+			//float hue = NBTHelper.getFloat(stack, "hue", 0);
+			//float sat = NBTHelper.getFloat(stack, "saturation", 0);
 			//float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 
 			//float saturation = curveConst * (1 - (float) Math.pow(Math.E, -pow)) * sat;
 
 			if (tintIndex != 0) return 0xFFFFFF;
-			float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
+			float rand = NBTHelper.getFloat(stack, NBT.RAND, -1);
 			float hue = rand < 0 ? (Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) % 140f : rand;
 			float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 
@@ -108,14 +108,14 @@ public interface INacreProduct extends IItemColorProvider {
 				if (!stack.hasTagCompound())
 					return Color.HSBtoRGB(MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f), 0.75f, 1f);
 
-				long lastCast = ItemNBTHelper.getLong(stack, NBT.LAST_CAST, -1);
-				int decayCooldown = ItemNBTHelper.getInt(stack, NBT.LAST_COOLDOWN, -1);
+				long lastCast = NBTHelper.getLong(stack, NBT.LAST_CAST, -1);
+				int decayCooldown = NBTHelper.getInt(stack, NBT.LAST_COOLDOWN, -1);
 				long tick = Minecraft.getMinecraft().world.getTotalWorldTime();
 				long timeSinceCooldown = tick - lastCast;
 				float decayStage = (decayCooldown > 0) ? ((float) timeSinceCooldown) / decayCooldown : 1f;
 
 
-				float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
+				float rand = NBTHelper.getFloat(stack, NBT.RAND, -1);
 				float hue = rand < 0 ? (tick / 140f) % 140f : rand;
 				float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 

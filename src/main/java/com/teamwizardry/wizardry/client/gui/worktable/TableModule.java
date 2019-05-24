@@ -337,7 +337,7 @@ public class TableModule extends GuiComponent {
 		GlStateManager.enableBlend();
 		GlStateManager.enableAlpha();
 		GlStateManager.disableCull();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+
 		GlStateManager.translate(0, 0, -10);
 		STREAK.bind();
 		InterpBezier2D bezier = new InterpBezier2D(start, end);

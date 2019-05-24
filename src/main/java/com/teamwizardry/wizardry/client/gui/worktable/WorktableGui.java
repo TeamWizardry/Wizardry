@@ -14,7 +14,7 @@ import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
@@ -354,7 +354,7 @@ public class WorktableGui extends GuiBase {
 				}
 				//	for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 				//		if (stack.getItem() == ModItems.BOOK) {
-				//			ItemNBTHelper.setList(stack, "common_modules", commonList);
+				//			NBTHelper.setList(stack, "common_modules", commonList);
 				//		}
 				//	}
 
@@ -418,7 +418,7 @@ public class WorktableGui extends GuiBase {
 				for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 					if (stack.getItem() == ModItems.BOOK) {
 
-						NBTTagList list = ItemNBTHelper.getList(stack, "common_modules", NBTTagCompound.class);
+						NBTTagList list = NBTHelper.getList(stack, "common_modules", NBTTagCompound.class);
 						if (list == null || list.isEmpty()) continue;
 
 						commonList = list;

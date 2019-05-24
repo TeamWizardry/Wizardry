@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.item.pearlbelt;
 
 import baubles.api.BaubleType;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.item.ProxiedItemStackHandler;
 import kotlin.jvm.functions.Function2;
@@ -35,6 +36,8 @@ public class ItemPearlBelt extends ItemModBauble implements IPearlBelt {
 	@NotNull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand) {
+
+		player.openGui(Wizardry.instance, 1, world, (int) player.posX, (int) player.posY, (int) player.posZ);
 		return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
 	}
 

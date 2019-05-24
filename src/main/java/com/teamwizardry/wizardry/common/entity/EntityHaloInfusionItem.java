@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.features.base.entity.EntityMod;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItem;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItemRegistry;
 import com.teamwizardry.wizardry.common.tile.TileHaloInfuser;
@@ -133,7 +133,7 @@ public class EntityHaloInfusionItem extends EntityMod {
 			TileHaloInfuser haloInfuser = (TileHaloInfuser) tile;
 			ItemStack halo = haloInfuser.getHalo();
 
-			NBTTagList slots = ItemNBTHelper.getList(halo, "slots", NBTTagString.class);
+			NBTTagList slots = NBTHelper.getList(halo, "slots", NBTTagString.class);
 			if (slots == null || slots.tagCount() < HaloInfusionItemRegistry.getItems().size() - 1) {
 				slots = new NBTTagList();
 
@@ -144,7 +144,7 @@ public class EntityHaloInfusionItem extends EntityMod {
 
 			slots.set(slot, new NBTTagString(haloInfusionItem.getNbtName()));
 
-			ItemNBTHelper.setList(halo, "slots", slots);
+			NBTHelper.setList(halo, "slots", slots);
 		}
 	}
 }

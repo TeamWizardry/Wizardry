@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import baubles.api.BaubleType;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICape;
@@ -11,7 +11,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.init.ModItems;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -22,7 +21,6 @@ import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -75,7 +73,7 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 	{
 		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
 		if (stack != ItemStack.EMPTY) {
-			float time = ItemNBTHelper.getInt(stack, "maxTick", 0);
+			float time = NBTHelper.getInt(stack, "maxTick", 0);
 			return (float) MathHelper.clamp(1 - (time / 1000000.0), 0.25, 1);
 		}
 		return 1;

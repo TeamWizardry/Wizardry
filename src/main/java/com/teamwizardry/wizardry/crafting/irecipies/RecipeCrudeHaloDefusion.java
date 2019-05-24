@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItem;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItemRegistry;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -63,7 +63,7 @@ public class RecipeCrudeHaloDefusion extends IForgeRegistryEntry.Impl<IRecipe> i
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack.getItem() == ModItems.FAKE_HALO) {
 
-				NBTTagList slots = ItemNBTHelper.getList(stack, "slots", NBTTagString.class);
+				NBTTagList slots = NBTHelper.getList(stack, "slots", NBTTagString.class);
 				if (slots == null) {
 					slots = new NBTTagList();
 

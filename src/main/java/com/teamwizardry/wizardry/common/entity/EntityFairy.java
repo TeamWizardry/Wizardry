@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.features.base.entity.FlyingEntityMod;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
@@ -201,7 +201,7 @@ public class EntityFairy extends FlyingEntityMod {
 		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
 		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);
-		ItemNBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, color.getRGB());
+		NBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, color.getRGB());
 		entityDropItem(fairyDust, RandUtil.nextFloat());
 		entityDropItem(fairyWings, RandUtil.nextFloat());
 	}

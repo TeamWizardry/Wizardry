@@ -1,10 +1,8 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorld;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
-import com.teamwizardry.wizardry.common.network.PacketSyncWizardryWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,7 +22,7 @@ public class SpellTicker {
 		WizardryWorld cap = WizardryWorldCapability.get(event.player.world);
 		if (cap == null) return;
 
-		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(cap.serializeNBT()), event.player.world.provider.getDimension());
+		//	PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(cap.serializeNBT()), event.player.world.provider.getDimension());
 	}
 
 	@SubscribeEvent

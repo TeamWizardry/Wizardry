@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.TileModTickable;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInventory;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.wizardry.Wizardry;
@@ -83,14 +83,14 @@ public class TileHaloInfuser extends TileModTickable {
 	}
 
 	public void updateItems(boolean soft) {
-		NBTTagList slots = ItemNBTHelper.getList(getHalo(), "slots", NBTTagString.class);
+		NBTTagList slots = NBTHelper.getList(getHalo(), "slots", NBTTagString.class);
 		if (slots == null || slots.tagCount() < HaloInfusionItemRegistry.getItems().size() - 1) {
 			slots = new NBTTagList();
 
 			for (int i = 0; i < HaloInfusionItemRegistry.getItems().size(); i++) {
 				slots.appendTag(new NBTTagString(HaloInfusionItemRegistry.EMPTY.getNbtName()));
 			}
-			ItemNBTHelper.setList(getHalo(), "slots", slots);
+			NBTHelper.setList(getHalo(), "slots", slots);
 		}
 
 		for (int i = 0; i < HaloInfusionItemRegistry.getItems().size(); i++) {

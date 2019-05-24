@@ -1,19 +1,15 @@
 package com.teamwizardry.wizardry.common.item.pearlbelt;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlStorageHolder;
-import com.teamwizardry.wizardry.api.util.Utils;
-import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotClient;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -62,30 +58,30 @@ public interface IPearlBelt extends IPearlStorageHolder, INacreProduct.INacreDec
 			boolean changed = false;
 			for (ItemStack stack : player.inventory.mainInventory)
 				if (stack.getItem() == ModItems.PEARL_NACRE)
-					if (ItemNBTHelper.getBoolean(stack, "infused", false))
-						if (addPearl(belt, stack.copy())) {
+					if (NBTHelper.getBoolean(stack, "infused", false))
+						if (addPearl(belt, stack.copy(), true)) {
 							stack.shrink(1);
 							changed = true;
 						}
 
 			if (changed) {
-				ItemNBTHelper.setInt(belt, "scroll_slot", -1);
+				NBTHelper.setInt(belt, "scroll_slot", -1);
 				player.playSound(ModSounds.BELL_TING, 1f, 1f);
 			}
 		} else if (isKeybindDown) {
-			int scrollSlot = ItemNBTHelper.getInt(belt, "scroll_slot", -1);
+			int scrollSlot = NBTHelper.getInt(belt, "scroll_slot", -1);
 			if (scrollSlot == -1) return;
 
-			ItemStack output = removePearl(belt, scrollSlot);
+			ItemStack output = removePearl(belt, scrollSlot, true);
 			if (output.isEmpty()) return;
 
 			player.addItemStackToInventory(output);
-			ItemNBTHelper.setInt(belt, "scroll_slot", Math.max(scrollSlot - 1, 0));
+			NBTHelper.setInt(belt, "scroll_slot", Math.max(scrollSlot - 1, 0));
 		}
 
 
-		if (player instanceof EntityPlayerMP)
-			PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(Utils.getSlotFor(player, belt), -1), (EntityPlayerMP) player);
+		//	if (player instanceof EntityPlayerMP)
+		//		PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(Utils.getSlotFor(player, belt), -1), (EntityPlayerMP) player);
 	}
 
 	default IItemHandler getBeltPearls(ItemStack stack) {
@@ -105,14 +101,14 @@ public interface IPearlBelt extends IPearlStorageHolder, INacreProduct.INacreDec
 			if (!stack.hasTagCompound())
 				return Color.HSBtoRGB(MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f), 0.75f, 1f);
 
-			long lastCast = ItemNBTHelper.getLong(stack, Constants.NBT.LAST_CAST, -1);
-			int decayCooldown = ItemNBTHelper.getInt(stack, Constants.NBT.LAST_COOLDOWN, -1);
+			long lastCast = NBTHelper.getLong(stack, Constants.NBT.LAST_CAST, -1);
+			int decayCooldown = NBTHelper.getInt(stack, Constants.NBT.LAST_COOLDOWN, -1);
 			long tick = Minecraft.getMinecraft().world.getTotalWorldTime();
 			long timeSinceCooldown = tick - lastCast;
 			float decayStage = (decayCooldown > 0) ? ((float) timeSinceCooldown) / decayCooldown : 1f;
 
 
-			float rand = ItemNBTHelper.getFloat(stack, Constants.NBT.RAND, -1);
+			float rand = NBTHelper.getFloat(stack, Constants.NBT.RAND, -1);
 			float hue = rand < 0 ? (tick / 140f) % 140f : rand;
 			float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 

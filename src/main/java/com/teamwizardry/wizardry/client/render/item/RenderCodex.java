@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.animator.Animator;
 import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
@@ -156,7 +156,7 @@ public class RenderCodex {
 
 		boolean isGuiOpen = mc.currentScreen instanceof GuiBook;
 		boolean rightHand = side == EnumHandSide.RIGHT;
-		boolean hasSpell = ItemNBTHelper.getBoolean(stack, "has_spell", false);
+		boolean hasSpell = NBTHelper.getBoolean(stack, "has_spell", false);
 
 		final String openingTagRight = "openingCooldownRight";
 		final String openingTagLeft = "openingCooldownLeft";
@@ -323,7 +323,7 @@ public class RenderCodex {
 							LibrarianLib.PROXY.translate("wizardry.book.open_recipe_tab"));
 
 				List<ItemStack> inventory = getSpellInventory(stack);
-				int currentPage = ItemNBTHelper.getInt(stack, "page", 0);
+				int currentPage = NBTHelper.getInt(stack, "page", 0);
 
 				int row = 0;
 				int column = 0;
@@ -453,12 +453,12 @@ public class RenderCodex {
 	}
 
 	public String[] getSpellStructureLines(ItemStack stack) {
-		NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+		NBTTagList moduleList = NBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 		if (moduleList == null) return new String[0];
 
 		List<List<ModuleInstance>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 		spellModules = SpellUtils.getEssentialModules(spellModules);
-		int page = ItemNBTHelper.getInt(stack, "page", 0);
+		int page = NBTHelper.getInt(stack, "page", 0);
 
 		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 
@@ -504,9 +504,9 @@ public class RenderCodex {
 	}
 
 	public List<ItemStack> getSpellInventory(ItemStack stack) {
-		if (!ItemNBTHelper.getBoolean(stack, "has_spell", false)) return new ArrayList<>();
+		if (!NBTHelper.getBoolean(stack, "has_spell", false)) return new ArrayList<>();
 
-		NBTTagList spellList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+		NBTTagList spellList = NBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 		if (spellList == null) return new ArrayList<>();
 
 		return SpellUtils.getSpellItems(SpellUtils.deserializeModuleList(spellList));

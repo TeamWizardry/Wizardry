@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemModFood;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.item.ItemStack;
@@ -22,6 +22,6 @@ public class ItemFairyImbuedApple extends ItemModFood implements IItemColorProvi
 	@Nullable
 	@Override
 	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
-		return (stack, tintIndex) -> ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF);
+		return (stack, tintIndex) -> NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF);
 	}
 }

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.capability.mana;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.common.network.PacketUpdateCaps;
 import net.minecraft.entity.Entity;
@@ -25,58 +25,58 @@ public class BaubleWizardryCapability implements IWizardryCapability {
 
 	public BaubleWizardryCapability(ItemStack stack, double maxMana, double maxBurnout) {
 		this.stack = stack;
-		ItemNBTHelper.setDouble(stack, "mana", 0);
-		ItemNBTHelper.setDouble(stack, "max_mana", maxMana);
-		ItemNBTHelper.setDouble(stack, "burnout", 0);
-		ItemNBTHelper.setDouble(stack, "max_burnout", maxBurnout);
+		NBTHelper.setDouble(stack, "mana", 0);
+		NBTHelper.setDouble(stack, "max_mana", maxMana);
+		NBTHelper.setDouble(stack, "burnout", 0);
+		NBTHelper.setDouble(stack, "max_burnout", maxBurnout);
 	}
 
 	public BaubleWizardryCapability(ItemStack stack, double maxMana, double maxBurnout, double mana, double burnout) {
 		this.stack = stack;
-		ItemNBTHelper.setDouble(stack, "mana", mana);
-		ItemNBTHelper.setDouble(stack, "max_mana", maxMana);
-		ItemNBTHelper.setDouble(stack, "burnout", burnout);
-		ItemNBTHelper.setDouble(stack, "max_burnout", maxBurnout);
+		NBTHelper.setDouble(stack, "mana", mana);
+		NBTHelper.setDouble(stack, "max_mana", maxMana);
+		NBTHelper.setDouble(stack, "burnout", burnout);
+		NBTHelper.setDouble(stack, "max_burnout", maxBurnout);
 	}
 
 	@Override
 	public double getMana() {
-		return ItemNBTHelper.getDouble(stack, "mana", 0);
+		return NBTHelper.getDouble(stack, "mana", 0);
 	}
 
 	@Override
 	public void setMana(double mana) {
-		ItemNBTHelper.setDouble(stack, "mana", MathHelper.clamp(mana, 0, ItemNBTHelper.getDouble(stack, "max_mana", 0)));
+		NBTHelper.setDouble(stack, "mana", MathHelper.clamp(mana, 0, NBTHelper.getDouble(stack, "max_mana", 0)));
 	}
 
 	@Override
 	public double getMaxMana() {
-		return ItemNBTHelper.getDouble(stack, "max_mana", 0);
+		return NBTHelper.getDouble(stack, "max_mana", 0);
 	}
 
 	@Override
 	public void setMaxMana(double maxMana) {
-		ItemNBTHelper.setDouble(stack, "max_mana", 0);
+		NBTHelper.setDouble(stack, "max_mana", 0);
 	}
 
 	@Override
 	public double getBurnout() {
-		return ItemNBTHelper.getDouble(stack, "burnout", 0);
+		return NBTHelper.getDouble(stack, "burnout", 0);
 	}
 
 	@Override
 	public void setBurnout(double burnout) {
-		ItemNBTHelper.setDouble(stack, "burnout", MathHelper.clamp(burnout, 0, ItemNBTHelper.getDouble(stack, "max_burnout", 0)));
+		NBTHelper.setDouble(stack, "burnout", MathHelper.clamp(burnout, 0, NBTHelper.getDouble(stack, "max_burnout", 0)));
 	}
 
 	@Override
 	public double getMaxBurnout() {
-		return ItemNBTHelper.getDouble(stack, "max_burnout", 0);
+		return NBTHelper.getDouble(stack, "max_burnout", 0);
 	}
 
 	@Override
 	public void setMaxBurnout(double maxBurnout) {
-		ItemNBTHelper.setDouble(stack, "max_burnout", 0);
+		NBTHelper.setDouble(stack, "max_burnout", 0);
 	}
 
 	@Override

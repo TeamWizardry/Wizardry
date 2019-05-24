@@ -6,7 +6,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ClientConfigValues;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
@@ -308,7 +308,7 @@ public final class CapeHandler {
 			ItemStack stack = BaublesSupport.getItem(player, ModItems.CAPE);
 
 			ResourceLocation fallBackCape;
-			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
+			UUID uuid = NBTHelper.getUniqueId(stack, "uuid");
 			if (uuid != null) {
 				RandUtilSeed seed = new RandUtilSeed(uuid.hashCode());
 				fallBackCape = new ResourceLocation(Wizardry.MODID, "textures/capes/cape_normal_" + seed.nextInt(1, 4) + ".png");

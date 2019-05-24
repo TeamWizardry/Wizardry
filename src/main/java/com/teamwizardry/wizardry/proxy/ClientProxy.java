@@ -37,7 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 
-//import com.teamwizardry.wizardry.client.core.renderer.PearlRadialUIRenderer;
+//import com.teamwizardry.wizardry.client.core.componentCentralCircle.PearlRadialUIRenderer;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {

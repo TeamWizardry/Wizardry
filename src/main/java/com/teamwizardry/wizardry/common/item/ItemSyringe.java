@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
@@ -115,8 +115,8 @@ public class ItemSyringe extends ItemMod {
 		//	entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 2);
 		//	stack.setItemDamage(3);
 		//	if (entity instanceof EntityPlayer)
-		//		ItemNBTHelper.setUUID(stack, "uuid", entity.getUniqueID());
-		//	else ItemNBTHelper.setString(stack, "entity", entity.getName());
+		//		NBTHelper.setUUID(stack, "uuid", entity.getUniqueID());
+		//	else NBTHelper.setString(stack, "entity", entity.getName());
 		//}
 		return false;
 	}
@@ -133,8 +133,8 @@ public class ItemSyringe extends ItemMod {
 		}
 
 		if (stack.getItemDamage() == 3 && stack.hasTagCompound()) {
-			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
-			String entity = ItemNBTHelper.getString(stack, "entity", null);
+			UUID uuid = NBTHelper.getUniqueId(stack, "uuid");
+			String entity = NBTHelper.getString(stack, "entity");
 			if (uuid != null) {
 				EntityPlayer player1 = null;
 				if (worldIn != null) {

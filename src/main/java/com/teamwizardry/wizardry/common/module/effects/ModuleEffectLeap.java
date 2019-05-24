@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -49,23 +49,23 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 		ItemStack stack = ((EntityLivingBase) target).getHeldItemMainhand();
 
 		if (stack.isEmpty()
-				|| !ItemNBTHelper.verifyExistence(stack, "jump_count")
-				|| !ItemNBTHelper.verifyExistence(stack, "max_jumps")
-				|| !ItemNBTHelper.verifyExistence(stack, "jump_timer"))
+				|| !NBTHelper.hasNBTEntry(stack, "jump_count")
+				|| !NBTHelper.hasNBTEntry(stack, "max_jumps")
+				|| !NBTHelper.hasNBTEntry(stack, "jump_timer"))
 			return 50;
 
-		int jumpCount = ItemNBTHelper.getInt(stack, "jump_count", 0);
-		int maxJumps = ItemNBTHelper.getInt(stack, "max_jumps", 0);
+		int jumpCount = NBTHelper.getInt(stack, "jump_count", 0);
+		int maxJumps = NBTHelper.getInt(stack, "max_jumps", 0);
 
 		if (jumpCount <= 1) {
 
-			ItemNBTHelper.removeEntry(stack, "jump_timer");
-			ItemNBTHelper.removeEntry(stack, "jump_count");
-			ItemNBTHelper.removeEntry(stack, "max_jumps");
+			NBTHelper.removeNBTEntry(stack, "jump_timer");
+			NBTHelper.removeNBTEntry(stack, "jump_count");
+			NBTHelper.removeNBTEntry(stack, "max_jumps");
 			return 50;
 		}
 
-		ItemNBTHelper.setInt(stack, "jump_count", jumpCount - 1);
+		NBTHelper.setInt(stack, "jump_count", jumpCount - 1);
 		return (maxJumps + 5) - jumpCount;
 	}
 
@@ -85,12 +85,12 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 			double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
 			if (!spellRing.taxCaster(world, spell, true)) return false;
 
-			if (!ItemNBTHelper.verifyExistence(stack, "jump_count")
-					|| !ItemNBTHelper.verifyExistence(stack, "max_jumps")
-					|| !ItemNBTHelper.verifyExistence(stack, "jump_timer")) {
-				ItemNBTHelper.setInt(stack, "jump_count", (int) potency);
-				ItemNBTHelper.setInt(stack, "max_jumps", (int) potency);
-				ItemNBTHelper.setInt(stack, "jump_timer", 200);
+			if (!NBTHelper.hasNBTEntry(stack, "jump_count")
+					|| !NBTHelper.hasNBTEntry(stack, "max_jumps")
+					|| !NBTHelper.hasNBTEntry(stack, "jump_timer")) {
+				NBTHelper.setInt(stack, "jump_count", (int) potency);
+				NBTHelper.setInt(stack, "max_jumps", (int) potency);
+				NBTHelper.setInt(stack, "jump_timer", 200);
 			}
 
 			target.motionX += lookVec.x;
@@ -129,15 +129,15 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 		ItemStack stack = event.getEntityLiving().getHeldItemMainhand();
 		if (stack.isEmpty()) return;
 
-		if (ItemNBTHelper.verifyExistence(stack, "jump_timer")) {
-			int x = ItemNBTHelper.getInt(stack, "jump_timer", 0);
+		if (NBTHelper.hasNBTEntry(stack, "jump_timer")) {
+			int x = NBTHelper.getInt(stack, "jump_timer", 0);
 
 			if (x <= 0 || event.getEntityLiving().collidedVertically) {
-				ItemNBTHelper.removeEntry(stack, "jump_timer");
-				ItemNBTHelper.removeEntry(stack, "jump_count");
-				ItemNBTHelper.removeEntry(stack, "max_jumps");
+				NBTHelper.removeNBTEntry(stack, "jump_timer");
+				NBTHelper.removeNBTEntry(stack, "jump_count");
+				NBTHelper.removeNBTEntry(stack, "max_jumps");
 
-			} else ItemNBTHelper.setInt(stack, "jump_timer", x - 1);
+			} else NBTHelper.setInt(stack, "jump_timer", x - 1);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItem;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItemRegistry;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -47,7 +47,7 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 
 		if (!foundGlueStick || foundHalo.isEmpty() || availableItems <= 0) return false;
 
-		NBTTagList slots = ItemNBTHelper.getList(foundHalo, "slots", NBTTagString.class);
+		NBTTagList slots = NBTHelper.getList(foundHalo, "slots", NBTTagString.class);
 		if (slots == null) return availableItems <= 7;
 
 		int freeSlots = 0;
@@ -78,7 +78,7 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 
 		if (foundHalo.isEmpty() || foundGlueStick.isEmpty() || infusionItems.isEmpty()) return ItemStack.EMPTY;
 
-		NBTTagList slots = ItemNBTHelper.getList(foundHalo, "slots", NBTTagString.class);
+		NBTTagList slots = NBTHelper.getList(foundHalo, "slots", NBTTagString.class);
 		if (slots == null) {
 			slots = new NBTTagList();
 
@@ -102,7 +102,7 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 
 		ItemStack haloCopy = foundHalo.copy();
 
-		ItemNBTHelper.setList(haloCopy, "slots", slots);
+		NBTHelper.setList(haloCopy, "slots", slots);
 
 		return haloCopy;
 	}

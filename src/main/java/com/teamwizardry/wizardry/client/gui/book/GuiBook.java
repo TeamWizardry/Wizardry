@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.gui.provided.book.ModGuiBook;
 import com.teamwizardry.librarianlib.features.gui.provided.book.context.BookContext;
 import com.teamwizardry.librarianlib.features.gui.provided.book.context.Bookmark;
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.book.Book;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.item.ItemStack;
@@ -26,7 +26,7 @@ public class GuiBook extends ModGuiBook {
 
 		if (bookItemStack.isEmpty()) return;
 
-		if (!ItemNBTHelper.getBoolean(bookItemStack, "has_spell", false)) return;
+		if (!NBTHelper.getBoolean(bookItemStack, "has_spell", false)) return;
 
 		List<Bookmark> bookmarks = book.addAllBookmarks(new ArrayList<>());
 		bookmarks.add(new ComponentRecipeBar.RecipeBookmark());

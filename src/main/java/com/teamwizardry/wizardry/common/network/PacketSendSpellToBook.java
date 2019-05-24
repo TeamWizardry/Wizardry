@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.network;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
@@ -53,10 +53,10 @@ public class PacketSendSpellToBook extends PacketBase {
 		for (ItemStack stack : player.inventory.mainInventory) {
 			if (stack.getItem() == ModItems.BOOK) {
 
-				ItemNBTHelper.setList(stack, "common_modules", commonModules);
-				ItemNBTHelper.setList(stack, Constants.NBT.SPELL, moduleList);
-				ItemNBTHelper.setBoolean(stack, "has_spell", true);
-				ItemNBTHelper.setInt(stack, "page", 0);
+				NBTHelper.setList(stack, "common_modules", commonModules);
+				NBTHelper.setList(stack, Constants.NBT.SPELL, moduleList);
+				NBTHelper.setBoolean(stack, "has_spell", true);
+				NBTHelper.setInt(stack, "page", 0);
 			}
 		}
 	}

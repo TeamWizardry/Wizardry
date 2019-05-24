@@ -1,14 +1,10 @@
 package com.teamwizardry.wizardry.api.item.pearlswapping;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
-import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
-import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotClient;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -26,24 +22,24 @@ public interface IPearlSwappable {
 	ItemStack swapPearl(ItemStack pearlHolder, ItemStack stackSwipeTo);
 
 	default void swapOnRightClick(EntityPlayer player, ItemStack pearlHolder) {
-		int scrollSlot = ItemNBTHelper.getInt(pearlHolder, "scroll_slot", -1);
+		int scrollSlot = NBTHelper.getInt(pearlHolder, "scroll_slot", -1);
 		if (scrollSlot == -1) return;
 
 		ItemStack beltStack = BaublesSupport.getItem(player, ModItems.PEARL_BELT);
 		if (beltStack.isEmpty()) return;
 
 		IPearlBelt belt = (IPearlBelt) beltStack.getItem();
-		ItemStack pearl = belt.removePearl(beltStack, scrollSlot);
+		ItemStack pearl = belt.removePearl(beltStack, scrollSlot, true);
 		if (pearl.isEmpty()) return;
 
 		ItemStack swappedPearl = swapPearl(pearlHolder, pearl);
 		if (!swappedPearl.isEmpty()) {
-			belt.addPearl(beltStack, swappedPearl);
+			belt.addPearl(beltStack, swappedPearl, true);
 		}
 
-		ItemNBTHelper.setInt(pearlHolder, "scroll_slot", Math.max(scrollSlot - 1, 0));
+		NBTHelper.setInt(pearlHolder, "scroll_slot", Math.max(scrollSlot - 1, 0));
 
-		if (player instanceof EntityPlayerMP)
-			PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(Utils.getSlotFor(player, pearlHolder), -1), (EntityPlayerMP) player);
+		//	if (player instanceof EntityPlayerMP)
+		//		PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(Utils.getSlotFor(player, pearlHolder), -1), (EntityPlayerMP) player);
 	}
 }

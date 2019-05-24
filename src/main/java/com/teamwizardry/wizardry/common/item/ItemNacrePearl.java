@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
@@ -155,12 +155,12 @@ public class ItemNacrePearl extends ItemMod implements IInfusableItem, IPotionEf
 			TooltipHelper.addToTooltip(tooltip, "wizardry.misc.sneak_expanded");
 		}
 
-		if (spellRings.isEmpty() && ItemNBTHelper.getFloat(stack, Constants.NBT.PURITY_OVERRIDE, -1f) < 0) {
+		if (spellRings.isEmpty() && NBTHelper.getFloat(stack, Constants.NBT.PURITY_OVERRIDE, -1f) < 0) {
 			float purity = getQuality(stack);
 			String desc = super.getTranslationKey(stack) + ".";
 			if (purity >= 1) desc += "perfect";
 			else {
-				boolean over = ItemNBTHelper.getInt(stack, Constants.NBT.PURITY, 0) > Constants.NBT.NACRE_PURITY_CONVERSION;
+				boolean over = NBTHelper.getInt(stack, Constants.NBT.PURITY, 0) > Constants.NBT.NACRE_PURITY_CONVERSION;
 				if (purity >= 5 / 6.0)
 					if (over)
 						desc += "over_near";
@@ -197,7 +197,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusableItem, IPotionEf
 		if (isInCreativeTab(tab)) {
 			subItems.add(new ItemStack(this));
 			ItemStack stack = new ItemStack(this);
-			ItemNBTHelper.setFloat(stack, Constants.NBT.PURITY_OVERRIDE, 2f);
+			NBTHelper.setFloat(stack, Constants.NBT.PURITY_OVERRIDE, 2f);
 			subItems.add(stack);
 		}
 	}

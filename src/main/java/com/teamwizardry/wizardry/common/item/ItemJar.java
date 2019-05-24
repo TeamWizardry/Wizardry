@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -53,9 +53,9 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 			EntityFairy fairy = (EntityFairy) entity;
 			stack.shrink(1);
 			ItemStack block = new ItemStack(ModBlocks.JAR);
-			ItemNBTHelper.setBoolean(block, Constants.NBT.FAIRY_INSIDE, true);
-			ItemNBTHelper.setInt(block, Constants.NBT.FAIRY_COLOR, fairy.getColor().getRGB());
-			ItemNBTHelper.setInt(block, Constants.NBT.FAIRY_AGE, fairy.getAge());
+			NBTHelper.setBoolean(block, Constants.NBT.FAIRY_INSIDE, true);
+			NBTHelper.setInt(block, Constants.NBT.FAIRY_COLOR, fairy.getColor().getRGB());
+			NBTHelper.setInt(block, Constants.NBT.FAIRY_AGE, fairy.getAge());
 			player.addItemStackToInventory(block);
 			entity.world.removeEntity(entity);
 			return true;
@@ -67,7 +67,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	@Override
 	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		stack.setItemDamage(0);
-		ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
+		NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
 			entityplayer.getFoodStats().addStats(4, 7f);
@@ -93,6 +93,6 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	@Nullable
 	@Override
 	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
-		return (stack, tintIndex) -> ((tintIndex == 0) && (stack.getItemDamage() != 0)) ? ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF) : 0xFFFFFF;
+		return (stack, tintIndex) -> ((tintIndex == 0) && (stack.getItemDamage() != 0)) ? NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF) : 0xFFFFFF;
 	}
 }

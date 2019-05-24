@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.api.spell.module;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.SpellObjectManager;
@@ -155,9 +155,9 @@ public abstract class ModuleInstance {
 	public final IBlockState getSelectedBlockState(EntityLivingBase caster) {
 		ItemStack hand = caster.getHeldItemMainhand();
 		if (hand.isEmpty()) return null;
-		if (ItemNBTHelper.verifyExistence(hand, "selected")) {
+		if (NBTHelper.hasNBTEntry(hand, "selected")) {
 
-			NBTTagCompound compound = ItemNBTHelper.getCompound(hand, "selected");
+			NBTTagCompound compound = NBTHelper.getCompound(hand, "selected");
 			if (compound == null) return null;
 
 			return NBTUtil.readBlockState(compound);

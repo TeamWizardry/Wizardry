@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.item.halo;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -14,7 +14,7 @@ public interface IHalo {
 	default List<String> getHaloTooltip(ItemStack stack) {
 		List<String> tooltips = new ArrayList<>();
 
-		NBTTagList slots = ItemNBTHelper.getList(stack, "slots", NBTTagString.class);
+		NBTTagList slots = NBTHelper.getList(stack, "slots", NBTTagString.class);
 		if (slots == null) {
 			tooltips.add(TextFormatting.GRAY + "<EMPTY>");
 			return tooltips;

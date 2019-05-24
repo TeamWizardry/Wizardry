@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.client.render.block.TileJarRenderer;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
@@ -56,12 +56,12 @@ public class BlockJar extends BlockModContainer {
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
+		if (NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
 			TileEntity entity = worldIn.getTileEntity(pos);
 			if (entity instanceof TileJar) {
 				TileJar jar = (TileJar) entity;
-				jar.color = new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
-				jar.age = ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
+				jar.color = new Color(NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
+				jar.age = NBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
 				jar.hasFairy = true;
 				jar.markDirty();
 				worldIn.checkLight(pos);
@@ -77,9 +77,9 @@ public class BlockJar extends BlockModContainer {
 			TileJar jar = (TileJar) entity;
 			if (jar.color == null) return stack;
 			stack.setItemDamage(1);
-			ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
-			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
-			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
+			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
+			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
+			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
 		}
 		return stack;
 	}
@@ -93,9 +93,9 @@ public class BlockJar extends BlockModContainer {
 			TileJar jar = (TileJar) entity;
 			if (jar.color == null) return;
 			stack.setItemDamage(1);
-			ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
-			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
-			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
+			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
+			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
+			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
 			drops.add(stack);
 		}
 	}
