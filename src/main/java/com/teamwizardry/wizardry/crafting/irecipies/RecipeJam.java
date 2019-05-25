@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.crafting.irecipies;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
@@ -27,8 +26,8 @@ public class RecipeJam extends IForgeRegistryEntry.Impl<IRecipe> implements IRec
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.JAR_ITEM || stack.getItem() == ModBlocks.JAR.getItemForm()) {
-				if (NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false))
+			if (stack.getItem() == ModItems.JAR_ITEM) {
+				if (stack.getItemDamage() == 2)
 					foundJar = true;
 
 			} else if (stack.getItem() == Items.GOLDEN_SWORD)
@@ -44,8 +43,8 @@ public class RecipeJam extends IForgeRegistryEntry.Impl<IRecipe> implements IRec
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.JAR_ITEM || stack.getItem() == ModBlocks.JAR.getItemForm()) {
-				if (NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false))
+			if (stack.getItem() == ModItems.JAR_ITEM) {
+				if (stack.getItemDamage() == 2)
 					jar = stack;
 			}
 		}

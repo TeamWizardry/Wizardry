@@ -11,7 +11,6 @@ import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -37,6 +36,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
+
 
 /**
  * Created by Demoniaque on 8/21/2016.
@@ -197,7 +197,7 @@ public class EntityFairy extends FlyingEntityMod {
 	@Override
 	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
 		ItemStack jar = player.getHeldItemMainhand();
-		if (jar.getItem() == ModBlocks.JAR.getItemForm()) {
+		if (jar.getItem() == ModItems.JAR_ITEM) {
 			succFairy(jar, player);
 			return EnumActionResult.SUCCESS;
 		}
@@ -207,7 +207,7 @@ public class EntityFairy extends FlyingEntityMod {
 	private void succFairy(ItemStack stack, EntityPlayer player) {
 		stack.shrink(1);
 		ItemStack jar = new ItemStack(ModItems.JAR_ITEM);
-		jar.setItemDamage(1);
+		jar.setItemDamage(2);
 		NBTHelper.setBoolean(jar, Constants.NBT.FAIRY_INSIDE, true);
 		NBTHelper.setInt(jar, Constants.NBT.FAIRY_COLOR, getColor().getRGB());
 		NBTHelper.setInt(jar, Constants.NBT.FAIRY_AGE, getAge());

@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer1": "wizardry:items/empty_jar"
-  }
-}

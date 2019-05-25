@@ -1,18 +1,19 @@
 package com.teamwizardry.wizardry.common.block;
 
+import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.client.render.block.TileJarRenderer;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileJar;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -27,6 +28,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,7 +74,7 @@ public class BlockJar extends BlockModContainer {
 
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-		ItemStack stack = new ItemStack(ModBlocks.JAR);
+		ItemStack stack = new ItemStack(ModItems.JAR_ITEM);
 		TileEntity entity = world.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
@@ -89,21 +91,36 @@ public class BlockJar extends BlockModContainer {
 	@Override
 	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 		drops.clear();
-		ItemStack stack = new ItemStack(ModBlocks.JAR);
-		TileEntity entity = world.getTileEntity(pos);
+	}
+
+	@Override
+	public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
+		ItemStack stack = new ItemStack(ModItems.JAR_ITEM);
+		TileEntity entity = worldIn.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
 			if (!jar.hasFairy) {
 				return;
 			}
-
-			stack = new ItemStack(ModItems.JAR_ITEM);
 			stack.setItemDamage(2);
 			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
 		}
-		drops.add(stack);
+		spawnAsEntity(worldIn, pos, stack);
+
+		super.breakBlock(worldIn, pos, state);
+	}
+
+	@Nullable
+	@Override
+	public ItemBlock createItemForm() {
+		return null;
+	}
+
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return null;
 	}
 
 	@Override

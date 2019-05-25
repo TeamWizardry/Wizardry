@@ -4,24 +4,30 @@ import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
+
+import static net.minecraft.util.EnumActionResult.PASS;
+import static net.minecraft.util.EnumActionResult.SUCCESS;
 
 /**
  * Created by Demoniaque on 8/27/2016.
@@ -29,7 +35,7 @@ import javax.annotation.Nullable;
 public class ItemJar extends ItemMod implements IItemColorProvider {
 
 	public ItemJar() {
-		super("jar_item", "jar_jam", "jar_fairy");
+		super("jar_item", "jar_empty", "jar_jam", "jar_fairy");
 		setMaxStackSize(1);
 	}
 
@@ -59,6 +65,42 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 		}
 
 		return stack;
+	}
+
+	@NotNull
+	@Override
+	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
+		if (stack.getItemDamage() != 1) {
+			BlockPos offset = pos.offset(side);
+			IBlockState offsetState = world.getBlockState(offset);
+			if (offsetState.getBlock().isAir(offsetState, world, offset) || offsetState.getBlock().isReplaceable(world, offset)) {
+
+				if (!world.mayPlace(ModBlocks.JAR, offset, false, side, player)) return PASS;
+
+				boolean replacable = world.getBlockState(pos).getBlock().isReplaceable(world, pos);
+				boolean success = world.setBlockState(replacable ? pos : offset, ModBlocks.JAR.getDefaultState());
+				if (success) {
+					world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_GLASS_PLACE, SoundCategory.BLOCKS, 1, 1, false);
+
+					if (!player.isCreative())
+						stack.shrink(1);
+
+					TileEntity tileEntity = world.getTileEntity(replacable ? pos : offset);
+					if (tileEntity instanceof TileJar) {
+						TileJar jar = (TileJar) tileEntity;
+						jar.color = new Color(NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
+						jar.age = NBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
+						jar.hasFairy = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
+						jar.markDirty();
+						world.checkLight(replacable ? pos : offset);
+					}
+				}
+
+				return SUCCESS;
+			}
+		}
+		return PASS;
 	}
 
 	@Nonnull

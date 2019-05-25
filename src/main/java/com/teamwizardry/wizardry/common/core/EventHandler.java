@@ -53,7 +53,6 @@ public class EventHandler {
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.DIAMOND));
 	}
 
-
 	@SubscribeEvent
 	public void redstoneHandler(EntityJoinWorldEvent event) {
 		if (event.getWorld().isRemote) {
