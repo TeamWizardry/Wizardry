@@ -98,7 +98,6 @@ public class ModBlocks {
 	@SideOnly(Side.CLIENT)
 	public static void registerModels(ModelRegistryEvent event) {
 		PEARL_HOLDER.initModel();
-		JAR.initModel();
 		MANA_MAGNET.initModel();
 	}
 }
