@@ -1,258 +1,263 @@
 {
-  "zoom": {
-    "sounds": [
-      "wizardry:zoom_1",
-      "wizardry:zoom_2",
-      "wizardry:zoom_3"
-    ]
-  },
-  "wing_flap": {
-    "sounds": [
-      "wizardry:wing_flap_1",
-      "wizardry:wing_flap_2"
-    ]
-  },
-  "whoosh": {
-    "sounds": [
-      "wizardry:whoosh_1",
-      "wizardry:whoosh_2"
-    ]
-  },
-  "ethereal": {
-    "sounds": [
-      "wizardry:ethereal_1",
-      "wizardry:ethereal_2",
-      "wizardry:ethereal_3"
-    ]
-  },
-  "button_click_out": {
-    "sounds": [
-      "wizardry:button_click_out"
-    ]
-  },
-  "button_click_in": {
-    "sounds": [
-      "wizardry:button_click_in"
-    ]
-  },
-  "bell_ting": {
-    "sounds": [
-      "wizardry:bell_ting"
-    ]
-  },
-  "pop": {
-    "sounds": [
-      "wizardry:pop"
-    ]
-  },
-  "glassbreak": {
-    "sounds": [
-      "wizardry:glassbreak"
-    ]
-  },
-  "fizzingloop": {
-    "sounds": [
-      "wizardry:fizzingloop"
-    ]
-  },
-  "firesizzleloop": {
-    "sounds": [
-      "wizardry:firesizzleloop"
-    ]
-  },
-  "harp1": {
-    "sounds": [
-      "wizardry:harp1"
-    ]
-  },
-  "harp2": {
-    "sounds": [
-      "wizardry:harp2"
-    ]
-  },
-  "bell": {
-    "sounds": [
-      "wizardry:bell"
-    ]
-  },
-  "bubbling": {
-    "sounds": [
-      "wizardry:bubbling"
-    ]
-  },
-  "hallowed_spirit_shriek": {
-    "sounds": [
-      "wizardry:hallowed_spirit_shriek"
-    ]
-  },
-  "expl_boom": {
-    "sounds": [
-      "wizardry:expl_boom"
-    ]
-  },
-  "proj_launch": {
-    "sounds": [
-      "wizardry:proj_launch"
-    ]
-  },
-  "bass_boom": {
-    "sounds": [
-      "wizardry:bass_boom"
-    ]
-  },
-  "chainy_zap": {
-    "sounds": [
-      "wizardry:chainy_zap"
-    ]
-  },
-  "chorus_good": {
-    "sounds": [
-      "wizardry:chorus_good"
-    ]
-  },
-  "cold_wind": {
-    "sounds": [
-      "wizardry:cold_wind"
-    ]
-  },
-  "electric_blast": {
-    "sounds": [
-      "wizardry:electric_blast"
-    ]
-  },
-  "ethereal_pass_by": {
-    "sounds": [
-      "wizardry:ethereal_pass_by"
-    ]
-  },
-  "fairy_1": {
-    "sounds": [
-      "wizardry:fairy_1"
-    ]
-  },
-  "fire": {
-    "sounds": [
-      "wizardry:fire"
-    ]
-  },
-  "fireball": {
-    "sounds": [
-      "wizardry:fireball"
-    ]
-  },
-  "fly": {
-    "sounds": [
-      "wizardry:fly_1",
-      "wizardry:fly_2"
-    ]
-  },
-  "frost_form": {
-    "sounds": [
-      "wizardry:frost_form"
-    ]
-  },
-  "heal": {
-    "sounds": [
-      "wizardry:heal"
-    ]
-  },
-  "lightning": {
-    "sounds": [
-      "wizardry:lightning"
-    ]
-  },
-  "slow_motion_in": {
-    "sounds": [
-      "wizardry:slow_motion_in"
-    ]
-  },
-  "slow_motion_out": {
-    "sounds": [
-      "wizardry:slow_motion_out"
-    ]
-  },
-  "smoke_blast": {
-    "sounds": [
-      "wizardry:smoke_blast"
-    ]
-  },
-  "teleport": {
-    "sounds": [
-      "wizardry:teleport_1",
-      "wizardry:teleport_2",
-      "wizardry:teleport_3"
-    ]
-  },
-  "thunder_blast": {
-    "sounds": [
-      "wizardry:thunder_blast"
-    ]
-  },
-  "wind": {
-    "sounds": [
-      "wizardry:wind"
-    ]
-  },
-  "zap": {
-    "sounds": [
-      "wizardry:zap"
-    ]
-  },
-  "electric_white_noise": {
-    "sounds": [
-      "wizardry:electric_white_noise"
-    ]
-  },
-  "sparkle": {
-    "sounds": [
-      "wizardry:sparkle"
-    ]
-  },
-  "gas_leak": {
-    "sounds": [
-      "wizardry:gas_leak"
-    ]
-  },
-  "grace": {
-    "sounds": [
-      "wizardry:grace"
-    ]
-  },
-  "sound_bomb": {
-    "sounds": [
-      "wizardry:sound_bomb"
-    ]
-  },
-  "firework": {
-    "sounds": [
-      "wizardry:firework"
-    ]
-  },
-  "marble_explosion": {
-    "sounds": [
-      "wizardry:marble_explosion"
-    ]
-  },
-  "scribbling": {
-    "sounds": [
-      "wizardry:scribbling_1",
-      "wizardry:scribbling_2",
-      "wizardry:scribbling_3"
-    ]
-  },
-  "good_ethereal_chills": {
-    "sounds": [
-      "wizardry:good_ethereal_chills"
-    ]
-  },
-  "spell_fail": {
-    "sounds": [
-      "wizardry:spell_fail"
-    ]
-  },
-  "slime_squishing": {
-    "sounds": [
-      "wizardry:slime_squishing"
-    ]
-  }
+	"zoom": {
+		"sounds": [
+			"wizardry:zoom_1",
+			"wizardry:zoom_2",
+			"wizardry:zoom_3"
+		]
+	},
+	"wing_flap": {
+		"sounds": [
+			"wizardry:wing_flap_1",
+			"wizardry:wing_flap_2"
+		]
+	},
+	"whoosh": {
+		"sounds": [
+			"wizardry:whoosh_1",
+			"wizardry:whoosh_2"
+		]
+	},
+	"ethereal": {
+		"sounds": [
+			"wizardry:ethereal_1",
+			"wizardry:ethereal_2",
+			"wizardry:ethereal_3"
+		]
+	},
+	"button_click_out": {
+		"sounds": [
+			"wizardry:button_click_out"
+		]
+	},
+	"button_click_in": {
+		"sounds": [
+			"wizardry:button_click_in"
+		]
+	},
+	"bell_ting": {
+		"sounds": [
+			"wizardry:bell_ting"
+		]
+	},
+	"pop": {
+		"sounds": [
+			"wizardry:pop"
+		]
+	},
+	"glassbreak": {
+		"sounds": [
+			"wizardry:glassbreak"
+		]
+	},
+	"fizzingloop": {
+		"sounds": [
+			"wizardry:fizzingloop"
+		]
+	},
+	"harp1": {
+		"sounds": [
+			"wizardry:harp1"
+		]
+	},
+	"harp2": {
+		"sounds": [
+			"wizardry:harp2"
+		]
+	},
+	"bell": {
+		"sounds": [
+			"wizardry:bell"
+		]
+	},
+	"bubbling": {
+		"sounds": [
+			"wizardry:bubbling"
+		]
+	},
+	"hallowed_spirit_shriek": {
+		"sounds": [
+			"wizardry:hallowed_spirit_shriek_1",
+			"wizardry:hallowed_spirit_shriek_2",
+			"wizardry:hallowed_spirit_shriek_3",
+			"wizardry:hallowed_spirit_shriek_4",
+			"wizardry:hallowed_spirit_shriek_5",
+			"wizardry:hallowed_spirit_shriek_6"
+		]
+	},
+	"expl_boom": {
+		"sounds": [
+			"wizardry:expl_boom"
+		]
+	},
+	"proj_launch": {
+		"sounds": [
+			"wizardry:proj_launch"
+		]
+	},
+	"bass_boom": {
+		"sounds": [
+			"wizardry:bass_boom"
+		]
+	},
+	"chainy_zap": {
+		"sounds": [
+			"wizardry:chainy_zap"
+		]
+	},
+	"chorus_good": {
+		"sounds": [
+			"wizardry:chorus_good"
+		]
+	},
+	"cold_wind": {
+		"sounds": [
+			"wizardry:cold_wind"
+		]
+	},
+	"electric_blast": {
+		"sounds": [
+			"wizardry:electric_blast"
+		]
+	},
+	"ethereal_pass_by": {
+		"sounds": [
+			"wizardry:ethereal_pass_by"
+		]
+	},
+	"fairy_1": {
+		"sounds": [
+			"wizardry:fairy_1"
+		]
+	},
+	"fire": {
+		"sounds": [
+			"wizardry:fire"
+		]
+	},
+	"fireball": {
+		"sounds": [
+			"wizardry:fireball"
+		]
+	},
+	"fly": {
+		"sounds": [
+			"wizardry:fly_1",
+			"wizardry:fly_2"
+		]
+	},
+	"frost_form": {
+		"sounds": [
+			"wizardry:frost_form"
+		]
+	},
+	"heal": {
+		"sounds": [
+			"wizardry:heal"
+		]
+	},
+	"lightning": {
+		"sounds": [
+			"wizardry:lightning"
+		]
+	},
+	"slow_motion_in": {
+		"sounds": [
+			"wizardry:slow_motion_in"
+		]
+	},
+	"slow_motion_out": {
+		"sounds": [
+			"wizardry:slow_motion_out"
+		]
+	},
+	"smoke_blast": {
+		"sounds": [
+			"wizardry:smoke_blast"
+		]
+	},
+	"teleport": {
+		"sounds": [
+			"wizardry:teleport_1",
+			"wizardry:teleport_2",
+			"wizardry:teleport_3"
+		]
+	},
+	"thunder_blast": {
+		"sounds": [
+			"wizardry:thunder_blast"
+		]
+	},
+	"wind": {
+		"sounds": [
+			"wizardry:wind"
+		]
+	},
+	"zap": {
+		"sounds": [
+			"wizardry:zap"
+		]
+	},
+	"electric_white_noise": {
+		"sounds": [
+			"wizardry:electric_white_noise"
+		]
+	},
+	"sparkle": {
+		"sounds": [
+			"wizardry:sparkle"
+		]
+	},
+	"gas_leak": {
+		"sounds": [
+			"wizardry:gas_leak"
+		]
+	},
+	"grace": {
+		"sounds": [
+			"wizardry:grace"
+		]
+	},
+	"sound_bomb": {
+		"sounds": [
+			"wizardry:sound_bomb"
+		]
+	},
+	"firework": {
+		"sounds": [
+			"wizardry:firework"
+		]
+	},
+	"marble_explosion": {
+		"sounds": [
+			"wizardry:marble_explosion"
+		]
+	},
+	"scribbling": {
+		"sounds": [
+			"wizardry:scribbling_1",
+			"wizardry:scribbling_2",
+			"wizardry:scribbling_3"
+		]
+	},
+	"good_ethereal_chills": {
+		"sounds": [
+			"wizardry:good_ethereal_chills"
+		]
+	},
+	"spell_fail": {
+		"sounds": [
+			"wizardry:spell_fail"
+		]
+	},
+	"slime_squishing": {
+		"sounds": [
+			"wizardry:slime_squishing"
+		]
+	},
+	"firesizzleloop": {
+		"sounds": [
+			"wizardry:frying_sizzle"
+		]
+	}
 }

@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.client.render.block.TileJarRenderer;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileJar;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -71,12 +72,13 @@ public class BlockJar extends BlockModContainer {
 
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-		ItemStack stack = new ItemStack(ModItems.JAR);
+		ItemStack stack = new ItemStack(ModBlocks.JAR);
 		TileEntity entity = world.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
-			if (jar.color == null) return stack;
-			stack.setItemDamage(1);
+			if (!jar.hasFairy) return stack;
+			stack = new ItemStack(ModItems.JAR_ITEM);
+			stack.setItemDamage(2);
 			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
@@ -87,17 +89,21 @@ public class BlockJar extends BlockModContainer {
 	@Override
 	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 		drops.clear();
-		ItemStack stack = new ItemStack(ModItems.JAR);
+		ItemStack stack = new ItemStack(ModBlocks.JAR);
 		TileEntity entity = world.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
-			if (jar.color == null) return;
-			stack.setItemDamage(1);
+			if (!jar.hasFairy) {
+				return;
+			}
+
+			stack = new ItemStack(ModItems.JAR_ITEM);
+			stack.setItemDamage(2);
 			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
-			drops.add(stack);
 		}
+		drops.add(stack);
 	}
 
 	@Override

@@ -4,13 +4,11 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Color;
-
 import javax.annotation.Nonnull;
+import java.awt.*;
 
 public class ModuleInstanceModifier extends ModuleInstance {
 
@@ -30,7 +28,7 @@ public class ModuleInstanceModifier extends ModuleInstance {
 	}
 
 	public String getShortHandKey() {
-		return "wizardry.spell." + subModuleID + ".short";
+		return "wizardry.spell." + moduleNBTKey + ".short";
 	}
 
 }

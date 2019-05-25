@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "wizardry:jar"
+      "model": "wizardry:jar_block"
     }
   }
 }

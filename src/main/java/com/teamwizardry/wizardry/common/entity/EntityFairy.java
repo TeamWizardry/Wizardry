@@ -6,10 +6,12 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,6 +22,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -27,6 +31,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -133,7 +138,7 @@ public class EntityFairy extends FlyingEntityMod {
 		if (!getNavigator().noPath()) return;
 
 		boolean nopeOut = false;
-		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).grow(5, 5, 5), null);
+		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).grow(2, 2, 2), null);
 		for (Entity entity : entities)
 			if (entity instanceof EntityLivingBase) {
 				if (entity.isSneaking()) continue;
@@ -186,6 +191,28 @@ public class EntityFairy extends FlyingEntityMod {
 				} else changingCourse = false;
 			}
 		}
+	}
+
+	@NotNull
+	@Override
+	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
+		ItemStack jar = player.getHeldItemMainhand();
+		if (jar.getItem() == ModBlocks.JAR.getItemForm()) {
+			succFairy(jar, player);
+			return EnumActionResult.SUCCESS;
+		}
+		return super.applyPlayerInteraction(player, vec, hand);
+	}
+
+	private void succFairy(ItemStack stack, EntityPlayer player) {
+		stack.shrink(1);
+		ItemStack jar = new ItemStack(ModItems.JAR_ITEM);
+		jar.setItemDamage(1);
+		NBTHelper.setBoolean(jar, Constants.NBT.FAIRY_INSIDE, true);
+		NBTHelper.setInt(jar, Constants.NBT.FAIRY_COLOR, getColor().getRGB());
+		NBTHelper.setInt(jar, Constants.NBT.FAIRY_AGE, getAge());
+		player.addItemStackToInventory(jar);
+		world.removeEntity(this);
 	}
 
 	@Override

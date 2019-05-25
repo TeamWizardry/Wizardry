@@ -1,15 +1,15 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler.OverrideMethod;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
-import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler.OverrideMethod;
 
 /**
  * A factory object to create new module instances based on passed parameter sets.
@@ -38,7 +38,7 @@ public class ModuleFactory {
 				field.setAccessible(true);
 			}
 			catch(SecurityException e) {
-				throw new ModuleInitException("Failed to aquire reflection access to field '" + field.toString() + "', annotated by @ModuleParameter.", e);
+				throw new ModuleInitException("Failed to acquire reflection access to field '" + field.toString() + "', annotated by @ModuleParameter.", e);
 			}
 			configurableFields.put(cfg.value(), field);
 		}

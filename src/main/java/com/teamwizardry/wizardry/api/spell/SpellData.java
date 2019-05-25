@@ -320,7 +320,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Get the value of the given attribute after being passed through any cast time modifiers.
 	 *
-	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributeModifiers.
 	 * @param value     The initial value of the given attribute, given by the compiled value in standard use cases.
 	 * @return The {@code double} potency of a modifier.
 	 */

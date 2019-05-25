@@ -27,7 +27,7 @@ public class RecipeJam extends IForgeRegistryEntry.Impl<IRecipe> implements IRec
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.JAR || stack.getItem() == ModBlocks.JAR.getItemForm()) {
+			if (stack.getItem() == ModItems.JAR_ITEM || stack.getItem() == ModBlocks.JAR.getItemForm()) {
 				if (NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false))
 					foundJar = true;
 
@@ -44,16 +44,19 @@ public class RecipeJam extends IForgeRegistryEntry.Impl<IRecipe> implements IRec
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.JAR || stack.getItem() == ModBlocks.JAR.getItemForm()) {
+			if (stack.getItem() == ModItems.JAR_ITEM || stack.getItem() == ModBlocks.JAR.getItemForm()) {
 				if (NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false))
 					jar = stack;
 			}
 		}
 
-		ItemStack baseItemCopy = jar.copy();
-		baseItemCopy.setItemDamage(2);
+		if (jar.isEmpty()) return ItemStack.EMPTY;
 
-		return baseItemCopy;
+		ItemStack jamJar = new ItemStack(ModItems.JAR_ITEM);
+		NBTHelper.setInt(jamJar, Constants.NBT.FAIRY_COLOR, NBTHelper.getInt(jar, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
+		jamJar.setItemDamage(1);
+
+		return jamJar;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.pearlswap;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.animator.Animator;
 import com.teamwizardry.librarianlib.features.animator.Easing;
@@ -207,12 +208,12 @@ public class GuiPearlSwap extends GuiBase {
 			IItemHandler itemHandler = pearlStorage.getPearls(pearlStorageStack);
 			if (itemHandler != null)
 				if (count >= itemHandler.getSlots()) {
-					centerText = "Belt Full\n\nClick any of the\npearls to pop\nthem out of the belt";
+					centerText = LibrarianLib.PROXY.translate("wizardry.pearlui.belt_full");
 				} else {
-					centerText = "Click here to attach all\npearls in your inventory\nto this belt\n\nClick any of the\npearls to pop\nthem out of the belt";
+					centerText = LibrarianLib.PROXY.translate("wizardry.pearlui.pop_pearls");
 				}
 		} else {
-			centerText = "Click to attach all\npearls in your inventory\nto this belt";
+			centerText = LibrarianLib.PROXY.translate("wizardry.pearlui.attach_pearls");
 		}
 	}
 

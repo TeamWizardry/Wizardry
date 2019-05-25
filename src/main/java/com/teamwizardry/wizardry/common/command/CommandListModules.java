@@ -27,7 +27,7 @@ public class CommandListModules extends CommandBase {
 		notifyCommandListener(sender, this, TextFormatting.YELLOW + " ________________________________________________\\\\");
 		notifyCommandListener(sender, this, TextFormatting.YELLOW + " | " + TextFormatting.GRAY + "Module List");
 		for (ModuleInstance module : ModuleRegistry.INSTANCE.modules)
-			notifyCommandListener(sender, this, TextFormatting.YELLOW + " | |_ " + TextFormatting.GREEN + module.getSubModuleID() + TextFormatting.RESET + ": " + TextFormatting.GRAY + module.getReadableName());
+			notifyCommandListener(sender, this, TextFormatting.YELLOW + " | |_ " + TextFormatting.GREEN + module.getNBTKey() + TextFormatting.RESET + ": " + TextFormatting.GRAY + module.getReadableName());
 		notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 
 	}

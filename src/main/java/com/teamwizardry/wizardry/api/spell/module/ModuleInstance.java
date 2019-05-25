@@ -56,12 +56,12 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
  */
 public abstract class ModuleInstance {
 
-	protected final String subModuleID;
+	protected final String moduleNBTKey;
 	protected final ModuleFactory createdByFactory;
 	protected final IModule moduleClass;
 	protected final ResourceLocation icon;
-	protected final List<AttributeModifier> attributes = new ArrayList<>();
-	protected Map<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
+	protected final List<AttributeModifier> attributeModifiers = new ArrayList<>();
+	protected Map<Attribute, AttributeRange> attributeRanges;
 	protected Color primaryColor;
 	protected Color secondaryColor;
 	protected ItemStack itemStack;
@@ -87,7 +87,7 @@ public abstract class ModuleInstance {
 	                         DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		this.moduleClass = moduleClass;
 		this.createdByFactory = createdByFactory;
-		this.subModuleID = moduleName;
+		this.moduleNBTKey = moduleName;
 		this.icon = icon;
 		this.itemStack = itemStack;
 		this.primaryColor = primaryColor;
@@ -264,8 +264,8 @@ public abstract class ModuleInstance {
 	 *
 	 * @return A lower case snake_case string.
 	 */
-	public final String getSubModuleID() {
-		return subModuleID;
+	public final String getNBTKey() {
+		return moduleNBTKey;
 	}
 
 	public final String getReferenceModuleID() {
@@ -274,7 +274,7 @@ public abstract class ModuleInstance {
 
 	@Override
 	public final String toString() {
-		return getSubModuleID();
+		return getNBTKey();
 	}
 
 	/**
@@ -290,7 +290,7 @@ public abstract class ModuleInstance {
 	 */
 	@Nonnull
 	public final String getNameKey() {
-		return "wizardry.spell." + subModuleID + ".name";
+		return "wizardry.spell." + moduleNBTKey + ".name";
 	}
 
 	/**
@@ -456,7 +456,7 @@ public abstract class ModuleInstance {
 			if (modifierNames != null) {
 				for (ModuleInstance mod : ModuleRegistry.INSTANCE.modules) {
 					for (String modifier : modifierNames) {
-						if (mod.getSubModuleID().equals(modifier)) {
+						if (mod.getNBTKey().equals(modifier)) {
 							if (!(mod instanceof ModuleInstanceModifier)) {
 								// TODO: Log it!
 								continue;
@@ -478,7 +478,7 @@ public abstract class ModuleInstance {
 	 */
 	@Nonnull
 	public final String getDescriptionKey() {
-		return "wizardry.spell." + subModuleID + ".desc";
+		return "wizardry.spell." + moduleNBTKey + ".desc";
 	}
 
 	@Nonnull
@@ -523,8 +523,8 @@ public abstract class ModuleInstance {
 		return secondaryColor;
 	}
 
-	public List<AttributeModifier> getAttributes() {
-		return attributes;
+	public List<AttributeModifier> getAttributeModifiers() {
+		return attributeModifiers;
 	}
 
 	public Map<Attribute, AttributeRange> getAttributeRanges() {
@@ -532,7 +532,7 @@ public abstract class ModuleInstance {
 	}
 
 	public final void addAttribute(AttributeModifier attribute) {
-		this.attributes.add(attribute);
+		this.attributeModifiers.add(attribute);
 	}
 
 	public final void addAttributeRange(Attribute attribute, AttributeRange range) {
@@ -633,12 +633,12 @@ public abstract class ModuleInstance {
 
 	@Nonnull
 	public final NBTTagString serialize() {
-		return new NBTTagString(getSubModuleID());
+		return new NBTTagString(getNBTKey());
 	}
 
 	public ResourceLocation getIconLocation() {
 		if (icon == null)
-			return new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + getSubModuleID() + ".png");
+			return new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + getNBTKey() + ".png");
 		return icon;
 	}
 }

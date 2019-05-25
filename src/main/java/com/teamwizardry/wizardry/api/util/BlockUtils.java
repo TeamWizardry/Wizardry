@@ -20,6 +20,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -63,7 +64,7 @@ public final class BlockUtils {
 
 		EntityPlayerMP playerMP;
 		if (player == null) {
-			playerMP = new FakePlayer((WorldServer) world, placer);
+			playerMP = FakePlayerFactory.get((WorldServer) world, placer);
 			playerMP.setPosition(pos.getX(), pos.getY(), pos.getZ());
 			playerMP.setSneaking(true);
 		} else playerMP = player;
@@ -83,7 +84,7 @@ public final class BlockUtils {
 	public static boolean placeBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nullable EnumFacing facing, @Nonnull ItemStack stack) {
 		if (!world.isBlockLoaded(pos)) return false;
 
-		FakePlayer player = new FakePlayer((WorldServer) world, placer);
+		FakePlayer player = FakePlayerFactory.get((WorldServer) world, placer);
 		player.setPosition(pos.getX(), pos.getY(), pos.getZ());
 		player.setHeldItem(EnumHand.MAIN_HAND, stack);
 		player.setSneaking(true);
@@ -120,7 +121,7 @@ public final class BlockUtils {
 
 		EntityPlayerMP playerMP;
 		if (player == null) {
-			playerMP = new FakePlayer((WorldServer) world, breaker);
+			playerMP = FakePlayerFactory.get((WorldServer) world, breaker);
 			playerMP.setPosition(pos.getX(), pos.getY(), pos.getZ());
 		} else playerMP = player;
 

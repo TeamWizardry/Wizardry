@@ -46,7 +46,7 @@ public class ModuleRegistry {
 	}
 
 	public ModuleInstance getModule(String id) {
-		for (ModuleInstance module : modules) if (module.getSubModuleID().equals(id)) return module;
+		for (ModuleInstance module : modules) if (module.getNBTKey().equals(id)) return module;
 		return null;
 	}
 
@@ -447,7 +447,7 @@ public class ModuleRegistry {
 			Wizardry.LOGGER.info(" | |_ Module " + moduleName + " registered successfully!");
 		}
 
-		modules.sort(Comparator.comparing(ModuleInstance::getSubModuleID));
+		modules.sort(Comparator.comparing(ModuleInstance::getNBTKey));
 
 		Wizardry.LOGGER.info(" |");
 		Wizardry.LOGGER.info(" | Module registration processing complete! (ᵔᴥᵔ)");
@@ -493,18 +493,18 @@ public class ModuleRegistry {
 
 	public void copyMissingModules(File directory) {
 		for (ModuleInstance module : modules) {
-			File file = new File(directory + "/modules/", module.getSubModuleID() + ".json");
+			File file = new File(directory + "/modules/", module.getNBTKey() + ".json");
 			if (file.exists()) continue;
 
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getSubModuleID() + ".json");
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getNBTKey() + ".json");
 			if (stream == null) {
-				Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not read module " + module.getSubModuleID() + " from mod jar! Report this to the devs on Github!");
+				Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not read module " + module.getNBTKey() + " from mod jar! Report this to the devs on Github!");
 				continue;
 			}
 
 			try {
 				FileUtils.copyInputStreamToFile(stream, file);
-				Wizardry.LOGGER.info("    > Module " + module.getSubModuleID() + " copied successfully from mod jar.");
+				Wizardry.LOGGER.info("    > Module " + module.getNBTKey() + " copied successfully from mod jar.");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -515,15 +515,15 @@ public class ModuleRegistry {
 		Map<String, ModContainer> modList = Loader.instance().getIndexedModList();
 		for (Map.Entry<String, ModContainer> entry : modList.entrySet()) {
 			for (ModuleInstance module : modules) {
-				InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), "wizmodules/" + module.getSubModuleID() + ".json");
+				InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), "wizmodules/" + module.getNBTKey() + ".json");
 				if (stream == null) {
-					Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not read module " + module.getSubModuleID() + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
+					Wizardry.LOGGER.error("    > SOMETHING WENT WRONG! Could not read module " + module.getNBTKey() + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
 					continue;
 				}
 
 				try {
-					FileUtils.copyInputStreamToFile(stream, new File(directory + "/wizmodules/", module.getSubModuleID() + ".json"));
-					Wizardry.LOGGER.info("    > Module " + module.getSubModuleID() + " copied successfully from mod jar.");
+					FileUtils.copyInputStreamToFile(stream, new File(directory + "/wizmodules/", module.getNBTKey() + ".json"));
+					Wizardry.LOGGER.info("    > Module " + module.getNBTKey() + " copied successfully from mod jar.");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

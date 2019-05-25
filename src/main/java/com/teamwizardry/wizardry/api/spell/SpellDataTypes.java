@@ -63,20 +63,6 @@ public class SpellDataTypes {
 		}
 	}
 
-	@RegisterDataType(storageType = "net.minecraft.nbt.NBTTagInt", dataType = "java.lang.Integer")
-	public static class EntityType implements Process<NBTTagInt, Integer> {
-		@NotNull
-		@Override
-		public NBTTagInt serialize(Integer object) {
-			return new NBTTagInt(object);
-		}
-
-		@Override
-		public Integer deserialize(@NotNull NBTTagInt object) {
-			return object.getInt();
-		}
-	}
-
 	@RegisterDataType(storageType = "net.minecraft.nbt.NBTTagFloat", dataType = "java.lang.Float")
 	public static class FloatType implements Process<NBTTagFloat, Float> {
 		@NotNull

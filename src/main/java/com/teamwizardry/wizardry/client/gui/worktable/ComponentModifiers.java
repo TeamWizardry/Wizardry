@@ -12,6 +12,9 @@ import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentRect;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -171,30 +174,46 @@ public class ComponentModifiers extends GuiComponent {
 					if (!event.component.getMouseOver()) return;
 					if (worktable.selectedModule == null) return;
 
-					int j = worktable.selectedModule.hasData(Integer.class, modifier.getSubModuleID()) ? worktable.selectedModule.getData(Integer.class, modifier.getSubModuleID()) : 0;
+					int j = worktable.selectedModule.hasData(Integer.class, modifier.getNBTKey()) ? worktable.selectedModule.getData(Integer.class, modifier.getNBTKey()) : 0;
 
 					int status = -1;
 					if (event.getButton() == EnumMouseButton.LEFT) {
+						AttributeRange cap = null;
+
+						for (AttributeRegistry.Attribute modifiersAssigned : worktable.selectedModule.getModule().getAttributeRanges().keySet()) {
+							for (AttributeModifier attribute : modifier.getAttributeModifiers()) {
+								if (modifiersAssigned.getNbtName().equals(attribute.getAttribute().getNbtName())) {
+									cap = worktable.selectedModule.getModule().getAttributeRanges().get(modifiersAssigned);
+									break;
+								}
+							}
+						}
+						if (cap != null && cap.max <= j) {
+							Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 1f, 1f);
+							return;
+						}
+
 						Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f);
-						worktable.selectedModule.setData(Integer.class, modifier.getSubModuleID(), ++j);
+						worktable.selectedModule.setData(Integer.class, modifier.getNBTKey(), ++j);
 						status = 0;
 						worktable.setToastMessage("", Color.GREEN);
 						worktable.syncToServer();
 					} else if (event.getButton() == EnumMouseButton.RIGHT) {
-						if (worktable.selectedModule.hasData(Integer.class, modifier.getSubModuleID())) {
+						if (worktable.selectedModule.hasData(Integer.class, modifier.getNBTKey())) {
 
 							if (j > 0) {
 								Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
-								worktable.selectedModule.setData(Integer.class, modifier.getSubModuleID(), --j);
+								worktable.selectedModule.setData(Integer.class, modifier.getNBTKey(), --j);
 
 								if (j <= 0) {
-									worktable.selectedModule.removeData(Integer.class, modifier.getSubModuleID());
+									Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 1f, 1f);
+									worktable.selectedModule.removeData(Integer.class, modifier.getNBTKey());
 								}
 								status = 1;
 								worktable.syncToServer();
 							}
 							worktable.setToastMessage("", Color.GREEN);
-						}
+						} else Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 1f, 1f);
 					}
 
 					if (status == -1) return;

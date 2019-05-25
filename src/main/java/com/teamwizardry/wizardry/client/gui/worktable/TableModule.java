@@ -483,9 +483,9 @@ public class TableModule extends GuiComponent {
 		List<ModuleInstanceModifier> modifierList = new ArrayList<>();
 		for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 			if (!(module instanceof ModuleInstanceModifier)) continue;
-			if (!hasData(Integer.class, module.getSubModuleID())) continue;
+			if (!hasData(Integer.class, module.getNBTKey())) continue;
 
-			modifiers.put((ModuleInstanceModifier) module, getData(Integer.class, module.getSubModuleID()));
+			modifiers.put((ModuleInstanceModifier) module, getData(Integer.class, module.getNBTKey()));
 			modifierList.add((ModuleInstanceModifier) module);
 		}
 
@@ -511,7 +511,7 @@ public class TableModule extends GuiComponent {
 
 				float modShrink = 4;
 
-				Sprite modICon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + modifier.getSubModuleID() + ".png"));
+				Sprite modICon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + modifier.getNBTKey() + ".png"));
 				modICon.bind();
 				modICon.draw(0, modShrink / 2.0f, modShrink / 2.0f, modSize.getXf() - modShrink, modSize.getYf() - modShrink);
 

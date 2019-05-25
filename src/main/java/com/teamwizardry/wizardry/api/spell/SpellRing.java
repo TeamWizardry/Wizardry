@@ -238,9 +238,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * Get a modifier in this ring between the range. Returns the true attribute value, unmodified by any other attributes.
+	 * Get a modifier in this ring between the range. Returns the true attribute value, unmodified by any other attributeModifiers.
 	 *
-	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributeModifiers.
 	 * @return The {@code double} potency of a modifier.
 	 */
 	public final double getTrueAttributeValue(Attribute attribute) {
@@ -321,7 +321,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 *
 	 *
 	 * @param world
-	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributeModifiers.
 	 * @param data      The data of the spell being cast, used to get caster-specific modifiers.
 	 * @return The {@code double} potency of a modifier.
 	 */
@@ -346,7 +346,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * Will process all modifiers and attributes set.
+	 * Will process all modifiers and attributeModifiers set.
 	 * WILL RESET THE INFORMATION TAG. <br/>
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
 	 */
@@ -369,7 +369,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 				informationMap.put(modifier.getAttribute().getNbtName(), newValue);
 
 				if (ConfigValues.debugInfo)
-					Wizardry.LOGGER.info(module == null ? "<null module>" : module.getSubModuleID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
+					Wizardry.LOGGER.info(module == null ? "<null module>" : module.getNBTKey() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
 			}
 		}
 
@@ -500,7 +500,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	/**
 	 * Returns mana drain value. If spell data is passed, then the value is modified additionally by runtime data,
-	 * e.g. by cape and halo attributes of caster.
+	 * e.g. by cape and halo attributeModifiers of caster.
 	 *
 	 * @param data runtime data of active spell. Can be <code>null</code>.
 	 * @return mana drain value
@@ -514,7 +514,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	/**
 	 * Returns burnout fill value. If spell data is passed, then the value is modified additionally by runtime data,
-	 * e.g. by cape and halo attributes of caster.
+	 * e.g. by cape and halo attributeModifiers of caster.
 	 *
 	 * @param data runtime data of active spell. Can be <code>null</code>.
 	 * @return burnout fill value
@@ -528,13 +528,13 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	/**
 	 * Adds a modifier module to spell ring. <br/>
-	 * <b>NOTE</b>: In actual implementation, only attributes are overtaken. <br/>
+	 * <b>NOTE</b>: In actual implementation, only attributeModifiers are overtaken. <br/>
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
 	 *
 	 * @param moduleModifier the modifier module instance
 	 */
 	void addModifier(ModuleInstanceModifier moduleModifier) {
-		moduleModifier.getAttributes().forEach(modifier -> compileTimeModifiers.put(modifier.getOperation(), new AttributeModifierSpellRing(modifier)));
+		moduleModifier.getAttributeModifiers().forEach(modifier -> compileTimeModifiers.put(modifier.getOperation(), new AttributeModifierSpellRing(modifier)));
 	}
 
 	/**
@@ -585,7 +585,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * All non mana, burnout, and multiplier attributes are reduced based on the caster's burnout level. This returns how much to reduce them by.
+	 * All non mana, burnout, and multiplier attributeModifiers are reduced based on the caster's burnout level. This returns how much to reduce them by.
 	 *
 	 * @return The INVERTED burnout multiplier.
 	 */
@@ -642,7 +642,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		compound.setString("secondary_color", String.valueOf(secondaryColor.getRGB()));
 
 		if (childRing != null) compound.setTag("child_ring", this.childRing.serializeNBT());
-		if (module != null) compound.setString("module", module.getSubModuleID());
+		if (module != null) compound.setString("module", module.getNBTKey());
 
 		compound.setString("uuid", uniqueID.toString());
 

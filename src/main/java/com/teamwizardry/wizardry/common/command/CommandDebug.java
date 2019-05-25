@@ -50,16 +50,16 @@ public class CommandDebug extends CommandBase {
 		notifyCommandListener(sender, this, TextFormatting.YELLOW + " |  |_ " + TextFormatting.GREEN + "Primary Color        " + TextFormatting.GRAY + " | " + TextFormatting.RED + module.getPrimaryColor().getRed() + TextFormatting.GRAY + ", " + TextFormatting.GREEN + module.getPrimaryColor().getGreen() + TextFormatting.GRAY + ", " + TextFormatting.BLUE + module.getPrimaryColor().getBlue());
 		notifyCommandListener(sender, this, TextFormatting.YELLOW + " |  |_ " + TextFormatting.GREEN + "Secondary Color    " + TextFormatting.GRAY + " | " + TextFormatting.RED + module.getSecondaryColor().getRed() + TextFormatting.GRAY + ", " + TextFormatting.GREEN + module.getSecondaryColor().getGreen() + TextFormatting.GRAY + ", " + TextFormatting.BLUE + module.getSecondaryColor().getBlue());
 
-		if (!module.getAttributes().isEmpty())
+		if (!module.getAttributeModifiers().isEmpty())
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |  |_ " + TextFormatting.GREEN + "Default AttributeRegistry");
-		for (AttributeModifier attributeModifier : module.getAttributes())
+		for (AttributeModifier attributeModifier : module.getAttributeModifiers())
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |  |  |_ " + TextFormatting.GRAY + attributeModifier.toString());
 
 		ModuleInstanceModifier[] modifierList = module.applicableModifiers();
 		if (modifierList != null) {
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |  |_ " + TextFormatting.GREEN + "Applicable Modifiers ");
 			for (ModuleInstanceModifier modifier : modifierList)
-				notifyCommandListener(sender, this, TextFormatting.YELLOW + " |     |_ " + TextFormatting.DARK_GREEN + modifier.getSubModuleID());
+				notifyCommandListener(sender, this, TextFormatting.YELLOW + " |     |_ " + TextFormatting.DARK_GREEN + modifier.getNBTKey());
 		}
 		notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 	}

@@ -72,7 +72,7 @@ public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 		}
 
 		if (module != null)
-			compound.setString("module", module.getSubModuleID());
+			compound.setString("module", module.getNBTKey());
 
 		if (pos != null) {
 			compound.setDouble("x", pos.getX());
@@ -84,7 +84,7 @@ public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound modifierNBT = new NBTTagCompound();
 		for (ModuleInstanceModifier modifier : modifiers.keySet()) {
 			int count = modifiers.get(modifier);
-			modifierNBT.setInteger(modifier.getSubModuleID(), count);
+			modifierNBT.setInteger(modifier.getNBTKey(), count);
 		}
 		compound.setTag("modifiers", modifierNBT);
 

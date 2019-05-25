@@ -4,12 +4,10 @@ import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -31,14 +29,14 @@ import javax.annotation.Nullable;
 public class ItemJar extends ItemMod implements IItemColorProvider {
 
 	public ItemJar() {
-		super("jar_item", "jar_empty", "jar_jam");
+		super("jar_item", "jar_jam", "jar_fairy");
 		setMaxStackSize(1);
 	}
 
 	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		if (stack.getItemDamage() == 2) return EnumAction.DRINK;
+		if (stack.getItemDamage() == 1) return EnumAction.DRINK;
 		return EnumAction.NONE;
 	}
 
@@ -47,28 +45,12 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 		return 32;
 	}
 
-	@Override
-	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-		if (entity instanceof EntityFairy) {
-			EntityFairy fairy = (EntityFairy) entity;
-			stack.shrink(1);
-			ItemStack block = new ItemStack(ModBlocks.JAR);
-			NBTHelper.setBoolean(block, Constants.NBT.FAIRY_INSIDE, true);
-			NBTHelper.setInt(block, Constants.NBT.FAIRY_COLOR, fairy.getColor().getRGB());
-			NBTHelper.setInt(block, Constants.NBT.FAIRY_AGE, fairy.getAge());
-			player.addItemStackToInventory(block);
-			entity.world.removeEntity(entity);
-			return true;
-		}
-		return false;
-	}
-
 	@Nonnull
 	@Override
 	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		stack.setItemDamage(0);
-		NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
+		stack.shrink(1);
 		if (entityLiving instanceof EntityPlayer) {
+			((EntityPlayer) entityLiving).addItemStackToInventory(new ItemStack(ModBlocks.JAR));
 			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
 			entityplayer.getFoodStats().addStats(4, 7f);
 			worldIn.playSound(null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, worldIn.rand.nextFloat() * 0.1F + 0.9F);
@@ -83,7 +65,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
-		if (stack.getItemDamage() == 2) {
+		if (stack.getItemDamage() == 1) {
 			player.setActiveHand(hand);
 			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		}
