@@ -9,7 +9,7 @@ public enum Operation {
 	 */
 	ADD {
 		@Override
-		public double apply(double value, double modifier) {
+		public float apply(float value, float modifier) {
 			return value + modifier;
 		}
 	},
@@ -18,7 +18,7 @@ public enum Operation {
 	 */
 	MULTIPLY {
 		@Override
-		public double apply(double value, double modifier) {
+		public float apply(float value, float modifier) {
 			return value * modifier;
 		}
 	},
@@ -27,10 +27,10 @@ public enum Operation {
 	 */
 	BONUS_MULTIPLY {
 		@Override
-		public double apply(double value, double modifier) {
+		public float apply(float value, float modifier) {
 			return value * (1 + modifier);
 		}
 	};
 
-	public abstract double apply(double value, double modifier);
+	public abstract float apply(float value, float modifier);
 }

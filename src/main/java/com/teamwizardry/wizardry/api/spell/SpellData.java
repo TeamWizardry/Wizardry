@@ -324,7 +324,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	 * @param value     The initial value of the given attribute, given by the compiled value in standard use cases.
 	 * @return The {@code double} potency of a modifier.
 	 */
-	public final double getCastTimeValue(Attribute attribute, double value) {
+	public final float getCastTimeValue(Attribute attribute, float value) {
 		ArrayListMultimap<Operation, AttributeModifier> operationMap = castTimeModifiers.get(attribute);
 		if (operationMap == null)
 			return value;

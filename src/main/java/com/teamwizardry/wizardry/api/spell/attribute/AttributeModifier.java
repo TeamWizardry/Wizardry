@@ -5,16 +5,16 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute
 public class AttributeModifier {
 
 	private AttributeRegistry.Attribute attribute;
-	private double modifier;
+	private float modifier;
 	private Operation op;
 
-	public AttributeModifier(Attribute attribute, double modifier, Operation op) {
+	public AttributeModifier(Attribute attribute, float modifier, Operation op) {
 		this.attribute = attribute;
 		this.modifier = modifier;
 		this.op = op;
 	}
 
-	public double apply(double currentValue) {
+	public float apply(float currentValue) {
 		return op.apply(currentValue, modifier);
 	}
 
@@ -26,11 +26,11 @@ public class AttributeModifier {
 		return op;
 	}
 
-	public double getModifier() {
+	public float getModifier() {
 		return modifier;
 	}
 
-	public void setModifier(double newValue) {
+	public void setModifier(float newValue) {
 		modifier = newValue;
 	}
 

@@ -236,12 +236,8 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 									+ Math.round(tmpRing.getBurnoutFill(null) * tmpRing.getBurnoutMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
 						for (String key : tmpRing.getInformationTag().getKeySet()) {
-							double value = tmpRing.getInformationTag().getDouble(key);
-							String valueString;
-							if (value < 10) valueString = String.format("%.2f", value);
-							else if (value < 100) valueString = String.format("%.1f", value);
-							else valueString = Double.toString(value);
-							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + valueString);
+							int value = (int) tmpRing.getInformationTag().getDouble(key);
+							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + value);
 						}
 					}
 					tmpRing = tmpRing.getChildRing();

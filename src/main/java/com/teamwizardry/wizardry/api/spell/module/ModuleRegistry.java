@@ -353,7 +353,7 @@ public class ModuleRegistry {
 								Wizardry.LOGGER.info(" | | |_ Found base " + attribute.toString() + " values:");
 							JsonObject baseAttrib = entry.getValue().getAsJsonObject();
 
-							double min = 0;
+							float min = 0;
 							if (baseAttrib.has("min") && baseAttrib.get("min").isJsonPrimitive()) {
 								min = baseAttrib.get("min").getAsInt();
 								if (min < 0) {
@@ -365,9 +365,9 @@ public class ModuleRegistry {
 								if (ConfigValues.debugInfo) Wizardry.LOGGER.info(" | | | |_ Minimum: " + min);
 							}
 
-							double max = Integer.MAX_VALUE;
+							float max = Integer.MAX_VALUE;
 							if (baseAttrib.has("max") && baseAttrib.get("max").isJsonPrimitive()) {
-								max = baseAttrib.get("max").getAsDouble();
+								max = baseAttrib.get("max").getAsFloat();
 								if (max < min) {
 									if (ConfigValues.debugInfo)
 										Wizardry.LOGGER.info(" | | | |_ Maximum value for " + attribute.toString() + " was " + max + ", must be greater than min. Setting to min, " + min);
@@ -383,9 +383,9 @@ public class ModuleRegistry {
 
 							}
 
-							double base = min;
+							float base = min;
 							if (baseAttrib.has("base") && baseAttrib.get("base").isJsonPrimitive()) {
-								base = baseAttrib.get("base").getAsDouble();
+								base = baseAttrib.get("base").getAsFloat();
 								if (base < min) {
 									if (ConfigValues.debugInfo)
 										Wizardry.LOGGER.info(" | | | |_ Base value for " + attribute.toString() + " was " + base + ", must be greater than min, " + min + ". Setting to " + min);
@@ -415,7 +415,7 @@ public class ModuleRegistry {
 						String attributeName = "NULL";
 						AttributeRegistry.Attribute attribute = null;
 						Operation operator = null;
-						double amount = 0;
+						float amount = 0;
 						JsonObject modifier = attributeModifier.getAsJsonObject();
 						if (modifier.has("attribute") && modifier.get("attribute").isJsonPrimitive() && modifier.getAsJsonPrimitive("attribute").isString()) {
 							attribute = AttributeRegistry.getAttributeFromName(modifier.getAsJsonPrimitive("attribute").getAsString());
@@ -425,7 +425,7 @@ public class ModuleRegistry {
 						if (modifier.has("operation") && modifier.get("operation").isJsonPrimitive() && modifier.getAsJsonPrimitive("operation").isString())
 							operator = Operation.valueOf(modifier.get("operation").getAsJsonPrimitive().getAsString().toUpperCase());
 						if (modifier.has("amount") && modifier.get("amount").isJsonPrimitive() && modifier.getAsJsonPrimitive("amount").isNumber())
-							amount = modifier.get("amount").getAsDouble();
+							amount = modifier.get("amount").getAsFloat();
 						if (ConfigValues.debugInfo)
 							Wizardry.LOGGER.info(" | | | |_ Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attributeName + ", " + amount);
 						if (attribute != null && operator != null) {

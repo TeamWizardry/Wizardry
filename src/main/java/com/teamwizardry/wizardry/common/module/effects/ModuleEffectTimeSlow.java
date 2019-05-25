@@ -19,6 +19,7 @@ import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -82,6 +83,7 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) potency, true, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, (int) duration, (int) potency, true, false));
 		}
 		return true;
 	}

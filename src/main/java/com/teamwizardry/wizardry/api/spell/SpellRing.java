@@ -150,13 +150,13 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @param informationMap a source key-value list, storing information.
 	 * @return normalized information NBT compound
 	 */
-	private static NBTTagCompound sortInformationTag(Map<String, Double> informationMap) {
-		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationMap.size());
+	private static NBTTagCompound sortInformationTag(Map<String, Float> informationMap) {
+		ArrayList<Pair<String, Float>> sortedInformationList = new ArrayList<>(informationMap.size());
 		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, FixedPointUtils.doubleToFixed(val))));
 		sortedInformationList.sort(Comparator.comparing(Pair::getKey));
 
 		NBTTagCompound newInformationTag = new NBTTagCompound();
-		for (Pair<String, Long> entry : sortedInformationList) {
+		for (Pair<String, Float> entry : sortedInformationList) {
 			FixedPointUtils.setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
 		}
 
@@ -170,14 +170,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @return normalized information NBT compound
 	 */
 	private static NBTTagCompound sortInformationTag(NBTTagCompound informationNbt) {
-		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationNbt.getSize());
+		ArrayList<Pair<String, Float>> sortedInformationList = new ArrayList<>(informationNbt.getSize());
 		for (String key : informationNbt.getKeySet()) {
 			sortedInformationList.add(Pair.of(key, FixedPointUtils.getFixedFromNBT(informationNbt, key)));
 		}
 		sortedInformationList.sort(Comparator.comparing(Pair::getKey));
 
 		NBTTagCompound newInformationTag = new NBTTagCompound();
-		for (Pair<String, Long> entry : sortedInformationList) {
+		for (Pair<String, Float> entry : sortedInformationList) {
 			FixedPointUtils.setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
 		}
 
@@ -325,10 +325,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @param data      The data of the spell being cast, used to get caster-specific modifiers.
 	 * @return The {@code double} potency of a modifier.
 	 */
-	public final double getAttributeValue(World world, Attribute attribute, SpellData data) {
+	public final float getAttributeValue(World world, Attribute attribute, SpellData data) {
 		if (module == null) return 0;
 
-		double current = FixedPointUtils.getDoubleFromNBT(informationTag, attribute.getNbtName());
+		float current = FixedPointUtils.getDoubleFromNBT(informationTag, attribute.getNbtName());
 
 		AttributeRange range = module.getAttributeRanges().get(attribute);
 
@@ -351,7 +351,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
 	 */
 	void processModifiers() {
-		HashMap<String, Double> informationMap = new HashMap<>();
+		HashMap<String, Float> informationMap = new HashMap<>();
 
 		if (module != null) {
 			module.getAttributeRanges().forEach((attribute, range) -> {
@@ -362,10 +362,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		for (Operation op : Operation.values()) {
 			for (AttributeModifier modifier : compileTimeModifiers.get(op)) {
 
-				Double current = informationMap.get(modifier.getAttribute().getNbtName());
-				if (current == null)
-					continue;
-				double newValue = modifier.apply(current);
+				float current = informationMap.get(modifier.getAttribute().getNbtName());
+
+				float newValue = modifier.apply(current);
 
 				informationMap.put(modifier.getAttribute().getNbtName(), newValue);
 
@@ -507,7 +506,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @return mana drain value
 	 */
 	public double getManaDrain(SpellData data) {
-		double value = FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.MANA.getNbtName());
+		float value = FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.MANA.getNbtName());
 		if (data != null)
 			value = data.getCastTimeValue(AttributeRegistry.MANA, value);
 		return value * getManaMultiplier();
@@ -521,7 +520,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @return burnout fill value
 	 */
 	public double getBurnoutFill(SpellData data) {
-		double value = FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.BURNOUT.getNbtName());
+		float value = FixedPointUtils.getDoubleFromNBT(informationTag, AttributeRegistry.BURNOUT.getNbtName());
 		if (data != null)
 			value = data.getCastTimeValue(AttributeRegistry.BURNOUT, value);
 		return value * getBurnoutMultiplier();
@@ -668,7 +667,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 						Operation operation = Operation.values()[modifierCompound.getInteger("operation") % Operation.values().length];
 						Attribute attribute = AttributeRegistry.getAttributeFromName(modifierCompound.getString("attribute"));
 
-						long modifierFixed = FixedPointUtils.getFixedFromNBT(modifierCompound, "modifier");
+						float modifierFixed = FixedPointUtils.getFixedFromNBT(modifierCompound, "modifier");
 						compileTimeModifiers.put(operation, new AttributeModifierSpellRing(attribute, modifierFixed, operation));
 					}
 				}
@@ -709,13 +708,13 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 */
 	private static class AttributeModifierSpellRing extends AttributeModifier {
 
-		private long modifierFixed;
+		private float modifierFixed;
 
 		public AttributeModifierSpellRing(AttributeModifier modifier) {
 			this(modifier.getAttribute(), modifier.getModifier(), modifier.getOperation());
 		}
 
-		public AttributeModifierSpellRing(Attribute attribute, double modifier, Operation op) {
+		public AttributeModifierSpellRing(Attribute attribute, float modifier, Operation op) {
 			super(attribute, modifier, op);
 			this.modifierFixed = FixedPointUtils.doubleToFixed(modifier);
 		}
@@ -724,17 +723,13 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			super(attribute, FixedPointUtils.fixedToDouble(modifierFixed), op);
 		}
 
-		public long getModifierFixed() {
+		public float getModifierFixed() {
 			return this.modifierFixed;
 		}
 
-		public void setModifier(double newValue) {
+		public void setModifier(float newValue) {
 			this.modifierFixed = FixedPointUtils.doubleToFixed(newValue);
 			super.setModifier(newValue);
-		}
-
-		public void setModifierFixed(long newValueFixed) {
-			this.modifierFixed = newValueFixed;
 		}
 
 		@Override
