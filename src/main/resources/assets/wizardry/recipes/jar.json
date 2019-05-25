@@ -15,6 +15,7 @@
 		}
 	},
 	"result": {
-		"item": "wizardry:jar_block"
+		"item": "wizardry:jar_item",
+		"data": 0
 	}
 }

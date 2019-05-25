@@ -7,7 +7,8 @@
 	],
 	"key": {
 		"A": {
-			"item": "minecraft:gold_nugget"
+			"type": "forge:ore_dict",
+			"ore": "nuggetGold"
 		},
 		"B": {
 			"item": "wizardry:wisdom_wood_pigmented_planks"

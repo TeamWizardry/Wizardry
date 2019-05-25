@@ -1,12 +1,12 @@
 {
-  "output": {
-    "item": "wizardry:wisdom_wood_slab",
-    "data": 0
-  },
-  "input": {
-    "type": "forge:ore_dict",
-    "ore": "slabWood"
-  },
-  "duration": 0,
-  "harp": false
+	"output": {
+		"item": "wizardry:wisdom_wood_slab",
+		"data": 0
+	},
+	"input": {
+		"type": "forge:ore_dict",
+		"ore": "slabWood"
+	},
+	"duration": 0,
+	"harp": false
 }

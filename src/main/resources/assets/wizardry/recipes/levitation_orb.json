@@ -1,15 +1,16 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {
-      "item": "wizardry:orb",
-      "data": 1
-    },
-    {
-      "item": "minecraft:iron_nugget"
-    }
-  ],
-  "result": {
-    "item": "wizardry:levitation_orb"
-  }
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "wizardry:orb",
+			"data": 1
+		},
+		{
+			"type": "forge:ore_dict",
+			"ore": "nuggetIron"
+		}
+	],
+	"result": {
+		"item": "wizardry:levitation_orb"
+	}
 }

@@ -1,10 +1,10 @@
 {
 	"output": {
-		"item": "wizardry:wisdom_wood_stairs"
+		"item": "wizardry:wisdom_wood_door"
 	},
 	"input": {
 		"type": "forge:ore_dict",
-		"ore": "stairWood"
+		"ore": "doorWood"
 	},
 	"duration": 0,
 	"harp": false

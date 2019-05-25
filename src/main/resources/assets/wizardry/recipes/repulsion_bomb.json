@@ -5,10 +5,12 @@
 			"item": "wizardry:sky_dust"
 		},
 		{
-			"item": "minecraft:paper"
+			"type": "forge:ore_dict",
+			"ore": "paper"
 		},
 		{
-			"item": "minecraft:gunpowder"
+			"type": "forge:ore_dict",
+			"ore": "gunpowder"
 		}
 	],
 	"result": {

@@ -11,7 +11,8 @@
 			"data": 1
 		},
 		"G": {
-			"item": "minecraft:gold_ingot"
+			"type": "forge:ore_dict",
+			"ore": "ingotGold"
 		}
 	},
 	"result": {
