@@ -81,7 +81,8 @@ public class ModuleEffectLightning implements IModuleEffect {
 		ArrayList<Vec3d> points = new ArrayList<>();
 		LightningGenerator.generate(rand, from, to, offshootRange).forEach(points::add);
 
-		world.playSound(null, new BlockPos(to), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.3f, RandUtil.nextFloat(1, 1.5f));
+		world.playSound(null, new BlockPos(to), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
+		world.playSound(null, new BlockPos(from), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
 
 		HashSet<BlockPos> positions = new HashSet<>();
 		for (Vec3d point : points)

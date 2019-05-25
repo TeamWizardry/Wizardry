@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
+    "layer1": "wizardry:items/glass_orb",
     "layer0": "wizardry:items/orb_fill_100"
   }
 }

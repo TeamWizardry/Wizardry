@@ -367,9 +367,9 @@ wizardry.update5=it's outdated my dudes
 wizardry.update6=yo dawg we heard you like changelogs so we put changelogs in your changelogs so you can change while you log
 wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
 
-wizardry.pearlui.belt_full=Belt Full\n\nClick any of the\npearls to pop\nthem out of the belt
-wizardry.pearlui.pop_pearls=Click here to attach all\npearls in your inventory\nto this belt\n\nClick any of the\npearls to pop\nthem out of the belt
-wizardry.pearlui.attach_pearls=Click to attach all\npearls in your inventory\nto this belt
+wizardry.pearlui.belt_full=Belt Full
+wizardry.pearlui.pop_pearls=Click any of the pearls to pop them out of the belt
+wizardry.pearlui.attach_pearls=Click here to attach all pearls in your inventory to this belt
 
 wizardry.table.spell_loaded=Spell loaded from condex.
 wizardry.table.paper_cleared=Paper cleared.

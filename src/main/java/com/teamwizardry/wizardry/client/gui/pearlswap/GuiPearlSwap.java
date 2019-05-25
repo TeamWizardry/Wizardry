@@ -92,7 +92,7 @@ public class GuiPearlSwap extends GuiBase {
 		}
 		ANIMATOR.add(colorAnim, heartBeatAnim);
 
-		updateText(pearlStorageStack, pearlStorage);
+		updateText(Minecraft.getMinecraft().player.getHeldItemMainhand(), pearlStorageStack, pearlStorage);
 
 		componentCentralCircle.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 			if (lock) return;
@@ -101,9 +101,9 @@ public class GuiPearlSwap extends GuiBase {
 			if (stack.isEmpty()) return;
 			IPearlStorageHolder holder = (IPearlStorageHolder) stack.getItem();
 
-			updateText(stack, holder);
+			updateText(Minecraft.getMinecraft().player.getHeldItemMainhand(), stack, holder);
 
-			runAnimations(stack);
+			runAnimations();
 
 			double mouseX = Mouse.getEventX() - mc.displayWidth / 2.0;
 			double mouseY = (Mouse.getEventY() - mc.displayHeight / 2.0) * -1;
@@ -201,18 +201,23 @@ public class GuiPearlSwap extends GuiBase {
 		}
 	}
 
-	private void updateText(ItemStack pearlStorageStack, IPearlStorageHolder pearlStorage) {
+	private void updateText(ItemStack heldItem, ItemStack pearlStorageStack, IPearlStorageHolder pearlStorage) {
 		int count = pearlStorage.getPearlCount(pearlStorageStack);
 		if (count > 0) {
 
 			IItemHandler itemHandler = pearlStorage.getPearls(pearlStorageStack);
-			if (itemHandler != null)
-				if (count >= itemHandler.getSlots()) {
-					centerText = LibrarianLib.PROXY.translate("wizardry.pearlui.belt_full");
-				} else {
+			if (itemHandler != null) {
+				if (heldItem.getItem() instanceof IPearlStorageHolder) {
+					if (count >= itemHandler.getSlots()) {
+						centerText = LibrarianLib.PROXY.translate("wizardry.pearlui.belt_full") + "\n\n" + LibrarianLib.PROXY.translate("wizardry.pearlui.pop_pearls");
+					} else {
+						centerText = LibrarianLib.PROXY.translate("wizardry.pearlui.pop_pearls") + "\n\n" + LibrarianLib.PROXY.translate("wizardry.pearlui.attach_pearls");
+					}
+				} else if (heldItem.getItem() instanceof IPearlSwappable) {
 					centerText = LibrarianLib.PROXY.translate("wizardry.pearlui.pop_pearls");
 				}
-		} else {
+			}
+		} else if (heldItem.getItem() instanceof IPearlStorageHolder) {
 			centerText = LibrarianLib.PROXY.translate("wizardry.pearlui.attach_pearls");
 		}
 	}
@@ -470,7 +475,7 @@ public class GuiPearlSwap extends GuiBase {
 
 	}
 
-	private void runAnimations(ItemStack stack) {
+	private void runAnimations() {
 		if (colorAnim.getFinished()) {
 			colorAnim = new BasicAnimation<>(this, "color");
 			colorAnim.setTo(color + 0.25f > 1f ? 0.25f : color + 0.25f);
@@ -584,38 +589,42 @@ public class GuiPearlSwap extends GuiBase {
 
 		GlStateManager.translate(getGuiWidth() / 2.0, getGuiHeight() / 2.0, 0);
 
-		String[] split = string.split("\n");
-		for (int i = 0; i < split.length; i++) {
-			String text = split[i];
+		List<String> lines = fontRenderer.listFormattedStringToWidth(string, 120);
+		for (int i = 0; i < lines.size(); i++) {
+			String text = lines.get(i);
 			Minecraft.getMinecraft().fontRenderer.drawString(
 					text,
 					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-					getTextY(split.length, i),
+					getTextY(lines.size(), i),
 					0x000000);
 		}
 
 		float rot1 = MathHelper.sin(ClientTickHandler.getTicks() / 50f) * 5;
 		GlStateManager.rotate(rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-		for (int i = 0; i < split.length; i++) {
-			String text = split[i];
+
+		for (int i = 0; i < lines.size(); i++) {
+			String text = lines.get(i);
 			Minecraft.getMinecraft().fontRenderer.drawString(
 					text,
 					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-					getTextY(split.length, i),
+					getTextY(lines.size(), i),
 					0x2b000000);
 		}
+
 		GlStateManager.rotate(-rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
 
 		float rot2 = MathHelper.sin(ClientTickHandler.getTicks() / 20f) * 6;
 		GlStateManager.rotate(rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-		for (int i = 0; i < split.length; i++) {
-			String text = split[i];
+
+		for (int i = 0; i < lines.size(); i++) {
+			String text = lines.get(i);
 			Minecraft.getMinecraft().fontRenderer.drawString(
 					text,
 					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-					getTextY(split.length, i),
+					getTextY(lines.size(), i),
 					0x21000000);
 		}
+
 		GlStateManager.rotate(-rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
 		GlStateManager.translate(-getGuiWidth() / 2.0, -getGuiHeight() / 2.0, 0);
 

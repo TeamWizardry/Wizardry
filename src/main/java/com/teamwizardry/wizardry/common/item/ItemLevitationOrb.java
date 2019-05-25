@@ -1,7 +1,9 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import kotlin.jvm.functions.Function2;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.IItemPropertyGetter;
@@ -15,11 +17,12 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 
 /**
  * Created by Demoniaque on 6/21/2016.
  */
-public class ItemLevitationOrb extends ItemMod {
+public class ItemLevitationOrb extends ItemMod implements IItemColorProvider {
 
 	public ItemLevitationOrb() {
 		super("levitation_orb");
@@ -51,5 +54,11 @@ public class ItemLevitationOrb extends ItemMod {
 				subItems.add(stack);
 			}
 		}
+	}
+
+	@Nullable
+	@Override
+	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
+		return (stack, tintIndex) -> tintIndex == 0 ? Color.ORANGE.getRGB() : 0xFFFFFF;
 	}
 }

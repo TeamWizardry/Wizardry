@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
@@ -7,6 +8,7 @@ import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
+import kotlin.jvm.functions.Function2;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -25,11 +27,12 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 
 /**
  * Created by Demoniaque on 6/21/2016.
  */
-public class ItemOrb extends ItemMod implements IManaCell {
+public class ItemOrb extends ItemMod implements IManaCell, IItemColorProvider {
 
 	public ItemOrb() {
 		super("orb", "glass_orb", "mana_orb");
@@ -110,5 +113,11 @@ public class ItemOrb extends ItemMod implements IManaCell {
 
 			subItems.add(new ItemStack(this, 1, 1));
 		}
+	}
+
+	@Nullable
+	@Override
+	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
+		return (stack, tintIndex) -> tintIndex == 0 && stack.getItemDamage() == 1 ? Color.CYAN.getRGB() : 0xFFFFFF;
 	}
 }
