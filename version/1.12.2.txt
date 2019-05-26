@@ -1,3 +1,8 @@
+0.10.2
+Added new recipes
+Fixed invalid recipes
+Changed recipes to use oredict if possible
+
 0.10.1
 Better fairy jar rendering
 Fixed some sounds
