@@ -87,11 +87,11 @@ public class ModuleEffectBreak implements IModuleEffect {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
-			return previousData;
+			return data;
 
 
 		BlockPos targetPos = data.getData(BLOCK_HIT);
@@ -100,7 +100,7 @@ public class ModuleEffectBreak implements IModuleEffect {
 		double range = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 		double strength = ring.getAttributeValue(world, AttributeRegistry.POTENCY, data);
 
-		if (targetPos == null || facing == null) return previousData;
+		if (targetPos == null || facing == null) return data;
 		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range)+1)/2), pos ->
 		{
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
@@ -111,20 +111,20 @@ public class ModuleEffectBreak implements IModuleEffect {
 			float hardness = state.getBlockHardness(world, pos);
 			return hardness < 0 || hardness > strength;
 		});
-		if (blocks.isEmpty()) return previousData;
+		if (blocks.isEmpty()) return data;
 		for (BlockPos pos : blocks)
 		{
 			IBlockState state = world.getBlockState(pos);
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
 			for (EnumFacing face : EnumFacing.VALUES) {
 					mutable.move(face);
-				IBlockState adjStat = instance.getCachableBlockstate(world, mutable, previousData);
+				IBlockState adjStat = instance.getCachableBlockstate(world, mutable, data);
 					if (adjStat.getBlock() != state.getBlock() || !blocks.contains(mutable)) {
 						instance.drawFaceOutline(mutable, face.getOpposite());
 				}
 				mutable.move(face.getOpposite());
 			}
 		}
-		return previousData;
+		return data;
 	}
 }

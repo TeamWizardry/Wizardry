@@ -140,7 +140,46 @@ public class ModuleShapeCone implements IModuleShape {
 			lines.setLifetime(RandUtil.nextInt(10, 20));
 		});
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@NotNull
+	@Override
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
+		Vec3d look = data.getData(LOOK);
+
+		Entity caster = data.getCaster(world);
+		Vec3d origin = data.getOrigin(world);
+		Vec3d target;
+
+		if (look == null) return data;
+		if (caster == null) return data;
+		if (origin == null) return data;
+
+		double interpPosX = caster.lastTickPosX + (caster.posX - caster.lastTickPosX) * partialTicks;
+		double interpPosY = caster.lastTickPosY + (caster.posY - caster.lastTickPosY) * partialTicks;
+		double interpPosZ = caster.lastTickPosZ + (caster.posZ - caster.lastTickPosZ) * partialTicks;
+
+		double dist = ring.getAttributeValue(world, AttributeRegistry.RANGE, data);
+
+		RayTraceResult result = new RayTrace(
+				world, look, new Vec3d(interpPosX, interpPosY + caster.getEyeHeight(), interpPosZ), dist)
+				.setEntityFilter(input -> input != caster)
+				.setReturnLastUncollidableBlock(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(true)
+				.trace();
+
+		data.processTrace(result);
+
+		target = data.getTarget(world);
+		if (target == null) return data;
+
+		instance.drawCircle(target, dist / 4.0, true, true, caster, partialTicks);
+
+		return data;
+	}
+
 	/////////////
 	
 	@ModuleOverride("shape_cone_run")

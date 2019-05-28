@@ -205,31 +205,31 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
-			return previousData;
+			return data;
 
 		Entity caster = data.getCaster(world);
 		BlockPos targetBlock = data.getTargetPos();
 		EnumFacing facing = data.getFaceHit();
 
 
-		if (!(caster instanceof EntityLivingBase)) return previousData;
+		if (!(caster instanceof EntityLivingBase)) return data;
 		ItemStack hand = ((EntityLivingBase) caster).getHeldItemMainhand();
 
-		if (hand.isEmpty()) return previousData;
+		if (hand.isEmpty()) return data;
 
 		if (targetBlock != null && caster instanceof EntityPlayer) {
-			if (facing == null) return previousData;
+			if (facing == null) return data;
 			if (NBTHelper.hasNBTEntry(hand, "selected")) {
 				NBTTagCompound compound = NBTHelper.getCompound(hand, "selected");
-				if (compound == null) return previousData;
+				if (compound == null) return data;
 
 				IBlockState state = NBTUtil.readBlockState(compound);
-				IBlockState targetState = instance.getCachableBlockstate(world, targetBlock, previousData);
-				if (targetState.getBlock() == state.getBlock()) return previousData;
+				IBlockState targetState = instance.getCachableBlockstate(world, targetBlock, data);
+				if (targetState.getBlock() == state.getBlock()) return data;
 
 				double area = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 
@@ -243,7 +243,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 					break;
 				}
 
-				if (stackBlock == null) return previousData;
+				if (stackBlock == null) return data;
 				stackBlock = stackBlock.copy();
 
 				Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetBlock, facing, Math.min(stackBlock.getCount(), (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
@@ -254,8 +254,8 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 					IBlockState block = world.getBlockState(pos);
 					return block.getBlock() != targetState.getBlock();
 				});
-				
-				if (blocks.isEmpty()) return previousData;
+
+				if (blocks.isEmpty()) return data;
 
 				HashMap<BlockPos, IBlockState> blockStateCache = new HashMap<>();
 				for (BlockPos pos : blocks) {
@@ -290,6 +290,6 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 			}
 		}
 
-		return previousData;
+		return data;
 	}
 }

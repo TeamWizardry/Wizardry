@@ -97,20 +97,25 @@ public class ModuleShapeProjectile implements IModuleShape {
 	 */
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		Vec3d look = data.getData(LOOK);
 
 		Entity caster = data.getCaster(world);
 		Vec3d origin = data.getOrigin(world);
+		Vec3d target;
 
-		if (look == null) return previousData;
-		if (caster == null) return previousData;
-		if (origin == null) return previousData;
+		if (look == null) return data;
+		if (caster == null) return data;
+		if (origin == null) return data;
 
 		double dist = ring.getAttributeValue(world, AttributeRegistry.RANGE, data);
 
+		double interpPosX = caster.lastTickPosX + (caster.posX - caster.lastTickPosX) * partialTicks;
+		double interpPosY = caster.lastTickPosY + (caster.posY - caster.lastTickPosY) * partialTicks;
+		double interpPosZ = caster.lastTickPosZ + (caster.posZ - caster.lastTickPosZ) * partialTicks;
+
 		RayTraceResult result = new RayTrace(
-				world, look, caster.getPositionVector().add(0, caster.getEyeHeight(), 0), dist)
+				world, look, new Vec3d(interpPosX, interpPosY + caster.getEyeHeight(), interpPosZ), dist)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(true)
@@ -118,12 +123,11 @@ public class ModuleShapeProjectile implements IModuleShape {
 
 		data.processTrace(result);
 
-		BlockPos pos = data.getTargetPos();
-		if (pos == null) return previousData;
+		target = data.getTarget(world);
+		if (target == null) return data;
+		instance.drawCircle(target, 0.3, true, false, caster, partialTicks);
 
-		previousData.processTrace(result);
-
-		return previousData;
+		return data;
 	}
 	
 	///////////

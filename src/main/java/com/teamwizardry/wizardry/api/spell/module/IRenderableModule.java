@@ -20,8 +20,8 @@ public interface IRenderableModule<InstanceType extends ModuleInstance> {
 	 * Will render whatever GL code is specified here while the spell is being held by the
 	 * player's hand.
 	 */
-	default SpellData renderVisualization(@Nonnull World world, InstanceType instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		return instance.standardRenderVisualization(data, ring, previousData);
+	default SpellData renderVisualization(@Nonnull World world, InstanceType instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
+		return instance.standardRenderVisualization(data, ring, partialTicks);
 	}
 
 	/**

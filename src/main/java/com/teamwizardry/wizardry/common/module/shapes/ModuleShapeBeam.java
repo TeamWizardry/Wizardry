@@ -134,24 +134,33 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 
 		Vec3d look = data.getData(LOOK);
 		Vec3d position = data.getOrigin(world);
 		Entity caster = data.getCaster(world);
 
-		if (look == null || position == null || caster == null) return previousData;
+		if (look == null || position == null || caster == null) return data;
 
 		double range = ring.getAttributeValue(world, AttributeRegistry.RANGE, data);
 
-		RayTraceResult trace = new RayTrace(world, look, position, range)
+		double interpPosX = caster.lastTickPosX + (caster.posX - caster.lastTickPosX) * partialTicks;
+		double interpPosY = caster.lastTickPosY + (caster.posY - caster.lastTickPosY) * partialTicks;
+		double interpPosZ = caster.lastTickPosZ + (caster.posZ - caster.lastTickPosZ) * partialTicks;
+
+		RayTraceResult result = new RayTrace(world, look, new Vec3d(interpPosX, interpPosY + caster.getEyeHeight(), interpPosZ), range)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(true)
 				.trace();
 
-		data.processTrace(trace, look.scale(range));
-		return previousData;
+		data.processTrace(result, look.scale(range));
+
+		Vec3d target = data.getTarget(world);
+		if (target == null) return data;
+
+		instance.drawCircle(target, 0.3, true, false, caster, partialTicks);
+		return data;
 	}
 
 	@Override

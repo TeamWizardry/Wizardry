@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -20,30 +19,25 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.List;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 
 /**
@@ -145,76 +139,42 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		Vec3d look = data.getData(SpellData.DefaultKeys.LOOK);
-		Vec3d target = data.getTarget(world);
 		Entity caster = data.getCaster(world);
 
-		if (caster == null) return previousData;
-		if (target == null) {
-			if (look == null) return previousData;
+		if (caster == null) return data;
+		if (look == null) return data;
 
-			RayTraceResult result = new RayTrace(world, look, caster.getPositionVector().add(0, caster.getEyeHeight(), 0),
-					caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
-					.setEntityFilter(input -> input != caster)
-					.setReturnLastUncollidableBlock(true)
-					.setIgnoreBlocksWithoutBoundingBoxes(true)
-					.trace();
+		Vec3d target;
 
-			data.processTrace(result);
+		double interpPosX = caster.lastTickPosX + (caster.posX - caster.lastTickPosX) * partialTicks;
+		double interpPosY = caster.lastTickPosY + (caster.posY - caster.lastTickPosY) * partialTicks;
+		double interpPosZ = caster.lastTickPosZ + (caster.posZ - caster.lastTickPosZ) * partialTicks;
 
-			BlockPos pos = data.getTargetPos();
-			if (pos == null) return previousData;
+		RayTraceResult result = new RayTrace(world, look, new Vec3d(interpPosX, interpPosY + caster.getEyeHeight(), interpPosZ),
+				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
+				.setEntityFilter(input -> input != caster)
+				.setReturnLastUncollidableBlock(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(true)
+				.trace();
 
-			previousData.processTrace(result);
+		data.processTrace(result);
 
-			target = data.getTarget(world);
-		}
-		if (target == null) return previousData;
+		BlockPos pos = data.getTargetPos();
+		if (pos == null) return data;
+
+		data.processTrace(result);
+
+		target = data.getTarget(world);
+
+		if (target == null) return data;
 
 		double aoe = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 
-		GlStateManager.pushMatrix();
+		instance.drawCircle(target, aoe, false, false, caster, partialTicks);
 
-		GlStateManager.disableDepth();
-
-		GlStateManager.disableCull();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableBlend();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.disableTexture2D();
-		GlStateManager.enableColorMaterial();
-
-		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
-		Color colorRGB = new Color(color);
-
-		GL11.glLineWidth(2f);
-		GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), (byte) 255);
-
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bb = tessellator.getBuffer();
-		bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
-		for (int i = 0; i <= 360; i++) {
-			double x = target.x + aoe * MathHelper.cos((float) ((i / 360.0) * Math.PI * 2));
-			double z = target.z + aoe * MathHelper.sin((float) ((i / 360.0) * Math.PI * 2));
-			double y = target.y;
-			bb.pos(x, y, z).endVertex();
-		}
-		tessellator.draw();
-
-		GlStateManager.disableBlend();
-		GlStateManager.enableDepth();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableColorMaterial();
-
-		GlStateManager.enableDepth();
-		GlStateManager.popMatrix();
-
-		return previousData;
+		return data;
 	}
 
 	/**

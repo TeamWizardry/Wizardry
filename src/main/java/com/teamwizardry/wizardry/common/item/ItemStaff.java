@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICooldownSpellCaster;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
+import com.teamwizardry.wizardry.api.item.ISpellCaster;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -43,7 +44,7 @@ import java.util.List;
 /**
  * Created by Demoniaque on 6/7/2016.
  */
-public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProduct, ICooldownSpellCaster, IPearlSwappable {
+public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProduct, ICooldownSpellCaster, IPearlSwappable, ISpellCaster {
 
 	public ItemStaff() {
 		super("staff", "staff", "staff_pearl");

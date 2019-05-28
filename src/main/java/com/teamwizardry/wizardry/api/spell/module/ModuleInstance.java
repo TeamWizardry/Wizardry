@@ -21,9 +21,12 @@ import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -32,6 +35,7 @@ import net.minecraft.nbt.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -129,12 +133,12 @@ public abstract class ModuleInstance {
 	 */
 	@Nonnull
 	@SideOnly(Side.CLIENT)
-	public SpellData renderVisualization(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		return standardRenderVisualization(data, ring, previousData);
+	public SpellData renderVisualization(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
+		return standardRenderVisualization(data, ring, partialTicks);
 	}
 
-	public final SpellData standardRenderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		return new SpellData();
+	public final SpellData standardRenderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
+		return data;
 	}
 
 	@Nullable
@@ -305,8 +309,8 @@ public abstract class ModuleInstance {
 	 * Convenience method for renderVisualization
 	 */
 	@Nonnull
-	public final IBlockState getCachableBlockstate(@Nonnull World world, @Nonnull BlockPos targetBlock, @Nonnull SpellData previousData) {
-		BlockStateCache cacheData = previousData.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE);
+	public final IBlockState getCachableBlockstate(@Nonnull World world, @Nonnull BlockPos targetBlock, @Nonnull SpellData data) {
+		BlockStateCache cacheData = data.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE);
 		Map<BlockPos, IBlockState> cache;
 
 		IBlockState state;
@@ -317,12 +321,12 @@ public abstract class ModuleInstance {
 				return cache.get(targetBlock);
 			} else {
 				cache.put(targetBlock, state = world.getBlockState(targetBlock));
-				previousData.addData(BLOCKSTATE_CACHE, new BlockStateCache(cache));
+				data.addData(BLOCKSTATE_CACHE, new BlockStateCache(cache));
 			}
 		} else {
 			cache = new HashMap<>();
 			cache.put(targetBlock, state = world.getBlockState(targetBlock));
-			previousData.addData(BLOCKSTATE_CACHE, new BlockStateCache(cache));
+			data.addData(BLOCKSTATE_CACHE, new BlockStateCache(cache));
 		}
 
 		return state;
@@ -349,10 +353,9 @@ public abstract class ModuleInstance {
 		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
 		Color colorRGB = new Color(color);
 
-		GL11.glLineWidth(1f);
-		GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), (byte) 255);
+		GlStateManager.glLineWidth(2f);
 
-		RenderUtils.renderBlockOutline(state.getSelectedBoundingBox(world, pos));
+		RenderUtils.bufferBlockOutline(state.getSelectedBoundingBox(world, pos), colorRGB);
 
 		GlStateManager.disableBlend();
 		GlStateManager.enableDepth();
@@ -362,6 +365,61 @@ public abstract class ModuleInstance {
 
 		GlStateManager.enableDepth();
 		GlStateManager.popMatrix();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public final void drawCircle(@Nonnull Vec3d pos, double radius, boolean flattenToScreen, boolean enableDepth, Entity caster, float partialTicks) {
+		GlStateManager.pushMatrix();
+
+		GlStateManager.translate(pos.x, pos.y, pos.z);
+
+		if (flattenToScreen) {
+			GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+			GlStateManager.rotate((float) (Minecraft.getMinecraft().getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+		}
+
+		if (enableDepth) GlStateManager.enableDepth();
+		else GlStateManager.disableDepth();
+
+		GlStateManager.disableCull();
+		GlStateManager.enableAlpha();
+		GlStateManager.enableBlend();
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.disableTexture2D();
+		GlStateManager.enableColorMaterial();
+		GlStateManager.translate(0, 0.01, 0);
+
+		int color = MathHelper.hsvToRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
+		Color colorRGB = new Color(color);
+
+		GlStateManager.glLineWidth(2f);
+
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bb = tessellator.getBuffer();
+		bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+		for (int i = 0; i <= 360; i++) {
+			double x = radius * MathHelper.cos((float) ((i / 360.0) * Math.PI * 2));
+			double z = radius * MathHelper.sin((float) ((i / 360.0) * Math.PI * 2));
+			if (flattenToScreen) {
+				bb.pos(x, z, 0).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
+			} else {
+				bb.pos(x, 0, z).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
+			}
+		}
+		tessellator.draw();
+
+		GlStateManager.disableBlend();
+		GlStateManager.enableDepth();
+		GlStateManager.enableAlpha();
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableColorMaterial();
+
+		GlStateManager.enableDepth();
+		GlStateManager.popMatrix();
+
 	}
 
 	/**
@@ -384,7 +442,7 @@ public abstract class ModuleInstance {
 		GlStateManager.enableColorMaterial();
 
 		Tessellator tessellator = Tessellator.getInstance();
-		tessellator.getBuffer().begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+		tessellator.getBuffer().begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 
 		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
 		Color colorRGB = new Color(color);
@@ -392,8 +450,7 @@ public abstract class ModuleInstance {
 		Vec3d directionOffsetVec = new Vec3d(facing.getDirectionVec()).scale(0.5);
 		Vec3d adjPos = new Vec3d(pos).add(0.5, 0.5, 0.5).add(directionOffsetVec);
 
-		GL11.glLineWidth(1f);
-		GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), (byte) 255);
+		GlStateManager.glLineWidth(2f);
 
 		for (EnumFacing facing1 : getPerpendicularFacings(facing)) {
 			for (EnumFacing facing2 : getPerpendicularFacings(facing)) {
@@ -404,7 +461,7 @@ public abstract class ModuleInstance {
 				Vec3d p2 = new Vec3d(facing2.getDirectionVec()).scale(0.5);
 				Vec3d edge = adjPos.add(p1.add(p2));
 
-				tessellator.getBuffer().pos(edge.x, edge.y, edge.z).endVertex();
+				tessellator.getBuffer().pos(edge.x, edge.y, edge.z).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
 			}
 		}
 
@@ -574,8 +631,8 @@ public abstract class ModuleInstance {
 	/**
 	 * Use this to run the module properly.
 	 *
-	 * @param data     The spellData associated with it.
-	 * @param ring The SpellRing made with this.
+	 * @param data    The spellData associated with it.
+	 * @param ring    The SpellRing made with this.
 	 * @param runOnce
 	 * @return If the spellData has succeeded.
 	 */

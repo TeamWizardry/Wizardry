@@ -18,6 +18,7 @@ import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -34,7 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule(ID="shape_touch")
+@RegisterModule(ID = "shape_touch")
 public class ModuleShapeTouch implements IModuleShape {
 
 	@Override
@@ -51,7 +52,7 @@ public class ModuleShapeTouch implements IModuleShape {
 
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
 		overrides.onRunTouch(world, spell, spellRing);
-		
+
 		RayTraceResult result = new RayTrace(
 				world, look, origin,
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
@@ -66,17 +67,21 @@ public class ModuleShapeTouch implements IModuleShape {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		Vec3d look = data.getData(LOOK);
 
 		Entity caster = data.getCaster(world);
 		Vec3d origin = data.getOrigin(world);
 
-		if (look == null) return previousData;
-		if (caster == null) return previousData;
-		if (origin == null) return previousData;
+		if (look == null) return data;
+		if (caster == null) return data;
+		if (origin == null) return data;
 
-		RayTraceResult result = new RayTrace(world, look, caster.getPositionVector().add(0, caster.getEyeHeight(), 0),
+		double interpPosX = caster.lastTickPosX + (caster.posX - caster.lastTickPosX) * partialTicks;
+		double interpPosY = caster.lastTickPosY + (caster.posY - caster.lastTickPosY) * partialTicks;
+		double interpPosZ = caster.lastTickPosZ + (caster.posZ - caster.lastTickPosZ) * partialTicks;
+
+		RayTraceResult result = new RayTrace(world, look, new Vec3d(interpPosX, interpPosY + caster.getEyeHeight(), interpPosZ),
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
@@ -86,14 +91,22 @@ public class ModuleShapeTouch implements IModuleShape {
 		data.processTrace(result);
 
 		BlockPos pos = data.getTargetPos();
-		if (pos == null) return previousData;
+		EnumFacing facing = data.getFaceHit();
+		Vec3d target = data.getTarget(world);
+		if (pos == null) return data;
 
 //		EnumFacing facing = result.sideHit;
-//		IBlockState state = getCachableBlockstate(world, result.getBlockPos(), previousData);
+//		IBlockState state = getCachableBlockstate(world, result.getBlockPos(), data);
 
-		previousData.processTrace(result);
+		if (facing != null && !world.isAirBlock(pos))
+			instance.drawFaceOutline(pos, facing);
+		else if (target != null) {
+			instance.drawCircle(target, 0.3, true, false, caster, partialTicks);
+		}
 
-		return previousData;
+		data.processTrace(result);
+
+		return data;
 	}
 
 	@Override
@@ -123,14 +136,14 @@ public class ModuleShapeTouch implements IModuleShape {
 			glitter.setScaleFunction(new InterpScale(1, 0));
 		});
 	}
-	
+
 	//////////////////
-	
+
 	@ModuleOverride("shape_touch_run")
 	public void onRunTouch(World world, SpellData data, SpellRing shape) {
 		// Default implementation
 	}
-	
+
 	@ModuleOverride("shape_touch_render")
 	public boolean onRenderTouch(World world, SpellData data, SpellRing shape) {
 		// Default implementation

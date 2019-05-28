@@ -6,6 +6,12 @@
   "overrides": [
     {
       "predicate": {
+        "fill": 0.0
+      },
+      "model": "wizardry:item/orb_fill_0"
+    },
+    {
+      "predicate": {
         "fill": 0.1
       },
       "model": "wizardry:item/orb_fill_10"

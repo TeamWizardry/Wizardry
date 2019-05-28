@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.module.effects;
+package com.teamwizardry.wizardry.common.module.effects.phase;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
@@ -18,7 +18,6 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.client.core.renderer.PhasedBlockRenderer;
 import com.teamwizardry.wizardry.common.core.SpellNemezTracker;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
@@ -340,11 +339,11 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
-			return previousData;
+			return data;
 
 		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
 		EnumFacing faceHit = data.getFaceHit();
@@ -354,8 +353,8 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 
 		if (faceHit != null && targetPos != null) {
 
-			IBlockState targetState = instance.getCachableBlockstate(world, targetPos, previousData);
-			if (BlockUtils.isAnyAir(targetState)) return previousData;
+			IBlockState targetState = instance.getCachableBlockstate(world, targetPos, data);
+			if (BlockUtils.isAnyAir(targetState)) return data;
 
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
 
@@ -424,7 +423,7 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 				boolean fullAirPlane = true;
 				for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
 
-					IBlockState originalState = instance.getCachableBlockstate(world, pos, previousData);
+					IBlockState originalState = instance.getCachableBlockstate(world, pos, data);
 					Block block = originalState.getBlock();
 
 					if (edges.contains(pos)) continue;
@@ -459,6 +458,6 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 			}
 		}
 
-		return previousData;
+		return data;
 	}
 }

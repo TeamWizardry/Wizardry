@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.core.renderer;
+package com.teamwizardry.wizardry.common.module.effects.lightning;
 
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.module.effects;
+package com.teamwizardry.wizardry.common.module.effects.lightning;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.LightningGenerator;

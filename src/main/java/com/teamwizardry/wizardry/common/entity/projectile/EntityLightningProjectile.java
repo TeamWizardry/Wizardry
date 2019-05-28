@@ -15,7 +15,7 @@ import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLightning;
+import com.teamwizardry.wizardry.common.module.effects.lightning.ModuleEffectLightning;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;

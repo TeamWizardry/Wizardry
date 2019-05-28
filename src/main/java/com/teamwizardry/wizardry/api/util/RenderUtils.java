@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -365,7 +366,7 @@ public class RenderUtils {
 		}
 	}
 
-	public static void renderBlockOutline(AxisAlignedBB aabb) {
+	public static void bufferBlockOutline(AxisAlignedBB aabb, Color color) {
 		Tessellator tessellator = Tessellator.getInstance();
 
 		double ix = aabb.minX;
@@ -375,42 +376,42 @@ public class RenderUtils {
 		double ay = aabb.maxY;
 		double az = aabb.maxZ;
 
-		tessellator.getBuffer().begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-		tessellator.getBuffer().pos(ix, iy, iz).endVertex();
-		tessellator.getBuffer().pos(ix, ay, iz).endVertex();
+		tessellator.getBuffer().begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+		tessellator.getBuffer().pos(ix, iy, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ix, ay, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ix, ay, iz).endVertex();
-		tessellator.getBuffer().pos(ax, ay, iz).endVertex();
+		tessellator.getBuffer().pos(ix, ay, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ax, ay, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ax, ay, iz).endVertex();
-		tessellator.getBuffer().pos(ax, iy, iz).endVertex();
+		tessellator.getBuffer().pos(ax, ay, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ax, iy, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ax, iy, iz).endVertex();
-		tessellator.getBuffer().pos(ix, iy, iz).endVertex();
+		tessellator.getBuffer().pos(ax, iy, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ix, iy, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ix, iy, az).endVertex();
-		tessellator.getBuffer().pos(ix, ay, az).endVertex();
+		tessellator.getBuffer().pos(ix, iy, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ix, ay, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ix, iy, az).endVertex();
-		tessellator.getBuffer().pos(ax, iy, az).endVertex();
+		tessellator.getBuffer().pos(ix, iy, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ax, iy, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ax, iy, az).endVertex();
-		tessellator.getBuffer().pos(ax, ay, az).endVertex();
+		tessellator.getBuffer().pos(ax, iy, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ax, ay, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ix, ay, az).endVertex();
-		tessellator.getBuffer().pos(ax, ay, az).endVertex();
+		tessellator.getBuffer().pos(ix, ay, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ax, ay, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ix, iy, iz).endVertex();
-		tessellator.getBuffer().pos(ix, iy, az).endVertex();
+		tessellator.getBuffer().pos(ix, iy, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ix, iy, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ix, ay, iz).endVertex();
-		tessellator.getBuffer().pos(ix, ay, az).endVertex();
+		tessellator.getBuffer().pos(ix, ay, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ix, ay, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ax, iy, iz).endVertex();
-		tessellator.getBuffer().pos(ax, iy, az).endVertex();
+		tessellator.getBuffer().pos(ax, iy, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ax, iy, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
-		tessellator.getBuffer().pos(ax, ay, iz).endVertex();
-		tessellator.getBuffer().pos(ax, ay, az).endVertex();
+		tessellator.getBuffer().pos(ax, ay, iz).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tessellator.getBuffer().pos(ax, ay, az).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
 		tessellator.draw();
 	}

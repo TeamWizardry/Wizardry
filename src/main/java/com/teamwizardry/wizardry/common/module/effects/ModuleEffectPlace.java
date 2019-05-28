@@ -123,37 +123,37 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
-			return previousData;
+			return data;
 
 		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
 		EnumFacing facing = data.getFaceHit();
 		Entity caster = data.getCaster(world);
 
-		if (facing == null || targetPos == null) return previousData;
+		if (facing == null || targetPos == null) return data;
 
 		double area = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 
 		if (caster instanceof EntityPlayer) {
 			IBlockState selected = instance.getSelectedBlockState((EntityPlayer) caster);
-			if (selected == null) return previousData;
+			if (selected == null) return data;
 
 			IBlockState targetState = world.getBlockState(targetPos);
 			List<ItemStack> stacks = instance.getAllOfStackFromInventory((EntityPlayer) caster, selected);
-			if (stacks.isEmpty()) return previousData;
+			if (stacks.isEmpty()) return data;
 
 			int stackCount = instance.getCountOfStacks(stacks);
 			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, Math.min(stackCount, (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
 				if (BlockUtils.isAnyAir(targetState)) return true;
 
 				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
-				IBlockState adjacentState = instance.getCachableBlockstate(world, mutable.offset(facing), previousData);
+				IBlockState adjacentState = instance.getCachableBlockstate(world, mutable.offset(facing), data);
 				if (adjacentState.getBlock() != Blocks.AIR) return true;
 
-				IBlockState state = instance.getCachableBlockstate(world, pos, previousData);
+				IBlockState state = instance.getCachableBlockstate(world, pos, data);
 				return state.getBlock() != targetState.getBlock();
 			});
 
@@ -178,6 +178,6 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 					}
 				}
 		}
-		return previousData;
+		return data;
 	}
 }

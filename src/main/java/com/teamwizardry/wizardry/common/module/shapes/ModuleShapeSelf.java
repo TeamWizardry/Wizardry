@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule(ID="shape_self")
+@RegisterModule(ID = "shape_self")
 public class ModuleShapeSelf implements IModuleShape {
 
 	@Override
@@ -38,10 +38,10 @@ public class ModuleShapeSelf implements IModuleShape {
 		if (caster == null) return false;
 
 		if (!spellRing.taxCaster(world, spell, true)) return false;
-		
+
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
 		overrides.onRunSelf(world, spell, spellRing);
-		
+
 		spell.processEntity(caster, false);
 
 		return true;
@@ -86,14 +86,36 @@ public class ModuleShapeSelf implements IModuleShape {
 		});
 
 	}
-	
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
+		Vec3d target = data.getTarget(world);
+		Entity caster = data.getCaster(world);
+
+		if (caster == null) return data;
+		if (target == null) {
+			target = caster.getPositionVector();
+			data.addData(SpellData.DefaultKeys.TARGET_HIT, target);
+			data.addData(SpellData.DefaultKeys.TARGET_HIT, target);
+		}
+		double interpPosX = caster.lastTickPosX + (caster.posX - caster.lastTickPosX) * partialTicks;
+		double interpPosY = caster.lastTickPosY + (caster.posY - caster.lastTickPosY) * partialTicks;
+		double interpPosZ = caster.lastTickPosZ + (caster.posZ - caster.lastTickPosZ) * partialTicks;
+
+		instance.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.55, false, true, caster, partialTicks);
+		instance.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.6, false, true, caster, partialTicks);
+
+		return data;
+	}
+
 	///////////////////
-	
+
 	@ModuleOverride("shape_self_run")
 	public void onRunSelf(World world, SpellData data, SpellRing shape) {
 		// Default implementation
 	}
-	
+
 	@ModuleOverride("shape_self_render")
 	public boolean onRenderSelf(World world, SpellData data, SpellRing shape) {
 		// Default implementation

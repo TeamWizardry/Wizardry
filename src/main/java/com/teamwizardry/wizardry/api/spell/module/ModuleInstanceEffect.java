@@ -59,8 +59,8 @@ public class ModuleInstanceEffect extends ModuleInstance {
 	@Override
 	@Nonnull
 	@SideOnly(Side.CLIENT)
-	public SpellData renderVisualization(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		return ((IModuleEffect) moduleClass).renderVisualization(world, this, data, ring, previousData);
+	public SpellData renderVisualization(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
+		return ((IModuleEffect) moduleClass).renderVisualization(world, this, data, ring, partialTicks);
 	}
 	
 	/**
