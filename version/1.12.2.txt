@@ -1,3 +1,12 @@
+0.10.3
+Renamed pearl holder to orb holder
+Add localization for levitation orbs
+New bouncy block effect & entity bouncy effect
+Added spell visualizations for every shape
+Fix light spell's rendering (crashed on servers)
+Fix error with bouncy blocks
+Fix orb coloring when their fill reaches 0
+
 0.10.2
 Added new recipes
 Fixed invalid recipes
