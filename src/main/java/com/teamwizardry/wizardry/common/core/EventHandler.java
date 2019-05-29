@@ -16,6 +16,7 @@ import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,9 +49,11 @@ public class EventHandler {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onTextureStitchEvent(TextureStitchEvent event) {
-		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SMOKE));
-		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.DIAMOND));
+		if (event.getMap() == Minecraft.getMinecraft().getTextureMapBlocks()) {
+			event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SMOKE));
+			event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+			event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.DIAMOND));
+		}
 	}
 
 	@SubscribeEvent
@@ -78,7 +81,7 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void tickEvent(TickEvent.WorldTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
+		if (event.phase == TickEvent.Phase.END && event.side == Side.SERVER) {
 			FluidTracker.INSTANCE.tick(event.world);
 		}
 	}
@@ -114,7 +117,7 @@ public class EventHandler {
 			}
 		}
 
-		if (event.player.isServerWorld()) {
+		if (!event.player.world.isRemote) {
 			for (ItemStack stack : event.player.inventory.mainInventory) {
 				if (stack.getItem() == ModItems.LEVITATION_ORB) {
 

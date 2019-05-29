@@ -21,7 +21,6 @@ import com.teamwizardry.wizardry.common.item.ItemBook;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
-import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.trickery.WorldProviderTorikki;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
@@ -36,7 +35,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
@@ -110,8 +108,6 @@ public class CommonProxy {
 	}
 
 	public void init(FMLInitializationEvent event) {
-		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
-
 		manaRecipeLoading:
 		{
 			File recipeDirectory = new File(directory, "fluid_recipes");
