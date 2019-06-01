@@ -4,7 +4,7 @@
 	"item": "minecraft:packed_ice",
 	"primary_color": "C4C4C4",
 	"secondary_color": "0080FF",
-	"mana": { "base": 100 },
-	"burnout": { "base": 50 },
-	"potency": { "base": 2, "min": 1, "max": 20 }
+	"mana": { "min": 100 },
+	"burnout": { "min": 50 },
+	"potency": { "min": 2, "max": 20 }
 }

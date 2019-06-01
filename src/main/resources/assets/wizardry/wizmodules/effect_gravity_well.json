@@ -6,10 +6,10 @@
   "primary_color": "ff0000",
   "secondary_color": "ffaa00",
   "cooldown_time": 100,
-  "mana": { "base": 0.5 },
-  "burnout": { "base": 0.5 },
-  "cooldown": { "base": 100 },
-  "area": { "base": 3, "min": 3, "max": 16 },
-  "potency": { "base": 10, "min": 10, "max": 50 },
-  "duration": { "base": 10, "min": 10, "max": 64 }
+  "mana": { "min": 0.5 },
+  "burnout": { "min": 0.5 },
+  "cooldown": { "min": 100 },
+  "area": { "min": 3, "max": 16 },
+  "potency": { "min": 10, "max": 50 },
+  "duration": { "min": 10, "max": 64 }
 }

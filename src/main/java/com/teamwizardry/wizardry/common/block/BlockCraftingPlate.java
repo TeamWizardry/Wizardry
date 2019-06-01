@@ -54,6 +54,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 		setHardness(2.0F);
 		setResistance(15.0f);
 		setSoundType(SoundType.WOOD);
+		getItemForm().setMaxStackSize(1);
 	}
 
 	@Override

@@ -323,9 +323,9 @@ public class ModuleRegistry {
 				Wizardry.LOGGER.info(" | | |_ Found Item " + item.getRegistryName().toString());
 			}
 
-			attributeRanges.put(AttributeRegistry.BURNOUT_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
-			attributeRanges.put(AttributeRegistry.MANA_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
-			attributeRanges.put(AttributeRegistry.POWER_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
+			attributeRanges.put(AttributeRegistry.BURNOUT_MULTI, new AttributeRange(1, Integer.MAX_VALUE));
+			attributeRanges.put(AttributeRegistry.MANA_MULTI, new AttributeRange(1, Integer.MAX_VALUE));
+			attributeRanges.put(AttributeRegistry.POWER_MULTI, new AttributeRange(1, Integer.MAX_VALUE));
 			for (Entry<String, JsonElement> entry : moduleObject.entrySet()) {
 				switch (entry.getKey()) {
 					case "meta": {
@@ -383,22 +383,7 @@ public class ModuleRegistry {
 
 							}
 
-							float base = min;
-							if (baseAttrib.has("base") && baseAttrib.get("base").isJsonPrimitive()) {
-								base = baseAttrib.get("base").getAsFloat();
-								if (base < min) {
-									if (ConfigValues.debugInfo)
-										Wizardry.LOGGER.info(" | | | |_ Base value for " + attribute.toString() + " was " + base + ", must be greater than min, " + min + ". Setting to " + min);
-									base = min;
-								} else if (base > max) {
-									if (ConfigValues.debugInfo)
-										Wizardry.LOGGER.info(" | | | |_ Base value for " + attribute + " was " + base + ", must be less than max, " + max + ". Setting to " + max);
-									base = max;
-								}
-
-								if (ConfigValues.debugInfo) Wizardry.LOGGER.info(" | | | |_ Base: " + base);
-							}
-							attributeRanges.put(attribute, new AttributeRange(base, min, max));
+							attributeRanges.put(attribute, new AttributeRange(min, max));
 						}
 					}
 				}

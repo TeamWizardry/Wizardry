@@ -544,15 +544,15 @@ public abstract class ModuleInstance {
 	}
 
 	public final double getBurnoutFill() {
-		return attributeRanges.get(AttributeRegistry.BURNOUT).base;
+		return attributeRanges.get(AttributeRegistry.BURNOUT).min;
 	}
 
 	public final int getCooldownTime() {
-		return (int) attributeRanges.get(AttributeRegistry.COOLDOWN).base;
+		return (int) attributeRanges.get(AttributeRegistry.COOLDOWN).min;
 	}
 
 	public final int getChargeupTime() {
-		return (int) attributeRanges.get(AttributeRegistry.CHARGEUP).base;
+		return (int) attributeRanges.get(AttributeRegistry.CHARGEUP).min;
 	}
 
 	public final ItemStack getItemStack() {
@@ -560,19 +560,19 @@ public abstract class ModuleInstance {
 	}
 
 	public final double getManaDrain() {
-		return attributeRanges.get(AttributeRegistry.MANA).base;
+		return attributeRanges.get(AttributeRegistry.MANA).min;
 	}
 
 	public final double getPowerMultiplier() {
-		return attributeRanges.get(AttributeRegistry.POWER_MULTI).base;
+		return attributeRanges.get(AttributeRegistry.POWER_MULTI).min;
 	}
 
 	public final double getManaMultiplier() {
-		return attributeRanges.get(AttributeRegistry.MANA_MULTI).base;
+		return attributeRanges.get(AttributeRegistry.MANA_MULTI).min;
 	}
 
 	public final double getBurnoutMultiplier() {
-		return attributeRanges.get(AttributeRegistry.BURNOUT_MULTI).base;
+		return attributeRanges.get(AttributeRegistry.BURNOUT_MULTI).min;
 	}
 
 	@Nonnull

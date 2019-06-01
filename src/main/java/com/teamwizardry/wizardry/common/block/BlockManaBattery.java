@@ -27,6 +27,7 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 	public BlockManaBattery() {
 		super("mana_battery", Material.GLASS);
 		setSoundType(SoundType.GLASS);
+		getItemForm().setMaxStackSize(1);
 	}
 
 	@Nullable

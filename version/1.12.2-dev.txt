@@ -1,3 +1,8 @@
+0.10.4
+Removed Event spell components
+Merged "min" and "base" in spell components (IMPORTANT - this will overwrite modified spell jsons)
+Changed stack size to 1 for several blocks
+
 0.10.3
 Renamed pearl holder to orb holder
 Add localization for levitation orbs

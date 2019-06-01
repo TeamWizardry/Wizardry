@@ -22,6 +22,7 @@ public class BlockManaVacuum extends BlockModContainer implements IStructure
 		super("mana_vacuum", Material.IRON);
 		setHardness(2);
 		setResistance(15);
+		getItemForm().setMaxStackSize(1);
 	}
 
 	@Override

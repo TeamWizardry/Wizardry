@@ -5,10 +5,10 @@
   "primary_color": "00ffff",
   "secondary_color": "00ff61",
   "mana": {
-    "base": 50
+    "min": 50
   },
   "burnout": {
-    "base": 50
+    "min": 50
   },
-  "potency": { "base": 4, "min": 4, "max": 30 }
+  "potency": { "min": 4, "max": 30 }
 }

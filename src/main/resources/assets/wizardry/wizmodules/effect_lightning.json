@@ -7,12 +7,12 @@
   "primary_color": "ff72ed",
   "secondary_color": "ff00e0",
   "mana": {
-    "base": 100
+    "min": 100
   },
   "burnout": {
-    "base": 70
+    "min": 70
   },
-  "range": { "base": 1, "min": 1, "max": 16 },
-  "potency": { "base": 4, "min": 4, "max": 20 },
-  "duration": { "base": 1, "min": 1, "max": 16 }
+  "range": { "min": 1, "max": 16 },
+  "potency": { "min": 4, "max": 20 },
+  "duration": { "min": 1, "max": 16 }
 }

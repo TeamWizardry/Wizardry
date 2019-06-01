@@ -7,11 +7,11 @@
   "primary_color": "FF0000",
   "secondary_color": "FF0000",
   "mana": {
-    "base": 100
+    "min": 100
   },
   "burnout": {
-    "base": 300
+    "min": 300
   },
-  "range": { "base": 2, "min": 2, "max": 20 },
-  "duration": { "base": 5, "min": 5, "max": 40 }
+  "range": { "min": 2, "max": 20 },
+  "duration": { "min": 5, "max": 40 }
 }

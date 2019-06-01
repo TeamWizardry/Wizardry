@@ -1,7 +1,0 @@
-{
-  "sub_module_id": "event_collide_entity",
-  "reference_module_id": "event_collide_entity",
-  "item": "minecraft:apple",
-  "mana": { "base": 10 },
-  "burnout": { "base": 5 }
-}

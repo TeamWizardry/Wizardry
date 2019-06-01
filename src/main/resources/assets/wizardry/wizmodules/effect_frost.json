@@ -5,11 +5,11 @@
   "primary_color": "FFFFFF",
   "secondary_color": "FFFFFF",
   "mana": {
-    "base": 100
+    "min": 100
   },
   "burnout": {
-    "base": 50
+    "min": 50
   },
-  "area": { "base": 1, "min": 1, "max": 16 },
-  "duration": { "base": 5, "min": 5, "max": 40 }
+  "area": { "min": 1, "max": 16 },
+  "duration": { "min": 5, "max": 40 }
 }

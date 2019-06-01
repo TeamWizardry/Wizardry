@@ -4,9 +4,9 @@
   "item": "minecraft:bone",
   "primary_color": "00FFFF",
   "secondary_color": "00FFFF",
-  "mana": { "base": 100 },
+  "mana": { "min": 100 },
   "burnout": {
-    "base": 50
+    "min": 50
   },
-  "potency": { "base": 3, "min": 3, "max": 20 }
+  "potency": { "min": 3, "max": 20 }
 }

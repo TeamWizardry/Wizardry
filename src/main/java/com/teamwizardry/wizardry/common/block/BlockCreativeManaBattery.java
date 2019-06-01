@@ -27,6 +27,7 @@ public class BlockCreativeManaBattery extends BlockModContainer implements IStru
 	public BlockCreativeManaBattery() {
 		super("creative_mana_battery", Material.GLASS);
 		setSoundType(SoundType.GLASS);
+		getItemForm().setMaxStackSize(1);
 	}
 
 	@Nullable

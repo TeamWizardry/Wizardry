@@ -3,13 +3,13 @@
   "reference_module_id": "shape_cone",
   "item": "minecraft:gunpowder",
   "mana": {
-    "base": 40
+    "min": 40
   },
   "burnout": {
-    "base": 30
+    "min": 30
   },
-  "cooldown": { "base": 30 },
-  "chargupup": { "base": 5 },
-  "range": { "base": 5, "min": 5, "max": 16 },
-  "potency": { "base": 5, "min": 5, "max": 32 }
+  "cooldown": { "min": 30 },
+  "chargupup": { "min": 5 },
+  "range": { "min": 5, "max": 16 },
+  "potency": { "min": 5, "max": 32 }
 }

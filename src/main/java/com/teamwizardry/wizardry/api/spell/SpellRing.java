@@ -355,7 +355,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		if (module != null) {
 			module.getAttributeRanges().forEach((attribute, range) -> {
-				informationMap.put(attribute.getNbtName(), range.base);
+				informationMap.put(attribute.getNbtName(), range.min);
 			});
 		}
 

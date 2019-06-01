@@ -4,7 +4,7 @@
   "item": "minecraft:golden_carrot",
   "primary_color": "FFFFFF",
   "secondary_color": "42D1D1",
-  "mana": { "base": 200 },
-  "burnout": { "base": 100 },
-  "duration": { "base": 5, "min": 5, "max": 60 }
+  "mana": { "min": 200 },
+  "burnout": { "min": 100 },
+  "duration": { "min": 5, "max": 60 }
 }

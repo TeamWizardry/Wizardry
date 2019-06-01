@@ -37,6 +37,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 		setResistance(15.0f);
 		setSoundType(SoundType.WOOD);
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ISLEFTSIDE, true));
+		getItemForm().setMaxStackSize(1);
 	}
 
 	@Nonnull

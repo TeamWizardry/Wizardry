@@ -4,8 +4,8 @@
 	"item": "minecraft:noteblock",
 	"primary_color": "00d8ff",
 	"secondary_color": "ff00ff",
-	"mana": { "base": 100 },
-	"burnout": { "base": 50 },
-	"area": { "base": 2, "min": 2, "max": 8 },
-	"potency": { "base": 4, "min": 1, "max": 24 }
+	"mana": { "min": 100 },
+	"burnout": { "min": 50 },
+	"area": { "min": 2, "max": 8 },
+	"potency": { "min": 4, "max": 24 }
 }

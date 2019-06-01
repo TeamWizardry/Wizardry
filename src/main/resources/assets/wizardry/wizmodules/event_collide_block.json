@@ -1,7 +1,0 @@
-{
-  "sub_module_id": "event_collide_block",
-  "reference_module_id": "event_collide_block",
-  "item": "minecraft:coal",
-  "mana": { "base": 10 },
-  "burnout": { "base": 5 }
-}

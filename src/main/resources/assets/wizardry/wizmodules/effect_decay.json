@@ -4,8 +4,8 @@
 	"item": "minecraft:fermented_spider_eye",
 	"primary_color": "208000",
 	"secondary_color": "000000",
-	"mana": { "base": 100 },
-	"burnout": { "base": 50 },
-	"duration": { "base": 10, "min": 1, "max": 60 },
-	"potency": { "base": 1, "min": 1, "max": 20 }
+	"mana": { "min": 100 },
+	"burnout": { "min": 50 },
+	"duration": { "min": 10, "max": 60 },
+	"potency": { "min": 1, "max": 20 }
 }

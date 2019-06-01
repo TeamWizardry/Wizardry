@@ -4,9 +4,9 @@
   "item": "minecraft:spider_eye",
   "primary_color": "00ff00",
   "secondary_color": "ff00ff",
-  "mana": { "base": 30 },
-  "burnout": { "base": 10 },
-  "area": { "base": 3, "min": 3, "max": 16 },
-  "potency": { "base": 1, "min": 1, "max": 12 },
-  "duration": { "base": 10, "min": 10, "max": 64 }
+  "mana": { "min": 30 },
+  "burnout": { "min": 10 },
+  "area": { "min": 3, "max": 16 },
+  "potency": { "min": 1, "max": 12 },
+  "duration": { "min": 10, "max": 64 }
 }
