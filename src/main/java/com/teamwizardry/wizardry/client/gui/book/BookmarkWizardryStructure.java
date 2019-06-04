@@ -5,9 +5,11 @@ import com.teamwizardry.librarianlib.features.gui.provided.book.context.Bookmark
 import com.teamwizardry.librarianlib.features.gui.provided.book.context.ComponentBookMark;
 import com.teamwizardry.librarianlib.features.gui.provided.book.structure.ComponentMaterialsBar;
 import com.teamwizardry.librarianlib.features.gui.provided.book.structure.StructureMaterials;
-import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
+import com.teamwizardry.wizardry.common.core.WizardryStructure;
+import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,10 +19,10 @@ import java.util.List;
 
 public class BookmarkWizardryStructure implements Bookmark {
 
-	private WizardryStructureRenderCompanion structure;
+	private WizardryStructure structure;
 
-	public BookmarkWizardryStructure(WizardryStructureRenderCompanion structure) {
-		this.structure = structure;
+	public BookmarkWizardryStructure(ResourceLocation structure) {
+		this.structure = ModStructures.structureManager.getStructure(structure);
 	}
 
 	@NotNull
@@ -28,7 +30,7 @@ public class BookmarkWizardryStructure implements Bookmark {
 	public ComponentBookMark createBookmarkComponent(@NotNull IBookGui book, int bookmarkIndex) {
 		HashMap<List<IBlockState>, Integer> map = new HashMap<>();
 		if (structure != null)
-			for (Template.BlockInfo info : structure.getBlockInfos()) {
+			for (Template.BlockInfo info : structure.blockInfos()) {
 				if (info.blockState.getBlock() == Blocks.AIR) continue;
 
 				List<IBlockState> list = new ArrayList<>();

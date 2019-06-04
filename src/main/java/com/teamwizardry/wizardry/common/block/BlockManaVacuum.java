@@ -2,16 +2,14 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
+import com.teamwizardry.wizardry.common.core.WizardryStructure;
 import com.teamwizardry.wizardry.common.tile.TileManaVacuum;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -50,13 +48,7 @@ public class BlockManaVacuum extends BlockModContainer implements IStructure
 	}
 	
 	@Override
-	public WizardryStructureRenderCompanion getStructure() {
-		return ModStructures.INSTANCE.getStructure(ModBlocks.CRAFTING_PLATE);
-	}
-
-	@Override
-	public Vec3i offsetToCenter()
-	{
-		return new Vec3i(1, 1, 1);
+	public WizardryStructure getStructure() {
+		return ModStructures.structureManager.getStructure(ModStructures.CRAFTING_PLATE);
 	}
 }

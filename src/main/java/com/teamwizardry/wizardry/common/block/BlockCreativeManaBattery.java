@@ -2,9 +2,8 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
+import com.teamwizardry.wizardry.common.core.WizardryStructure;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -15,7 +14,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -72,12 +70,7 @@ public class BlockCreativeManaBattery extends BlockModContainer implements IStru
 	}
 
 	@Override
-	public WizardryStructureRenderCompanion getStructure() {
-		return ModStructures.INSTANCE.getStructure(ModBlocks.MANA_BATTERY);
-	}
-
-	@Override
-	public Vec3i offsetToCenter() {
-		return new Vec3i(5, 4, 5);
+	public WizardryStructure getStructure() {
+		return ModStructures.structureManager.getStructure(ModStructures.MANA_BATTERY);
 	}
 }

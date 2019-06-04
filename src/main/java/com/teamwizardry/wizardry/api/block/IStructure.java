@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -123,8 +122,6 @@ public interface IStructure {
 
 	WizardryStructure getStructure();
 
-	Vec3i offsetToCenter();
-
 	/**
 	 * Will return a list of blocks that are incorrect. If this list is empty, the structure is complete.
 	 */
@@ -136,7 +133,7 @@ public interface IStructure {
 			if (info.blockState.getMaterial() == Material.AIR || info.blockState.getBlock() == Blocks.STRUCTURE_VOID)
 				continue;
 
-			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
+			BlockPos realPos = info.pos.add(pos).subtract(getStructure().getOrigin());
 			IBlockState state = world.getBlockState(realPos);
 			if (state != info.blockState) {
 
@@ -164,7 +161,7 @@ public interface IStructure {
 		for (Template.BlockInfo info : getStructure().blockInfos()) {
 			if (info.blockState == null) continue;
 
-			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
+			BlockPos realPos = info.pos.add(pos).subtract(getStructure().getOrigin());
 			IBlockState state = world.getBlockState(realPos);
 			if (state != info.blockState) {
 

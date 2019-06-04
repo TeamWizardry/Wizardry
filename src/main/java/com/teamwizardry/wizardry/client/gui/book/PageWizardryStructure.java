@@ -7,9 +7,8 @@ import com.teamwizardry.librarianlib.features.gui.provided.book.context.Bookmark
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.entry.Entry;
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.page.Page;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
-import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
-import com.teamwizardry.wizardry.init.ModStructures;
 import kotlin.jvm.functions.Function0;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -23,13 +22,15 @@ public class PageWizardryStructure implements Page {
 
 	private Entry entry;
 	private String structureName;
-	private WizardryStructureRenderCompanion structure;
+	private ResourceLocation structure;
 
 	public PageWizardryStructure(Entry entry, JsonObject element) {
 		this.entry = entry;
 		if (element != null && element.has("name"))
 			structureName = element.getAsJsonPrimitive("name").getAsString();
-		structure = ModStructures.INSTANCE.getStructure(structureName);
+		if (structureName != null) {
+			structure = new ResourceLocation(structureName);
+		}
 	}
 
 	@NotNull
