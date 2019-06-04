@@ -28,7 +28,7 @@ public class CommandResetModules extends CommandBase {
 	public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String[] args) throws CommandException {
 		notifyCommandListener(sender, this, "wizardry.command." + getName() + ".warning");
 
-		File moduleDirectory = new File(Wizardry.proxy.getWizardryDirectory(), "modules");
+		File moduleDirectory = new File(Wizardry.PROXY.getWizardryDirectory(), "modules");
 		if (moduleDirectory.exists()) {
 
 			File[] files = moduleDirectory.listFiles();
@@ -49,8 +49,8 @@ public class CommandResetModules extends CommandBase {
 				throw new CommandException("wizardry.command" + getName() + ".fail_dir_create");
 
 		ModuleRegistry.INSTANCE.loadUnprocessedModules();
-		ModuleRegistry.INSTANCE.copyMissingModules(Wizardry.proxy.getWizardryDirectory());
-		ModuleRegistry.INSTANCE.loadModules(Wizardry.proxy.getWizardryDirectory());
+		ModuleRegistry.INSTANCE.copyMissingModules(Wizardry.PROXY.getWizardryDirectory());
+		ModuleRegistry.INSTANCE.loadModules(Wizardry.PROXY.getWizardryDirectory());
 
 		notifyCommandListener(sender, this, "wizardry.command" + getName() + ".success");
 	}

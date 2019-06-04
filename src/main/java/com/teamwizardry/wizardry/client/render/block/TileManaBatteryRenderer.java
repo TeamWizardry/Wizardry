@@ -10,7 +10,6 @@ import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
@@ -46,12 +45,9 @@ import java.util.ArrayList;
 public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> {
 
 	private static IBakedModel modelRing, modelCrystal, modelRingOuter;
-	private WizardryStructureRenderCompanion wizardryStructure;
 
 	public TileManaBatteryRenderer(@Nonnull TileManaBattery manaBattery) {
 		super(manaBattery);
-		wizardryStructure = ModStructures.INSTANCE.getStructure(tile.getBlockType());
-		// new WizardryStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
 	}
 
 	static {
@@ -148,15 +144,18 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 
 		ArrayList<BlockPos> errors = new ArrayList<>(((IStructure) tile.getBlockType()).testStructure(tile.getWorld(), tile.getPos()));
 		errors.sort(Vec3i::compareTo);
-		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !errors.isEmpty()) {
+		if (tile.revealStructure && tile.getBlockType() instanceof IStructure) {
 
-			wizardryStructure.draw(tile.getWorld(), (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.4f);
+			ModStructures.structureManager.draw(ModStructures.MANA_BATTERY, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.4f);
 
+			if (!errors.isEmpty()) {
+				final int size = errors.size();
+				for (int i = 0; i < size; i++) {
+					BlockPos error = errors.get(i);
+					StructureErrorRenderer.addError(error, i, size);
+				}
+			}
 			return;
-
-		} else if (!tile.revealStructure && !errors.isEmpty()) {
-			for (BlockPos error : errors)
-				StructureErrorRenderer.addError(error);
 		}
 
 		if (tile.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {

@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -28,28 +27,13 @@ public class StructureErrorRenderer {
 	private static final Sprite particle = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/sparkle_blurred.png"));
 	private static ArrayList<ParticleError> errors = new ArrayList<>();
 
-	public static void addError(BlockPos pos) {
+	public static void addError(BlockPos pos, int i, int maxBlocks) {
 		for (ParticleError error : errors) {
 			if (error == null) continue;
-			if (error.pos.x == pos.getX() + 0.5
-					&& error.pos.y == pos.getY() + 0.5
-					&& error.pos.z == pos.getZ() + 0.5)
-				return;
+			if (error.pos.equals(pos)) return;
 		}
 
-		errors.add(new ParticleError(new Vec3d(pos).add(0.5, 0.5, 0.5), 100));
-	}
-
-	public static void addError(Vec3d pos) {
-		for (ParticleError error : errors) {
-			if (error == null) continue;
-			if (error.pos.x == pos.x
-					|| error.pos.y == pos.y
-					|| error.pos.z == pos.z)
-				return;
-		}
-
-		errors.add(new ParticleError(pos, 100));
+		errors.add(new ParticleError(pos, (int) (100.0 + (i / (double) maxBlocks) * 5)));
 	}
 
 	@SubscribeEvent
@@ -73,7 +57,7 @@ public class StructureErrorRenderer {
 
 
 			GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
-			GlStateManager.translate(error.pos.x, error.pos.y, error.pos.z);
+			GlStateManager.translate(error.pos.getX() + 0.5, error.pos.getY() + 0.5, error.pos.getZ() + 0.5);
 
 			GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
 			GlStateManager.rotate((float) (Minecraft.getMinecraft().getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
@@ -99,10 +83,10 @@ public class StructureErrorRenderer {
 
 	private static class ParticleError {
 
-		public final Vec3d pos;
+		public final BlockPos pos;
 		public int tick;
 
-		public ParticleError(Vec3d pos, int maxTick) {
+		ParticleError(BlockPos pos, int maxTick) {
 			this.pos = pos;
 			this.tick = maxTick;
 		}

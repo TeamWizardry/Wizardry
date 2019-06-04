@@ -5,17 +5,16 @@ import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
 import com.teamwizardry.wizardry.api.item.IInfusableItem;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.core.WizardryStructure;
 import com.teamwizardry.wizardry.common.network.PacketAddItemCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.network.PacketRemoveItemCraftingPlate;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.init.ModStructures;
@@ -189,8 +188,8 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	}
 
 	@Override
-	public WizardryStructureRenderCompanion getStructure() {
-		return ModStructures.INSTANCE.getStructure(ModBlocks.CRAFTING_PLATE);
+	public WizardryStructure getStructure() {
+		return ModStructures.structureManager.getStructure(ModStructures.CRAFTING_PLATE);
 	}
 
 	@Override

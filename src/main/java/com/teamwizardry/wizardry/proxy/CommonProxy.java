@@ -72,6 +72,7 @@ public class CommonProxy {
 		ModPotions.init();
 		ModEntities.init();
 		ModCapabilities.preInit();
+		ModStructures.INSTANCE.getClass();
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
@@ -108,6 +109,7 @@ public class CommonProxy {
 	}
 
 	public void init(FMLInitializationEvent event) {
+		ModStructures.INSTANCE.init();
 		manaRecipeLoading:
 		{
 			File recipeDirectory = new File(directory, "fluid_recipes");
@@ -156,4 +158,5 @@ public class CommonProxy {
 
 	public void postInit(FMLPostInitializationEvent event) {
 	}
+
 }

@@ -7,7 +7,6 @@ import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
@@ -41,13 +40,10 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 	private WeakHashMap<Integer, LocationAndAngle> locationsAndAngles;
 
-	private WizardryStructureRenderCompanion wizardryStructure;
-
 	public TileCraftingPlateRenderer(@Nonnull TileCraftingPlate tile) {
 		super(tile);
 
 		animator.setUseWorldTicks(true);
-		wizardryStructure = ModStructures.INSTANCE.getStructure(tile.getBlockType());
 		locationsAndAngles = new WeakHashMap<>();
 
 		for (int i = 0; i < tile.realInventory.getHandler().getSlots(); i++) {
@@ -69,15 +65,18 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		ArrayList<BlockPos> errors = new ArrayList<>(((IStructure) tile.getBlockType()).testStructure(tile.getWorld(), tile.getPos()));
 		errors.sort(Vec3i::compareTo);
 
-		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !errors.isEmpty()) {
+		if (tile.revealStructure && tile.getBlockType() instanceof IStructure) {
 
-			wizardryStructure.draw(tile.getWorld(), (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.4f);
+			ModStructures.structureManager.draw(ModStructures.CRAFTING_PLATE, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.4f);
 
+			if (!errors.isEmpty()) {
+				final int size = errors.size();
+				for (int i = 0; i < size; i++) {
+					BlockPos error = errors.get(i);
+					StructureErrorRenderer.addError(error, i, size);
+				}
+			}
 			return;
-
-		} else if (!tile.revealStructure && !errors.isEmpty()) {
-			for (BlockPos error : errors)
-				StructureErrorRenderer.addError(error);
 		}
 
 		// render each item at its current position

@@ -625,7 +625,7 @@ public class ModuleOverrideHandler {
 	}
 
 	/**
-	 * An invocation handler for the reflection proxy object implementing a consumer interface.
+	 * An invocation handler for the reflection PROXY object implementing a consumer interface.
 	 *
 	 * @author Avatair
 	 */

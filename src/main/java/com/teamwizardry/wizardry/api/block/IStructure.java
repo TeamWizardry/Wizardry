@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.block;
 
+import com.teamwizardry.wizardry.common.core.WizardryStructure;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
@@ -120,7 +121,7 @@ public interface IStructure {
 		return recipes;
 	}
 
-	WizardryStructureRenderCompanion getStructure();
+	WizardryStructure getStructure();
 
 	Vec3i offsetToCenter();
 
@@ -130,7 +131,7 @@ public interface IStructure {
 	default Set<BlockPos> testStructure(World world, BlockPos pos) {
 		Set<BlockPos> errors = new HashSet<>();
 
-		for (Template.BlockInfo info : getStructure().getBlockInfos()) {
+		for (Template.BlockInfo info : getStructure().blockInfos()) {
 			if (info.blockState == null) continue;
 			if (info.blockState.getMaterial() == Material.AIR || info.blockState.getBlock() == Blocks.STRUCTURE_VOID)
 				continue;
@@ -160,7 +161,7 @@ public interface IStructure {
 	default boolean buildStructure(World world, BlockPos pos) {
 		if (world.isRemote) return true;
 
-		for (Template.BlockInfo info : getStructure().getBlockInfos()) {
+		for (Template.BlockInfo info : getStructure().blockInfos()) {
 			if (info.blockState == null) continue;
 
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());

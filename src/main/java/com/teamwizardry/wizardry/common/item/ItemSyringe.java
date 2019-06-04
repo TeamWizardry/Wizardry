@@ -65,7 +65,7 @@ public class ItemSyringe extends ItemMod {
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return 30;
+		return 10;
 	}
 
 	@Override
@@ -75,14 +75,14 @@ public class ItemSyringe extends ItemMod {
 
 		if (count <= 1) {
 			player.swingArm(player.getActiveHand());
-			((EntityPlayer) player).getCooldownTracker().setCooldown(this, stack.getItemDamage() == 1 ? 100 : 300);
+			((EntityPlayer) player).getCooldownTracker().setCooldown(this, 30);
 
 			if (stack.getItemDamage() == 2) {
 				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 0, true, false));
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 1) {
 				CapManager.forObject(player)
-						.addMana(CapManager.getMaxMana(player) / 1.5)
+						.addMana(CapManager.getMaxMana(player))
 						.close();
 				player.attackEntityFrom(DamageSourceMana.INSTANCE, 2);
 				stack.setItemDamage(0);
@@ -90,7 +90,7 @@ public class ItemSyringe extends ItemMod {
 
 				RayTraceResult raytraceresult = this.rayTrace(player.world, (EntityPlayer) player, true);
 
-				if (raytraceresult != null && raytraceresult.typeOfHit != null && raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) {
+				if (raytraceresult.typeOfHit != null && raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) {
 					BlockPos blockpos = raytraceresult.getBlockPos();
 					if (raytraceresult.sideHit == null) raytraceresult.sideHit = EnumFacing.UP;
 
