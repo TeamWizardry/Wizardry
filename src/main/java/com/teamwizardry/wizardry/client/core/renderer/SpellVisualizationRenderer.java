@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.item.ISpellCaster;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -27,6 +28,8 @@ public class SpellVisualizationRenderer {
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		World world = Minecraft.getMinecraft().world;
+
+		if (player.isInvisible() || player.isPotionActive(ModPotions.VANISH)) return;
 
 		ItemStack hand = player.getHeldItemMainhand();
 		if (!(hand.getItem() instanceof ISpellCaster)) return;
