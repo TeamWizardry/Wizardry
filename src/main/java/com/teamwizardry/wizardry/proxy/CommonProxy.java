@@ -72,7 +72,6 @@ public class CommonProxy {
 		ModPotions.init();
 		ModEntities.init();
 		ModCapabilities.preInit();
-		ModStructures.INSTANCE.getClass();
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
@@ -104,12 +103,14 @@ public class CommonProxy {
 		PacketHandler.register(PacketVanishPotion.class, Side.CLIENT);
 		PacketHandler.register(PacketDevilDustFizzle.class, Side.CLIENT);
 
-		PageTypes.INSTANCE.registerPageProvider("wizardry_structure", PageWizardryStructure::new);
-		ItemBook.BOOK = new Book("book");
 	}
 
 	public void init(FMLInitializationEvent event) {
-		ModStructures.INSTANCE.init();
+		ModStructures.init();
+
+		PageTypes.INSTANCE.registerPageProvider("wizardry_structure", PageWizardryStructure::new);
+		ItemBook.BOOK = new Book("book");
+
 		manaRecipeLoading:
 		{
 			File recipeDirectory = new File(directory, "fluid_recipes");

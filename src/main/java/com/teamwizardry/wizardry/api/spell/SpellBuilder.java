@@ -97,10 +97,7 @@ public class SpellBuilder {
 
 		for (SpellRing ring : spellList) {
 			SpellRing chainEnd = ring;
-			List<ModuleInstanceModifier> cascadingModifiers = new LinkedList<>();
 			while (chainEnd != null) {
-				for (ModuleInstanceModifier modifier : cascadingModifiers)
-					chainEnd.addModifier(modifier);
 				if (chainEnd.getChildRing() == null) {
 					if (chainEnd.getModule() != null) {
 						chainEnd.setPrimaryColor(chainEnd.getModule().getPrimaryColor());

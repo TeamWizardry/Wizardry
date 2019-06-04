@@ -319,7 +319,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Get a modifier in this ring between the range. Returns the attribute value, modified by burnout and multipliers, for use in a spell.
 	 *
-	 *
 	 * @param world
 	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributeModifiers.
 	 * @param data      The data of the spell being cast, used to get caster-specific modifiers.
@@ -354,18 +353,29 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		HashMap<String, Float> informationMap = new HashMap<>();
 
 		if (module != null) {
+			// So first of all we take all the ranges possible for the modifiers of this module
+			// We then add them all to the informationMap in their minimum values to buff them later below.
 			module.getAttributeRanges().forEach((attribute, range) -> {
 				informationMap.put(attribute.getNbtName(), range.min);
 			});
 		}
 
+		// Look through every operation we can do
+		// If the compileTimeModifiers map has modifiers for the operation, lets do them.
 		for (Operation op : Operation.values()) {
+			if (!compileTimeModifiers.containsKey(op)) continue;
 			for (AttributeModifier modifier : compileTimeModifiers.get(op)) {
 
+				if (!informationMap.containsKey(modifier.getAttribute().getNbtName())) continue;
+
+				// Get the minimum range we gave the informationMap above (the minimum values of all the modifiers
+				// this module supports.
 				float current = informationMap.get(modifier.getAttribute().getNbtName());
 
+				// Buff the minimum value according to however many modifiers where applied
 				float newValue = modifier.apply(current);
 
+				// Update the map's entry to the buffed modifier value.
 				informationMap.put(modifier.getAttribute().getNbtName(), newValue);
 
 				if (ConfigValues.debugInfo)

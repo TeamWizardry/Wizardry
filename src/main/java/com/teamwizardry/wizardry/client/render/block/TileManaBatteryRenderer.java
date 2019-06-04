@@ -146,13 +146,11 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		errors.sort(Vec3i::compareTo);
 		if (tile.revealStructure && tile.getBlockType() instanceof IStructure) {
 
-			ModStructures.structureManager.draw(ModStructures.MANA_BATTERY, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.4f);
+			ModStructures.structureManager.draw(ModStructures.MANA_BATTERY, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.3f);
 
 			if (!errors.isEmpty()) {
-				final int size = errors.size();
-				for (int i = 0; i < size; i++) {
-					BlockPos error = errors.get(i);
-					StructureErrorRenderer.addError(error, i, size);
+				for (BlockPos error : errors) {
+					StructureErrorRenderer.addError(error);
 				}
 			}
 			return;

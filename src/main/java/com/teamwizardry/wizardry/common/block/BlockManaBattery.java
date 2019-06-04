@@ -14,7 +14,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -72,10 +71,5 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 	@Override
 	public WizardryStructure getStructure() {
 		return ModStructures.structureManager.getStructure(ModStructures.MANA_BATTERY);
-	}
-
-	@Override
-	public Vec3i offsetToCenter() {
-		return new Vec3i(5, 4, 5);
 	}
 }

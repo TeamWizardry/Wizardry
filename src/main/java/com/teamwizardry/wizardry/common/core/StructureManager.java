@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.core;
 
 import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.kotlin.ClientUtilMethods;
+import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -49,10 +50,12 @@ public class StructureManager implements ISelectiveResourceReloadListener {
 	 * @param location The location of the structure.nbt file.
 	 */
 	public void addStructure(ResourceLocation location, BlockPos origin) {
+		if (structures.containsKey(location)) return;
+
 		WizardryStructure structure = new WizardryStructure(location);
 		structure.setOrigin(origin);
 		structures.put(location, structure);
-		bake(location);
+		//	bake(location);
 	}
 
 	/**
@@ -63,15 +66,23 @@ public class StructureManager implements ISelectiveResourceReloadListener {
 	 */
 	@SideOnly(Side.CLIENT)
 	public void draw(ResourceLocation location, float alpha) {
-		bake(location);
 		HashMap<Integer, int[]> cache = vboCache.get(location);
-		if (cache == null) return;
+
+		if (cache == null || cache.isEmpty()) {
+			bake(location);
+			return;
+		}
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.enablePolygonOffset();
 		GlStateManager.doPolygonOffset(1f, -0.05f);
+		//	GlStateManager.disableDepth();
+
+		int alphaFunc = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
+		float alphaRef = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
+		GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -84,13 +95,14 @@ public class StructureManager implements ISelectiveResourceReloadListener {
 			buffer.addVertexData(cache.get(layerID));
 
 			for (int i = 0; i < buffer.getVertexCount(); i++) {
-				int idx = buffer.getColorIndex(i + 1);
-				buffer.putColorRGBA(idx, 255, 255, 255, (int) (alpha * 255));
+				buffer.putColorRGBA(buffer.getColorIndex(i), 255, 255, 255, (int) (alpha * 255));
 			}
 
 			tes.draw();
 		}
 
+		GlStateManager.alphaFunc(alphaFunc, alphaRef);
+		//	GlStateManager.enableDepth();
 		GlStateManager.disablePolygonOffset();
 		GlStateManager.color(1F, 1F, 1F, 1F);
 		GlStateManager.popMatrix();
@@ -101,17 +113,35 @@ public class StructureManager implements ISelectiveResourceReloadListener {
 	 */
 	@SideOnly(Side.CLIENT)
 	public void bake(ResourceLocation resourceLocation) {
+		Wizardry.LOGGER.info("Attempting to bake structure \"" + resourceLocation.toString() + "\"");
 		WizardryStructure structure = structures.get(resourceLocation);
+		if (structure == null) {
+			Wizardry.LOGGER.error("Could not bake structure \"" + resourceLocation.toString() + "\". Does not seem to exist?");
+			return;
+		}
 
 		HashMultimap<Integer, Template.BlockInfo> blocks = HashMultimap.create();
+		for (Template.BlockInfo info : structure.blockInfos()) {
+			if (info.blockState.getMaterial() == Material.AIR) continue;
+			if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE) continue;
+			blocks.put(info.blockState.getBlock().getRenderLayer().ordinal(), info);
+		}
 
 		BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		// It CAN be null.
+		//noinspection ConstantConditions
+		if (dispatcher == null) {
+			Wizardry.LOGGER.error("Could not bake structure \"" + resourceLocation.toString() + "\". Dispatcher is null. Don't call bake so early?");
+			return;
+		}
 		Tessellator tes = Tessellator.getInstance();
 		BufferBuilder bb = tes.getBuffer();
 
-		bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		HashMap<Integer, int[]> cache = new HashMap<>();
 		for (int layerID : blocks.keySet()) {
+
+			bb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+
 			for (Template.BlockInfo info : blocks.get(layerID)) {
 				if (info.blockState == null) continue;
 				if (info.blockState.getMaterial() == Material.AIR) continue;
@@ -123,10 +153,13 @@ public class StructureManager implements ISelectiveResourceReloadListener {
 
 				bb.setTranslation(0, 0, 0);
 			}
+
 			cache.put(layerID, ClientUtilMethods.createCacheArrayAndReset(bb));
 			bb.reset();
 		}
 		vboCache.put(resourceLocation, cache);
+
+		Wizardry.LOGGER.info("Baking for structure \"" + resourceLocation.toString() + "\" completed.");
 	}
 
 	/**

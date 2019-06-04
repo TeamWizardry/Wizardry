@@ -19,15 +19,17 @@ import java.util.List;
 
 public class BookmarkWizardryStructure implements Bookmark {
 
-	private WizardryStructure structure;
+	private ResourceLocation location;
 
-	public BookmarkWizardryStructure(ResourceLocation structure) {
-		this.structure = ModStructures.structureManager.getStructure(structure);
+	public BookmarkWizardryStructure(ResourceLocation location) {
+		this.location = location;
 	}
 
 	@NotNull
 	@Override
 	public ComponentBookMark createBookmarkComponent(@NotNull IBookGui book, int bookmarkIndex) {
+		WizardryStructure structure = ModStructures.structureManager.getStructure(location);
+
 		HashMap<List<IBlockState>, Integer> map = new HashMap<>();
 		if (structure != null)
 			for (Template.BlockInfo info : structure.blockInfos()) {

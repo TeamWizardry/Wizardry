@@ -31,7 +31,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -190,10 +189,5 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	@Override
 	public WizardryStructure getStructure() {
 		return ModStructures.structureManager.getStructure(ModStructures.CRAFTING_PLATE);
-	}
-
-	@Override
-	public Vec3i offsetToCenter() {
-		return new Vec3i(4, 1, 4);
 	}
 }
