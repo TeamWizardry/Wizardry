@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.common.potion;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.animator.Animator;
+import com.teamwizardry.librarianlib.features.animator.Easing;
+import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -20,8 +23,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -36,6 +39,11 @@ import javax.annotation.Nonnull;
 // TODO: other player testing, proper in/out fading
 @SuppressWarnings({"rawtypes", "unused"})
 public class PotionVanish extends PotionBase {
+
+	private static final Animator ANIMATOR = new Animator();
+
+	public float alpha = 1f;
+
 	public PotionVanish() {
 		super("vanish", false, 0xA9F3A9);
 		MinecraftForge.EVENT_BUS.register(this);
@@ -66,14 +74,12 @@ public class PotionVanish extends PotionBase {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void renderItem(RenderSpecificHandEvent event) {
+	public void renderItem(RenderHandEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayer player = mc.player;
 
 		if (player.isPotionActive(this)) {
-			boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.15;
-
-			if (!iWalked) event.setCanceled(true);
+			event.setCanceled(true);
 		}
 	}
 
@@ -94,40 +100,29 @@ public class PotionVanish extends PotionBase {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		EntityLivingBase entity = event.getEntity();
 
-		// FIXME: 7/2/2017 FADE SHIT
-		float x = 0;//MathHelper.clamp(3 / time, 0, 1);
-
-		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.15;
 		boolean theyWalked = new Vec3d(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ).distanceTo(new Vec3d(event.getEntity().prevPosX, event.getEntity().prevPosY, event.getEntity().prevPosZ)) > 0.15;
 
-		boolean amRenderingMyself = event.getEntity().getEntityId() == player.getEntityId();
+		boolean renderingSelf = event.getEntity().getEntityId() == player.getEntityId();
 
 		boolean override = false;
 		boolean hide = false;
 
 		if (player.isPotionActive(this)) {
-			override = true;
-			if (iWalked) {
-				if (amRenderingMyself) x = 1;
-				else {
-					hide = true;
-					x = 0;
-				}
+			if (renderingSelf) {
+				hide = true;
+				new BasicAnimation<>(this, "alpha").to(0f).ease(Easing.easeOutQuint).duration(5).addTo(ANIMATOR);
 			} else {
-				if (amRenderingMyself) {
-					hide = true;
-					x = 0;
-				} else x = 1;
+				new BasicAnimation<>(this, "alpha").to(1f).ease(Easing.easeOutQuint).duration(5).addTo(ANIMATOR);
 			}
 		}
 
-		if (!amRenderingMyself && event.getEntity().isPotionActive(this)) {
+		if (!renderingSelf && event.getEntity().isPotionActive(this)) {
 			override = true;
 			if (theyWalked) {
-				x = 1;
+				new BasicAnimation<>(this, "alpha").to(1f).ease(Easing.easeOutQuint).duration(5).addTo(ANIMATOR);
 			} else {
 				hide = true;
-				x = 0;
+				new BasicAnimation<>(this, "alpha").to(0f).ease(Easing.easeOutQuint).duration(5).addTo(ANIMATOR);
 			}
 		}
 
@@ -137,7 +132,7 @@ public class PotionVanish extends PotionBase {
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		GlStateManager.color(1, 1, 1, x);
+		GlStateManager.color(1, 1, 1, alpha);
 		//GlStateManager.disableCull();
 		event.getRenderer().getMainModel().swingProgress = entity.swingProgress;
 		boolean shouldSit = entity.isRiding() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
@@ -249,14 +244,16 @@ public class PotionVanish extends PotionBase {
 	@SubscribeEvent
 	public void renderShadowAndFire(EntityRenderShadowAndFireEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
-		if (player.isPotionActive(this)) {
-			boolean walked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.1;
-			if (walked) event.override = true;
-		}
-		if (event.entity instanceof EntityLivingBase && ((EntityLivingBase) event.entity).isPotionActive(this)) {
-			boolean walked = new Vec3d(event.entity.posX, event.entity.posY, event.entity.posZ).distanceTo(new Vec3d(event.entity.prevPosX, event.entity.prevPosY, event.entity.prevPosZ)) > 0.1;
-			if (!walked) event.override = true;
-		}
+		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.2;
+		if (!(event.entity instanceof EntityLivingBase)) return;
+
+		if (event.entity.getEntityId() != player.getEntityId()) {
+			if (((EntityLivingBase) event.entity).isPotionActive(this))
+				event.override = true;
+			else if (player.isPotionActive(this) && !iWalked) {
+				event.override = true;
+			}
+		} else event.override = true;
 	}
 
 	private static class ClientStuff {
