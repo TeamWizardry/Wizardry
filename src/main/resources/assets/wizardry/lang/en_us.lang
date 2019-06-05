@@ -356,18 +356,6 @@ wizardry.command.listmodules.usage=/wizardry listmodules
 wizardry.command.debug.usage=/wizardry debug <module name>. Get a list of all modules from /wizardry listmodules
 wizardry.command.debug.module_not_found=Module not found. Get a list of all modules from /wizardry listmodules
 
-wizardry.command.reloadmodules.usage=/wizardry reloadmodules
-wizardry.command.reloadmodules.success=Successfully reloaded all modules.
-
-wizardry.command.resetmodules.usage=/wizardry resetmodules
-wizardry.command.resetmodules.success=Successfully reset all modules.
-wizardry.command.resetmodules.warning=Attempting to reset module directory... Any modifications made to it will be lost!
-wizardry.command.resetmodules.success_delete=Successfully deleted %s
-wizardry.command.resetmodules.fail=Could not delete %s
-wizardry.command.resetmodules.fail_dir_delete=Could not delete module directory
-wizardry.command.resetmodules.fail_dir_create=Could not create module directory
-
-
 
 
 wizardry.update0=Don't let your bugs be thugs! Use our patented Magic-o-gon spray for only $9.99

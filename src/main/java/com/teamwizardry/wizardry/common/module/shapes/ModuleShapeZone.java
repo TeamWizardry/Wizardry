@@ -187,7 +187,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
 		double aoe = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 
-		RenderUtils.drawCircle(target, aoe, false, false, caster, partialTicks);
+		RenderUtils.drawCircle(target, aoe, false, false);
 
 		return data;
 	}

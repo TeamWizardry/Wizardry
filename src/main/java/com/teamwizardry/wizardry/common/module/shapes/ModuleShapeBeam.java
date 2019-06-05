@@ -160,7 +160,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 		Vec3d target = data.getTarget(world);
 		if (target == null) return data;
 
-		RenderUtils.drawCircle(target, 0.3, true, false, caster, partialTicks);
+		RenderUtils.drawCircle(target, 0.3, true, false);
 		return data;
 	}
 

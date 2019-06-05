@@ -102,7 +102,7 @@ public class ModuleShapeTouch implements IModuleShape {
 		if (facing != null && !world.isAirBlock(pos))
 			RenderUtils.drawFaceOutline(pos, facing);
 		else if (target != null) {
-			RenderUtils.drawCircle(target, 0.3, true, false, caster, partialTicks);
+			RenderUtils.drawCircle(target, 0.3, true, false);
 		}
 
 		data.processTrace(result);

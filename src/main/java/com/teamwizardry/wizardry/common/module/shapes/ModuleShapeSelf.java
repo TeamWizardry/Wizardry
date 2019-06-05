@@ -104,8 +104,8 @@ public class ModuleShapeSelf implements IModuleShape {
 		double interpPosY = caster.lastTickPosY + (caster.posY - caster.lastTickPosY) * partialTicks;
 		double interpPosZ = caster.lastTickPosZ + (caster.posZ - caster.lastTickPosZ) * partialTicks;
 
-		RenderUtils.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.55, false, true, caster, partialTicks);
-		RenderUtils.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.6, false, true, caster, partialTicks);
+		RenderUtils.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.55, false, true);
+		RenderUtils.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.6, false, true);
 
 		return data;
 	}

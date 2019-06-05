@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -363,7 +362,9 @@ public final class RenderUtils {
 		GlStateManager.popMatrix();
 	}
 
-	public static void drawCircle(@Nonnull Vec3d pos, double radius, boolean flattenToScreen, boolean enableDepth, Entity caster, float partialTicks) {
+	public static void drawCircle(@Nonnull Vec3d pos, double radius, boolean flattenToScreen, boolean enableDepth) {
+		if (Minecraft.getMinecraft().getRenderManager() == null) return;
+
 		GlStateManager.pushMatrix();
 
 		GlStateManager.translate(pos.x, pos.y, pos.z);

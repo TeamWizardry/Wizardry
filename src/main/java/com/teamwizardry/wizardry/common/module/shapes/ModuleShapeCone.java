@@ -176,7 +176,7 @@ public class ModuleShapeCone implements IModuleShape {
 		target = data.getTarget(world);
 		if (target == null) return data;
 
-		RenderUtils.drawCircle(target, dist / 4.0, true, true, caster, partialTicks);
+		RenderUtils.drawCircle(target, dist / 4.0, true, true);
 
 		return data;
 	}
