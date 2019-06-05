@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.common.item.*;
-import com.teamwizardry.wizardry.common.item.dusts.ItemBomb;
 import com.teamwizardry.wizardry.common.item.dusts.ItemDevilDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemFairyDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemSkyDust;

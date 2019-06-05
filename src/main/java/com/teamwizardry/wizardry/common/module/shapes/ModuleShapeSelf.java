@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -103,8 +104,8 @@ public class ModuleShapeSelf implements IModuleShape {
 		double interpPosY = caster.lastTickPosY + (caster.posY - caster.lastTickPosY) * partialTicks;
 		double interpPosZ = caster.lastTickPosZ + (caster.posZ - caster.lastTickPosZ) * partialTicks;
 
-		instance.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.55, false, true, caster, partialTicks);
-		instance.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.6, false, true, caster, partialTicks);
+		RenderUtils.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.55, false, true, caster, partialTicks);
+		RenderUtils.drawCircle(new Vec3d(interpPosX, interpPosY + caster.height / 2.0, interpPosZ), 0.6, false, true, caster, partialTicks);
 
 		return data;
 	}

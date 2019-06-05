@@ -8,6 +8,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
@@ -28,6 +30,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -37,16 +40,44 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Created by Demoniaque.
  */
-@RegisterModule(ID="effect_frost")
+@RegisterModule(ID = "effect_frost")
 public class ModuleEffectFrost implements IModuleEffect {
 
 	@Override
 	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe", "modifier_extend_time"};
+	}
+
+	@ModuleOverride("shape_zone_run")
+	public boolean onRunZone(World world, SpellData data, SpellRing ring, @ContextRing SpellRing childRing) {
+		double aoe = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
+		double range = ring.getAttributeValue(world, AttributeRegistry.RANGE, data);
+
+		Vec3d targetPos = data.getTarget(world);
+
+		if (targetPos == null) return false;
+
+		Vec3d min = targetPos.subtract(aoe / 2, range / 2, aoe / 2);
+		Vec3d max = targetPos.add(aoe / 2, range / 2, aoe / 2);
+
+		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(min, max));
+		for (Entity entity : entities) {
+			entity.extinguish();
+			if (entity instanceof EntityLivingBase) {
+				if (!((EntityLivingBase) entity).isPotionActive(ModPotions.SLIPPERY) && entity.getDistanceSq(targetPos.x, targetPos.y, targetPos.z) <= (aoe) * (aoe)) {
+
+					double time = childRing.getAttributeValue(world, AttributeRegistry.DURATION, data) * 10;
+					world.playSound(null, entity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
+					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 0, true, false));
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -63,8 +94,9 @@ public class ModuleEffectFrost implements IModuleEffect {
 		if (targetEntity != null) {
 			world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
 			targetEntity.extinguish();
-			if (targetEntity instanceof EntityLivingBase)
+			if (targetEntity instanceof EntityLivingBase) {
 				((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 0, true, false));
+			}
 		}
 
 		if (targetPos != null) {

@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
-import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -18,31 +17,21 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
-import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,9 +40,6 @@ import java.util.*;
 import java.util.List;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCKSTATE_CACHE;
-import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 /**
  * Created by Demoniaque.
@@ -330,151 +316,6 @@ public abstract class ModuleInstance {
 		}
 
 		return state;
-	}
-
-	/**
-	 * Convenience method for renderVisualization
-	 */
-	@SideOnly(Side.CLIENT)
-	public final void drawCubeOutline(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-		GlStateManager.pushMatrix();
-
-		GlStateManager.disableDepth();
-		GlStateManager.disableCull();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableBlend();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.disableTexture2D();
-		GlStateManager.enableColorMaterial();
-
-		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
-		Color colorRGB = new Color(color);
-
-		GlStateManager.glLineWidth(2f);
-
-		RenderUtils.bufferBlockOutline(state.getSelectedBoundingBox(world, pos), colorRGB);
-
-		GlStateManager.disableBlend();
-		GlStateManager.enableDepth();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableColorMaterial();
-
-		GlStateManager.enableDepth();
-		GlStateManager.popMatrix();
-	}
-
-	@SideOnly(Side.CLIENT)
-	public final void drawCircle(@Nonnull Vec3d pos, double radius, boolean flattenToScreen, boolean enableDepth, Entity caster, float partialTicks) {
-		GlStateManager.pushMatrix();
-
-		GlStateManager.translate(pos.x, pos.y, pos.z);
-
-		if (flattenToScreen) {
-			GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-			GlStateManager.rotate((float) (Minecraft.getMinecraft().getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
-		}
-
-		if (enableDepth) GlStateManager.enableDepth();
-		else GlStateManager.disableDepth();
-
-		GlStateManager.disableCull();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableBlend();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.disableTexture2D();
-		GlStateManager.enableColorMaterial();
-		GlStateManager.translate(0, 0.01, 0);
-
-		int color = MathHelper.hsvToRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
-		Color colorRGB = new Color(color);
-
-		GlStateManager.glLineWidth(2f);
-
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bb = tessellator.getBuffer();
-		bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-		for (int i = 0; i <= 360; i++) {
-			double x = radius * MathHelper.cos((float) ((i / 360.0) * Math.PI * 2));
-			double z = radius * MathHelper.sin((float) ((i / 360.0) * Math.PI * 2));
-			if (flattenToScreen) {
-				bb.pos(x, z, 0).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
-			} else {
-				bb.pos(x, 0, z).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
-			}
-		}
-		tessellator.draw();
-
-		GlStateManager.disableBlend();
-		GlStateManager.enableDepth();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableColorMaterial();
-
-		GlStateManager.enableDepth();
-		GlStateManager.popMatrix();
-
-	}
-
-	/**
-	 * Convenience method for renderVisualization
-	 */
-	@SideOnly(Side.CLIENT)
-	public final void drawFaceOutline(@Nonnull BlockPos pos, @Nonnull EnumFacing facing) {
-		GlStateManager.pushMatrix();
-
-		GlStateManager.disableDepth();
-
-		GlStateManager.disableCull();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableBlend();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.disableTexture2D();
-		GlStateManager.enableColorMaterial();
-
-		Tessellator tessellator = Tessellator.getInstance();
-		tessellator.getBuffer().begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-
-		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
-		Color colorRGB = new Color(color);
-
-		Vec3d directionOffsetVec = new Vec3d(facing.getDirectionVec()).scale(0.5);
-		Vec3d adjPos = new Vec3d(pos).add(0.5, 0.5, 0.5).add(directionOffsetVec);
-
-		GlStateManager.glLineWidth(2f);
-
-		for (EnumFacing facing1 : getPerpendicularFacings(facing)) {
-			for (EnumFacing facing2 : getPerpendicularFacings(facing)) {
-				if (facing1 == facing2 || facing1.getOpposite() == facing2 || facing2.getOpposite() == facing1)
-					continue;
-
-				Vec3d p1 = new Vec3d(facing1.getDirectionVec()).scale(0.5);
-				Vec3d p2 = new Vec3d(facing2.getDirectionVec()).scale(0.5);
-				Vec3d edge = adjPos.add(p1.add(p2));
-
-				tessellator.getBuffer().pos(edge.x, edge.y, edge.z).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
-			}
-		}
-
-		tessellator.draw();
-
-		GlStateManager.disableBlend();
-		GlStateManager.enableDepth();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableColorMaterial();
-
-		GlStateManager.enableDepth();
-		GlStateManager.popMatrix();
 	}
 
 	public List<String> getDetailedInfo() {

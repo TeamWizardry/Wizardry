@@ -80,35 +80,35 @@ public class BounceBlockRenderer {
 				BufferBuilder bb = tess.getBuffer();
 				bb.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-				bb.pos(ix, iy, iz).tex(0, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, iy, iz).tex(1, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, iy, az).tex(1, 1).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ix, iy, az).tex(0, 1).color(1f, 1f, 1f, 0.2f).endVertex();
+				bb.pos(ix, iy, iz).tex(0, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, iy, iz).tex(1, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, iy, az).tex(1, 1).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ix, iy, az).tex(0, 1).color(1f, 1f, 1f, 0.8f).endVertex();
 
-				bb.pos(ix, iy, iz).tex(0, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ix, ay, iz).tex(1, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ix, ay, az).tex(1, 1).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ix, iy, az).tex(0, 1).color(1f, 1f, 1f, 0.2f).endVertex();
+				bb.pos(ix, iy, iz).tex(0, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ix, ay, iz).tex(1, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ix, ay, az).tex(1, 1).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ix, iy, az).tex(0, 1).color(1f, 1f, 1f, 0.8f).endVertex();
 
-				bb.pos(ix, iy, iz).tex(0, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ix, ay, iz).tex(1, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, ay, iz).tex(1, 1).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, iy, iz).tex(0, 1).color(1f, 1f, 1f, 0.2f).endVertex();
+				bb.pos(ix, iy, iz).tex(0, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ix, ay, iz).tex(1, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, ay, iz).tex(1, 1).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, iy, iz).tex(0, 1).color(1f, 1f, 1f, 0.8f).endVertex();
 
-				bb.pos(ix, ay, iz).tex(0, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, ay, iz).tex(1, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, ay, az).tex(1, 1).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ix, ay, az).tex(0, 1).color(1f, 1f, 1f, 0.2f).endVertex();
+				bb.pos(ix, ay, iz).tex(0, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, ay, iz).tex(1, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, ay, az).tex(1, 1).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ix, ay, az).tex(0, 1).color(1f, 1f, 1f, 0.8f).endVertex();
 
-				bb.pos(ax, iy, iz).tex(0, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, ay, iz).tex(1, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, ay, az).tex(1, 1).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, iy, az).tex(0, 1).color(1f, 1f, 1f, 0.2f).endVertex();
+				bb.pos(ax, iy, iz).tex(0, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, ay, iz).tex(1, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, ay, az).tex(1, 1).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, iy, az).tex(0, 1).color(1f, 1f, 1f, 0.8f).endVertex();
 
-				bb.pos(ix, iy, az).tex(0, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ix, ay, az).tex(1, 0).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, ay, az).tex(1, 1).color(1f, 1f, 1f, 0.2f).endVertex();
-				bb.pos(ax, iy, az).tex(0, 1).color(1f, 1f, 1f, 0.2f).endVertex();
+				bb.pos(ix, iy, az).tex(0, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ix, ay, az).tex(1, 0).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, ay, az).tex(1, 1).color(1f, 1f, 1f, 0.8f).endVertex();
+				bb.pos(ax, iy, az).tex(0, 1).color(1f, 1f, 1f, 0.8f).endVertex();
 
 				tess.draw();
 				GlStateManager.translate(-tracker.pos.getX(), -tracker.pos.getY() - 1, -tracker.pos.getZ());

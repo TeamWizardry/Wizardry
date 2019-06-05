@@ -18,6 +18,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.common.core.SpellNemezTracker;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
@@ -446,7 +447,7 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 							mutable2.move(facing);
 
 							if (!tmp.containsKey(mutable2))
-								instance.drawFaceOutline(mutable2, facing.getOpposite());
+								RenderUtils.drawFaceOutline(mutable2, facing.getOpposite());
 
 							mutable2.move(facing.getOpposite());
 						}

@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
-import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
@@ -23,6 +22,7 @@ import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -87,25 +87,24 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 
 		if (position == null) return;
 
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
+		double maxPotency = spellRing.getModule() != null ? spellRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY).max : 1;
+
 		ParticleBuilder glitter = new ParticleBuilder(0);
 		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), 10, 10, (aFloat, particleBuilder) -> {
-			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
-			glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setLifetime(RandUtil.nextInt(20, 40));
-			glitter.setScaleFunction(new InterpScale(1, 0));
-			if (RandUtil.nextBoolean())
-				glitter.setPositionFunction(new InterpHelix(
-						new Vec3d(0, 0, 0),
-						new Vec3d(0, 2, 0),
-						0.5f, 0, 1, RandUtil.nextFloat()
-				));
-			else glitter.setPositionFunction(new InterpHelix(
-					new Vec3d(0, 0, 0),
-					new Vec3d(0, -2, 0),
-					0.5f, 0, 1, RandUtil.nextFloat()
-			));
+			particleBuilder.setScale((float) RandUtil.nextDouble(0.3, 1));
+			particleBuilder.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+			particleBuilder.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			particleBuilder.setLifetime(RandUtil.nextInt(20, 30));
+			particleBuilder.setScaleFunction(new InterpScale(1, 0));
+
+			double radius = 1;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+			particleBuilder.setMotion(new Vec3d(x, RandUtil.nextDouble(-radius, radius), z).normalize().scale(RandUtil.nextFloat((float) ((maxPotency - potency) / maxPotency / 10.0))));
 		});
 	}
 

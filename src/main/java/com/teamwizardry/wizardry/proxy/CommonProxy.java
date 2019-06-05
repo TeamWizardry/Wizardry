@@ -60,7 +60,7 @@ public class CommonProxy {
 		ManifestUpgrader maniUpgrader = ManifestHandler.INSTANCE.startUpgrade(directory);
 		maniUpgrader.changeCategoryName("modules", "wizmodules");
 		maniUpgrader.finalizeUpgrade();
-		
+
 		ManifestHandler.INSTANCE.loadNewInternalManifest("wizmodules", "fluid_recipes", "fire_recipes");
 		ManifestHandler.INSTANCE.loadExternalManifest(directory);
 		ManifestHandler.INSTANCE.processComparisons(directory, "wizmodules", "fluid_recipes", "fire_recipes");
@@ -103,13 +103,14 @@ public class CommonProxy {
 		PacketHandler.register(PacketVanishPotion.class, Side.CLIENT);
 		PacketHandler.register(PacketDevilDustFizzle.class, Side.CLIENT);
 
-	}
 
-	public void init(FMLInitializationEvent event) {
 		ModStructures.init();
 
 		PageTypes.INSTANCE.registerPageProvider("wizardry_structure", PageWizardryStructure::new);
 		ItemBook.BOOK = new Book("book");
+	}
+
+	public void init(FMLInitializationEvent event) {
 
 		manaRecipeLoading:
 		{
@@ -153,7 +154,7 @@ public class CommonProxy {
 				ModuleRegistry.INSTANCE.copyAllModules(moduleDirectory);
 			ModuleRegistry.INSTANCE.loadModules(moduleDirectory);
 		}
-		
+
 		ProcessData.INSTANCE.registerAnnotatedDataTypes();
 	}
 

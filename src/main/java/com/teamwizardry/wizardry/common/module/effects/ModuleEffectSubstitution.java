@@ -19,6 +19,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
@@ -282,7 +283,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 						if (adjState.getBlock() != targetState.getBlock() || !blocks.contains(mutable)) {
 
-							instance.drawFaceOutline(mutable, face.getOpposite());
+							RenderUtils.drawFaceOutline(mutable, face.getOpposite());
 						}
 						mutable.move(face.getOpposite());
 					}

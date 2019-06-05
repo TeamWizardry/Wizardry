@@ -37,5 +37,6 @@ public class PacketAddBouncyBlock extends PacketBase {
 		if (pos == null) return;
 		World world = Minecraft.getMinecraft().world;
 		BounceManager.INSTANCE.forBlock(world, pos, time);
+		BounceBlockRenderer.addBounce(world, pos, time);
 	}
 }

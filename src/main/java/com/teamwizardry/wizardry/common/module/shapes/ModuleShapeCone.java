@@ -17,6 +17,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -175,7 +176,7 @@ public class ModuleShapeCone implements IModuleShape {
 		target = data.getTarget(world);
 		if (target == null) return data;
 
-		instance.drawCircle(target, dist / 4.0, true, true, caster, partialTicks);
+		RenderUtils.drawCircle(target, dist / 4.0, true, true, caster, partialTicks);
 
 		return data;
 	}

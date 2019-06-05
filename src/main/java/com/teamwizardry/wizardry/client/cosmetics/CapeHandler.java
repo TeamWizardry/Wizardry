@@ -11,8 +11,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ClientConfigValues;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
+import com.teamwizardry.wizardry.common.module.effects.vanish.VanishTracker;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModPotions;
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.block.BlockLiquid;
@@ -67,7 +67,7 @@ public final class CapeHandler {
 	public void onPlayerRender(RenderPlayerEvent.Post event) {
 		EntityPlayer player = event.getEntityPlayer();
 		float delta = event.getPartialRenderTick();
-		if (ClientConfigValues.renderCape && !player.isInvisible() && !player.isPotionActive(ModPotions.VANISH) && !player.isElytraFlying() && !player.isPlayerSleeping() && delta != 1) {
+		if (ClientConfigValues.renderCape && !player.isInvisible() && !VanishTracker.isVanished(player) && !player.isElytraFlying() && !player.isPlayerSleeping() && delta != 1) {
 			RenderCape cape = getCape(player);
 			if (cape.isPresent(player)) {
 				cape.render(

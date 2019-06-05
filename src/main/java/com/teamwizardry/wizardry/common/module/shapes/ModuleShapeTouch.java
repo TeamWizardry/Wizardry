@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -99,9 +100,9 @@ public class ModuleShapeTouch implements IModuleShape {
 //		IBlockState state = getCachableBlockstate(world, result.getBlockPos(), data);
 
 		if (facing != null && !world.isAirBlock(pos))
-			instance.drawFaceOutline(pos, facing);
+			RenderUtils.drawFaceOutline(pos, facing);
 		else if (target != null) {
-			instance.drawCircle(target, 0.3, true, false, caster, partialTicks);
+			RenderUtils.drawCircle(target, 0.3, true, false, caster, partialTicks);
 		}
 
 		data.processTrace(result);

@@ -81,8 +81,8 @@ public class ModuleEffectLightning implements IModuleEffect {
 		ArrayList<Vec3d> points = new ArrayList<>();
 		LightningGenerator.generate(rand, from, to, offshootRange).forEach(points::add);
 
-		world.playSound(null, new BlockPos(to), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
-		world.playSound(null, new BlockPos(from), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
+		world.playSound(null, new BlockPos(to), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.1f, RandUtil.nextFloat(1, 1.5f));
+		world.playSound(null, new BlockPos(from), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.1f, RandUtil.nextFloat(1, 1.5f));
 
 		HashSet<BlockPos> positions = new HashSet<>();
 		for (Vec3d point : points)
@@ -244,7 +244,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 
 	@ModuleOverride("shape_zone_run")
-	public void onRunZone(@ContextSuper ModuleOverrideSuper ovdSuper, World world, SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public boolean onRunZone(@ContextSuper ModuleOverrideSuper ovdSuper, World world, SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		if (ovdSuper.hasSuper())
 			ovdSuper.invoke(true, world, data, shape);
 
@@ -252,9 +252,9 @@ public class ModuleEffectLightning implements IModuleEffect {
 		Entity caster = data.getCaster(world);
 		Vec3d targetPos = data.getTargetWithFallback(world);
 
-		if (targetPos == null) return;
+		if (targetPos == null) return true;
 
-		if (!childRing.taxCaster(world, data, true)) return;
+		if (!childRing.taxCaster(world, data, true)) return true;
 
 		double lightningRange = childRing.getAttributeValue(world, AttributeRegistry.RANGE, data);
 		double lightningPotency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data) / 2.0;
@@ -274,6 +274,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		Vec3d to = Vec3d.fromPitchYaw(pitch, yaw).normalize().scale(lightningRange).add(from);
 
 		doLightning(rand.nextLong(100, 100000), world, caster, from, to, lightningRange, lightningPotency, lightningDuration);
+		return true;
 	}
 
 	@Override

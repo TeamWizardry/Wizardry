@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -18,6 +18,7 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -46,8 +47,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule(ID = "shape_zone")
 public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
-	public static final String ZONE_OFFSET = "zone offset";
-	public static final String ZONE_CAST = "zone cast";
+	private static final String ZONE_TICK = "zone_tick";
 
 	/**
 	 * {@inheritDoc}
@@ -80,31 +80,46 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 	public boolean run(@NotNull World world, ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		//		Vec3d position = spell.getData(ORIGIN);
 //		Entity caster = spell.getCaster(world);
-		Vec3d targetPos = spell.getTargetWithFallback(world);
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+		boolean overriden = overrides.onRunZone(world, spell, spellRing);
+		if (overriden) return true;
+
+		Vec3d targetPos = spell.getTarget(world);
 
 		if (targetPos == null) return false;
 
+		double maxPotency = spellRing.getModule() != null ? spellRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY).max : 1;
+		double minPotency = spellRing.getModule() != null ? spellRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY).min : 1;
+
 		double aoe = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
-		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
+		double potency = Math.max(minPotency, spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell));
 		double range = spellRing.getAttributeValue(world, AttributeRegistry.RANGE, spell);
 
-		Vec3d min = targetPos.subtract(aoe / 2, range / 2, aoe / 2);
-		Vec3d max = targetPos.add(aoe / 2, range / 2, aoe / 2);
+		Vec3d min = targetPos.subtract(aoe, range, aoe);
+		Vec3d max = targetPos.add(aoe, range, aoe);
 
 		NBTTagCompound info = spell.getDataWithFallback(SpellData.DefaultKeys.COMPOUND, new NBTTagCompound());
 
-		double zoneOffset = info.getDouble(ZONE_OFFSET) + potency;
-		info.setBoolean(ZONE_CAST, false);
-		if (zoneOffset >= ConfigValues.zoneTimer) {
-			zoneOffset %= ConfigValues.zoneTimer;
+		double zoneTick = 0;
+		if (!NBTHelper.hasKey(info, ZONE_TICK)) {
+			NBTHelper.setDouble(info, ZONE_TICK, maxPotency - potency);
+		} else {
+			zoneTick = NBTHelper.getDouble(info, ZONE_TICK, maxPotency);
+
+			if (--zoneTick < 0) {
+				zoneTick = maxPotency - potency;
+			}
+
+			NBTHelper.setDouble(info, ZONE_TICK, zoneTick);
+		}
+		spell.addData(COMPOUND, info);
+
+		if (zoneTick == 0) {
 			if (!spellRing.taxCaster(world, spell, true)) {
-				info.setDouble(ZONE_OFFSET, zoneOffset);
+				info.setDouble(ZONE_TICK, zoneTick);
 				spell.addData(COMPOUND, info);
 				return false;
 			}
-
-			IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-			overrides.onRunZone(world, spell, spellRing);
 
 			BlockPos target = new BlockPos(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
 			List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(target));
@@ -120,7 +135,9 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 				if (spellRing.getChildRing() != null)
 					spellRing.getChildRing().runSpellRing(world, spell, true);
 			}
+
 			Vec3d pos = new Vec3d(target).add(0.5, 0.5, 0.5);
+			if (pos.squareDistanceTo(targetPos) > aoe * aoe) return true;
 
 			SpellData copy = spell.copy();
 			copy.addData(ORIGIN, pos);
@@ -131,9 +148,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 			if (spellRing.getChildRing() != null)
 				spellRing.getChildRing().runSpellRing(world, copy, true);
 		}
-		info.setDouble(ZONE_OFFSET, zoneOffset);
 
-		spell.addData(COMPOUND, info);
 		return true;
 	}
 
@@ -172,7 +187,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
 		double aoe = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 
-		instance.drawCircle(target, aoe, false, false, caster, partialTicks);
+		RenderUtils.drawCircle(target, aoe, false, false, caster, partialTicks);
 
 		return data;
 	}
@@ -217,8 +232,9 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 	////////////////
 
 	@ModuleOverride("shape_zone_run")
-	public void onRunZone(World world, SpellData data, SpellRing shape) {
+	public boolean onRunZone(World world, SpellData data, SpellRing shape) {
 		// Default implementation
+		return false;
 	}
 
 	@ModuleOverride("shape_zone_render")

@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -125,7 +126,7 @@ public class ModuleShapeProjectile implements IModuleShape {
 
 		target = data.getTarget(world);
 		if (target == null) return data;
-		instance.drawCircle(target, 0.3, true, false, caster, partialTicks);
+		RenderUtils.drawCircle(target, 0.3, true, false, caster, partialTicks);
 
 		return data;
 	}

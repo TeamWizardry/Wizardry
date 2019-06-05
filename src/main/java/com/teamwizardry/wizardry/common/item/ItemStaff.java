@@ -14,9 +14,9 @@ import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.module.defaults.IModuleOverrides;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModKeybinds;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -30,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -65,7 +66,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
-		if (ModKeybinds.getPearlSwapping(playerIn.getUniqueID())) return false;
+		if (playerIn.isSneaking()) return false;
 		if (isCoolingDown(playerIn.world, stack)) return false;
 		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return false;
@@ -83,11 +84,11 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {
-		if (ModKeybinds.getPearlSwapping(player.getUniqueID())) return EnumActionResult.PASS;
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
 			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
-				if (spellRing.getModule() instanceof IBlockSelectable) {
+				if ((spellRing.getModule() != null ? spellRing.getModule().getModuleClass() : null) instanceof IBlockSelectable) {
+					if (player.world.isAirBlock(pos)) break;
 					NBTHelper.setCompound(stack, "selected", NBTUtil.writeBlockState(new NBTTagCompound(), world.getBlockState(pos)));
 					player.stopActiveHand();
 					player.swingArm(hand);
@@ -115,14 +116,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
-		if (ModKeybinds.getPearlSwapping(player.getUniqueID())) return new ActionResult<>(EnumActionResult.PASS, stack);
-		if (player.isSneaking()) {
-			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
-				if (spellRing.getModule() instanceof IBlockSelectable) {
-					return new ActionResult<>(EnumActionResult.PASS, stack);
-				}
-			}
-		}
+		if (player.isSneaking()) return new ActionResult<>(EnumActionResult.PASS, stack);
 
 		boolean hasHalo = BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty();
 		if (isCoolingDown(world, stack) || hasHalo) {
@@ -153,9 +147,32 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
-		if (ModKeybinds.getPearlSwapping(player.getUniqueID())) return;
 		if (isCoolingDown(player.world, stack)) return;
 		if (!(player instanceof EntityPlayer)) return;
+
+		if (player.isSneaking()) {
+			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
+				if ((spellRing.getModule() != null ? spellRing.getModule().getModuleClass() : null) instanceof IBlockSelectable) {
+					RayTraceResult result = new RayTrace(
+							player.world, player.getLookVec(), player.getPositionVector().add(0, player.getEyeHeight(), 0),
+							player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue())
+							.setEntityFilter(input -> input != player)
+							.setReturnLastUncollidableBlock(true)
+							.setIgnoreBlocksWithoutBoundingBoxes(true)
+							.trace();
+
+					if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+						BlockPos posHit = result.getBlockPos();
+						if (player.world.isAirBlock(posHit)) break;
+
+						NBTHelper.setCompound(stack, "selected", NBTUtil.writeBlockState(new NBTTagCompound(), player.world.getBlockState(posHit)));
+						player.stopActiveHand();
+						player.swingArm(player.getActiveHand());
+					}
+					return;
+				}
+			}
+		}
 
 		if (isContinuousSpell(stack)) {
 

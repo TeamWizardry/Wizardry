@@ -40,6 +40,9 @@ public interface IShapeOverrides {
 	@ModuleOverrideInterface("shape_cone_run")
 	void onRunCone(World world, SpellData data, SpellRing shape);
 
+	/**
+	 * @return Return true to prevent the original run method from executing after this runs.
+	 */
 	@ModuleOverrideInterface("shape_zone_run")
-	void onRunZone(World world, SpellData data, SpellRing shape);
+	boolean onRunZone(World world, SpellData data, SpellRing shape);
 }

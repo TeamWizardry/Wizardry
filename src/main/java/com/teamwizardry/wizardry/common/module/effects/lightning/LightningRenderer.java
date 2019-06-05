@@ -81,6 +81,7 @@ public class LightningRenderer {
 			GlStateManager.enableAlpha();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
+			GlStateManager.enableColorMaterial();
 
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder vb = tessellator.getBuffer();

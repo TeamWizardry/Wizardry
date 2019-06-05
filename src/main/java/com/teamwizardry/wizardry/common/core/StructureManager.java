@@ -11,31 +11,23 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
-import net.minecraftforge.client.resource.IResourceType;
-import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
-import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
-import java.util.function.Predicate;
 
-public class StructureManager implements ISelectiveResourceReloadListener {
+public class StructureManager {
 
 	private final HashMap<ResourceLocation, WizardryStructure> structures = new HashMap<>();
 	private final HashMap<ResourceLocation, HashMap<Integer, int[]>> vboCache = new HashMap<>();
 
 	public StructureManager() {
-		((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
 	}
 
 	@Nullable
@@ -172,15 +164,5 @@ public class StructureManager implements ISelectiveResourceReloadListener {
 		for (ResourceLocation resourceLocation : structures.keySet()) {
 			bake(resourceLocation);
 		}
-	}
-
-	@Override
-	public void onResourceManagerReload(@NotNull IResourceManager resourceManager) {
-		onResourceManagerReload(resourceManager, SelectiveReloadStateHandler.INSTANCE.get());
-	}
-
-	@Override
-	public void onResourceManagerReload(@NotNull IResourceManager resourceManager, @NotNull Predicate<IResourceType> resourcePredicate) {
-		bake();
 	}
 }

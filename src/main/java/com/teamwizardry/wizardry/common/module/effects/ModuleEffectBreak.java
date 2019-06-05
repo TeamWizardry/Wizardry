@@ -1,18 +1,20 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeZone;
+import com.teamwizardry.wizardry.common.network.PacketBreakBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -32,7 +34,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
 /**
  * Created by Demoniaque.
  */
-@RegisterModule(ID="effect_break")
+@RegisterModule(ID = "effect_break")
 public class ModuleEffectBreak implements IModuleEffect {
 
 	@Override
@@ -54,24 +56,26 @@ public class ModuleEffectBreak implements IModuleEffect {
 		if (targetEntity instanceof EntityLivingBase)
 			for (ItemStack stack : targetEntity.getArmorInventoryList())
 				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
-		
+
 		if (targetPos == null || facing == null) return false;
-		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range)+1)/2), pos ->
+		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range) + 1) / 2), pos ->
 		{
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
+			if (world.isAirBlock(pos)) return true;
 			if (!world.isAirBlock(mutable.offset(facing))) return true;
 			IBlockState state = world.getBlockState(pos);
-			if (BlockUtils.isAnyAir(state)) return true;
-			
+
 			float hardness = state.getBlockHardness(world, pos);
 			return hardness < 0 || hardness > strength;
 		});
-		for (BlockPos pos : blocks)
-		{
+		for (BlockPos pos : blocks) {
 			if (!spellRing.taxCaster(world, spell, 1 / range, false)) continue;
-			BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
+			world.destroyBlock(pos, true);
+			if (caster instanceof EntityPlayerMP) {
+				PacketHandler.NETWORK.sendTo(new PacketBreakBlock(pos), (EntityPlayerMP) caster);
+			}
 		}
-		
+
 		return true;
 	}
 
@@ -90,7 +94,7 @@ public class ModuleEffectBreak implements IModuleEffect {
 	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
-				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
+				&& ring.getParentRing().getModule().getModuleClass() instanceof ModuleShapeZone)
 			return data;
 
 
@@ -101,26 +105,25 @@ public class ModuleEffectBreak implements IModuleEffect {
 		double strength = ring.getAttributeValue(world, AttributeRegistry.POTENCY, data);
 
 		if (targetPos == null || facing == null) return data;
-		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range)+1)/2), pos ->
+		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range) + 1) / 2), pos ->
 		{
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
 			if (!world.isAirBlock(mutable.offset(facing))) return true;
 			IBlockState state = world.getBlockState(pos);
 			if (BlockUtils.isAnyAir(state)) return true;
-			
+
 			float hardness = state.getBlockHardness(world, pos);
 			return hardness < 0 || hardness > strength;
 		});
 		if (blocks.isEmpty()) return data;
-		for (BlockPos pos : blocks)
-		{
+		for (BlockPos pos : blocks) {
 			IBlockState state = world.getBlockState(pos);
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
 			for (EnumFacing face : EnumFacing.VALUES) {
-					mutable.move(face);
+				mutable.move(face);
 				IBlockState adjStat = instance.getCachableBlockstate(world, mutable, data);
-					if (adjStat.getBlock() != state.getBlock() || !blocks.contains(mutable)) {
-						instance.drawFaceOutline(mutable, face.getOpposite());
+				if (adjStat.getBlock() != state.getBlock() || !blocks.contains(mutable)) {
+					RenderUtils.drawFaceOutline(mutable, face.getOpposite());
 				}
 				mutable.move(face.getOpposite());
 			}

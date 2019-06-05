@@ -7,9 +7,10 @@ import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
+import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeZone;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -126,7 +127,7 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 	public SpellData renderVisualization(@Nonnull World world, ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, float partialTicks) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
-				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
+				&& ring.getParentRing().getModule().getModuleClass() instanceof ModuleShapeZone)
 			return data;
 
 		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
@@ -159,8 +160,8 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 			if (blocks.isEmpty()) {
 				if (targetState.getBlock() == Blocks.AIR)
-					instance.drawCubeOutline(world, targetPos, targetState);
-				else instance.drawFaceOutline(targetPos, facing);
+					RenderUtils.drawCubeOutline(world, targetPos, targetState);
+				else RenderUtils.drawFaceOutline(targetPos, facing);
 			} else
 				for (BlockPos areaPos : blocks) {
 					BlockPos pos = areaPos.offset(facing);
@@ -172,7 +173,7 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 						if (blocks.contains(mutable)) {
 
-							instance.drawFaceOutline(mutable, facing1.getOpposite());
+							RenderUtils.drawFaceOutline(mutable, facing1.getOpposite());
 						}
 						mutable.move(facing1.getOpposite());
 					}

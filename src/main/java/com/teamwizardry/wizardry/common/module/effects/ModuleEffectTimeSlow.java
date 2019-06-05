@@ -10,6 +10,8 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
@@ -22,6 +24,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -33,11 +36,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Created by Demoniaque.
  */
-@RegisterModule(ID="effect_time_slow")
+@RegisterModule(ID = "effect_time_slow")
 public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 
 	@SubscribeEvent
@@ -70,6 +74,31 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 		return new String[]{"modifier_increase_potency", "modifier_extend_time"};
 	}
 
+	@ModuleOverride("shape_zone_run")
+	public boolean onRunZone(World world, SpellData data, SpellRing ring, @ContextRing SpellRing childRing) {
+		double aoe = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
+		double range = ring.getAttributeValue(world, AttributeRegistry.RANGE, data);
+
+		Vec3d targetPos = data.getTarget(world);
+
+		if (targetPos == null) return false;
+
+		Vec3d min = targetPos.subtract(aoe / 2, range / 2, aoe / 2);
+		Vec3d max = targetPos.add(aoe / 2, range / 2, aoe / 2);
+
+		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(min, max));
+		for (Entity entity : entities) {
+			if (entity instanceof EntityLivingBase) {
+				if (!((EntityLivingBase) entity).isPotionActive(ModPotions.TIME_SLOW) && entity.getDistanceSq(targetPos.x, targetPos.y, targetPos.z) <= (aoe) * (aoe)) {
+					data.processEntity(entity, false);
+					runOnce(world, data, childRing);
+				}
+			}
+		}
+		return true;
+	}
+
+
 	@Override
 	@SuppressWarnings("unused")
 	public boolean runOnce(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
@@ -77,13 +106,13 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 		Entity targetEntity = spell.getVictim(world);
 		Entity caster = spell.getCaster(world);
 
-		if (targetEntity instanceof EntityLivingBase) {
+		if (targetEntity instanceof EntityLivingBase && !((EntityLivingBase) targetEntity).isPotionActive(ModPotions.TIME_SLOW)) {
 			double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
 			double duration = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell) * 10;
 			if (!spellRing.taxCaster(world, spell, true)) return false;
 
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) potency, true, false));
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, (int) duration, (int) potency, true, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) potency, false, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, (int) duration, (int) potency, false, false));
 		}
 		return true;
 	}

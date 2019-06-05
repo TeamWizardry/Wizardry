@@ -342,7 +342,7 @@ public class ModuleOverrideHandler {
 				ptr = new OverridePointer(spellRing, null, entry.getKey(), entry.getValue());
 			} else {
 				if (!areMethodsCompatible(ptr.getBaseMethod().getMethod(), entry.getValue().getMethod()))
-					throw new ModuleOverrideException("Method '" + ptr.getBaseMethod() + "' can't be overridden by '" + entry.getValue() + "' due to incompatible signature.");
+					throw new ModuleOverrideException("Method '" + ptr.getClass().getCanonicalName() + "." + ptr.getBaseMethod().getMethod().getName() + "' can't be overridden by '" + entry.getValue().getClass().getCanonicalName() + "." + entry.getValue().getMethod().getName() + "' due to incompatible signature.");
 				ptr = new OverridePointer(spellRing, ptr, entry.getKey(), entry.getValue());
 			}
 
