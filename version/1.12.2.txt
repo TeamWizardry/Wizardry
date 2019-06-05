@@ -1,3 +1,17 @@
+0.10.5
+Better structure visualization
+Overhaul vanish spell. It actually works now + no ai targetting
+Overhaul zone shape. It handles things better now + is affected by potency
+Some effects now respond better to zones (like timeslow/place/break/frost)
+Buff base break spell
+Block selection now works properly for place and substitution spells
+Break spell no longer desyncs
+Fixed rendering issue with lightning
+Move mana pools to biome decoration event
+Removed event modules from the spell system
+Modules no longer have a "base" and "min". They just have min now.
+SERIOUSLY reduce syringe cooldown time. make syringes fill mana completely
+
 0.10.3
 Renamed pearl holder to orb holder
 Add localization for levitation orbs
@@ -11,24 +25,3 @@ Fix orb coloring when their fill reaches 0
 Added new recipes
 Fixed invalid recipes
 Changed recipes to use oredict if possible
-
-0.10.1
-Better fairy jar rendering
-Fixed some sounds
-Fixed worktable model in guis
-Fixed modifiers not working at all and being calculated completely wrong
-Add fatigue to time slow for a more punchy slowness effect
-Fixed lightning spell and fix it's sounds
-Fixed jars. They now exist properly
-Pearl swap ui completely redone. Now actually works
-Fixed light spell crashing
-Fixed world lighting issue when accessing the worktable
-Fixed a bug where lingering spells casted from lingering spells couldn't coexist
-Fixed bug where lingering spells of the same type couldn't co-exist (yes, this is different)
-Fixed spells not working on servers
-Fixed vulnerability with spell book syncing
-Redid /wizardry command
-Added levitation orbs for funsies
-Fixed a crash with IC2
-Fixed a freeze from the phase spell
-Made cosmetics (like capes) downloadable so they're version agnostic
