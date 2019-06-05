@@ -79,8 +79,8 @@ public class ModuleEffectZoom implements IModuleEffect {
 			entityHit.velocityChanged = true;
 		}
 		if (entityHit instanceof EntityLivingBase) {
-			((EntityLivingBase) entityHit).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 5, 1, true, false));
-			((EntityLivingBase) entityHit).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 1, true, false));
+			((EntityLivingBase) entityHit).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 2, 1, true, false));
+			((EntityLivingBase) entityHit).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 2, 1, true, false));
 		}
 
 		return true;

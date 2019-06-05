@@ -16,8 +16,11 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -47,7 +50,7 @@ public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule
 		Vec3d targetPos = spell.getTarget(world);
 		Entity caster = spell.getCaster(world);
 
-		double potency = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell) * 2;
 
 		if (targetPos == null) return false;
 
@@ -71,6 +74,10 @@ public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule
 			entity.motionZ = (dir.z);
 			entity.fallDistance = 0;
 			entity.velocityChanged = true;
+
+			if (entity instanceof EntityLivingBase) {
+				((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 2, 1, false, false));
+			}
 
 		}
 		return true;

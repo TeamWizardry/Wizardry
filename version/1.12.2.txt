@@ -1,3 +1,11 @@
+0.10.6
+Fixed crashes on servers
+Removed wizardry reset command
+Fix crash for render visualizations
+Fixed crash with empty syringes
+Reduced zoom lag effect
+Tiny telekinesis buff
+
 0.10.5
 Better structure visualization
 Overhaul vanish spell. It actually works now + no ai targetting
