@@ -83,13 +83,13 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 
 		if (targetPos == null) return false;
 
-		Vec3d min = targetPos.subtract(aoe / 2, range / 2, aoe / 2);
-		Vec3d max = targetPos.add(aoe / 2, range / 2, aoe / 2);
+		Vec3d min = targetPos.subtract(aoe, range, aoe);
+		Vec3d max = targetPos.add(aoe, range, aoe);
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(min, max));
 		for (Entity entity : entities) {
 			if (entity instanceof EntityLivingBase) {
-				if (!((EntityLivingBase) entity).isPotionActive(ModPotions.TIME_SLOW) && entity.getDistanceSq(targetPos.x, targetPos.y, targetPos.z) <= (aoe) * (aoe)) {
+				if (!((EntityLivingBase) entity).isPotionActive(ModPotions.TIME_SLOW) && entity.getDistanceSq(targetPos.x, targetPos.y, targetPos.z) <= aoe * aoe) {
 					data.processEntity(entity, false);
 					runOnce(world, data, childRing);
 				}

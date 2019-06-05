@@ -62,14 +62,14 @@ public class ModuleEffectFrost implements IModuleEffect {
 
 		if (targetPos == null) return false;
 
-		Vec3d min = targetPos.subtract(aoe / 2, range / 2, aoe / 2);
-		Vec3d max = targetPos.add(aoe / 2, range / 2, aoe / 2);
+		Vec3d min = targetPos.subtract(aoe, range, aoe);
+		Vec3d max = targetPos.add(aoe, range, aoe);
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(min, max));
 		for (Entity entity : entities) {
 			entity.extinguish();
 			if (entity instanceof EntityLivingBase) {
-				if (!((EntityLivingBase) entity).isPotionActive(ModPotions.SLIPPERY) && entity.getDistanceSq(targetPos.x, targetPos.y, targetPos.z) <= (aoe) * (aoe)) {
+				if (!((EntityLivingBase) entity).isPotionActive(ModPotions.SLIPPERY) && entity.getDistanceSq(targetPos.x, targetPos.y, targetPos.z) <= aoe * aoe) {
 
 					double time = childRing.getAttributeValue(world, AttributeRegistry.DURATION, data) * 10;
 					world.playSound(null, entity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);

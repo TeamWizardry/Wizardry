@@ -23,6 +23,7 @@ import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -104,7 +105,17 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 				IBlockState state = NBTUtil.readBlockState(compound);
 				IBlockState touchedBlock = world.getBlockState(targetBlock);
 
-				if (touchedBlock.getBlock() == state.getBlock()) return false;
+				boolean misMatch = false;
+				for (IProperty property : touchedBlock.getPropertyKeys()) {
+					if (state.getPropertyKeys().contains(property)) {
+						if (state.getValue(property).equals(touchedBlock.getValue(property))) {
+
+						} else {
+							misMatch = true;
+						}
+					}
+				}
+				if (touchedBlock.getBlock() == state.getBlock() && !misMatch) return false;
 
 				double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
 
@@ -114,6 +125,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 					if (!(stack.getItem() instanceof ItemBlock)) continue;
 					Block block = ((ItemBlock) stack.getItem()).getBlock();
 					if (block != state.getBlock()) continue;
+
 					stackBlock = stack;
 					break;
 				}
@@ -121,9 +133,8 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 				if (stackBlock == null) return false;
 
 				Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetBlock, facing, Math.min(stackBlock.getCount(), (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
-					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
-					IBlockState adjacentState = world.getBlockState(mutable.offset(facing));
-					if (adjacentState.getBlock() != Blocks.AIR) return true;
+					if (world.isAirBlock(pos)) return true;
+					if (!world.isAirBlock(pos.offset(facing))) return true;
 
 					IBlockState block = world.getBlockState(pos);
 					return block.getBlock() != touchedBlock.getBlock();
