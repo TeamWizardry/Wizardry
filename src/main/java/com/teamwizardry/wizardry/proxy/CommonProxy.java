@@ -104,13 +104,12 @@ public class CommonProxy {
 		PacketHandler.register(PacketDevilDustFizzle.class, Side.CLIENT);
 
 
-		ModStructures.init();
-
 		PageTypes.INSTANCE.registerPageProvider("wizardry_structure", PageWizardryStructure::new);
 		ItemBook.BOOK = new Book("book");
 	}
 
 	public void init(FMLInitializationEvent event) {
+		ModStructures.init();
 
 		manaRecipeLoading:
 		{
