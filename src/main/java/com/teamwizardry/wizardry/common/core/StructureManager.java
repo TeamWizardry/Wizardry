@@ -47,7 +47,7 @@ public class StructureManager {
 		WizardryStructure structure = new WizardryStructure(location);
 		structure.setOrigin(origin);
 		structures.put(location, structure);
-		bake(location);
+
 	}
 
 	/**
@@ -60,10 +60,10 @@ public class StructureManager {
 	public void draw(ResourceLocation location, float alpha) {
 		HashMap<Integer, int[]> cache = vboCache.get(location);
 
-		//	if (cache == null || cache.isEmpty()) {
-		//		bake(location);
-		//		return;
-		//	}
+		if (cache == null || cache.isEmpty()) {
+			bake(location);
+			return;
+		}
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
