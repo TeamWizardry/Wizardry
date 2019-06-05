@@ -11,6 +11,7 @@ import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,10 +84,11 @@ public class PotionVanish extends PotionBase {
 	@SubscribeEvent
 	public void ai(LivingSetAttackTargetEvent event) {
 		if (event.getEntityLiving() instanceof EntityPlayer) return;
+		if (!(event.getEntityLiving() instanceof EntityLiving)) return;
 
-		EntityLivingBase potentialPotion = event.getTarget();
+		EntityLivingBase potentialPotion = ((EntityLiving) event.getEntityLiving()).getAttackTarget();
 		if (potentialPotion != null && potentialPotion.isPotionActive(this)) {
-			//	event.setca
+			((EntityLiving) event.getEntityLiving()).setAttackTarget(null);
 		}
 	}
 
