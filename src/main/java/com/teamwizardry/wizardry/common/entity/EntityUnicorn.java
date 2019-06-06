@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornCharge;
-import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornWander;
+import com.teamwizardry.wizardry.common.entity.ai.UnicornPathNavigator;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
@@ -13,7 +13,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.pathfinding.PathNavigateFlying;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,14 +34,14 @@ public class EntityUnicorn extends EntityMob implements EntityFlying {
 	public int shieldCooldown = 0;
 	public int flatulenceTicker;
 	public boolean givenPath = false;
-	
-    public int tailCounter;
-    private float headLean;
-    private float prevHeadLean;
+
+	public int tailCounter;
+	private float headLean;
+	private float prevHeadLean;
 	private float rearingAmount;
-    private float prevRearingAmount;
-    private float mouthOpenness;
-    private float prevMouthOpenness;
+	private float prevRearingAmount;
+	private float mouthOpenness;
+	private float prevMouthOpenness;
 
 	public EntityUnicorn(World worldIn) {
 		super(worldIn);
@@ -58,22 +57,19 @@ public class EntityUnicorn extends EntityMob implements EntityFlying {
 	@NotNull
 	@Override
 	protected PathNavigate createNavigator(@NotNull World worldIn) {
-		PathNavigateFlying navigateFlying = new PathNavigateFlying(this, world);
-		navigateFlying.setCanFloat(true);
-		navigateFlying.setCanEnterDoors(true);
-		return navigateFlying;
+		return new UnicornPathNavigator(this, world);
 	}
 
 	@Override
 	protected void initEntityAI() {
-		this.tasks.addTask(0, new EntityAIUnicornCharge(this, 1.0F, 10.0F, 5.0));
+		this.tasks.addTask(0, new EntityAIUnicornCharge(this, 3.0F, 20.0F, 5.0));
 		this.tasks.addTask(1, new EntityAIAttackMelee(this, 2, false));
 		this.tasks.addTask(2, new EntityAISwimming(this));
 		this.tasks.addTask(3, new EntityAIMoveTowardsRestriction(this, 1.0D));
-		this.tasks.addTask(4, new EntityAIUnicornWander(this, 1.0D));
+		this.tasks.addTask(4, new EntityAIWanderAvoidWater(this, 2.0D));
 
 //		this.tasks.addTask(3, new EntityAIWander(this, 0.6));
-		this.tasks.addTask(5, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.tasks.addTask(5, new EntityAIWatchClosest(this, EntityPlayer.class, 10.0F));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
 
 //		this.tasks.addTask(6, new EntityAIRunAroundLikeCrazy(this, 1.2D));
@@ -92,9 +88,9 @@ public class EntityUnicorn extends EntityMob implements EntityFlying {
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
-		this.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(2);
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
+		this.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(0.3);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25);
 		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5.0D);
 	}
 
@@ -106,8 +102,18 @@ public class EntityUnicorn extends EntityMob implements EntityFlying {
 		if (world.isRemote) return;
 		fallDistance = 0;
 
+		if (navigator.noPath() && !this.onGround && this.motionY < 0.0D) {
+			this.motionY = 0;
+		}
+
+
 		if (getAttackTarget() != null) {
-			moveHelper.setMoveTo(getAttackTarget().posX, getAttackTarget().posY, getAttackTarget().posZ, 1);
+			//		Vec3d sub = getAttackTarget().getPositionVector().subtract(getPositionVector()).normalize().scale(0.2);
+			//		motionX = sub.x;
+			//		motionY = sub.y;
+			//		motionZ = sub.z;
+			//		//	navigator.tryMoveToEntityLiving(getAttackTarget(), 5);
+			//	moveHelper.setMoveTo(getAttackTarget().posX, getAttackTarget().posY, getAttackTarget().posZ, 10);
 		}
 
 	}
@@ -154,25 +160,21 @@ public class EntityUnicorn extends EntityMob implements EntityFlying {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public float getRearingAmount(float partialTicks)
-	{
+	public float getRearingAmount(float partialTicks) {
 		return prevRearingAmount + (rearingAmount - prevRearingAmount) * partialTicks;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
-	public float getMouthOpennessAngle(float partialTicks)
-	{
+	public float getMouthOpennessAngle(float partialTicks) {
 		return prevMouthOpenness + (mouthOpenness - prevMouthOpenness) * partialTicks;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
-	public float getGrassEatingAmount(float partialTicks)
-	{
+	public float getGrassEatingAmount(float partialTicks) {
 		return prevHeadLean + (headLean - prevHeadLean) * partialTicks;
 	}
 
-	public float getSize()
-	{
-		return 0.5F;
+	public float getSize() {
+		return 1f;
 	}
 }

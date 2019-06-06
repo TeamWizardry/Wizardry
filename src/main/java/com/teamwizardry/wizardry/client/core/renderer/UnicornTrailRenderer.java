@@ -101,6 +101,7 @@ public class UnicornTrailRenderer {
 		GlStateManager.disableTexture2D();
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
+		GlStateManager.enableColorMaterial();
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vb = tessellator.getBuffer();

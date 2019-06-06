@@ -65,12 +65,13 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 			unicorn.getAttackTarget().attackEntityFrom(DamageSource.causeMobDamage(unicorn), (float) damage);
 			int invTime = unicorn.getAttackTarget().hurtResistantTime;
 			unicorn.getAttackTarget().hurtResistantTime = 0;
-			unicorn.getAttackTarget().attackEntityFrom(DamageSource.causeIndirectMagicDamage(unicorn, null), (float) damage * 0.2f);
+			unicorn.getAttackTarget().attackEntityFrom(DamageSource.causeIndirectDamage(unicorn, unicorn.getAttackTarget()), (float) damage * 0.2f);
 			unicorn.getAttackTarget().hurtResistantTime = invTime;
 			targetHit = true;
 		}
 	}
 
+	@Override
 	public void resetTask() {
 		this.unicorn.getNavigator().clearPath();
 		unicorn.isCharging = false;
