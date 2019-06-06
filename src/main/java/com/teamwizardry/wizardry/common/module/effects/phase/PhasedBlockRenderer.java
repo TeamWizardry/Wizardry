@@ -51,6 +51,7 @@ public class PhasedBlockRenderer {
 		GlStateManager.depthMask(false);
 		GlStateManager.enablePolygonOffset();
 		GlStateManager.doPolygonOffset(-0.1f, -1000f);
+		GlStateManager.enableColorMaterial();
 
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);

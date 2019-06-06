@@ -56,8 +56,8 @@ public class EntitySpiritWight extends EntityMob {
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(75.0D);
-		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(3.0D);
+		getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100.0);
+		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
 		//this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.6D);
 	}
 
@@ -106,9 +106,9 @@ public class EntitySpiritWight extends EntityMob {
 		if (getAttackTarget() != null) {
 			noClip = true;
 			Vec3d direction = getPositionVector().subtract(getAttackTarget().getPositionVector()).normalize();
-			motionX = direction.x * -0.05;
-			motionY = direction.y * -0.05;
-			motionZ = direction.z * -0.05;
+			motionX = direction.x * -0.1;
+			motionY = direction.y * -0.1;
+			motionZ = direction.z * -0.1;
 			rotationYaw = (float) (((-MathHelper.atan2(direction.x, direction.z) * 180) / Math.PI) - 180) / 2;
 		} else {
 			if (!collidedVertically) {

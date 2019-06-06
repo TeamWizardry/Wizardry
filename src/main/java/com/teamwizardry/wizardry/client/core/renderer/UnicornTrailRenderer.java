@@ -33,7 +33,7 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 public class UnicornTrailRenderer {
 
-	public static HashMap<EntityUnicorn, List<Point>> positions = new HashMap<>();
+	public static WeakHashMap<EntityUnicorn, List<Point>> positions = new WeakHashMap<>();
 
 	private static BufferBuilder pos(BufferBuilder vb, Vec3d pos) {
 		return vb.pos(pos.x, pos.y, pos.z);
@@ -41,8 +41,10 @@ public class UnicornTrailRenderer {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public static void tick(TickEvent.WorldTickEvent event) {
-		World world = event.world;
+	public static void tick(TickEvent.ClientTickEvent event) {
+		if (event.phase != TickEvent.Phase.END) return;
+		World world = Minecraft.getMinecraft().world;
+		if (world == null) return;
 
 		List<EntityUnicorn> unicorns = world.getEntities(EntityUnicorn.class, input -> true);
 
@@ -102,6 +104,7 @@ public class UnicornTrailRenderer {
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
 		GlStateManager.enableColorMaterial();
+		GlStateManager.disableLighting();
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vb = tessellator.getBuffer();
