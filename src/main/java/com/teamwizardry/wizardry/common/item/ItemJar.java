@@ -102,6 +102,8 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 						jar.color = new Color(NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
 						jar.age = NBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
 						jar.hasFairy = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
+						jar.cap.getHandler().setMana(NBTHelper.getDouble(stack, Constants.NBT.FAIRY_MANA, 0));
+						jar.isDulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
 						jar.markDirty();
 						world.checkLight(replacable ? pos : offset);
 					}

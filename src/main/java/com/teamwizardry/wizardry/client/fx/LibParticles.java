@@ -288,7 +288,6 @@ public class LibParticles {
 	}
 
 	public static void FAIRY_TRAIL(World world, Vec3d pos, Color color, boolean sad, int age) {
-		if (((age / 4) >= (age / 2)) || (age == 0)) return;
 		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(age / 8, age / 4));
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));

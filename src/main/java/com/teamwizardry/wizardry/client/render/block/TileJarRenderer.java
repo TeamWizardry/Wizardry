@@ -40,10 +40,10 @@ public class TileJarRenderer extends TileRenderHandler<TileJar> {
 		if (!te.hasFairy) return;
 		Vec3d pos = new Vec3d(te.getPos()).add(0.5, 0.35, 0.5).add(fairyPos);
 
-		float excitement = (float) (tile.cap.getHandler().getMana() / tile.cap.getHandler().getMaxMana());
+		float excitement = (float) (tile.cap.getHandler().getMana() / tile.cap.getHandler().getMaxMana()) * (tile.isDulled ? 0 : 1);
 
 		Color color = te.color;
-		ParticleBuilder glitter = new ParticleBuilder((int) (RandUtil.nextInt(1, 3) + (10 * (1 - excitement))));
+		ParticleBuilder glitter = new ParticleBuilder((int) (RandUtil.nextInt(3, 5) + (10 * (1 - excitement))));
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
@@ -58,20 +58,26 @@ public class TileJarRenderer extends TileRenderHandler<TileJar> {
 			trail.setScale(0.2f + 0.2f * excitement);
 			//trail.enableMotionCalculation();
 			ParticleSpawner.spawn(trail, te.getWorld(), new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
-				trail.setMotion(new Vec3d(
-						RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement),
-						RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement),
-						RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement)
-				));
+				if (te.isDulled) {
+					particleBuilder.enableMotionCalculation();
+					particleBuilder.setCollision(true);
+					//	particleBuilder.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.05, -0.01), 0));
+
+				} else
+					particleBuilder.setMotion(new Vec3d(
+							RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement),
+							RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement),
+							RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement)
+					));
 			});
 		}
 	}
 
 	private void animCurve() {
-		float excitement = (float) (1f - tile.cap.getHandler().getMana() / tile.cap.getHandler().getMaxMana());
+		float excitement = (float) (1f - tile.cap.getHandler().getMana() / tile.cap.getHandler().getMaxMana()) * (tile.isDulled ? 0 : 1);
 		new BasicAnimation<>(this, "fairyPos").ease(Easing.easeInQuint)
 				.to(new Vec3d(RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.25, 0.25), RandUtil.nextDouble(-0.1, 0.1)))
-				.duration((1 + RandUtil.nextFloat(10, 20) * excitement))
+				.duration((RandUtil.nextInt(1, 5) + RandUtil.nextFloat(10, 20) * excitement))
 				.completion(this::animCurve).addTo(ANIMATOR);
 
 	}

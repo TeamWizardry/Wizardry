@@ -45,8 +45,9 @@ import java.util.Random;
 public class EntityFairy extends FlyingEntityMod {
 
 	public boolean ambush = false;
+	private double mana;
 	private Color color;
-	private boolean sad;
+	private boolean dulled;
 	private int age;
 	private boolean changingCourse = false;
 	private int changeCourseTick = 0;
@@ -63,8 +64,9 @@ public class EntityFairy extends FlyingEntityMod {
 		age = RandUtil.nextInt(1, 100);
 	}
 
-	public EntityFairy(World worldIn, Color color, int age) {
+	public EntityFairy(World worldIn, Color color, int age, double mana) {
 		super(worldIn);
+		this.mana = mana;
 		setSize(1F, 1F);
 		isAirBorne = true;
 		experienceValue = 5;
@@ -109,7 +111,7 @@ public class EntityFairy extends FlyingEntityMod {
 			@SideOnly(Side.CLIENT)
 			public void runIfClient() {
 				LibParticles.FAIRY_HEAD(world, getPositionVector().add(0, 0.25, 0), getColor());
-				LibParticles.FAIRY_TRAIL(world, getPositionVector().add(0, 0.25, 0), getColor(), isSad(), new Random(getUniqueID().hashCode()).nextInt(150));
+				LibParticles.FAIRY_TRAIL(world, getPositionVector().add(0, 0.25, 0), getColor(), isDulled(), new Random(getUniqueID().hashCode()).nextInt(150));
 			}
 		});
 
@@ -253,12 +255,12 @@ public class EntityFairy extends FlyingEntityMod {
 		this.color = color;
 	}
 
-	public boolean isSad() {
-		return sad;
+	public boolean isDulled() {
+		return dulled;
 	}
 
-	public void setSad(boolean sad) {
-		this.sad = sad;
+	public void setDulled(boolean dulled) {
+		this.dulled = dulled;
 	}
 
 	public int getAge() {

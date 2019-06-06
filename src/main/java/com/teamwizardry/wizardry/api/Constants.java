@@ -26,6 +26,8 @@ public class Constants {
 		public static final String FAIRY_INSIDE = "fairy_inside";
 		public static final String FAIRY_COLOR = "fairy_color";
 		public static final String FAIRY_AGE = "fairy_age";
+		public static final String FAIRY_MANA = "fairy_mana";
+		public static final String FAIRY_DULLED = "fairy_dulled";
 		public static final String COLOR = "color";
 		public static final String RAND = "rand";
 		public static final String LAST_CAST = "last_cast";

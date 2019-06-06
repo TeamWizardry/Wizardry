@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -87,7 +88,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 				StructureErrorRenderer.addError(error);
 			}
 			return;
-		} else if (!CraftingPlateRecipeManager.doesRecipeExist(tile.getWorld(), tile.getPos(), input) && RandUtil.nextInt(4) == 0) {
+		} else if (tile.getWorld().isAirBlock(tile.getPos().offset(EnumFacing.UP)) && !CraftingPlateRecipeManager.doesRecipeExist(tile.getWorld(), tile.getPos(), input) && RandUtil.nextInt(4) == 0) {
 			LibParticles.CRAFTING_ALTAR_IDLE(tile.getWorld(), new Vec3d(tile.getPos()).add(0.5, 0.7, 0.5));
 		}
 

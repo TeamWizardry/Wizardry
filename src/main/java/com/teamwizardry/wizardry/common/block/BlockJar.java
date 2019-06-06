@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -51,7 +52,7 @@ public class BlockJar extends BlockModContainer {
 		TileEntity entity = world.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
-			return jar.hasFairy ? 15 : 0;
+			return jar.hasFairy ? (int) (5 + 10 * jar.cap.getHandler().getMana() / jar.cap.getHandler().getMaxMana()) : 0;
 		} else return 0;
 	}
 
@@ -64,6 +65,8 @@ public class BlockJar extends BlockModContainer {
 				jar.color = new Color(NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
 				jar.age = NBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
 				jar.hasFairy = true;
+				jar.cap.getHandler().setMana(NBTHelper.getDouble(stack, Constants.NBT.FAIRY_MANA, 0));
+				jar.isDulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
 				jar.markDirty();
 				worldIn.checkLight(pos);
 			}
@@ -82,6 +85,8 @@ public class BlockJar extends BlockModContainer {
 			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
+			NBTHelper.setDouble(stack, Constants.NBT.FAIRY_MANA, jar.cap.getHandler().getMana());
+			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_DULLED, jar.isDulled);
 		}
 		return stack;
 	}
@@ -104,6 +109,8 @@ public class BlockJar extends BlockModContainer {
 			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
+			NBTHelper.setDouble(stack, Constants.NBT.FAIRY_MANA, jar.cap.getHandler().getMana());
+			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_DULLED, jar.isDulled);
 		}
 		spawnAsEntity(worldIn, pos, stack);
 
@@ -127,13 +134,26 @@ public class BlockJar extends BlockModContainer {
 			TileEntity tile = worldIn.getTileEntity(pos);
 			if (tile instanceof TileJar) {
 				TileJar jar = (TileJar) tile;
-				if (playerIn.isSneaking() && jar.hasFairy) {
-					EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age);
-					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-					worldIn.spawnEntity(entity);
-					jar.hasFairy = false;
-					jar.markDirty();
-					return true;
+				if (jar.hasFairy) {
+					ItemStack stack = playerIn.getHeldItem(hand);
+					if (stack.isEmpty() && playerIn.isSneaking()) {
+						EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age, RandUtil.nextDouble(0, 1000));
+						entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+						worldIn.spawnEntity(entity);
+						jar.hasFairy = false;
+						jar.cap.getHandler().setMana(0);
+						jar.markDirty();
+						worldIn.notifyBlockUpdate(pos, state, worldIn.getBlockState(pos), 3);
+						worldIn.checkLight(pos);
+						return true;
+
+					} else if (stack.getItem() == ModItems.SKY_DUST) {
+						jar.isDulled = true;
+						jar.markDirty();
+						stack.shrink(1);
+						worldIn.notifyBlockUpdate(pos, state, worldIn.getBlockState(pos), 3);
+						worldIn.checkLight(pos);
+					}
 				}
 			}
 		}
