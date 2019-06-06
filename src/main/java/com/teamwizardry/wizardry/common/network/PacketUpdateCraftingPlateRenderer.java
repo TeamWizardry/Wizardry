@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.tileentity.TileEntity;
@@ -33,6 +32,7 @@ public class PacketUpdateCraftingPlateRenderer extends PacketBase {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void handle(@NotNull MessageContext ctx) {
 		if (ctx.side.isServer()) return;
 
@@ -40,18 +40,12 @@ public class PacketUpdateCraftingPlateRenderer extends PacketBase {
 		if (world == null) return;
 		if (!world.isBlockLoaded(pos)) return;
 
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient() {
-				TileEntity entity = world.getTileEntity(pos);
-				if (entity instanceof TileCraftingPlate) {
-					TileCraftingPlate plate = (TileCraftingPlate) entity;
-					if (plate.renderHandler != null) {
-						((TileCraftingPlateRenderer) plate.renderHandler).update(slot);
-					}
-				}
+		TileEntity entity = world.getTileEntity(pos);
+		if (entity instanceof TileCraftingPlate) {
+			TileCraftingPlate plate = (TileCraftingPlate) entity;
+			if (plate.renderHandler != null) {
+				((TileCraftingPlateRenderer) plate.renderHandler).update(slot);
 			}
-		});
+		}
 	}
 }

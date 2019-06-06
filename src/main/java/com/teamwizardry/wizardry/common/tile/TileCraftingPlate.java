@@ -15,7 +15,6 @@ import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketAddItemCraftingPlate;
-import com.teamwizardry.wizardry.common.network.PacketUpdateCraftingPlateRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -60,10 +59,6 @@ public class TileCraftingPlate extends TileManaInteractor {
 		@Override
 		protected void onContentsChanged(int slot) {
 			markDirty();
-
-			if (!world.isRemote) {
-				PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateRenderer(pos, slot), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
-			}
 		}
 
 	});
@@ -154,30 +149,31 @@ public class TileCraftingPlate extends TileManaInteractor {
 			}
 		}
 
-		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos))) {
-			if (entityItem.getItem().isEmpty()) continue;
-			if (hasInput()) break;
+		if (!world.isRemote) {
+			for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos))) {
+				if (entityItem.getItem().isEmpty()) continue;
+				if (hasInput()) break;
 
-			if (!isInventoryEmpty() && CraftingPlateRecipeManager.doesRecipeExistForItem(entityItem.getItem())) {
+				if (!isInventoryEmpty() && CraftingPlateRecipeManager.doesRecipeExistForItem(entityItem.getItem())) {
 
-				ItemStack stack = entityItem.getItem().copy();
-				stack.setCount(1);
-				entityItem.getItem().shrink(1);
-
-				input.getHandler().setStackInSlot(0, stack);
-
-			} else if (!(CraftingPlateRecipeManager.doesRecipeExistForItem(entityItem.getItem()))) {
-
-				ItemStack stack = entityItem.getItem().copy();
-				stack.setCount(1);
-
-				if (!world.isRemote) {
-					PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(getPos(), stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
-				}
-				ItemStack left = ItemHandlerHelper.insertItem(realInventory.getHandler(), stack, false);
-
-				if (left.isEmpty()) {
+					ItemStack stack = entityItem.getItem().copy();
+					stack.setCount(1);
 					entityItem.getItem().shrink(1);
+
+					input.getHandler().insertItem(0, stack, false);
+
+					PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(getPos(), stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+
+				} else if (!(CraftingPlateRecipeManager.doesRecipeExistForItem(entityItem.getItem()))) {
+
+					ItemStack stack = entityItem.getItem().copy();
+					stack.setCount(1);
+
+					ItemStack left = ItemHandlerHelper.insertItem(realInventory.getHandler(), stack, false);
+					if (left.isEmpty()) {
+						entityItem.getItem().shrink(1);
+						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(getPos(), stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+					}
 				}
 			}
 		}

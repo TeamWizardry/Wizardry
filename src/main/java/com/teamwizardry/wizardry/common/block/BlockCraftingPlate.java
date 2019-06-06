@@ -4,8 +4,9 @@ import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.CraftingPlateRecipeManager;
+import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.item.ISpellInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
@@ -78,7 +79,6 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 		if (testStructure(worldIn, pos).isEmpty()) {
 			TileCraftingPlate plate = getTE(worldIn, pos);
-			if (!plate.input.getHandler().getStackInSlot(0).isEmpty()) return false;
 			if (!heldItem.isEmpty()) {
 				if (heldItem.getItem() == ModItems.BOOK && playerIn.isCreative()) {
 					ItemStack pearl = new ItemStack(ModItems.PEARL_NACRE);
@@ -116,42 +116,70 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					heldItem.shrink(subtractHand);
 					stack.setCount(oldCount - heldItem.getCount());
 
-					if (!plate.isInventoryEmpty() && stack.getItem() instanceof ISpellInfusable) {
-						plate.input.getHandler().setStackInSlot(0, stack);
+					boolean recipeExists = CraftingPlateRecipeManager.doesRecipeExistForItem(stack);
+
+					if (!plate.isInventoryEmpty() && recipeExists) {
+						plate.input.getHandler().insertItem(0, stack, false);
+
 						plate.markDirty();
-
 						playerIn.openContainer.detectAndSendChanges();
-						worldIn.notifyBlockUpdate(pos, state, state, 3);
 
-					} else if (!(stack.getItem() instanceof ISpellInfusable)) {
-						ItemHandlerHelper.insertItem(plate.realInventory.getHandler(), stack, false);
 						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+
+					} else if (!recipeExists) {
+						ItemHandlerHelper.insertItem(plate.realInventory.getHandler(), stack, false);
+
 						plate.markDirty();
 						playerIn.openContainer.detectAndSendChanges();
+
+						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 					}
 
 					return true;
 				}
 			} else {
 
-				if (plate.hasOutput()) {
-					playerIn.setHeldItem(hand, plate.output.getHandler().extractItem(0, 1, false));
-					plate.markDirty();
+				if (plate.hasInput()) {
+					ItemStack stack = plate.input.getHandler().getStackInSlot(0);
 
-					playerIn.openContainer.detectAndSendChanges();
+					ICraftingPlateRecipe recipe = CraftingPlateRecipeManager.getRecipeForItem(stack);
+					if (recipe != null) recipe.canceled(worldIn, pos, stack);
 
-					return true;
+					ItemStack extract = plate.input.getHandler().extractItem(0, 1, false);
+					if (!extract.isEmpty()) {
+
+						playerIn.addItemStackToInventory(extract);
+
+						plate.markDirty();
+						playerIn.openContainer.detectAndSendChanges();
+
+						PacketHandler.NETWORK.sendToAllAround(new PacketRemoveItemCraftingPlate(pos, 0), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+						return true;
+					}
+
+				} else if (plate.hasOutput()) {
+					ItemStack extract = plate.output.getHandler().extractItem(0, 1, false);
+					if (!extract.isEmpty()) {
+
+						playerIn.addItemStackToInventory(extract);
+
+						plate.markDirty();
+						playerIn.openContainer.detectAndSendChanges();
+
+						PacketHandler.NETWORK.sendToAllAround(new PacketRemoveItemCraftingPlate(pos, 0), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+						return true;
+					}
 				} else {
 
 					for (int i = plate.realInventory.getHandler().getSlots() - 1; i >= 0; i--) {
 						ItemStack extracted = plate.realInventory.getHandler().extractItem(i, playerIn.isSneaking() ? 64 : 1, false);
-						PacketHandler.NETWORK.sendToAllAround(new PacketRemoveItemCraftingPlate(pos, i), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 						if (!extracted.isEmpty()) {
 							playerIn.addItemStackToInventory(extracted);
-							plate.markDirty();
 
+							plate.markDirty();
 							playerIn.openContainer.detectAndSendChanges();
 
+							PacketHandler.NETWORK.sendToAllAround(new PacketRemoveItemCraftingPlate(pos, i), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 							break;
 						}
 					}

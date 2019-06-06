@@ -4,6 +4,8 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.wizardry.api.CraftingPlateRecipeManager;
+import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -43,7 +45,22 @@ public class PacketAddItemCraftingPlate extends PacketBase {
 		if (entity instanceof TileCraftingPlate) {
 			TileCraftingPlate plate = (TileCraftingPlate) entity;
 
-			ItemHandlerHelper.insertItem(plate.realInventory.getHandler(), stack, false);
+			if (!plate.isInventoryEmpty() && CraftingPlateRecipeManager.doesRecipeExistForItem(stack)) {
+
+				ItemHandlerHelper.insertItem(plate.input.getHandler(), stack, false);
+
+			} else if (!(CraftingPlateRecipeManager.doesRecipeExistForItem(stack))) {
+
+				for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
+					if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
+						plate.realInventory.getHandler().insertItem(i, stack, false);
+
+						if (plate.renderHandler != null) {
+							((TileCraftingPlateRenderer) plate.renderHandler).update(i);
+						}
+					}
+				}
+			}
 		}
 	}
 }
