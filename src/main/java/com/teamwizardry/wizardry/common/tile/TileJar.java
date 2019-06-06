@@ -25,6 +25,8 @@ public class TileJar extends TileMod {
 	public Color color = Color.WHITE;
 	@Save
 	public int age = 0;
+	@Save
+	public boolean isDulled = false;
 
 	@Module
 	public ManaModule cap = new ManaModule(new CustomWizardryCapability(1000, 1000, 0, 0));

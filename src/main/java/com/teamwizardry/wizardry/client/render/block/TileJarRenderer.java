@@ -40,35 +40,38 @@ public class TileJarRenderer extends TileRenderHandler<TileJar> {
 		if (!te.hasFairy) return;
 		Vec3d pos = new Vec3d(te.getPos()).add(0.5, 0.35, 0.5).add(fairyPos);
 
+		float excitement = (float) (tile.cap.getHandler().getMana() / tile.cap.getHandler().getMaxMana());
+
 		Color color = te.color;
-		ParticleBuilder glitter = new ParticleBuilder(10);
+		ParticleBuilder glitter = new ParticleBuilder((int) (RandUtil.nextInt(1, 3) + (10 * (1 - excitement))));
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
-		glitter.setScale(0.3f);
+		glitter.setScale(0.3f + (excitement * 3));
 		ParticleSpawner.spawn(glitter, te.getWorld(), new StaticInterp<>(pos), 1);
 
-		if (RandUtil.nextInt(10) == 0) {
-			ParticleBuilder trail = new ParticleBuilder(20);
+		if (RandUtil.nextInt((int) (10 * (1 - excitement))) == 0) {
+			ParticleBuilder trail = new ParticleBuilder(RandUtil.nextInt(10, 20));
 			trail.setColor(te.color);
 			trail.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			trail.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
-			trail.setScale(0.2f);
+			trail.setScale(0.2f + 0.2f * excitement);
 			//trail.enableMotionCalculation();
 			ParticleSpawner.spawn(trail, te.getWorld(), new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
 				trail.setMotion(new Vec3d(
-						RandUtil.nextDouble(-0.005, 0.005),
-						RandUtil.nextDouble(-0.005, 0.005),
-						RandUtil.nextDouble(-0.005, 0.005)
+						RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement),
+						RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement),
+						RandUtil.nextDouble(-0.005, 0.005) * (10 * excitement)
 				));
 			});
 		}
 	}
 
 	private void animCurve() {
+		float excitement = (float) (1f - tile.cap.getHandler().getMana() / tile.cap.getHandler().getMaxMana());
 		new BasicAnimation<>(this, "fairyPos").ease(Easing.easeInQuint)
 				.to(new Vec3d(RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.25, 0.25), RandUtil.nextDouble(-0.1, 0.1)))
-				.duration(RandUtil.nextFloat(5, 25))
+				.duration((1 + RandUtil.nextFloat(10, 20) * excitement))
 				.completion(this::animCurve).addTo(ANIMATOR);
 
 	}
