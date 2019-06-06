@@ -474,10 +474,9 @@ public abstract class ModuleInstance {
 	 *
 	 * @param data    The spellData associated with it.
 	 * @param ring    The SpellRing made with this.
-	 * @param runOnce
 	 * @return If the spellData has succeeded.
 	 */
-	public final boolean castSpell(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring, boolean runOnce) {
+	public final boolean castSpell(@Nonnull World world, @Nonnull SpellData data, @Nonnull SpellRing ring) {
 		if (world.isRemote) return true;
 
 		boolean success;
@@ -497,7 +496,7 @@ public abstract class ModuleInstance {
 
 			list.appendTag(new NBTTagString(ring.getUniqueID().toString()));
 			data.addData(SpellData.DefaultKeys.TAG_LIST, list);
-			success = internalCastSpell(world, data, ring) && ((ILingeringModule) moduleClass).runOnce(world, data, ring);
+			success = internalCastSpell(world, data, ring) && ((ILingeringModule) moduleClass).runOnStart(world, data, ring);
 
 			if (success) {
 				worldCap.getSpellObjectManager().addLingering(new SpellObjectManager.LingeringObject(world, data, ring), ((ILingeringModule) moduleClass).getLingeringTime(world, data, ring));

@@ -15,12 +15,12 @@ public class ModPotions {
 	public static PotionTimeSlow TIME_SLOW;
 	public static PotionSlippery SLIPPERY;
 	public static PotionLowGrav LOW_GRAVITY;
-	public static PotionVanish VANISH;
 	public static PotionCrash CRASH;
 	public static PotionZachCorruption ZACH_CORRUPTION;
 	public static PotionSuffocate SUFFOCATE;
 	public static PotionGrace GRACE;
 	public static PotionBouncing BOUNCING;
+	public static PotionTimeLock TIME_LOCK;
 
 	public static void init() {
 		NULLIFY_GRAVITY = new PotionNullGrav();
@@ -31,10 +31,10 @@ public class ModPotions {
 		SLIPPERY = new PotionSlippery();
 		LOW_GRAVITY = new PotionLowGrav();
 		CRASH = new PotionCrash();
-		VANISH = new PotionVanish();
 		ZACH_CORRUPTION = new PotionZachCorruption();
 		SUFFOCATE = new PotionSuffocate();
 		BOUNCING = new PotionBouncing();
+		TIME_LOCK = new PotionTimeLock();
 		MinecraftForge.EVENT_BUS.register(GRACE = new PotionGrace());
 	}
 }

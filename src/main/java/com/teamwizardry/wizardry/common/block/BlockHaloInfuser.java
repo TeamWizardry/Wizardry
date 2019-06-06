@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.common.core.WizardryStructure;
+import com.teamwizardry.wizardry.api.structure.WizardryStructure;
 import com.teamwizardry.wizardry.common.tile.TileHaloInfuser;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModStructures;

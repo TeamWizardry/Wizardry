@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.core;
+package com.teamwizardry.wizardry.api.structure;
 
 import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.kotlin.ClientUtilMethods;

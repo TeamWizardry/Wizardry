@@ -1,0 +1,20 @@
+{
+  "sub_module_id": "effect_time_lock",
+  "reference_module_id": "effect_time_lock",
+  "item": "minecraft:chorus_fruit",
+  "primary_color": "ff1952",
+  "secondary_color": "18fff3",
+  "mana": {
+    "min": 300
+  },
+  "burnout": {
+    "min": 400
+  },
+  "cooldown": {
+    "min": 100
+  },
+  "duration": {
+    "min": 40,
+    "max": 200
+  }
+}

@@ -91,7 +91,7 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 			if (entity instanceof EntityLivingBase) {
 				if (!((EntityLivingBase) entity).isPotionActive(ModPotions.TIME_SLOW) && entity.getDistanceSq(targetPos.x, targetPos.y, targetPos.z) <= aoe * aoe) {
 					data.processEntity(entity, false);
-					runOnce(world, data, childRing);
+					runOnStart(world, data, childRing);
 				}
 			}
 		}
@@ -101,7 +101,7 @@ public class ModuleEffectTimeSlow implements IModuleEffect, ILingeringModule {
 
 	@Override
 	@SuppressWarnings("unused")
-	public boolean runOnce(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean runOnStart(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		BlockPos targetPos = spell.getTargetPos();
 		Entity targetEntity = spell.getVictim(world);
 		Entity caster = spell.getCaster(world);

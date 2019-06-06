@@ -26,7 +26,7 @@ public class ModItems {
 	
 	public static ItemOrb ORB;
 	public static ItemLevitationOrb LEVITATION_ORB;
-	public static ItemNacrePearl PEARL_NACRE;
+	public static NacrePearlSpell PEARL_NACRE;
 
 	public static ItemStaff STAFF;
 
@@ -61,7 +61,7 @@ public class ModItems {
 	public static void init() {
 		ORB = new ItemOrb();
 		LEVITATION_ORB = new ItemLevitationOrb();
-		PEARL_NACRE = new ItemNacrePearl();
+		PEARL_NACRE = new NacrePearlSpell();
 
 		RING = new ItemRing();
 		BOOK = new ItemBook();

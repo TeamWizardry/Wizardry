@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.api;
 
 import com.google.common.collect.ImmutableMap;
+import com.teamwizardry.wizardry.api.lifetimeobject.LifetimeObject;
+import com.teamwizardry.wizardry.api.lifetimeobject.LifetimeObjectManager;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;

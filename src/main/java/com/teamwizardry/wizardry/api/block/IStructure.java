@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.block;
 
-import com.teamwizardry.wizardry.common.core.WizardryStructure;
+import com.teamwizardry.wizardry.api.structure.WizardryStructure;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;

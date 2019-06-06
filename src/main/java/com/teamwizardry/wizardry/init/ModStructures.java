@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.core.StructureManager;
+import com.teamwizardry.wizardry.api.structure.StructureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 

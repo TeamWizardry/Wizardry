@@ -6,6 +6,8 @@ import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
+import com.teamwizardry.wizardry.api.CraftingPlateRecipeManager;
+import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -65,16 +67,28 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		ArrayList<BlockPos> errors = new ArrayList<>(((IStructure) tile.getBlockType()).testStructure(tile.getWorld(), tile.getPos()));
 		errors.sort(Vec3i::compareTo);
 
-		if (tile.revealStructure && tile.getBlockType() instanceof IStructure) {
+		ItemStack input = tile.getInput();
+		if (input.isEmpty()) {
+			input = tile.getOutput();
+			if (input.isEmpty()) {
+				input = ItemStack.EMPTY;
+			}
+		}
 
+		ICraftingPlateRecipe recipeForItem = CraftingPlateRecipeManager.getRecipe(tile.getWorld(), tile.getPos(), input);
+		if (recipeForItem != null) recipeForItem.renderInput(tile.getWorld(), tile.getPos(), input, partialTicks);
+
+		if (!errors.isEmpty() && tile.revealStructure && tile.getBlockType() instanceof IStructure) {
 			ModStructures.structureManager.draw(ModStructures.CRAFTING_PLATE, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.3f);
+		}
 
-			if (!errors.isEmpty()) {
-				for (BlockPos error : errors) {
-					StructureErrorRenderer.addError(error);
-				}
+		if (!errors.isEmpty()) {
+			for (BlockPos error : errors) {
+				StructureErrorRenderer.addError(error);
 			}
 			return;
+		} else if (!CraftingPlateRecipeManager.doesRecipeExist(tile.getWorld(), tile.getPos(), input) && RandUtil.nextInt(4) == 0) {
+			LibParticles.CRAFTING_ALTAR_IDLE(tile.getWorld(), new Vec3d(tile.getPos()).add(0.5, 0.7, 0.5));
 		}
 
 		// render each item at its current position
@@ -116,26 +130,6 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 					}
 				}
 			}
-		}
-
-		ItemStack pearlToRender = tile.getInputPearl();
-		if (pearlToRender.isEmpty()) {
-			pearlToRender = tile.getOutputPearl();
-			if (pearlToRender.isEmpty()) {
-				pearlToRender = ItemStack.EMPTY;
-			}
-		}
-
-		if (!pearlToRender.isEmpty()) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(0.5, 1, 0.5);
-			GlStateManager.scale(0.4, 0.4, 0.4);
-			GlStateManager.rotate((float) (tile.getWorld().getTotalWorldTime() * 10.0), 0, 1, 0);
-			GlStateManager.translate(0, 0.5 + Math.sin((tile.getWorld().getTotalWorldTime() + partialTicks) / 5) / 10.0, 0);
-			Minecraft.getMinecraft().getRenderItem().renderItem(pearlToRender, TransformType.NONE);
-			GlStateManager.popMatrix();
-		} else if (errors.isEmpty() && RandUtil.nextInt(4) == 0) {
-			LibParticles.CRAFTING_ALTAR_IDLE(tile.getWorld(), new Vec3d(tile.getPos()).add(0.5, 0.7, 0.5));
 		}
 	}
 

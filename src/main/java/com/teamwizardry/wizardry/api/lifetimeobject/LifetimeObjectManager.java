@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api;
+package com.teamwizardry.wizardry.api.lifetimeobject;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

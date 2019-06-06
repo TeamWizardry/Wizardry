@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.gui.provided.book.context.Bookmark
 import com.teamwizardry.librarianlib.features.gui.provided.book.context.ComponentBookMark;
 import com.teamwizardry.librarianlib.features.gui.provided.book.structure.ComponentMaterialsBar;
 import com.teamwizardry.librarianlib.features.gui.provided.book.structure.StructureMaterials;
-import com.teamwizardry.wizardry.common.core.WizardryStructure;
+import com.teamwizardry.wizardry.api.structure.WizardryStructure;
 import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

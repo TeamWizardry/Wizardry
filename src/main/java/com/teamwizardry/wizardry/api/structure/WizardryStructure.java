@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.core;
+package com.teamwizardry.wizardry.api.structure;
 
 import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.librarianlib.features.structure.TemplateBlockAccess;

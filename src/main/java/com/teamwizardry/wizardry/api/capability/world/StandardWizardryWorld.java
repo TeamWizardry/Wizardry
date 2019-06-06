@@ -17,12 +17,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class StandardWizardryWorld implements WizardryWorld {
 
 	private World world;
 	private SpellObjectManager spellObjectManager = new SpellObjectManager();
-	public HashMap<BlockPos, NemezTracker> nemezDrives = new HashMap<>();
+	public HashMap<BlockPos, NemezTracker> blockNemezDrives = new HashMap<>();
+	public HashMap<UUID, NemezTracker> entityNemezDrives = new HashMap<>();
 
 	public static StandardWizardryWorld create(World world) {
 		StandardWizardryWorld wizardryWorld = new StandardWizardryWorld();
@@ -42,7 +44,16 @@ public class StandardWizardryWorld implements WizardryWorld {
 
 	@Override
 	public NemezTracker addNemezDrive(BlockPos pos, NemezTracker nemezDrive) {
-		nemezDrives.put(pos, nemezDrive);
+		blockNemezDrives.put(pos, nemezDrive);
+
+		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(serializeNBT()), world.provider.getDimension());
+
+		return nemezDrive;
+	}
+
+	@Override
+	public NemezTracker addNemezDrive(UUID uuid, NemezTracker nemezDrive) {
+		entityNemezDrives.put(uuid, nemezDrive);
 
 		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(serializeNBT()), world.provider.getDimension());
 
@@ -51,14 +62,26 @@ public class StandardWizardryWorld implements WizardryWorld {
 
 	@Override
 	public void removeNemezDrive(BlockPos pos) {
-		nemezDrives.remove(pos);
+		blockNemezDrives.remove(pos);
 
 		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(serializeNBT()), world.provider.getDimension());
 	}
 
 	@Override
-	public HashMap<BlockPos, NemezTracker> getNemezDrives() {
-		return nemezDrives;
+	public void removeNemezDrive(UUID uuid) {
+		entityNemezDrives.remove(uuid);
+
+		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(serializeNBT()), world.provider.getDimension());
+	}
+
+	@Override
+	public HashMap<BlockPos, NemezTracker> getBlockNemezDrives() {
+		return blockNemezDrives;
+	}
+
+	@Override
+	public HashMap<UUID, NemezTracker> getEntityNemezDrives() {
+		return entityNemezDrives;
 	}
 
 	@Override
@@ -68,7 +91,7 @@ public class StandardWizardryWorld implements WizardryWorld {
 		compound.setTag("spell_object_manager", spellObjectManager.manager.toNbt());
 
 		NBTTagList driveNBT = new NBTTagList();
-		for (Map.Entry<BlockPos, NemezTracker> entry : nemezDrives.entrySet()) {
+		for (Map.Entry<BlockPos, NemezTracker> entry : blockNemezDrives.entrySet()) {
 			if (entry == null) continue;
 			NBTTagCompound compound1 = new NBTTagCompound();
 			compound1.setLong("pos", entry.getKey().toLong());
@@ -96,7 +119,7 @@ public class StandardWizardryWorld implements WizardryWorld {
 						NemezTracker tracker = new NemezTracker();
 						tracker.deserializeNBT(((NBTTagCompound) base).getTagList("drive", Constants.NBT.TAG_COMPOUND));
 
-						nemezDrives.put(pos, tracker);
+						blockNemezDrives.put(pos, tracker);
 					}
 				}
 			}

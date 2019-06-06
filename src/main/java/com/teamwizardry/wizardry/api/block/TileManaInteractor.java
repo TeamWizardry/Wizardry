@@ -73,6 +73,16 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 	public void update() {
 		if (distanceCache.isEmpty()) return;
 
+		if (suckManaAutomatically()) suckMana(getWizardryCap());
+	}
+
+	public boolean suckManaAutomatically() {
+		return true;
+	}
+
+	public double suckMana(IWizardryCapability cap) {
+		double totalZucced = 0;
+
 		for (SuckRule suckRule : suckRules) {
 			if (getClass().isAssignableFrom(suckRule.thisClazz)) {
 
@@ -81,7 +91,11 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 
 				int i = 0;
 				for (TileManaInteractor interacter : interactables) {
-					if (suckManaFrom(interacter, suckRule)) {
+					double zucced = suckManaFrom(interacter, suckRule, cap);
+					if (zucced > 0) {
+						totalZucced += zucced;
+
+						// Trigger events to notify
 						interacter.onDrainedFrom(this);
 						onSuckFrom(interacter);
 
@@ -90,6 +104,7 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 				}
 			}
 		}
+		return totalZucced;
 	}
 
 	@Nullable
@@ -118,31 +133,30 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 		this.allowOutsideSucking = allowOutsideSucking;
 	}
 
-	public boolean suckManaFrom(TileManaInteractor interacterFrom, SuckRule suckRule) {
+	public double suckManaFrom(TileManaInteractor interacterFrom, SuckRule suckRule, IWizardryCapability cap) {
 
-		if (getWizardryCap() == null || interacterFrom.getWizardryCap() == null) return false;
+		if (cap == null || interacterFrom.getWizardryCap() == null) return 0;
+		if (!isAllowOutsideSucking() && interacterFrom.isAllowOutsideSucking()) return 0;
+		if (!suckRule.condition.test(this, interacterFrom)) return 0;
 
-		if (!isAllowOutsideSucking() && interacterFrom.isAllowOutsideSucking()) return false;
-		if (!suckRule.condition.test(this, interacterFrom)) return false;
-
-		try (CapManager.CapManagerBuilder thisMgr = CapManager.forObject(getWizardryCap())) {
+		try (CapManager.CapManagerBuilder thisMgr = CapManager.forObject(cap)) {
 			try (CapManager.CapManagerBuilder theirMgr = CapManager.forObject(interacterFrom.getWizardryCap())) {
 
-				if (thisMgr.isManaFull()) return false;
-				if (theirMgr.isManaEmpty()) return false;
+				if (thisMgr.isManaFull()) return 0;
+				if (theirMgr.isManaEmpty()) return 0;
 
 				if (suckRule.equalize && Math.abs(thisMgr.getMana() - theirMgr.getMana()) <= suckRule.idealAmount)
-					return false;
+					return 0;
 
 				double ratio = theirMgr.getMana() / thisMgr.getMana();
 
 				if (suckRule.equalize && Double.isFinite(ratio) && ratio <= 1.2)
-					return false;
+					return 0;
 
 				double amount = interacterFrom.drainMana(suckRule.idealAmount);
-				if (amount <= 0) return false;
+				if (amount <= 0) return 0;
 
-				CapManager.forObject(getWizardryCap()).addMana(amount).close();
+				CapManager.forObject(cap).addMana(amount).close();
 
 				if (world.isRemote)
 					ClientRunnable.run(new ClientRunnable() {
@@ -160,7 +174,7 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 							});
 						}
 					});
-				return true;
+				return amount;
 			}
 		}
 	}

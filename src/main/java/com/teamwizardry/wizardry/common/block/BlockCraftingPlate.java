@@ -5,12 +5,12 @@ import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.item.IInfusableItem;
+import com.teamwizardry.wizardry.api.item.ISpellInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.api.structure.WizardryStructure;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.common.core.WizardryStructure;
 import com.teamwizardry.wizardry.common.network.PacketAddItemCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.network.PacketRemoveItemCraftingPlate;
@@ -78,7 +78,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 		if (testStructure(worldIn, pos).isEmpty()) {
 			TileCraftingPlate plate = getTE(worldIn, pos);
-			if (!plate.inputPearl.getHandler().getStackInSlot(0).isEmpty()) return false;
+			if (!plate.input.getHandler().getStackInSlot(0).isEmpty()) return false;
 			if (!heldItem.isEmpty()) {
 				if (heldItem.getItem() == ModItems.BOOK && playerIn.isCreative()) {
 					ItemStack pearl = new ItemStack(ModItems.PEARL_NACRE);
@@ -102,7 +102,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					//NBTHelper.setFloat(pearl, "saturation", hsv[1]);
 					NBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
 
-					plate.outputPearl.getHandler().setStackInSlot(0, pearl);
+					plate.output.getHandler().setStackInSlot(0, pearl);
 					plate.markDirty();
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).add(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, false),
 							new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
@@ -116,14 +116,14 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					heldItem.shrink(subtractHand);
 					stack.setCount(oldCount - heldItem.getCount());
 
-					if (!plate.isInventoryEmpty() && stack.getItem() instanceof IInfusableItem) {
-						plate.inputPearl.getHandler().setStackInSlot(0, stack);
+					if (!plate.isInventoryEmpty() && stack.getItem() instanceof ISpellInfusable) {
+						plate.input.getHandler().setStackInSlot(0, stack);
 						plate.markDirty();
 
 						playerIn.openContainer.detectAndSendChanges();
 						worldIn.notifyBlockUpdate(pos, state, state, 3);
 
-					} else if (!(stack.getItem() instanceof IInfusableItem)) {
+					} else if (!(stack.getItem() instanceof ISpellInfusable)) {
 						ItemHandlerHelper.insertItem(plate.realInventory.getHandler(), stack, false);
 						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 						plate.markDirty();
@@ -134,8 +134,8 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 				}
 			} else {
 
-				if (plate.hasOutputPearl()) {
-					playerIn.setHeldItem(hand, plate.outputPearl.getHandler().extractItem(0, 1, false));
+				if (plate.hasOutput()) {
+					playerIn.setHeldItem(hand, plate.output.getHandler().extractItem(0, 1, false));
 					plate.markDirty();
 
 					playerIn.openContainer.detectAndSendChanges();

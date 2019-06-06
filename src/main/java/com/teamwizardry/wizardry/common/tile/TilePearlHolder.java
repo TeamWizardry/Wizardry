@@ -12,8 +12,8 @@ import com.teamwizardry.wizardry.api.item.ICooldownSpellCaster;
 import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.ItemOrb;
+import com.teamwizardry.wizardry.common.item.NacrePearlSpell;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +35,7 @@ public class TilePearlHolder extends TileManaInteractor implements ICooldownSpel
 	public ModuleInventory inventory = new ModuleInventory(new ItemStackHandler() {
 		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-			if (stack.getItem() instanceof IManaCell || stack.getItem() instanceof ItemNacrePearl) {
+			if (stack.getItem() instanceof IManaCell || stack.getItem() instanceof NacrePearlSpell) {
 				//Max number of orbs the pearl holder can hold
 				return 1;
 			} else {
@@ -122,7 +122,7 @@ public class TilePearlHolder extends TileManaInteractor implements ICooldownSpel
 	}
 
 	public boolean containsNacrePearl() {
-		return getItemStack().getItem() instanceof ItemNacrePearl;
+		return getItemStack().getItem() instanceof NacrePearlSpell;
 	}
 
 	public ItemStack getItemStack() {

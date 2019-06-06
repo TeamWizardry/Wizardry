@@ -43,7 +43,7 @@ public class ModuleEffectBouncing implements IModuleEffect, ILingeringModule {
 	}
 
 	@Override
-	public boolean runOnce(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean runOnStart(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity entity = spell.getVictim(world);
 
 		BlockPos pos = spell.getTargetPos();

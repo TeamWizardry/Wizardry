@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api;
+package com.teamwizardry.wizardry.api.lifetimeobject;
 
 public interface LifetimeObject {
 

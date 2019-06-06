@@ -19,7 +19,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RenderUtils;
-import com.teamwizardry.wizardry.common.core.SpellNemezTracker;
+import com.teamwizardry.wizardry.common.core.WizardryNemezManager;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -68,7 +68,7 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 		BlockPos targetPos = spell.getTargetPos();
 		if (targetPos == null) return;
 
-		NemezTracker nemezDrive = SpellNemezTracker.getAndRemoveNemezDrive(world, targetPos);
+		NemezTracker nemezDrive = WizardryNemezManager.getAndRemoveNemezDrive(world, targetPos);
 
 		if (nemezDrive != null) {
 			NemezEventHandler.reverseTime(world, nemezDrive, targetPos);
@@ -96,7 +96,7 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 
 		if (targetPos != null && faceHit != null) {
 			world.playSound(null, targetPos, ModSounds.ETHEREAL, SoundCategory.NEUTRAL, 1, 1);
-			NemezTracker nemezDrive = SpellNemezTracker.getOrCreateNemezDrive(world, targetPos);
+			NemezTracker nemezDrive = WizardryNemezManager.getOrCreateNemezDrive(world, targetPos);
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
 
 			faceHit = faceHit.getOpposite();

@@ -14,7 +14,14 @@ public interface ILingeringModule {
 	/**
 	 * Runs once when lingering starts
 	 */
-	default boolean runOnce(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	default boolean runOnStart(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return true;
+	}
+
+	/**
+	 * Runs once when lingering ends
+	 */
+	default boolean runOnFinish(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		return true;
 	}
 }

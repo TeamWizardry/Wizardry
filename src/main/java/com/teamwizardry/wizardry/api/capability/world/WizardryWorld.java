@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public interface WizardryWorld extends ICapabilitySerializable<NBTTagCompound> {
 
@@ -14,8 +15,13 @@ public interface WizardryWorld extends ICapabilitySerializable<NBTTagCompound> {
 
 	NemezTracker addNemezDrive(BlockPos pos, NemezTracker nemezDrive);
 
+	NemezTracker addNemezDrive(UUID uuid, NemezTracker nemezDrive);
+
 	void removeNemezDrive(BlockPos pos);
 
-	HashMap<BlockPos, NemezTracker> getNemezDrives();
+	void removeNemezDrive(UUID uuid);
 
+	HashMap<BlockPos, NemezTracker> getBlockNemezDrives();
+
+	HashMap<UUID, NemezTracker> getEntityNemezDrives();
 }
