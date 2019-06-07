@@ -428,3 +428,14 @@ wizardry.book.dimensions.underworld.content1=<WIP><br>Das Reich von Zachriel, De
 wizardry.book.dimensions.underworld.content2=Es gibt wenig Leben im bewölkten Himmel der Unterwelt (schließlich ist es ja das Reich der Toten), aber einige Wesen kann man dort trotzdem finden<br><WIP>
 wizardry.book.dimensions.underworld.content3=Um in den Unterirdischen Himmel zu gelangen, musst du von einer Höhe von über 130 Blöcken abspringen und unten auf Grundgestein aufkommen. Statt zu sterben wirst du direkt durch das Grundgestein hindurch fallen und relativ weich zwischen den Wolken des Unterirdischen Himmels landen.
 wizardry.book.dimensions.underworld.content4=Um den Himmel wieder zu verlassen, springe einfach in die Leere unter den Wolken. Du wirst direkt am Anfangspunkt der Oberwelt aus den Wolken fallen.
+
+item.wizardry.fairy_jar.dulled=Dulled Fairy In A Jar
+item.wizardry.fairy_jar.barely_excited=Barely Excited Fairy In A Jar
+item.wizardry.fairy_jar.moderately_excited=Moderately Excited Fairy In A Jar
+item.wizardry.fairy_jar.very_excited=Very Excited Fairy In A Jar
+item.wizardry.fairy_jar.overloaded=Overloaded Fairy In A Jar
+item.wizardry.fairy_jar.dulled.info=This fairy now obeys you
+item.wizardry.fairy_jar.barely_excited.info=This fairy needs more mana, it's hardly charged
+item.wizardry.fairy_jar.moderately_excited.info=This fairy is half way charged. It needs more mana
+item.wizardry.fairy_jar.very_excited.info=This fairy is almost fully charged with mana. It needs a little more
+item.wizardry.fairy_jar.overloaded.info=This fairy is completely overloaded and unstable.

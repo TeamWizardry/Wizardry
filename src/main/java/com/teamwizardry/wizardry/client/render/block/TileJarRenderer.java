@@ -48,6 +48,11 @@ public class TileJarRenderer extends TileRenderHandler<TileJar> {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
 		glitter.setScale(0.3f + (excitement * 3));
+		if (te.isDulled) {
+			glitter.enableMotionCalculation();
+			glitter.setCollision(true);
+		}
+
 		ParticleSpawner.spawn(glitter, te.getWorld(), new StaticInterp<>(pos), 1);
 
 		if (RandUtil.nextInt((int) (10 * (1 - excitement))) == 0) {
@@ -74,7 +79,7 @@ public class TileJarRenderer extends TileRenderHandler<TileJar> {
 	}
 
 	private void animCurve() {
-		float excitement = (float) (1f - tile.cap.getHandler().getMana() / tile.cap.getHandler().getMaxMana()) * (tile.isDulled ? 0 : 1);
+		float excitement = (float) (1f - (tile.cap.getHandler().getMana() / tile.cap.getHandler().getMaxMana()) * (tile.isDulled ? 0 : 1));
 		new BasicAnimation<>(this, "fairyPos").ease(Easing.easeInQuint)
 				.to(new Vec3d(RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.25, 0.25), RandUtil.nextDouble(-0.1, 0.1)))
 				.duration((RandUtil.nextInt(1, 5) + RandUtil.nextFloat(10, 20) * excitement))

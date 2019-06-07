@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.common.tile.TileJar;
@@ -12,6 +13,7 @@ import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -22,6 +24,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.List;
 
 import static net.minecraft.util.EnumActionResult.PASS;
 import static net.minecraft.util.EnumActionResult.SUCCESS;
@@ -102,7 +106,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 						jar.color = new Color(NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
 						jar.age = NBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
 						jar.hasFairy = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
-						jar.cap.getHandler().setMana(NBTHelper.getDouble(stack, Constants.NBT.FAIRY_MANA, 0));
+						jar.cap.getHandler().setMana(CapManager.getMana(stack));
 						jar.isDulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
 						jar.markDirty();
 						world.checkLight(replacable ? pos : offset);
@@ -130,5 +134,55 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	@Override
 	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return (stack, tintIndex) -> ((tintIndex == 0) && (stack.getItemDamage() != 0)) ? NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF) : 0xFFFFFF;
+	}
+
+	@Override
+	public String getItemStackDisplayName(ItemStack stack) {
+		if (stack.getItemDamage() == 2) {
+			double mana = CapManager.getMana(stack) / CapManager.getMaxMana(stack);
+			boolean dulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
+
+			if (dulled) {
+				return I18n.translateToLocal("item.wizardry.fairy_jar.dulled.name").trim();
+			} else if (mana > 0.25 && mana < 0.5) {
+				return I18n.translateToLocal("item.wizardry.fairy_jar.barely_excited.name").trim();
+
+			} else if (mana >= 0.5 && mana < 0.75) {
+				return I18n.translateToLocal("item.wizardry.fairy_jar.moderately_excited.name").trim();
+
+			} else if (mana > 0.75 && mana < 1) {
+				return I18n.translateToLocal("item.wizardry.fairy_jar.very_excited.name").trim();
+
+			} else if (mana >= 1) {
+				return I18n.translateToLocal("item.wizardry.fairy_jar.overloaded.name").trim();
+
+			} else return super.getItemStackDisplayName(stack);
+
+		} else return super.getItemStackDisplayName(stack);
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+		if (stack.getItemDamage() == 2) {
+			double mana = CapManager.getMana(stack) / CapManager.getMaxMana(stack);
+			boolean dulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
+
+			if (dulled) {
+				tooltip.add(I18n.translateToLocal("item.wizardry.fairy_jar.dulled.info").trim());
+			} else if (mana > 0.25 && mana < 0.5) {
+				tooltip.add(I18n.translateToLocal("item.wizardry.fairy_jar.barely_excited.info").trim());
+
+			} else if (mana >= 0.5 && mana < 0.75) {
+				tooltip.add(I18n.translateToLocal("item.wizardry.fairy_jar.moderately_excited.info").trim());
+
+			} else if (mana > 0.75 && mana < 1) {
+				tooltip.add(I18n.translateToLocal("item.wizardry.fairy_jar.very_excited.info").trim());
+
+			} else if (mana >= 1) {
+				tooltip.add(I18n.translateToLocal("item.wizardry.fairy_jar.overloaded.info").trim());
+
+			} else super.addInformation(stack, worldIn, tooltip, flagIn);
+
+		} else super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
 }

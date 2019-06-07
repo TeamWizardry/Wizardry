@@ -220,3 +220,14 @@ wizardry.book.dimensions.underworld.content2=Життя рідко зустрі�
 wizardry.book.dimensions.underworld.content3=Щоб дістатися до підземного світу, стрибніть з висоти понад 130 блоків на бедрок в самому низу світу, ви потрапите прямо в верхню частину підземного світу, де вас зустріне приємне і відносно безпечне падіння на його хмари.
 wizardry.book.dimensions.underworld.content4=Щоб повернутися з підземного світу, стрибніть в його порожнечу. Ви потрапите у верхню частину світу.
 
+
+item.wizardry.fairy_jar.dulled=Dulled Fairy In A Jar
+item.wizardry.fairy_jar.barely_excited=Barely Excited Fairy In A Jar
+item.wizardry.fairy_jar.moderately_excited=Moderately Excited Fairy In A Jar
+item.wizardry.fairy_jar.very_excited=Very Excited Fairy In A Jar
+item.wizardry.fairy_jar.overloaded=Overloaded Fairy In A Jar
+item.wizardry.fairy_jar.dulled.info=This fairy now obeys you
+item.wizardry.fairy_jar.barely_excited.info=This fairy needs more mana, it's hardly charged
+item.wizardry.fairy_jar.moderately_excited.info=This fairy is half way charged. It needs more mana
+item.wizardry.fairy_jar.very_excited.info=This fairy is almost fully charged with mana. It needs a little more
+item.wizardry.fairy_jar.overloaded.info=This fairy is completely overloaded and unstable.
