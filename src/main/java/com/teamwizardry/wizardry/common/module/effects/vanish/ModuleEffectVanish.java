@@ -73,6 +73,7 @@ public class ModuleEffectVanish implements IModuleEffect {
 
 			((EntityLivingBase) targetEntity).world.playSound(null, targetEntity.getPosition(), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 0.5f, 1);
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, (int) duration, 100, false, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, (int) duration, 100, false, false));
 			VanishTracker.addVanishObject(targetEntity.getEntityId(), (int) duration);
 			PacketHandler.NETWORK.sendToAll(new PacketVanishPlayer(targetEntity.getEntityId(), (int) duration));
 			//	((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, (int) duration, 0, true, false));
