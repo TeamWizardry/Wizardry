@@ -5,19 +5,12 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
-import com.teamwizardry.wizardry.api.events.SpellCastEvent;
-import com.teamwizardry.wizardry.api.spell.IContinuousModule;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
-import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
-import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -25,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -39,7 +31,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.UUID;
 
 public class EventHandler {
@@ -69,7 +60,7 @@ public class EventHandler {
 				newItem.motionX = item.motionX;
 				newItem.motionY = item.motionY;
 				newItem.motionZ = item.motionZ;
-				newItem.setDefaultPickupDelay();
+				newItem.setPickupDelay(40);
 				item.setDead();
 				event.getWorld().spawnEntity(newItem);
 			}
@@ -167,24 +158,6 @@ public class EventHandler {
 					}
 				}
 			}
-		}
-	}
-
-	@SubscribeEvent
-	public void fairyAmbush(SpellCastEvent event) {
-		Entity caster = event.getSpellData().getCaster(event.getWorld());
-		int chance = 5;
-		for (SpellRing spellRing : SpellUtils.getAllSpellRings(event.getSpellRing()))
-			if (spellRing.getModule() != null && spellRing.getModule().getModuleClass() instanceof IContinuousModule) {
-				chance = 1000;
-				break;
-			}
-		if (RandUtil.nextInt(chance) == 0 && caster != null) {
-			List<EntityFairy> fairyList = event.getWorld().getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).grow(64, 64, 64));
-			if (fairyList.isEmpty()) return;
-			EntityFairy fairy = fairyList.get(RandUtil.nextInt(fairyList.size() - 1));
-			if (fairy == null) return;
-			fairy.ambush = true;
 		}
 	}
 }

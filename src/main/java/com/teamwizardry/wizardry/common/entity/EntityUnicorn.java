@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornCharge;
-import com.teamwizardry.wizardry.common.entity.ai.UnicornPathNavigator;
+import com.teamwizardry.wizardry.common.entity.ai.WizardryFlyablePathNavigator;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
@@ -57,7 +57,7 @@ public class EntityUnicorn extends EntityMob implements EntityFlying {
 	@NotNull
 	@Override
 	protected PathNavigate createNavigator(@NotNull World worldIn) {
-		return new UnicornPathNavigator(this, world);
+		return new WizardryFlyablePathNavigator(this, world);
 	}
 
 	@Override

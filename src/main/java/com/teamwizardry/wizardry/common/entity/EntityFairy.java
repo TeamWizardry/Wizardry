@@ -1,58 +1,60 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.features.base.entity.FlyingEntityMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.entity.ai.FairyAIWanderAvoidWaterFlying;
+import com.teamwizardry.wizardry.common.entity.ai.FairyMoveHelper;
+import com.teamwizardry.wizardry.common.entity.ai.WizardryFlyablePathNavigator;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIAvoidEntity;
+import net.minecraft.entity.ai.EntityAIFollow;
+import net.minecraft.entity.ai.EntityAIFollowOwnerFlying;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.EntityFlying;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.List;
-import java.util.Random;
 
 
 /**
  * Created by Demoniaque on 8/21/2016.
  */
 @SaveInPlace
-public class EntityFairy extends FlyingEntityMod {
+public class EntityFairy extends EntityTameable implements EntityFlying {
 
-	public boolean ambush = false;
-	private double mana;
-	private Color color;
-	private boolean dulled;
-	private int age;
-	private boolean changingCourse = false;
-	private int changeCourseTick = 0;
-	private float tickPitch = 0;
-	private float tickYaw = 0;
+	public double mana;
+	public Color color;
+	public boolean dulled;
+	public int age;
+	public boolean changingCourse = false;
+	public int changeCourseTick = 0;
+	public float tickPitch = 0;
+	public float tickYaw = 0;
+	private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
@@ -61,7 +63,8 @@ public class EntityFairy extends FlyingEntityMod {
 		experienceValue = 5;
 		color = new Color(RandUtil.nextFloat(), RandUtil.nextFloat(), RandUtil.nextFloat());
 		color = color.brighter();
-		age = RandUtil.nextInt(1, 100);
+		age = RandUtil.nextInt(10, 300);
+		moveHelper = new FairyMoveHelper(this);
 	}
 
 	public EntityFairy(World worldIn, Color color, int age, double mana) {
@@ -72,7 +75,15 @@ public class EntityFairy extends FlyingEntityMod {
 		experienceValue = 5;
 		this.color = color;
 		this.age = age;
+		moveHelper = new FairyMoveHelper(this);
 	}
+
+	@Nullable
+	@Override
+	public EntityAgeable createChild(@NotNull EntityAgeable ageable) {
+		return null;
+	}
+
 
 	@Override
 	public boolean getCanSpawnHere() {
@@ -80,10 +91,75 @@ public class EntityFairy extends FlyingEntityMod {
 	}
 
 	@Override
-	protected void applyEntityAttributes() {
+	public boolean isBreedingItem(ItemStack stack) {
+		return false;
+	}
+
+	@Override
+	public boolean canMateWith(@NotNull EntityAnimal otherAnimal) {
+		return false;
+	}
+
+	@Override
+	public boolean attackEntityAsMob(@NotNull Entity entityIn) {
+		if (entityIn instanceof EntityUnicorn) return false;
+		if (!isTamed()) return false;
+		return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 3.0F);
+	}
+
+	@Override
+	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+		if (this.isEntityInvulnerable(source)) {
+			return false;
+		} else {
+			if (this.aiSit != null) {
+				this.aiSit.setSitting(false);
+			}
+
+			return super.attackEntityFrom(source, amount);
+		}
+	}
+
+	public boolean isFlying() {
+		return !this.onGround;
+	}
+
+	@Override
+	public void initEntityAI() {
+		this.tasks.addTask(1, new EntityAIFollowOwnerFlying(this, 1.0D, 5.0F, 1.0F));
+		this.tasks.addTask(2, new FairyAIWanderAvoidWaterFlying(this, 1.0D));
+		this.tasks.addTask(3, new EntityAIFollow(this, 1.0D, 3.0F, 7.0F));
+	}
+
+	@Override
+	protected void setupTamedAI() {
+		if (this.avoidEntity == null) {
+			this.avoidEntity = new EntityAIAvoidEntity<>(this, EntityPlayer.class, 16.0F, 2, 3);
+		}
+
+		this.tasks.removeTask(this.avoidEntity);
+
+		if (!this.isTamed()) {
+			this.tasks.addTask(0, this.avoidEntity);
+		}
+
+		this.tasks.addTask(0, new EntityAIAvoidEntity<>(this, EntityUnicorn.class, 16, 2, 3));
+		this.tasks.addTask(0, new EntityAIAvoidEntity<>(this, EntitySpiritWight.class, 16, 2, 3));
+	}
+
+	@Override
+	public void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(0.1D);
-		getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(RandUtil.nextDouble(2, 3));
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(1);
+	}
+
+	@NotNull
+	@Override
+	public PathNavigate createNavigator(@NotNull World worldIn) {
+		return new WizardryFlyablePathNavigator(this, worldIn);
 	}
 
 	@Override
@@ -103,95 +179,14 @@ public class EntityFairy extends FlyingEntityMod {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
+		fallDistance = 0;
+		setNoGravity(true);
+
 		if (isAIDisabled()) return;
 		if (isDead) return;
 
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient() {
-				LibParticles.FAIRY_HEAD(world, getPositionVector().add(0, 0.25, 0), getColor());
-				LibParticles.FAIRY_TRAIL(world, getPositionVector().add(0, 0.25, 0), getColor(), isDulled(), new Random(getUniqueID().hashCode()).nextInt(150));
-			}
-		});
-
-		if (ambush) {
-			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).grow(64, 64, 64), null);
-			for (Entity entity : entities)
-				if (entity instanceof EntityPlayer) {
-
-					double dist = entity.getPositionVector().distanceTo(getPositionVector());
-					Vec3d sub = entity.getPositionVector().add(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 3.0);
-
-					motionX = sub.x;
-					motionY = sub.y;
-					motionZ = sub.z;
-					velocityChanged = true;
-
-					if ((int) dist <= 0 || RandUtil.nextInt((int) (dist * 20.0)) == 0)
-						ambush = false;
-
-					if (entity instanceof EntityPlayerMP)
-						((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(this));
-				}
-			return;
-		}
-
-		if (!getNavigator().noPath()) return;
-
-		boolean nopeOut = false;
-		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).grow(2, 2, 2), null);
-		for (Entity entity : entities)
-			if (entity instanceof EntityLivingBase) {
-				if (entity.isSneaking()) continue;
-				nopeOut = true;
-
-				Vec3d sub = getPositionVector().subtract(entity.getPositionVector().add(0, entity.height / 2, 0)).normalize();
-
-				Random rand = new Random(hashCode());
-				double speed = rand.nextInt(9) + 1;
-				motionX += sub.x / speed;
-				motionY += sub.y / speed;
-				motionZ += sub.z / speed;
-			}
-
-		if (nopeOut) {
-			for (int i = -2; i < 2; i++)
-				for (int k = -2; k < 2; k++)
-					for (int j = -2; j < 2; j++) {
-						BlockPos pos = new BlockPos(getPositionVector()).add(i, j, k);
-						if (!world.isAirBlock(pos)) {
-							Vec3d center = new Vec3d(pos).add(0.5, 0.5, 0.5);
-							Vec3d sub = getPositionVector().add(0, height / 2, 0).subtract(center).normalize();
-
-							Random rand = new Random(hashCode());
-							double speed = rand.nextInt(9) + 1;
-							motionX += sub.x / speed;
-							motionY += sub.y / speed;
-							motionZ += sub.z / speed;
-						}
-					}
-		}
-
-		if (!nopeOut) {
-			int r = Math.abs(new Random(getPosition().toLong()).nextInt(20)) + 1;
-			if (RandUtil.nextInt(r) == 0) {
-				changingCourse = true;
-				changeCourseTick = RandUtil.nextInt(50);
-				tickPitch = (float) RandUtil.nextDouble(-10, 10);
-				tickYaw = (float) RandUtil.nextDouble(-10, 10);
-			}
-			if (changingCourse) {
-				if (changeCourseTick > 0) {
-					changeCourseTick--;
-					Vec3d dir = getVectorForRotation(rotationPitch += tickPitch, rotationYaw += tickYaw).normalize();
-					Random rand = new Random(hashCode());
-					double speed = rand.nextInt(9) + 1;
-					motionX = dir.x / speed;
-					motionY = dir.y / speed;
-					motionZ = dir.z / speed;
-				} else changingCourse = false;
-			}
+		if (getNavigator().noPath()) {
+			getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 1);
 		}
 	}
 
@@ -199,7 +194,7 @@ public class EntityFairy extends FlyingEntityMod {
 	@Override
 	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
 		ItemStack jar = player.getHeldItemMainhand();
-		if (jar.getItem() == ModItems.JAR_ITEM) {
+		if (jar.getItem() == ModItems.JAR_ITEM && jar.getItemDamage() == 0) {
 			succFairy(jar, player);
 			return EnumActionResult.SUCCESS;
 		}
@@ -213,6 +208,8 @@ public class EntityFairy extends FlyingEntityMod {
 		NBTHelper.setBoolean(jar, Constants.NBT.FAIRY_INSIDE, true);
 		NBTHelper.setInt(jar, Constants.NBT.FAIRY_COLOR, getColor().getRGB());
 		NBTHelper.setInt(jar, Constants.NBT.FAIRY_AGE, getAge());
+		NBTHelper.setBoolean(jar, Constants.NBT.FAIRY_DULLED, isDulled());
+		CapManager.forObject(stack).setMana(mana);
 		player.addItemStackToInventory(jar);
 		world.removeEntity(this);
 	}
@@ -220,7 +217,7 @@ public class EntityFairy extends FlyingEntityMod {
 	@Override
 	public void onDeath(@Nonnull DamageSource cause) {
 		super.onDeath(cause);
-		if (getHealth() <= 0)
+		if (!world.isRemote && getHealth() <= 0)
 			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().add(0, 0.25, 0), color, color, 0.5, 0.5, RandUtil.nextInt(100, 200), 75, 25, true),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
@@ -235,16 +232,18 @@ public class EntityFairy extends FlyingEntityMod {
 		entityDropItem(fairyWings, RandUtil.nextFloat());
 	}
 
+	@NotNull
 	@Override
-	public void readCustomNBT(NBTTagCompound compound) {
-		super.readCustomNBT(compound);
-		AbstractSaveHandler.readAutoNBT(this, compound.getCompoundTag("save"), true);
+	public NBTTagCompound serializeNBT() {
+		NBTTagCompound compound = new NBTTagCompound();
+		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
+		return compound;
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound compound) {
-		super.writeCustomNBT(compound);
-		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
+	public void deserializeNBT(@NotNull NBTTagCompound nbt) {
+		super.deserializeNBT(nbt);
+		AbstractSaveHandler.readAutoNBT(this, nbt.getCompoundTag("save"), true);
 	}
 
 	public Color getColor() {

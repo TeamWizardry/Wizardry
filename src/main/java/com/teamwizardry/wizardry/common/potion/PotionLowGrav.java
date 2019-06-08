@@ -36,19 +36,18 @@ public class PotionLowGrav extends PotionBase {
 		World world = entity.world;
 		if (world.containsAnyLiquid(entity.getEntityBoundingBox().offset(0.0, dist + shift, 0.0)) && entity.motionY < 0.5) {
 			entity.motionY += 0.15;
-			entity.fallDistance = 0f;
 		} else if (world.containsAnyLiquid(entity.getEntityBoundingBox().offset(0.0, dist, 0.0)) && entity.motionY < 0.0) {
 			entity.motionY = 0.0;
-			entity.fallDistance = 0f;
 			entity.onGround = true;
 		} else if (world.containsAnyLiquid(entity.getEntityBoundingBox().offset(0.0, dist + entity.motionY - 0.05, 0.0)) && entity.motionY < 0.0) {
 			entity.setPosition(entity.posX, Math.floor(entity.posY), entity.posZ);
 			entity.motionY /= 5;
-			entity.fallDistance = 0f;
 			entity.onGround = true;
 		} else if (entity.motionY < 0) {
 			entity.motionY = Math.max(entity.motionY, amplifier * -0.1);
 		}
+
+		entity.fallDistance = 0f;
 	}
 
 	@SubscribeEvent

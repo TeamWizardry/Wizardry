@@ -5,9 +5,9 @@ import net.minecraft.pathfinding.PathNavigateFlying;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class UnicornPathNavigator extends PathNavigateFlying {
+public class WizardryFlyablePathNavigator extends PathNavigateFlying {
 
-	public UnicornPathNavigator(EntityLiving entityIn, World worldIn) {
+	public WizardryFlyablePathNavigator(EntityLiving entityIn, World worldIn) {
 		super(entityIn, worldIn);
 
 		setCanFloat(true);

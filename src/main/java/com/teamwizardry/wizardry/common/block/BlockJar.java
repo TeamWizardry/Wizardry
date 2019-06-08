@@ -138,12 +138,18 @@ public class BlockJar extends BlockModContainer {
 				if (jar.hasFairy) {
 					ItemStack stack = playerIn.getHeldItem(hand);
 					if (stack.isEmpty() && playerIn.isSneaking()) {
-						EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age, RandUtil.nextDouble(0, 1000));
+
+						EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age, RandUtil.nextDouble(20, 300));
+						entity.mana = jar.cap.getHandler().getMana();
+						entity.dulled = jar.isDulled;
 						entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+
 						worldIn.spawnEntity(entity);
+
 						jar.hasFairy = false;
 						jar.cap.getHandler().setMana(0);
 						jar.markDirty();
+
 						worldIn.notifyBlockUpdate(pos, state, worldIn.getBlockState(pos), 3);
 						worldIn.checkLight(pos);
 						return true;

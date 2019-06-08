@@ -48,7 +48,7 @@ public class ModuleEffectDisarm implements IModuleEffect {
 					ItemStack copy = held.copy();
 					held.setCount(0);
 					EntityItem item = new EntityItem(world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, copy);
-					item.setDefaultPickupDelay();
+					item.setPickupDelay(40);
 					world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
 					return world.spawnEntity(item);
 				} else {
@@ -72,7 +72,7 @@ public class ModuleEffectDisarm implements IModuleEffect {
 
 					if (!held.isEmpty() && flag && RandUtil.nextDouble() < dropChance) {
 						EntityItem item = new EntityItem(world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
-						item.setPickupDelay(5);
+						item.setPickupDelay(40);
 						world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
 						return world.spawnEntity(item);
 					}
