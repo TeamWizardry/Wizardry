@@ -584,12 +584,17 @@ public class GuiPearlSwap extends GuiBase {
 	}
 
 	private void renderText(String string) {
+		if (string.isEmpty()) return;
+
+		List<String> lines = fontRenderer.listFormattedStringToWidth(string, 120);
+		if (lines.isEmpty()) return;
+
+
 		GlStateManager.pushMatrix();
 		GlStateManager.enableTexture2D();
 
 		GlStateManager.translate(getGuiWidth() / 2.0, getGuiHeight() / 2.0, 0);
 
-		List<String> lines = fontRenderer.listFormattedStringToWidth(string, 120);
 		for (int i = 0; i < lines.size(); i++) {
 			String text = lines.get(i);
 			Minecraft.getMinecraft().fontRenderer.drawString(
