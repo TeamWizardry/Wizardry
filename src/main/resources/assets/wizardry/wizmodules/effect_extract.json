@@ -1,0 +1,21 @@
+{
+  "sub_module_id": "effect_extract",
+  "reference_module_id": "effect_extract",
+  "item": "minecraft:blaze_rod",
+  "primary_color": "FFFFFF",
+  "secondary_color": "FF0000",
+  "potency": {
+    "min": 1,
+    "max": 64
+  },
+  "duration": {
+    "min": 25,
+    "max": 80
+  },
+  "mana": {
+    "min": 100
+  },
+  "burnout": {
+    "min": 100
+  }
+}

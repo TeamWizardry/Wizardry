@@ -77,6 +77,8 @@ public class TileManaNode extends TileCachable implements ITickable {
 		addSuckRule(new SuckRule<>(1, 0.25, false, 4, TileCraftingPlate.class, TileOrbHolder.class, (tileCraftingPlate, tileOrbHolder) ->
 				true
 		));
+
+		suckRules.sort(Comparator.comparingInt(SuckRule::getPriority));
 	}
 
 	@Module
@@ -125,8 +127,6 @@ public class TileManaNode extends TileCachable implements ITickable {
 		double totalZucced = 0;
 
 		if (CapManager.isManaFull(cap)) return 0;
-
-		suckRules.sort(Comparator.comparingInt(SuckRule::getPriority));
 
 		for (SuckRule suckRule : suckRules) {
 			if (getClass().isAssignableFrom(suckRule.thisClazz)) {
