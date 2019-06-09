@@ -11,7 +11,8 @@ import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.block.TileManaInteractor;
+import com.teamwizardry.wizardry.api.block.IManaGenerator;
+import com.teamwizardry.wizardry.api.block.TileManaNode;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -32,7 +33,7 @@ import java.util.HashSet;
 
 @TileRegister(Wizardry.MODID + ":mana_battery")
 @TileRenderer(TileManaBatteryRenderer.class)
-public class TileManaBattery extends TileManaInteractor {
+public class TileManaBattery extends TileManaNode implements IManaGenerator {
 
 	public static final HashSet<BlockPos> poses = new HashSet<>();
 
@@ -48,7 +49,8 @@ public class TileManaBattery extends TileManaInteractor {
 
 	public TileManaBattery() {
 		super(1000, 1000);
-		setAllowOutsideSucking(false);
+		setCanSuckFromOutside(false);
+		setCanGiveToOutside(false);
 	}
 
 	@Nonnull
@@ -65,15 +67,20 @@ public class TileManaBattery extends TileManaInteractor {
 		if (getBlockType() == ModBlocks.MANA_BATTERY && !((BlockManaBattery) getBlockType()).testStructure(getWorld(), getPos()).isEmpty())
 			return;
 
+		if (getStructurePos() != getPos()) {
+			setStructurePos(getPos());
+			markDirty();
+		}
+
 		if (getBlockType() != ModBlocks.CREATIVE_MANA_BATTERY) {
 			for (BlockPos relative : poses) {
 				BlockPos target = getPos().add(relative);
 				TileEntity tile = world.getTileEntity(target);
-				if (tile instanceof TilePearlHolder) {
-					if (!((TilePearlHolder) tile).isPartOfStructure) {
-						((TilePearlHolder) tile).isPartOfStructure = true;
-						((TilePearlHolder) tile).structurePos = getPos();
-						((TilePearlHolder) tile).setAllowOutsideSucking(false);
+				if (tile instanceof TileOrbHolder) {
+					if (!((TileOrbHolder) tile).isPartOfStructure() || ((TileOrbHolder) tile).canSuckFromOutside() || !((TileOrbHolder) tile).canGiveToOutside()) {
+						((TileOrbHolder) tile).setStructurePos(getPos());
+						((TileOrbHolder) tile).setCanSuckFromOutside(false);
+						((TileOrbHolder) tile).setCanGiveToOutside(true);
 						tile.markDirty();
 					}
 				}

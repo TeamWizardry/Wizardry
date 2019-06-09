@@ -23,7 +23,7 @@ public class ModBlocks {
 	public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
 	public static BlockManaBattery MANA_BATTERY;
 	public static BlockCreativeManaBattery CREATIVE_MANA_BATTERY;
-	public static BlockPearlHolder PEARL_HOLDER;
+	public static BlockOrbHolder PEARL_HOLDER;
 	public static BlockHaloInfuser HALO_INFUSER;
 	public static BlockCloud CLOUD;
 	public static BlockManaMagnet MANA_MAGNET;
@@ -56,7 +56,7 @@ public class ModBlocks {
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
 		MANA_BATTERY = new BlockManaBattery();
 		CREATIVE_MANA_BATTERY = new BlockCreativeManaBattery();
-		PEARL_HOLDER = new BlockPearlHolder();
+		PEARL_HOLDER = new BlockOrbHolder();
 		HALO_INFUSER = new BlockHaloInfuser();
 		CLOUD = new BlockCloud();
 		NACRE = new BlockNacre();

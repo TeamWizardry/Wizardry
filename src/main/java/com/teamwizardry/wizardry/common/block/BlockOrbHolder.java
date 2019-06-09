@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
-import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
-import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
+import com.teamwizardry.wizardry.client.render.block.TileOrbHolderRenderer;
+import com.teamwizardry.wizardry.common.tile.TileOrbHolder;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -27,11 +27,11 @@ import javax.annotation.Nullable;
 /**
  * Created by Demoniaque on 5/7/2016.
  */
-public class BlockPearlHolder extends BlockModContainer {
+public class BlockOrbHolder extends BlockModContainer {
 
 	private static final AxisAlignedBB AABB_PEARL_HOLDER = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.75, 0.875);
 
-	public BlockPearlHolder() {
+	public BlockOrbHolder() {
 		super("pearl_holder", Material.WOOD);
 		setSoundType(SoundType.WOOD);
 		setHardness(2.0f);
@@ -40,16 +40,16 @@ public class BlockPearlHolder extends BlockModContainer {
 
 	@SideOnly(Side.CLIENT)
 	public void initModel() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TilePearlHolder.class, new TilePearlHolderRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileOrbHolder.class, new TileOrbHolderRenderer());
 	}
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 
-		TilePearlHolder te = getTE(worldIn, pos);
+		TileOrbHolder te = getTE(worldIn, pos);
 
-		if (!te.containsSomething()) {
+		if (!te.containsCell()) {
 			if (heldItem.getItem() == ModItems.ORB || heldItem.getItem() == ModItems.PEARL_NACRE) {
 				te.setItemStack(heldItem.copy());
 				te.getItemStack().setCount(1);
@@ -70,14 +70,14 @@ public class BlockPearlHolder extends BlockModContainer {
 		return true;
 	}
 
-	private TilePearlHolder getTE(World world, BlockPos pos) {
-		return (TilePearlHolder) world.getTileEntity(pos);
+	private TileOrbHolder getTE(World world, BlockPos pos) {
+		return (TileOrbHolder) world.getTileEntity(pos);
 	}
 
 	@Nullable
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
-		return new TilePearlHolder();
+		return new TileOrbHolder();
 	}
 
 	@Override

@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleFluid
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInventory;
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.TileManaInteractor;
+import com.teamwizardry.wizardry.api.block.TileManaNode;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.init.Items;
@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 @TileRegister(Wizardry.MODID + ":mana_vacuum")
 //@TileRenderer(TileManaVacuumRenderer.class)
-public class TileManaVacuum extends TileManaInteractor
+public class TileManaVacuum extends TileManaNode
 {
 	private static final BlockPos pos = new BlockPos(0, 3, 0);
 	

@@ -36,7 +36,7 @@ public class TileManaMagnetRenderer extends TileEntitySpecialRenderer<TileManaMa
 				RenderHelper.disableStandardItemLighting();
 
 				Minecraft.getMinecraft().getTextureManager().bindTexture(manaPearlCubeTexture);
-				TilePearlHolderRenderer.renderCube(0.1, Color.WHITE);
+				TileOrbHolderRenderer.renderCube(0.1, Color.WHITE);
 
 				GlStateManager.disableRescaleNormal();
 			}

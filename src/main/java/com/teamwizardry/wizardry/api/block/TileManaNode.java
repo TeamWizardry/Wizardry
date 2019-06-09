@@ -18,11 +18,14 @@ import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
-import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
+import com.teamwizardry.wizardry.common.tile.TileOrbHolder;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,34 +34,75 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.BiPredicate;
 
-public class TileManaInteractor extends TileCachable implements ITickable {
+public class TileManaNode extends TileCachable implements ITickable {
 
-	private static Set<SuckRule> suckRules = new HashSet<>();
+	private static ArrayList<SuckRule> suckRules = new ArrayList<>();
 
 	static {
-		addSuckRule(new SuckRule<>(1, true, 1, TilePearlHolder.class, TilePearlHolder.class, (tilePearlHolder, tilePearlHolder2) ->
-				(tilePearlHolder.structurePos == null && tilePearlHolder2.structurePos == null)
-						|| (tilePearlHolder.structurePos != null && tilePearlHolder2.structurePos != null && tilePearlHolder.structurePos.equals(tilePearlHolder2.structurePos))
-						|| (tilePearlHolder.structurePos != null && tilePearlHolder2.structurePos == null)));
+		addSuckRule(new SuckRule<>(0, 1, true, 1, TileOrbHolder.class, TileOrbHolder.class, (to, from) -> {
+			World world = to.world;
+			if (world == null) return false;
+			if (from.isPartOfStructure()) {
+				TileEntity tile = world.getTileEntity(from.getStructurePos());
+				if (tile instanceof IManaGenerator && to.isPartOfStructure() && to.getStructurePos().equals(from.getStructurePos())) {
+					return true;
+				} else
+					return !(tile instanceof IManaGenerator) || (to.isPartOfStructure() && to.getStructurePos().equals(from.getStructurePos()));
+			}
 
-		addSuckRule(new SuckRule<>(1, false, 1, TilePearlHolder.class, TileManaBattery.class, (tilePearlHolder, tileManaBattery) ->
-				tilePearlHolder.structurePos != null && tilePearlHolder.structurePos.equals(tileManaBattery.getPos())
+			return true;
+		}
 		));
 
-		addSuckRule(new SuckRule<>(0.25, false, 4, TileCraftingPlate.class, TilePearlHolder.class, (tileCraftingPlate, tilePearlHolder) ->
-				tilePearlHolder.structurePos != null && tilePearlHolder.structurePos.equals(tileCraftingPlate.getPos())));
+		addSuckRule(new SuckRule<>(0, 1, false, 1, TileOrbHolder.class, TileOrbHolder.class, (to, from) -> {
+			World world = to.world;
+			if (world == null) return false;
+			if (from.isPartOfStructure()) {
+				TileEntity tile = world.getTileEntity(from.getStructurePos());
+
+				return tile instanceof IManaGenerator && (!to.isPartOfStructure() || !to.getStructurePos().equals(from.getStructurePos()));
+			}
+
+			return false;
+		}
+		));
+
+
+		addSuckRule(new SuckRule<>(1, 1, false, 1, TileOrbHolder.class, TileManaBattery.class, (tileOrbHolder, tileManaBattery) ->
+				true
+		));
+
+		addSuckRule(new SuckRule<>(1, 0.25, false, 4, TileCraftingPlate.class, TileOrbHolder.class, (tileCraftingPlate, tileOrbHolder) ->
+				true
+		));
 	}
 
 	@Module
 	public ManaModule cap;
-	@Save
-	public boolean allowOutsideSucking = true;
 
-	public TileManaInteractor(double maxMana, double maxBurnout) {
+	/**
+	 * If this node can suck mana from nodes not part of structures
+	 */
+	@Save
+	private boolean canSuckFromOutside = true;
+
+	/**
+	 * If this node can give mana to nodes not part of structures
+	 */
+	@Save
+	private boolean canGiveToOutside = true;
+
+	/**
+	 * The center of the structure this node is a part of.
+	 * Null if not part of a structure.
+	 */
+	@Save
+	@Nullable
+	private BlockPos structurePos = null;
+
+	public TileManaNode(double maxMana, double maxBurnout) {
 		cap = new ManaModule(new CustomWizardryCapability(maxMana, maxBurnout));
 	}
 
@@ -80,23 +124,36 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 	public double suckMana(IWizardryCapability cap) {
 		double totalZucced = 0;
 
+		if (CapManager.isManaFull(cap)) return 0;
+
+		suckRules.sort(Comparator.comparingInt(SuckRule::getPriority));
+
 		for (SuckRule suckRule : suckRules) {
 			if (getClass().isAssignableFrom(suckRule.thisClazz)) {
 
-				ArrayList<TileManaInteractor> interactables = new ArrayList<TileManaInteractor>(getNearestTiles(suckRule.fromClazz));
-				interactables.sort(Comparator.comparingDouble(this::getCachedDistanceSq));
+				ArrayList<TileManaNode> nodes = getNearestNodes(suckRule.fromClazz);
+				nodes.sort(Comparator.comparingDouble(this::getCachedDistanceSq));
 
 				int i = 0;
-				for (TileManaInteractor interacter : interactables) {
-					double zucced = suckManaFrom(interacter, suckRule, cap);
-					if (zucced > 0) {
-						totalZucced += zucced;
+				for (TileManaNode from : nodes) {
+					if (from == null) continue;
 
-						// Trigger events to notify
-						interacter.onDrainedFrom(this);
-						onSuckFrom(interacter);
+					//noinspection ConstantConditions
+					if ((from.isPartOfStructure() && isPartOfStructure() && from.canGiveToOutside() && canSuckFromOutside())
+							|| (from.isPartOfStructure() && !isPartOfStructure() && from.canGiveToOutside())
+							|| (from.isPartOfStructure() && isPartOfStructure() && from.getStructurePos().equals(getStructurePos()))
+							|| !from.isPartOfStructure() && !isPartOfStructure()) {
 
-						if (++i > suckRule.getNbOfConnections()) break;
+						double zucced = suckManaFrom(from, suckRule, cap);
+						if (zucced > 0) {
+							totalZucced += zucced;
+
+							// Trigger events to notify
+							from.onDrainedFrom(this);
+							onSuckFrom(from);
+
+							if (++i > suckRule.getNbOfConnections()) break;
+						}
 					}
 				}
 			}
@@ -109,12 +166,25 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 		return cap.getHandler();
 	}
 
-	public void onDrainedFrom(TileManaInteractor from) {
+	public void onDrainedFrom(TileManaNode from) {
 
 	}
 
-	public void onSuckFrom(TileManaInteractor from) {
+	public void onSuckFrom(TileManaNode from) {
 
+	}
+
+	public boolean isPartOfStructure() {
+		return structurePos != null;
+	}
+
+	@Nullable
+	public BlockPos getStructurePos() {
+		return structurePos;
+	}
+
+	public void setStructurePos(@Nullable BlockPos structurePos) {
+		this.structurePos = structurePos;
 	}
 
 	@Nonnull
@@ -122,18 +192,18 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 		return Vec3d.ZERO;
 	}
 
-	public boolean isAllowOutsideSucking() {
-		return allowOutsideSucking;
+	public boolean canSuckFromOutside() {
+		return canSuckFromOutside;
 	}
 
-	public void setAllowOutsideSucking(boolean allowOutsideSucking) {
-		this.allowOutsideSucking = allowOutsideSucking;
+	public void setCanSuckFromOutside(boolean canSuckFromOutside) {
+		this.canSuckFromOutside = canSuckFromOutside;
 	}
 
-	public double suckManaFrom(TileManaInteractor interacterFrom, SuckRule suckRule, IWizardryCapability cap) {
+	public double suckManaFrom(TileManaNode interacterFrom, SuckRule suckRule, IWizardryCapability cap) {
 
 		if (cap == null || interacterFrom.getWizardryCap() == null) return 0;
-		if (!isAllowOutsideSucking() && interacterFrom.isAllowOutsideSucking()) return 0;
+		if (!canSuckFromOutside() && interacterFrom.canSuckFromOutside()) return 0;
 		if (!suckRule.condition.test(this, interacterFrom)) return 0;
 
 		try (CapManager.CapManagerBuilder thisMgr = CapManager.forObject(cap)) {
@@ -189,8 +259,17 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 		return amount;
 	}
 
-	public static class SuckRule<K extends TileManaInteractor, T extends TileManaInteractor> {
+	public boolean canGiveToOutside() {
+		return canGiveToOutside;
+	}
 
+	public void setCanGiveToOutside(boolean canGiveToOutside) {
+		this.canGiveToOutside = canGiveToOutside;
+	}
+
+	public static class SuckRule<K extends TileManaNode, T extends TileManaNode> {
+
+		private final int priority;
 		private final double idealAmount;
 		private final boolean equalize;
 		private final int nbOfConnections;
@@ -199,7 +278,8 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 		@Nullable
 		private final BiPredicate<K, T> condition;
 
-		public SuckRule(double idealAmount, boolean equalize, int nbOfConnections, Class<K> thisClazz, Class<T> fromClazz, @Nullable BiPredicate<K, T> condition) {
+		public SuckRule(int priority, double idealAmount, boolean equalize, int nbOfConnections, Class<K> thisClazz, Class<T> fromClazz, @Nullable BiPredicate<K, T> condition) {
+			this.priority = priority;
 			this.idealAmount = idealAmount;
 			this.equalize = equalize;
 			this.nbOfConnections = nbOfConnections;
@@ -229,9 +309,12 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 			return condition;
 		}
 
-
 		public int getNbOfConnections() {
 			return nbOfConnections;
+		}
+
+		public int getPriority() {
+			return priority;
 		}
 	}
 }

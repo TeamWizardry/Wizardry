@@ -253,7 +253,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return MathHelper.clamp(current, range.min, range.max);
 	}
 
-	//TODO: pearl holders
+	//TODO: orb holders
 	public boolean taxCaster(@Nonnull World world, SpellData data, double multiplier, boolean failSound) {
 		Entity caster = data.getCaster(world);
 		if (caster == null) return false;
