@@ -35,7 +35,7 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 		TileJar jar = (TileJar) tileEntity;
 
 		if (jar.hasFairy && !CapManager.isManaFull(jar.cap.getHandler())) {
-			CapManager.forObject(jar.cap.getHandler()).addMana(consumeMana.apply(jar.cap.getHandler()));
+			CapManager.forObject(jar.cap.getHandler()).addMana(consumeMana.apply(jar.cap.getHandler())).close();
 		}
 	}
 
@@ -60,7 +60,7 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 		TileJar jar = (TileJar) tileEntity;
 
 		if (!CapManager.isManaFull(jar.cap.getHandler())) {
-			CapManager.forObject(jar.cap.getHandler()).setMana(0);
+			CapManager.forObject(jar.cap.getHandler()).setMana(0).close();
 		}
 	}
 

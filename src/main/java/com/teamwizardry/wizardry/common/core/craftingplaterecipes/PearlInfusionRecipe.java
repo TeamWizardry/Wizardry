@@ -52,7 +52,7 @@ public class PearlInfusionRecipe implements ICraftingPlateRecipe {
 	@Override
 	public void tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IWizardryCapability, Double> consumeMana) {
 		if (!CapManager.isManaFull(input)) {
-			CapManager.forObject(input).addMana(consumeMana.apply(WizardryCapabilityProvider.getCap(input)));
+			CapManager.forObject(input).addMana(consumeMana.apply(WizardryCapabilityProvider.getCap(input))).close();
 		}
 	}
 
@@ -122,7 +122,7 @@ public class PearlInfusionRecipe implements ICraftingPlateRecipe {
 
 	@Override
 	public void canceled(World world, BlockPos pos, ItemStack stack) {
-		CapManager.forObject(stack).setMana(0);
+		CapManager.forObject(stack).setMana(0).close();
 	}
 
 	@Override

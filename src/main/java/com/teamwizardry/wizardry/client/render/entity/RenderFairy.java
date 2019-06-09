@@ -47,7 +47,7 @@ public class RenderFairy extends RenderLiving<EntityFairy> {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
 
-		if (RandUtil.nextInt(3) == 0)
+		if (RandUtil.nextInt(2) == 0)
 			ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 1, 0, (i, build) -> {
 				build.setMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(-0.01, 0.01)));
 				if (RandUtil.nextBoolean())

@@ -17,7 +17,7 @@ public final class ModStructures {
 	public static void init() {
 		structureManager = new StructureManager();
 		structureManager.addStructure(CRAFTING_PLATE, new BlockPos(4, 1, 4));
-		structureManager.addStructure(MANA_BATTERY, new BlockPos(5, 4, 5));
+		structureManager.addStructure(MANA_BATTERY, new BlockPos(4, 4, 4));
 	}
 }
 

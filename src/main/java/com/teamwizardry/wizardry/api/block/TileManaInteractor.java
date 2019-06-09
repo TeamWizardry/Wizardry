@@ -46,11 +46,8 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 						|| (tilePearlHolder.structurePos != null && tilePearlHolder2.structurePos == null)));
 
 		addSuckRule(new SuckRule<>(1, false, 1, TilePearlHolder.class, TileManaBattery.class, (tilePearlHolder, tileManaBattery) ->
-				tilePearlHolder.structurePos == null || !tilePearlHolder.structurePos.equals(tileManaBattery.getPos())));
-
-		addSuckRule(new SuckRule<>(1, false, 20, TileManaBattery.class, TilePearlHolder.class, (tileManaBattery, tilePearlHolder) ->
-				tilePearlHolder.structurePos != null && tilePearlHolder.structurePos.equals(tileManaBattery.getPos()),
-				true));
+				tilePearlHolder.structurePos != null && tilePearlHolder.structurePos.equals(tileManaBattery.getPos())
+		));
 
 		addSuckRule(new SuckRule<>(0.25, false, 4, TileCraftingPlate.class, TilePearlHolder.class, (tileCraftingPlate, tilePearlHolder) ->
 				tilePearlHolder.structurePos != null && tilePearlHolder.structurePos.equals(tileCraftingPlate.getPos())));
@@ -203,15 +200,6 @@ public class TileManaInteractor extends TileCachable implements ITickable {
 		private final BiPredicate<K, T> condition;
 
 		public SuckRule(double idealAmount, boolean equalize, int nbOfConnections, Class<K> thisClazz, Class<T> fromClazz, @Nullable BiPredicate<K, T> condition) {
-			this.idealAmount = idealAmount;
-			this.equalize = equalize;
-			this.nbOfConnections = nbOfConnections;
-			this.thisClazz = thisClazz;
-			this.fromClazz = fromClazz;
-			this.condition = condition;
-		}
-
-		public SuckRule(double idealAmount, boolean equalize, int nbOfConnections, Class<K> thisClazz, Class<T> fromClazz, @Nullable BiPredicate<K, T> condition, boolean ignoreTrace) {
 			this.idealAmount = idealAmount;
 			this.equalize = equalize;
 			this.nbOfConnections = nbOfConnections;

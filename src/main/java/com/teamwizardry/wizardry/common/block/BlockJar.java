@@ -87,7 +87,7 @@ public class BlockJar extends BlockModContainer {
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
 			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_DULLED, jar.isDulled);
-			CapManager.forObject(stack).addMana(jar.cap.getHandler().getMana());
+			CapManager.forObject(stack).addMana(jar.cap.getHandler().getMana()).close();
 		}
 		return stack;
 	}
@@ -111,7 +111,7 @@ public class BlockJar extends BlockModContainer {
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
 			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_DULLED, jar.isDulled);
-			CapManager.forObject(stack).addMana(jar.cap.getHandler().getMana());
+			CapManager.forObject(stack).addMana(jar.cap.getHandler().getMana()).close();
 		}
 		spawnAsEntity(worldIn, pos, stack);
 

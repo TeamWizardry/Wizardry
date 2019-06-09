@@ -209,7 +209,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		NBTHelper.setInt(jar, Constants.NBT.FAIRY_COLOR, getColor().getRGB());
 		NBTHelper.setInt(jar, Constants.NBT.FAIRY_AGE, getAge());
 		NBTHelper.setBoolean(jar, Constants.NBT.FAIRY_DULLED, isDulled());
-		CapManager.forObject(stack).setMana(mana);
+		CapManager.forObject(stack).setMana(mana).close();
 		player.addItemStackToInventory(jar);
 		world.removeEntity(this);
 	}

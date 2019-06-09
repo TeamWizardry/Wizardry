@@ -1,21 +1,25 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
 import com.teamwizardry.wizardry.common.block.BlockManaBattery;
 import com.teamwizardry.wizardry.init.ModBlocks;
-import com.teamwizardry.wizardry.init.ModSounds;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -33,20 +37,14 @@ public class TileManaBattery extends TileManaInteractor {
 	public static final HashSet<BlockPos> poses = new HashSet<>();
 
 	static {
-		poses.add(new BlockPos(2, 1, 2));
-		poses.add(new BlockPos(-2, 1, 2));
-		poses.add(new BlockPos(2, 1, -2));
-		poses.add(new BlockPos(-2, 1, -2));
-
-		poses.add(new BlockPos(4, 2, 4));
-		poses.add(new BlockPos(-4, 2, 4));
-		poses.add(new BlockPos(4, 2, -4));
-		poses.add(new BlockPos(-4, 2, -4));
+		poses.add(new BlockPos(3, -1, 3));
+		poses.add(new BlockPos(-3, -1, 3));
+		poses.add(new BlockPos(3, -1, -3));
+		poses.add(new BlockPos(-3, -1, -3));
 	}
 
 	@Save
 	public boolean revealStructure = false;
-
 
 	public TileManaBattery() {
 		super(1000, 1000);
@@ -58,29 +56,6 @@ public class TileManaBattery extends TileManaInteractor {
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return TileEntity.INFINITE_EXTENT_AABB;
-	}
-
-	@Override
-	public void onSuckFrom(TileManaInteractor from) {
-		super.onSuckFrom(from);
-
-		if (from instanceof TilePearlHolder && CapManager.isManaEmpty(from.getWizardryCap())) {
-
-			((TilePearlHolder) from).setItemStack(ItemStack.EMPTY);
-			from.markDirty();
-
-			if (!world.isRemote) {
-				world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-
-				ClientRunnable.run(new ClientRunnable() {
-					@Override
-					@SideOnly(Side.CLIENT)
-					public void runIfClient() {
-						LibParticles.EXPLODE(world, new Vec3d(from.getPos()).add(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10, true);
-					}
-				});
-			}
-		}
 	}
 
 	@Override
@@ -102,6 +77,36 @@ public class TileManaBattery extends TileManaInteractor {
 						tile.markDirty();
 					}
 				}
+			}
+
+
+			if (world.getTotalWorldTime() % 20 == 0 && !CapManager.forObject(getWizardryCap()).isManaFull()) {
+				CapManager.forObject(getWizardryCap())
+						.addMana(5)
+						.removeBurnout(5)
+						.close();
+
+				if (world.isRemote)
+					ClientRunnable.run(new ClientRunnable() {
+						@Override
+						@SideOnly(Side.CLIENT)
+						public void runIfClient() {
+							Vec3d from = new Vec3d(getPos()).add(0.5, 1, 0.5);
+							Vec3d to = from.add(RandUtil.nextDouble(-1, 1), -3, RandUtil.nextDouble(-1, 1));
+
+							ParticleBuilder helix = new ParticleBuilder(200);
+							helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+							helix.setAlphaFunction(new InterpFloatInOut(0.1f, 0.1f));
+							ParticleSpawner.spawn(helix, world, new StaticInterp<>(to), 5, 0, (someFloat, particleBuilder) -> {
+								particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
+								particleBuilder.setScale(RandUtil.nextFloat(0.3f, 0.8f));
+								particleBuilder.setPositionFunction(new InterpBezier3D(Vec3d.ZERO,
+										from.subtract(to),
+										new Vec3d(0, 5, 0), new Vec3d(0, 1, 0)));
+								particleBuilder.setLifetime(RandUtil.nextInt(50, 60));
+							});
+						}
+					});
 			}
 
 		} else {

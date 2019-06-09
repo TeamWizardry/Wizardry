@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -11,6 +12,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
@@ -24,6 +26,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.model.IModel;
@@ -111,7 +114,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		else GlStateManager.shadeModel(GL11.GL_FLAT);
 
-		float fill = (float) (CapManager.getMana(tile.getWizardryCap()) / CapManager.getMaxMana(tile.getWizardryCap())) / 50.0f;
+		float fill = (float) (CapManager.getMana(tile.getWizardryCap()) / CapManager.getMaxMana(tile.getWizardryCap())) / 40.0f;
 
 
 		GlStateManager.translate(0, 0.5, 0);
@@ -144,15 +147,15 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 
 		ArrayList<BlockPos> errors = new ArrayList<>(((IStructure) tile.getBlockType()).testStructure(tile.getWorld(), tile.getPos()));
 		errors.sort(Vec3i::compareTo);
-		if (tile.revealStructure && tile.getBlockType() instanceof IStructure) {
 
-			ModStructures.structureManager.draw(ModStructures.MANA_BATTERY, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.3f);
-
-			if (!errors.isEmpty()) {
-				for (BlockPos error : errors) {
-					StructureErrorRenderer.addError(error);
-				}
+		if (!errors.isEmpty()) {
+			for (BlockPos error : errors) {
+				StructureErrorRenderer.addError(error);
 			}
+		}
+
+		if (!errors.isEmpty() && tile.revealStructure && tile.getBlockType() instanceof IStructure) {
+			ModStructures.structureManager.draw(ModStructures.MANA_BATTERY, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.3f);
 			return;
 		}
 
@@ -172,6 +175,22 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 				particleBuilder.setColor(new Color(0xd600d2));
 				particleBuilder.setAlphaFunction(new InterpFloatInOut(1, 1));
 				particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
+			});
+		} else if (tile.getWorld().getTotalWorldTime() % 10 == 0 && CapManager.forObject(tile.getWizardryCap()).isManaFull()) {
+			double radius = 1;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+
+			ParticleBuilder helix = new ParticleBuilder(20);
+			helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			helix.setAlphaFunction(new InterpFloatInOut(0.1f, 0.4f));
+			ParticleSpawner.spawn(helix, tile.getWorld(), new StaticInterp<>(new Vec3d(tile.getPos()).add(0.5, 0.5, 0.5)), 1, 0, (someFloat, particleBuilder) -> {
+				particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
+				particleBuilder.setScale(RandUtil.nextFloat(0.5f, 1.2f));
+				particleBuilder.setMotion(new Vec3d(x, RandUtil.nextDouble(-1, 1), z).scale(0.05));
+				particleBuilder.setLifetime(RandUtil.nextInt(20, 40));
 			});
 		}
 	}
