@@ -3,8 +3,8 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
+import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.entity.FairyObject;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
 /**
  * Created by Demoniaque on 8/21/2016.
  */
-@SaveInPlace
+@Savable
 public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	@Save

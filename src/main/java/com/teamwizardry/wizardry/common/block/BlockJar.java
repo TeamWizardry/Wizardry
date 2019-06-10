@@ -16,13 +16,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -125,10 +123,10 @@ public class BlockJar extends BlockModContainer {
 
 						if (jar.fairy.isDepressed) {
 							ItemStack fairyStack = new ItemStack(ModItems.FAIRY_ITEM);
-							fairyStack.setTagCompound(jar.fairy.serializeNBT());
+							NBTHelper.setCompound(fairyStack, "fairy", jar.fairy.serializeNBT());
 
 							EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 0.5, pos.getZ(), fairyStack);
-							entityItem.setPickupDelay(40);
+							entityItem.setPickupDelay(20);
 							worldIn.spawnEntity(entityItem);
 
 							jar.fairy = null;
@@ -139,7 +137,8 @@ public class BlockJar extends BlockModContainer {
 							entity.setPosition(pos.getX(), pos.getY() + 0.5, pos.getZ());
 
 							worldIn.spawnEntity(entity);
-							worldIn.createExplosion(entity, pos.getX(), pos.getY(), pos.getZ(), 10, true);
+							Explosion explosion = worldIn.createExplosion(entity, pos.getX(), pos.getY(), pos.getZ(), 10, true);
+							entity.attackEntityFrom(DamageSource.causeExplosionDamage(explosion), 5);
 
 							jar.fairy = null;
 							jar.markDirty();

@@ -5,8 +5,8 @@ import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFlo
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
+import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.UUID;
 
-@SaveInPlace
+@Savable
 public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilityProvider {
 
 	@Save
