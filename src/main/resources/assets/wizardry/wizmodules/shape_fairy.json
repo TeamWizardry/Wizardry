@@ -1,0 +1,15 @@
+{
+  "sub_module_id": "shape_fairy",
+  "reference_module_id": "shape_fairy",
+  "item": "wizardry:sky_dust",
+  "mana": {
+    "min": 50
+  },
+  "burnout": {
+    "min": 20
+  },
+  "speed": {
+    "min": 1,
+    "max": 20
+  }
+}

@@ -44,6 +44,7 @@ public class TileManaNode extends TileCachable implements ITickable {
 		addSuckRule(new SuckRule<>(0, 1, true, 1, TileOrbHolder.class, TileOrbHolder.class, (to, from) -> {
 			World world = to.world;
 			if (world == null) return false;
+			if (!checkStructureCompat(to, from)) return false;
 			if (from.isPartOfStructure()) {
 				TileEntity tile = world.getTileEntity(from.getStructurePos());
 				if (tile instanceof IManaGenerator && to.isPartOfStructure() && to.getStructurePos().equals(from.getStructurePos())) {
@@ -59,6 +60,7 @@ public class TileManaNode extends TileCachable implements ITickable {
 		addSuckRule(new SuckRule<>(0, 1, false, 1, TileOrbHolder.class, TileOrbHolder.class, (to, from) -> {
 			World world = to.world;
 			if (world == null) return false;
+			if (!checkStructureCompat(to, from)) return false;
 			if (from.isPartOfStructure()) {
 				TileEntity tile = world.getTileEntity(from.getStructurePos());
 
@@ -70,13 +72,9 @@ public class TileManaNode extends TileCachable implements ITickable {
 		));
 
 
-		addSuckRule(new SuckRule<>(1, 1, false, 1, TileOrbHolder.class, TileManaBattery.class, (tileOrbHolder, tileManaBattery) ->
-				true
-		));
+		addSuckRule(new SuckRule<>(1, 1, false, 1, TileOrbHolder.class, TileManaBattery.class, TileManaNode::checkStructureCompat));
 
-		addSuckRule(new SuckRule<>(1, 0.25, false, 4, TileCraftingPlate.class, TileOrbHolder.class, (tileCraftingPlate, tileOrbHolder) ->
-				true
-		));
+		addSuckRule(new SuckRule<>(1, 0.25, false, 4, TileCraftingPlate.class, TileOrbHolder.class, TileManaNode::checkStructureCompat));
 
 		suckRules.sort(Comparator.comparingInt(SuckRule::getPriority));
 	}
@@ -123,6 +121,13 @@ public class TileManaNode extends TileCachable implements ITickable {
 		return true;
 	}
 
+	private static boolean checkStructureCompat(TileManaNode to, TileManaNode from) {
+		return (from.isPartOfStructure() && to.isPartOfStructure() && from.canGiveToOutside() && to.canSuckFromOutside())
+				|| (from.isPartOfStructure() && !to.isPartOfStructure() && from.canGiveToOutside())
+				|| (from.isPartOfStructure() && to.isPartOfStructure() && from.getStructurePos().equals(to.getStructurePos()))
+				|| (!from.isPartOfStructure() && !to.isPartOfStructure());
+	}
+
 	public double suckMana(IWizardryCapability cap) {
 		double totalZucced = 0;
 
@@ -138,22 +143,15 @@ public class TileManaNode extends TileCachable implements ITickable {
 				for (TileManaNode from : nodes) {
 					if (from == null) continue;
 
-					//noinspection ConstantConditions
-					if ((from.isPartOfStructure() && isPartOfStructure() && from.canGiveToOutside() && canSuckFromOutside())
-							|| (from.isPartOfStructure() && !isPartOfStructure() && from.canGiveToOutside())
-							|| (from.isPartOfStructure() && isPartOfStructure() && from.getStructurePos().equals(getStructurePos()))
-							|| !from.isPartOfStructure() && !isPartOfStructure()) {
+					double zucced = suckManaFrom(from, suckRule, cap);
+					if (zucced > 0) {
+						totalZucced += zucced;
 
-						double zucced = suckManaFrom(from, suckRule, cap);
-						if (zucced > 0) {
-							totalZucced += zucced;
+						// Trigger events to notify
+						from.onDrainedFrom(this);
+						onSuckFrom(from);
 
-							// Trigger events to notify
-							from.onDrainedFrom(this);
-							onSuckFrom(from);
-
-							if (++i > suckRule.getNbOfConnections()) break;
-						}
+						if (++i > suckRule.getNbOfConnections()) break;
 					}
 				}
 			}
@@ -203,7 +201,6 @@ public class TileManaNode extends TileCachable implements ITickable {
 	public double suckManaFrom(TileManaNode interacterFrom, SuckRule suckRule, IWizardryCapability cap) {
 
 		if (cap == null || interacterFrom.getWizardryCap() == null) return 0;
-		if (!canSuckFromOutside() && interacterFrom.canSuckFromOutside()) return 0;
 		if (!suckRule.condition.test(this, interacterFrom)) return 0;
 
 		try (CapManager.CapManagerBuilder thisMgr = CapManager.forObject(cap)) {

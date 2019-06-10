@@ -9,6 +9,10 @@ import java.util.List;
  */
 public class ColorUtils {
 
+	public static Color generateRandomColor() {
+		return new Color(RandUtil.nextFloat(), RandUtil.nextFloat(), RandUtil.nextFloat());
+	}
+
 	public static Color mixColors(List<Color> colors) {
 		int red = 0, green = 0, blue = 0;
 

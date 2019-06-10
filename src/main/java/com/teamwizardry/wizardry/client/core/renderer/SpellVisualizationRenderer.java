@@ -27,8 +27,11 @@ public class SpellVisualizationRenderer {
 
 	@SubscribeEvent
 	public static void tickDisplay(CustomWorldRenderEvent event) {
+		if (Minecraft.getMinecraft() == null) return;
 		if (Minecraft.getMinecraft().player == null) return;
 		if (Minecraft.getMinecraft().world == null) return;
+		if (Minecraft.getMinecraft().getRenderManager() == null) return;
+		if (Minecraft.getMinecraft().getRenderManager().options == null) return;
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		World world = Minecraft.getMinecraft().world;

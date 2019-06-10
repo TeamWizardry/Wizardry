@@ -3,9 +3,7 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.entity.FairyObject;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -13,6 +11,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -32,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 
 /**
  * Created by Demoniaque.
@@ -53,24 +51,18 @@ public class BlockJar extends BlockModContainer {
 		TileEntity entity = world.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
-			return jar.hasFairy ? (int) (5 + 10 * jar.cap.getHandler().getMana() / jar.cap.getHandler().getMaxMana() * (jar.isDulled ? 0 : 1)) : 0;
+			return jar.fairy != null ? (int) (5 + 10 * jar.fairy.handler.getMana() / jar.fairy.handler.getMaxMana() * (jar.fairy.isDepressed ? 0 : 1)) : 0;
 		} else return 0;
 	}
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		if (NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
-			TileEntity entity = worldIn.getTileEntity(pos);
-			if (entity instanceof TileJar) {
-				TileJar jar = (TileJar) entity;
-				jar.color = new Color(NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
-				jar.age = NBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
-				jar.hasFairy = true;
-				jar.cap.getHandler().setMana(CapManager.forObject(stack).getMana());
-				jar.isDulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
-				jar.markDirty();
-				worldIn.checkLight(pos);
-			}
+		TileEntity entity = worldIn.getTileEntity(pos);
+		if (entity instanceof TileJar) {
+			TileJar jar = (TileJar) entity;
+			jar.fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+			jar.markDirty();
+			worldIn.checkLight(pos);
 		}
 	}
 
@@ -80,14 +72,10 @@ public class BlockJar extends BlockModContainer {
 		TileEntity entity = world.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
-			if (!jar.hasFairy) return stack;
+			if (jar.fairy == null) return stack;
 			stack = new ItemStack(ModItems.JAR_ITEM);
 			stack.setItemDamage(2);
-			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
-			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
-			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
-			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_DULLED, jar.isDulled);
-			CapManager.forObject(stack).addMana(jar.cap.getHandler().getMana()).close();
+			NBTHelper.setTag(stack, "fairy", jar.fairy.serializeNBT());
 		}
 		return stack;
 	}
@@ -103,15 +91,11 @@ public class BlockJar extends BlockModContainer {
 		TileEntity entity = worldIn.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
-			if (!jar.hasFairy) {
+			if (jar.fairy == null) {
 				return;
 			}
 			stack.setItemDamage(2);
-			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
-			NBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
-			NBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
-			NBTHelper.setBoolean(stack, Constants.NBT.FAIRY_DULLED, jar.isDulled);
-			CapManager.forObject(stack).addMana(jar.cap.getHandler().getMana()).close();
+			NBTHelper.setTag(stack, "fairy", jar.fairy.serializeNBT());
 		}
 		spawnAsEntity(worldIn, pos, stack);
 
@@ -135,27 +119,47 @@ public class BlockJar extends BlockModContainer {
 			TileEntity tile = worldIn.getTileEntity(pos);
 			if (tile instanceof TileJar) {
 				TileJar jar = (TileJar) tile;
-				if (jar.hasFairy) {
+				if (jar.fairy != null) {
 					ItemStack stack = playerIn.getHeldItem(hand);
 					if (stack.isEmpty() && playerIn.isSneaking()) {
 
-						EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age, RandUtil.nextDouble(20, 300));
-						entity.mana = jar.cap.getHandler().getMana();
-						entity.dulled = jar.isDulled;
-						entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+						if (jar.fairy.isDepressed) {
+							ItemStack fairyStack = new ItemStack(ModItems.FAIRY_ITEM);
+							fairyStack.setTagCompound(jar.fairy.serializeNBT());
 
-						worldIn.spawnEntity(entity);
+							EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 0.5, pos.getZ(), fairyStack);
+							entityItem.setPickupDelay(40);
+							worldIn.spawnEntity(entityItem);
 
-						jar.hasFairy = false;
-						jar.cap.getHandler().setMana(0);
-						jar.markDirty();
+							jar.fairy = null;
+							jar.markDirty();
+
+						} else if (jar.fairy.handler.getMana() >= jar.fairy.handler.getMaxMana()) {
+							EntityFairy entity = new EntityFairy(worldIn, jar.fairy);
+							entity.setPosition(pos.getX(), pos.getY() + 0.5, pos.getZ());
+
+							worldIn.spawnEntity(entity);
+							worldIn.createExplosion(entity, pos.getX(), pos.getY(), pos.getZ(), 10, true);
+
+							jar.fairy = null;
+							jar.markDirty();
+
+						} else {
+							EntityFairy entity = new EntityFairy(worldIn, jar.fairy);
+							entity.setPosition(pos.getX(), pos.getY() + 0.5, pos.getZ());
+
+							worldIn.spawnEntity(entity);
+
+							jar.fairy = null;
+							jar.markDirty();
+						}
 
 						worldIn.notifyBlockUpdate(pos, state, worldIn.getBlockState(pos), 3);
 						worldIn.checkLight(pos);
 						return true;
 
-					} else if (stack.getItem() == ModItems.SKY_DUST && !jar.isDulled) {
-						jar.isDulled = true;
+					} else if (stack.getItem() == ModItems.SKY_DUST && !jar.fairy.isDepressed) {
+						jar.fairy.isDepressed = true;
 						jar.markDirty();
 						stack.shrink(1);
 						worldIn.notifyBlockUpdate(pos, state, worldIn.getBlockState(pos), 3);

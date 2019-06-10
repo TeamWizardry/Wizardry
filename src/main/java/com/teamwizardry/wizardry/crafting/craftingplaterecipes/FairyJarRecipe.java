@@ -1,27 +1,22 @@
-package com.teamwizardry.wizardry.common.core.craftingplaterecipes;
+package com.teamwizardry.wizardry.crafting.craftingplaterecipes;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.item.INacreProduct;
-import com.teamwizardry.wizardry.api.item.ISpellInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
+import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModSounds;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -37,27 +32,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class PearlInfusionRecipe implements ICraftingPlateRecipe {
+public class FairyJarRecipe implements ICraftingPlateRecipe {
 
 	@Override
 	public boolean doesRecipeExistForItem(ItemStack stack) {
-		return stack.getItem() instanceof ISpellInfusable;
-	}
-
-	@Override
-	public boolean doesRecipeExistInWorld(World world, BlockPos pos) {
 		return false;
 	}
 
 	@Override
+	public boolean doesRecipeExistInWorld(World world, BlockPos pos) {
+		TileEntity tileEntity = world.getTileEntity(pos.offset(EnumFacing.UP));
+		if (!(tileEntity instanceof TileJar)) return false;
+		TileJar jar = (TileJar) tileEntity;
+
+		return jar.fairy != null && jar.fairy.infusedSpell == null && !jar.fairy.isDepressed;
+	}
+
+	@Override
 	public void tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IWizardryCapability, Double> consumeMana) {
-		if (!CapManager.isManaFull(input)) {
-			CapManager.forObject(input).addMana(consumeMana.apply(WizardryCapabilityProvider.getCap(input))).close();
+		TileEntity tileEntity = world.getTileEntity(pos.offset(EnumFacing.UP));
+		if (!(tileEntity instanceof TileJar)) return;
+		TileJar jar = (TileJar) tileEntity;
+
+		if (jar.fairy != null
+				&& jar.fairy.infusedSpell == null
+				&& !jar.fairy.isDepressed
+				&& !CapManager.isManaFull(jar.fairy.handler)) {
+			CapManager.forObject(jar.fairy.handler).addMana(consumeMana.apply(jar.fairy.handler)).close();
+			jar.markDirty();
 		}
 	}
 
 	@Override
 	public void complete(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler) {
+		TileEntity tileEntity = world.getTileEntity(pos.offset(EnumFacing.UP));
+		if (!(tileEntity instanceof TileJar)) return;
+		TileJar jar = (TileJar) tileEntity;
+
 		ArrayList<ItemStack> stacks = new ArrayList<>();
 
 		for (int i = 0; i < inventoryHandler.getSlots(); i++) {
@@ -67,29 +78,16 @@ public class PearlInfusionRecipe implements ICraftingPlateRecipe {
 			}
 		}
 
-		// Process spellData multipliers based on nacre quality
-		double pearlMultiplier = 1;
-		if (input.getItem() instanceof INacreProduct) {
-			float purity = ((INacreProduct) input.getItem()).getQuality(input);
-			if (purity >= 1f) pearlMultiplier = ConfigValues.perfectPearlMultiplier * purity;
-			else if (purity <= ConfigValues.damagedPearlMultiplier)
-				pearlMultiplier = ConfigValues.damagedPearlMultiplier;
-			else {
-				double base = purity - 1;
-				pearlMultiplier = 1 - (base * base * base * base);
-			}
-		}
-
-		SpellBuilder builder = new SpellBuilder(stacks, pearlMultiplier);
+		SpellBuilder builder = new SpellBuilder(stacks);
+		List<SpellRing> spell = builder.getSpell();
+		if (spell.isEmpty()) return;
 
 		NBTTagList list = new NBTTagList();
 		for (SpellRing spellRing : builder.getSpell()) {
 			list.appendTag(spellRing.serializeNBT());
 		}
 
-		SpellUtils.infuseSpell(input, list);
-
-		//markDirty();
+		jar.fairy.infusedSpell = builder.getSpell().get(0);
 
 		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).add(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, true),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
@@ -117,23 +115,28 @@ public class PearlInfusionRecipe implements ICraftingPlateRecipe {
 
 	@Override
 	public boolean isDone(World world, BlockPos pos, ItemStack stack) {
-		return CapManager.isManaFull(stack);
+		TileEntity tileEntity = world.getTileEntity(pos.offset(EnumFacing.UP));
+		if (!(tileEntity instanceof TileJar)) return false;
+		TileJar jar = (TileJar) tileEntity;
+
+		return CapManager.isManaFull(jar.fairy.handler);
 	}
 
 	@Override
 	public void canceled(World world, BlockPos pos, ItemStack stack) {
-		CapManager.forObject(stack).setMana(0).close();
+		TileEntity tileEntity = world.getTileEntity(pos.offset(EnumFacing.UP));
+		if (!(tileEntity instanceof TileJar)) return;
+		TileJar jar = (TileJar) tileEntity;
+
+		if (!CapManager.isManaFull(jar.fairy.handler)) {
+			CapManager.forObject(jar.fairy.handler).setMana(0).close();
+		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderInput(World world, BlockPos pos, ItemStack input, float partialTicks) {
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(0.5, 1, 0.5);
-		GlStateManager.scale(0.4, 0.4, 0.4);
-		GlStateManager.rotate((float) (world.getTotalWorldTime() * 10.0), 0, 1, 0);
-		GlStateManager.translate(0, 0.5 + Math.sin((world.getTotalWorldTime() + partialTicks) / 5) / 10.0, 0);
-		Minecraft.getMinecraft().getRenderItem().renderItem(input, ItemCameraTransforms.TransformType.NONE);
-		GlStateManager.popMatrix();
+
 	}
+
 }

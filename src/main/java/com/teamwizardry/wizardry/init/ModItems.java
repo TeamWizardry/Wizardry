@@ -38,6 +38,7 @@ public class ModItems {
 	public static ItemUnicornHorn UNICORN_HORN;
 	public static ItemBlackenedSpirit BLACKENED_SPIRIT;
 	public static Item CAPE;
+	public static ItemFairy FAIRY_ITEM;
 
 	public static ItemFairyWings FAIRY_WINGS;
 	public static ItemFairyImbuedApple FAIRY_IMBUED_APPLE;
@@ -70,6 +71,7 @@ public class ModItems {
 		BOMB = new ItemBomb();
 		BLACKENED_SPIRIT = new ItemBlackenedSpirit();
 		JAR_ITEM = new ItemJar();
+		FAIRY_ITEM = new ItemFairy();
 
 		STAFF = new ItemStaff();
 

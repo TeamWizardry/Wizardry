@@ -17,7 +17,7 @@ public class TileLight extends TileMod {
 	private ModuleInstance module = null;
 
 	public void setModule(ModuleInstance module) {
-		this.module = module;    // The light color is inherited from this given module
+		this.module = module;    // The light primaryColor is inherited from this given module
 	}
 
 	public ModuleInstance getModule() {

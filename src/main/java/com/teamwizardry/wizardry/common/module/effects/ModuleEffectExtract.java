@@ -43,8 +43,6 @@ public class ModuleEffectExtract implements IModuleEffect {
 		BlockPos targetPos = spell.getTargetPos();
 		EnumFacing facing = spell.getFaceHit();
 
-		double maxPotency = instance.getAttributeRanges().get(AttributeRegistry.POTENCY).max;
-		double minPotency = instance.getAttributeRanges().get(AttributeRegistry.POTENCY).min;
 		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
 		double duration = spellRing.getAttributeValue(world, AttributeRegistry.DURATION, spell);
 

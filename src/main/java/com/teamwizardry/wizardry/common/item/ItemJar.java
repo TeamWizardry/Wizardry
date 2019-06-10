@@ -3,10 +3,11 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.entity.FairyObject;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -31,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.List;
 
 import static net.minecraft.util.EnumActionResult.PASS;
@@ -103,11 +103,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 					TileEntity tileEntity = world.getTileEntity(replacable ? pos : offset);
 					if (tileEntity instanceof TileJar) {
 						TileJar jar = (TileJar) tileEntity;
-						jar.color = new Color(NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
-						jar.age = NBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
-						jar.hasFairy = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
-						jar.cap.getHandler().setMana(CapManager.getMana(stack));
-						jar.isDulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
+						jar.fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
 						jar.markDirty();
 						world.checkLight(replacable ? pos : offset);
 					}
@@ -133,14 +129,26 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	@Nullable
 	@Override
 	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
-		return (stack, tintIndex) -> ((tintIndex == 0) && (stack.getItemDamage() != 0)) ? NBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF) : 0xFFFFFF;
+		return (stack, tintIndex) -> {
+			if ((tintIndex == 0 && stack.getItemDamage() != 0)) {
+				FairyObject object = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+				if (object != null && object.primaryColor != null) {
+					return object.primaryColor.getRGB();
+				}
+			}
+			return 0xFFFFFF;
+		};
 	}
 
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
 		if (stack.getItemDamage() == 2) {
-			double mana = CapManager.getMana(stack) / CapManager.getMaxMana(stack);
-			boolean dulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
+			FairyObject fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+			if (fairy == null) return super.getItemStackDisplayName(stack);
+
+			IWizardryCapability cap = fairy.handler;
+			double mana = CapManager.getMana(cap) / CapManager.getMaxMana(cap);
+			boolean dulled = fairy.isDepressed;
 
 			if (dulled) {
 				return I18n.translateToLocal("item.wizardry.fairy_jar.dulled.name").trim();
@@ -162,10 +170,15 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag
+			flagIn) {
 		if (stack.getItemDamage() == 2) {
-			double mana = CapManager.getMana(stack) / CapManager.getMaxMana(stack);
-			boolean dulled = NBTHelper.getBoolean(stack, Constants.NBT.FAIRY_DULLED, false);
+			FairyObject fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+			if (fairy == null) return;
+
+			IWizardryCapability cap = fairy.handler;
+			double mana = CapManager.getMana(cap) / CapManager.getMaxMana(cap);
+			boolean dulled = fairy.isDepressed;
 
 			if (dulled) {
 				tooltip.add(I18n.translateToLocal("item.wizardry.fairy_jar.dulled.info").trim());

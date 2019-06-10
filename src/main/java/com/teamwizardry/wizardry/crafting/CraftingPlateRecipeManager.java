@@ -1,9 +1,9 @@
-package com.teamwizardry.wizardry.api;
+package com.teamwizardry.wizardry.crafting;
 
 import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.common.core.craftingplaterecipes.FairyJarRecipe;
-import com.teamwizardry.wizardry.common.core.craftingplaterecipes.PearlInfusionRecipe;
+import com.teamwizardry.wizardry.crafting.craftingplaterecipes.FairyJarRecipe;
+import com.teamwizardry.wizardry.crafting.craftingplaterecipes.PearlInfusionRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

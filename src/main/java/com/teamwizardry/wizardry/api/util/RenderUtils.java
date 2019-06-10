@@ -363,8 +363,6 @@ public final class RenderUtils {
 	}
 
 	public static void drawCircle(@Nonnull Vec3d pos, double radius, boolean flattenToScreen, boolean enableDepth) {
-		if (Minecraft.getMinecraft().getRenderManager() == null) return;
-
 		GlStateManager.pushMatrix();
 
 		GlStateManager.translate(pos.x, pos.y, pos.z);
