@@ -2,12 +2,8 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
-import com.teamwizardry.librarianlib.features.saving.Savable;
-import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.entity.FairyObject;
-import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.ai.FairyAIWanderAvoidWaterFlying;
 import com.teamwizardry.wizardry.common.entity.ai.FairyMoveHelper;
@@ -27,6 +23,9 @@ import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
@@ -43,11 +42,9 @@ import javax.annotation.Nullable;
 /**
  * Created by Demoniaque on 8/21/2016.
  */
-@Savable
 public class EntityFairy extends EntityTameable implements EntityFlying {
 
-	@Save
-	public FairyObject fairyObject;
+	private static final DataParameter<NBTTagCompound> DATA_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
 
 	private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
 
@@ -56,11 +53,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		setSize(1F, 1F);
 		isAirBorne = true;
 		experienceValue = 5;
-		fairyObject = new FairyObject();
-		fairyObject.age = RandUtil.nextInt(100, 1000);
-		fairyObject.primaryColor = ColorUtils.generateRandomColor();
-		fairyObject.secondaryColor = ColorUtils.generateRandomColor();
 		moveHelper = new FairyMoveHelper(this);
+
+		setDataFairy(new FairyObject());
 	}
 
 	public EntityFairy(World worldIn, FairyObject fairyObject) {
@@ -69,7 +64,21 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		isAirBorne = true;
 		experienceValue = 5;
 		moveHelper = new FairyMoveHelper(this);
-		this.fairyObject = fairyObject;
+
+		setDataFairy(fairyObject);
+	}
+
+	@Nullable
+	public FairyObject getDataFairy() {
+		NBTTagCompound compound = this.getDataManager().get(DATA_FAIRY);
+		return FairyObject.deserialize(compound);
+	}
+
+	public void setDataFairy(FairyObject fairy) {
+		if (fairy == null) return;
+
+		this.getDataManager().set(DATA_FAIRY, fairy.serializeNBT());
+		this.getDataManager().setDirty(DATA_FAIRY);
 	}
 
 	@Nullable
@@ -118,10 +127,17 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	}
 
 	@Override
+	protected void entityInit() {
+		super.entityInit();
+		this.getDataManager().register(DATA_FAIRY, new FairyObject().serializeNBT());
+	}
+
+	@Override
 	public void initEntityAI() {
 		this.tasks.addTask(1, new EntityAIFollowOwnerFlying(this, 1.0D, 5.0F, 1.0F));
 		this.tasks.addTask(2, new FairyAIWanderAvoidWaterFlying(this, 1.0D));
 		this.tasks.addTask(3, new EntityAIFollow(this, 1.0D, 3.0F, 7.0F));
+
 	}
 
 	@Override
@@ -138,6 +154,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		this.tasks.addTask(0, new EntityAIAvoidEntity<>(this, EntityUnicorn.class, 16, 2, 3));
 		this.tasks.addTask(0, new EntityAIAvoidEntity<>(this, EntitySpiritWight.class, 16, 2, 3));
+
 	}
 
 	@Override
@@ -170,12 +187,16 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	@Override
 	public void onUpdate() {
-		super.onUpdate();
-		fallDistance = 0;
 		setNoGravity(true);
-
+		fallDistance = 0;
 		if (isAIDisabled()) return;
+
 		if (isDead) return;
+		FairyObject dataFairy = getDataFairy();
+		if (dataFairy != null && dataFairy.isDepressed) return;
+
+		super.onUpdate();
+
 
 		if (getNavigator().noPath()) {
 			getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 1);
@@ -194,11 +215,14 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	}
 
 	private void succFairy(ItemStack stack, EntityPlayer player) {
+		FairyObject dataFairy = getDataFairy();
+		if (dataFairy == null) return;
+
 		stack.shrink(1);
 		ItemStack jar = new ItemStack(ModItems.JAR_ITEM);
 		jar.setItemDamage(2);
-		fairyObject.wasTamperedWith = true;
-		NBTHelper.setTag(jar, "fairy", fairyObject.serializeNBT());
+		dataFairy.wasTamperedWith = true;
+		NBTHelper.setTag(jar, "fairy", dataFairy.serializeNBT());
 		player.addItemStackToInventory(jar);
 		world.removeEntity(this);
 	}
@@ -206,32 +230,42 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	@Override
 	public void onDeath(@Nonnull DamageSource cause) {
 		super.onDeath(cause);
+
+		FairyObject dataFairy = getDataFairy();
+		if (dataFairy == null) return;
+
 		if (!world.isRemote && getHealth() <= 0)
-			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().add(0, 0.25, 0), fairyObject.primaryColor, fairyObject.secondaryColor, 0.5, 0.5, RandUtil.nextInt(100, 200), 75, 25, true),
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().add(0, 0.25, 0), dataFairy.primaryColor, dataFairy.secondaryColor, 0.5, 0.5, RandUtil.nextInt(100, 200), 75, 25, true),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
 
 	@Override
 	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @Nonnull DamageSource source) {
 		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
+		FairyObject dataFairy = getDataFairy();
+		if (dataFairy == null) return;
+
+		// TODO color
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
 		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);
-		NBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, fairyObject.primaryColor.getRGB());
+		NBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, dataFairy.primaryColor.getRGB());
 		entityDropItem(fairyDust, RandUtil.nextFloat());
 		entityDropItem(fairyWings, RandUtil.nextFloat());
 	}
 
-	@NotNull
 	@Override
-	public NBTTagCompound serializeNBT() {
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
-		return compound;
+	public void readEntityFromNBT(NBTTagCompound compound) {
+		super.readEntityFromNBT(compound);
+
+		setDataFairy(FairyObject.deserialize(NBTHelper.getCompoundTag(compound, "fairy")));
 	}
 
 	@Override
-	public void deserializeNBT(@NotNull NBTTagCompound nbt) {
-		super.deserializeNBT(nbt);
-		AbstractSaveHandler.readAutoNBT(this, nbt.getCompoundTag("save"), true);
+	public void writeEntityToNBT(NBTTagCompound compound) {
+		super.writeEntityToNBT(compound);
+
+		FairyObject dataFairy = getDataFairy();
+		if (dataFairy != null)
+			NBTHelper.setCompoundTag(compound, "fairy", dataFairy.serializeNBT());
 	}
 }

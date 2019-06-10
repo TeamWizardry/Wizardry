@@ -125,7 +125,7 @@ public class BlockJar extends BlockModContainer {
 							ItemStack fairyStack = new ItemStack(ModItems.FAIRY_ITEM);
 							NBTHelper.setCompound(fairyStack, "fairy", jar.fairy.serializeNBT());
 
-							EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 0.5, pos.getZ(), fairyStack);
+							EntityItem entityItem = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, fairyStack);
 							entityItem.setPickupDelay(20);
 							worldIn.spawnEntity(entityItem);
 
@@ -134,7 +134,7 @@ public class BlockJar extends BlockModContainer {
 
 						} else if (jar.fairy.handler.getMana() >= jar.fairy.handler.getMaxMana()) {
 							EntityFairy entity = new EntityFairy(worldIn, jar.fairy);
-							entity.setPosition(pos.getX(), pos.getY() + 0.5, pos.getZ());
+							entity.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
 
 							worldIn.spawnEntity(entity);
 							Explosion explosion = worldIn.createExplosion(entity, pos.getX(), pos.getY(), pos.getZ(), 10, true);
@@ -145,7 +145,7 @@ public class BlockJar extends BlockModContainer {
 
 						} else {
 							EntityFairy entity = new EntityFairy(worldIn, jar.fairy);
-							entity.setPosition(pos.getX(), pos.getY() + 0.5, pos.getZ());
+							entity.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
 
 							worldIn.spawnEntity(entity);
 

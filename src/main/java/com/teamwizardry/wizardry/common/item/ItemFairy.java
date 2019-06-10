@@ -30,6 +30,7 @@ public class ItemFairy extends ItemMod {
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.getHeldItem(hand);
 		if (stack.isEmpty()) return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+		if (worldIn.isRemote) return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 
 		FairyObject object = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
 		if (object == null) return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
@@ -46,8 +47,9 @@ public class ItemFairy extends ItemMod {
 
 		} else {
 
+			BlockPos offsetpos = pos.offset(facing);
 			EntityFairy entity = new EntityFairy(worldIn, object);
-			entity.setPosition(pos.getX(), pos.getY() + 0.5, pos.getZ());
+			entity.setPosition(offsetpos.getX() + 0.5, offsetpos.getY() + 0.5, offsetpos.getZ() + 0.5);
 
 			worldIn.spawnEntity(entity);
 		}

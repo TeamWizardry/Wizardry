@@ -13,6 +13,7 @@ import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,13 +40,13 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 	public boolean wasTamperedWith = false;
 
 	@Save
-	public Color primaryColor = Color.WHITE;
+	public Color primaryColor = ColorUtils.generateRandomColor();
 
 	@Save
-	public Color secondaryColor = Color.WHITE;
+	public Color secondaryColor = ColorUtils.generateRandomColor();
 
 	@Save
-	public int age = 0;
+	public int age = RandUtil.nextInt(100, 1000);
 
 	@Save
 	public boolean isDepressed = false;
@@ -86,7 +87,7 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 
 	@SideOnly(Side.CLIENT)
 	public void render(World world, Vec3d pos, float partialTicks) {
-		if (!wasTamperedWith) {
+		if (!wasTamperedWith && !isDepressed) {
 			LibParticles.FAIRY_HEAD(world, pos.add(0, 0.25, 0), primaryColor);
 
 			ParticleBuilder glitter = new ParticleBuilder(age);
