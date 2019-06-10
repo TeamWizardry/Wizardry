@@ -1,3 +1,16 @@
+0.10.7
+WIP unicorn AI
+Improved fairy AI
+Sped up spirit wight speed + buffed them
+WIP fairy jarring
+Fix crash with clients when logging on
+Redo mana network logic
+Mana battery structure has been changed and regenerates mana now
+Changed Disarm to Extract and now pulls items from chests as well
+Fixed bug where disarmed items are instantly picked up
+Made vanish more reliable and takes advantage of vanilla invisibility as well
+Fix crash with pearl UI
+
 0.10.6
 Fixed crashes on servers
 Removed wizardry reset command
@@ -5,31 +18,3 @@ Fix crash for render visualizations
 Fixed crash with empty syringes
 Reduced zoom lag effect
 Tiny telekinesis buff
-
-0.10.5
-Better structure visualization
-Overhaul vanish spell. It actually works now + no ai targetting
-Overhaul zone shape. It handles things better now + is affected by potency
-Some effects now respond better to zones (like timeslow/place/break/frost)
-Buff base break spell
-Block selection now works properly for place and substitution spells
-Break spell no longer desyncs
-Fixed rendering issue with lightning
-Move mana pools to biome decoration event
-Removed event modules from the spell system
-Modules no longer have a "base" and "min". They just have min now.
-SERIOUSLY reduce syringe cooldown time. make syringes fill mana completely
-
-0.10.3
-Renamed pearl holder to orb holder
-Add localization for levitation orbs
-New bouncy block effect & entity bouncy effect
-Added spell visualizations for every shape
-Fix light spell's rendering (crashed on servers)
-Fix error with bouncy blocks
-Fix orb coloring when their fill reaches 0
-
-0.10.2
-Added new recipes
-Fixed invalid recipes
-Changed recipes to use oredict if possible
