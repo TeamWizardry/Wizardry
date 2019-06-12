@@ -3,9 +3,9 @@ package com.teamwizardry.wizardry.crafting.craftingplaterecipes;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.ISpellInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
@@ -50,9 +50,9 @@ public class PearlInfusionRecipe implements ICraftingPlateRecipe {
 	}
 
 	@Override
-	public void tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IWizardryCapability, Double> consumeMana) {
-		if (!CapManager.isManaFull(input)) {
-			CapManager.forObject(input).addMana(consumeMana.apply(WizardryCapabilityProvider.getCap(input))).close();
+	public void tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IManaCapability, Double> consumeMana) {
+		if (!ManaManager.isManaFull(input)) {
+			ManaManager.forObject(input).addMana(consumeMana.apply(ManaCapabilityProvider.getCap(input))).close();
 		}
 	}
 
@@ -117,12 +117,12 @@ public class PearlInfusionRecipe implements ICraftingPlateRecipe {
 
 	@Override
 	public boolean isDone(World world, BlockPos pos, ItemStack stack) {
-		return CapManager.isManaFull(stack);
+		return ManaManager.isManaFull(stack);
 	}
 
 	@Override
 	public void canceled(World world, BlockPos pos, ItemStack stack) {
-		CapManager.forObject(stack).setMana(0).close();
+		ManaManager.forObject(stack).setMana(0).close();
 	}
 
 	@Override

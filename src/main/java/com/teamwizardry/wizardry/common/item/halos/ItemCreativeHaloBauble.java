@@ -1,30 +1,27 @@
 package com.teamwizardry.wizardry.common.item.halos;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import baubles.api.BaubleType;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import com.teamwizardry.wizardry.api.spell.SpellModifierRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
-
-import baubles.api.BaubleType;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Demoniaque on 8/30/2016.
@@ -43,7 +40,7 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IHalo {
 	public void onWornTick(@Nonnull ItemStack stack, @Nonnull EntityLivingBase player) {
 		if (player.world.isRemote) return;
 
-		try (CapManager.CapManagerBuilder mgr = CapManager.forObject(player)) {
+		try (ManaManager.CapManagerBuilder mgr = ManaManager.forObject(player)) {
 			mgr.setMaxMana(ConfigValues.creativeHaloBufferSize);
 			mgr.setMaxBurnout(ConfigValues.creativeHaloBufferSize);
 			mgr.setMana(ConfigValues.creativeHaloBufferSize);

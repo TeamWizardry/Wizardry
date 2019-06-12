@@ -1,8 +1,8 @@
-package com.teamwizardry.wizardry.api.capability.mana;
+package com.teamwizardry.wizardry.api.capability.player.mana;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.common.network.PacketUpdateCaps;
+import com.teamwizardry.wizardry.common.network.PacketUpdateManaCap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,15 +15,15 @@ import javax.annotation.Nullable;
 /**
  * Created by Demoniaque.
  */
-public class BaubleWizardryCapability implements IWizardryCapability {
+public class BaubleManaCapability implements IManaCapability {
 
 	private ItemStack stack;
 
-	public BaubleWizardryCapability(ItemStack stack) {
+	public BaubleManaCapability(ItemStack stack) {
 		this.stack = stack;
 	}
 
-	public BaubleWizardryCapability(ItemStack stack, double maxMana, double maxBurnout) {
+	public BaubleManaCapability(ItemStack stack, double maxMana, double maxBurnout) {
 		this.stack = stack;
 		NBTHelper.setDouble(stack, "mana", 0);
 		NBTHelper.setDouble(stack, "max_mana", maxMana);
@@ -31,7 +31,7 @@ public class BaubleWizardryCapability implements IWizardryCapability {
 		NBTHelper.setDouble(stack, "max_burnout", maxBurnout);
 	}
 
-	public BaubleWizardryCapability(ItemStack stack, double maxMana, double maxBurnout, double mana, double burnout) {
+	public BaubleManaCapability(ItemStack stack, double maxMana, double maxBurnout, double mana, double burnout) {
 		this.stack = stack;
 		NBTHelper.setDouble(stack, "mana", mana);
 		NBTHelper.setDouble(stack, "max_mana", maxMana);
@@ -102,6 +102,6 @@ public class BaubleWizardryCapability implements IWizardryCapability {
 	@Override
 	public void dataChanged(Entity entity) {
 		if ((entity != null) && entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
-			PacketHandler.NETWORK.sendTo(new PacketUpdateCaps(serializeNBT()), (EntityPlayerMP) entity);
+			PacketHandler.NETWORK.sendTo(new PacketUpdateManaCap(serializeNBT()), (EntityPlayerMP) entity);
 	}
 }

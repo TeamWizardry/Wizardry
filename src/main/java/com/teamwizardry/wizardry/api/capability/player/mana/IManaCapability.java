@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability.mana;
+package com.teamwizardry.wizardry.api.capability.player.mana;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -7,7 +7,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 /**
  * Created by Demoniaque on 8/16/2016.
  */
-public interface IWizardryCapability extends INBTSerializable<NBTTagCompound> {
+public interface IManaCapability extends INBTSerializable<NBTTagCompound> {
 
 	double getMana();
 

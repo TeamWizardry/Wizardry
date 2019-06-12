@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability.mana;
+package com.teamwizardry.wizardry.api.capability.player.mana;
 
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;

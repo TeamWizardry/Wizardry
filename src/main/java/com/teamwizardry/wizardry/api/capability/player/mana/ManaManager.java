@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability.mana;
+package com.teamwizardry.wizardry.api.capability.player.mana;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 /**
  * Created by Demoniaque.
  */
-public final class CapManager {
+public final class ManaManager {
 
 	public static CapManagerBuilder forObject(@Nullable Entity entity) {
 		return new CapManagerBuilder(entity);
@@ -26,189 +26,189 @@ public final class CapManager {
 		return new CapManagerBuilder(world, pos, facing);
 	}
 
-	public static CapManagerBuilder forObject(@Nullable IWizardryCapability cap) {
+	public static CapManagerBuilder forObject(@Nullable IManaCapability cap) {
 		return new CapManagerBuilder(cap);
 	}
 
 	@Nullable
-	private static IWizardryCapability getCap(@Nullable ItemStack stack) {
-		return stack != null && !stack.isEmpty() ? WizardryCapabilityProvider.getCap(stack) : null;
+	private static IManaCapability getCap(@Nullable ItemStack stack) {
+		return stack != null && !stack.isEmpty() ? ManaCapabilityProvider.getCap(stack) : null;
 	}
 
 	@Nullable
-	private static IWizardryCapability getCap(@Nullable Entity entity) {
-		return entity != null ? WizardryCapabilityProvider.getCap(entity) : null;
+	private static IManaCapability getCap(@Nullable Entity entity) {
+		return entity != null ? ManaCapabilityProvider.getCap(entity) : null;
 
 	}
 
 	@Nullable
-	private static IWizardryCapability getCap(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		return world == null || pos == null ? null : world.isRemote ? null : WizardryCapabilityProvider.getCap(world, pos, facing);
+	private static IManaCapability getCap(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
+		return world == null || pos == null ? null : world.isRemote ? null : ManaCapabilityProvider.getCap(world, pos, facing);
 	}
 
-	public static double getMaxMana(@Nullable IWizardryCapability cap) {
+	public static double getMaxMana(@Nullable IManaCapability cap) {
 		if (cap == null) return 0;
 		return cap.getMaxMana();
 	}
 
 	public static double getMaxMana(@Nullable Entity entity) {
-		IWizardryCapability cap = getCap(entity);
+		IManaCapability cap = getCap(entity);
 		if (cap == null) return 0;
 		return cap.getMaxMana();
 	}
 
 	public static double getMaxMana(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		IWizardryCapability cap = getCap(world, pos, facing);
+		IManaCapability cap = getCap(world, pos, facing);
 		if (cap == null) return 0;
 		return cap.getMaxMana();
 	}
 
 	public static double getMaxMana(@Nullable ItemStack stack) {
-		IWizardryCapability cap = getCap(stack);
+		IManaCapability cap = getCap(stack);
 		if (cap == null) return 0;
 		return cap.getMaxMana();
 	}
 
-	public static double getMana(@Nullable IWizardryCapability cap) {
+	public static double getMana(@Nullable IManaCapability cap) {
 		if (cap == null) return 0;
 		return cap.getMana();
 	}
 
 	public static double getMana(@Nullable Entity entity) {
-		IWizardryCapability cap = getCap(entity);
+		IManaCapability cap = getCap(entity);
 		if (cap == null) return 0;
 		return cap.getMana();
 	}
 
 	public static double getMana(@Nullable ItemStack stack) {
-		IWizardryCapability cap = getCap(stack);
+		IManaCapability cap = getCap(stack);
 		if (cap == null) return 0;
 		return cap.getMana();
 	}
 
 	public static double getMana(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		IWizardryCapability cap = getCap(world, pos, facing);
+		IManaCapability cap = getCap(world, pos, facing);
 		if (cap == null) return 0;
 		return cap.getMana();
 	}
 
-	public static double getBurnout(@Nullable IWizardryCapability cap) {
+	public static double getBurnout(@Nullable IManaCapability cap) {
 		if (cap == null) return 0;
 		return cap.getBurnout();
 	}
 
 	public static double getBurnout(@Nullable ItemStack stack) {
-		IWizardryCapability cap = getCap(stack);
+		IManaCapability cap = getCap(stack);
 		if (cap == null) return 0;
 		return cap.getBurnout();
 	}
 
 	public static double getBurnout(@Nullable Entity entity) {
-		IWizardryCapability cap = getCap(entity);
+		IManaCapability cap = getCap(entity);
 		if (cap == null) return 0;
 		return cap.getBurnout();
 	}
 
 	public static double getBurnout(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		IWizardryCapability cap = getCap(world, pos, facing);
+		IManaCapability cap = getCap(world, pos, facing);
 		if (cap == null) return 0;
 		return cap.getBurnout();
 	}
 
-	public static double getMaxBurnout(@Nullable IWizardryCapability cap) {
+	public static double getMaxBurnout(@Nullable IManaCapability cap) {
 		if (cap == null) return 0;
 		return cap.getMaxBurnout();
 	}
 
 	public static double getMaxBurnout(@Nullable ItemStack stack) {
-		IWizardryCapability cap = getCap(stack);
+		IManaCapability cap = getCap(stack);
 		if (cap == null) return 0;
 		return cap.getMaxBurnout();
 	}
 
 	public static double getMaxBurnout(@Nullable Entity entity) {
-		IWizardryCapability cap = getCap(entity);
+		IManaCapability cap = getCap(entity);
 		if (cap == null) return 0;
 		return cap.getMaxBurnout();
 	}
 
 	public static double getMaxBurnout(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		IWizardryCapability cap = getCap(world, pos, facing);
+		IManaCapability cap = getCap(world, pos, facing);
 		if (cap == null) return 0;
 		return cap.getMaxBurnout();
 	}
 
-	public static boolean isManaFull(@Nullable IWizardryCapability cap) {
+	public static boolean isManaFull(@Nullable IManaCapability cap) {
 		return cap != null && cap.getMana() >= cap.getMaxMana();
 	}
 
 	public static boolean isManaFull(@Nullable Entity entity) {
-		IWizardryCapability cap = getCap(entity);
+		IManaCapability cap = getCap(entity);
 		return cap != null && cap.getMana() >= cap.getMaxMana();
 	}
 
 	public static boolean isManaFull(@Nullable ItemStack stack) {
-		IWizardryCapability cap = getCap(stack);
+		IManaCapability cap = getCap(stack);
 		return cap != null && cap.getMana() >= cap.getMaxMana();
 	}
 
 	public static boolean isManaFull(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		IWizardryCapability cap = getCap(world, pos, facing);
+		IManaCapability cap = getCap(world, pos, facing);
 		return cap != null && cap.getMana() >= cap.getMaxMana();
 	}
 
 	public static boolean isBurnoutFull(@Nullable ItemStack stack) {
-		IWizardryCapability cap = getCap(stack);
+		IManaCapability cap = getCap(stack);
 		return cap != null && cap.getBurnout() >= cap.getMaxBurnout();
 	}
 
 	public static boolean isBurnoutFull(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		IWizardryCapability cap = getCap(world, pos, facing);
+		IManaCapability cap = getCap(world, pos, facing);
 		return cap != null && cap.getBurnout() >= cap.getMaxBurnout();
 	}
 
-	public static boolean isManaEmpty(@Nullable IWizardryCapability cap) {
+	public static boolean isManaEmpty(@Nullable IManaCapability cap) {
 		return cap != null && cap.getMana() <= 0;
 	}
 
 	public static boolean isManaEmpty(@Nullable ItemStack stack) {
-		IWizardryCapability cap = getCap(stack);
+		IManaCapability cap = getCap(stack);
 		return cap != null && cap.getMana() <= 0;
 	}
 
 	public static boolean isManaEmpty(@Nullable Entity entity) {
-		IWizardryCapability cap = getCap(entity);
+		IManaCapability cap = getCap(entity);
 		return cap != null && cap.getMana() <= 0;
 	}
 
 	public static boolean isManaEmpty(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		IWizardryCapability cap = getCap(world, pos, facing);
+		IManaCapability cap = getCap(world, pos, facing);
 		return cap != null && cap.getMana() <= 0;
 	}
 
-	public static boolean isBurnoutEmpty(@Nullable IWizardryCapability cap) {
+	public static boolean isBurnoutEmpty(@Nullable IManaCapability cap) {
 		return cap != null && cap.getBurnout() <= 0;
 	}
 
 	public static boolean isBurnoutEmpty(@Nullable Entity entity) {
-		IWizardryCapability cap = getCap(entity);
+		IManaCapability cap = getCap(entity);
 		return cap != null && cap.getBurnout() <= 0;
 	}
 
 	public static boolean isBurnoutEmpty(@Nullable ItemStack stack) {
-		IWizardryCapability cap = getCap(stack);
+		IManaCapability cap = getCap(stack);
 		return cap != null && cap.getBurnout() <= 0;
 	}
 
 	public static boolean isBurnoutEmpty(@Nullable World world, @Nullable BlockPos pos, @Nullable EnumFacing facing) {
-		IWizardryCapability cap = getCap(world, pos, facing);
+		IManaCapability cap = getCap(world, pos, facing);
 		return cap != null && cap.getBurnout() <= 0;
 	}
 
 	public static class CapManagerBuilder implements AutoCloseable {
 
 		@Nullable
-		private IWizardryCapability cap = null;
+		private IManaCapability cap = null;
 		@Nullable
 		private Entity entity = null;
 
@@ -217,17 +217,17 @@ public final class CapManager {
 		CapManagerBuilder(@Nullable Entity entity) {
 			this.entity = entity;
 			if (entity != null) {
-				cap = WizardryCapabilityProvider.getCap(entity);
+				cap = ManaCapabilityProvider.getCap(entity);
 			}
 		}
 
 		CapManagerBuilder(@Nullable ItemStack stack) {
 			if (stack != null && !stack.isEmpty()) {
-				cap = WizardryCapabilityProvider.getCap(stack);
+				cap = ManaCapabilityProvider.getCap(stack);
 			}
 		}
 
-		CapManagerBuilder(@Nullable IWizardryCapability cap) {
+		CapManagerBuilder(@Nullable IManaCapability cap) {
 			this.cap = cap;
 		}
 
@@ -235,7 +235,7 @@ public final class CapManager {
 			if (world == null || pos == null) return;
 			if (world.isRemote) return;
 
-			cap = WizardryCapabilityProvider.getCap(world, pos, facing);
+			cap = ManaCapabilityProvider.getCap(world, pos, facing);
 		}
 
 		public CapManagerBuilder addMana(double mana) {

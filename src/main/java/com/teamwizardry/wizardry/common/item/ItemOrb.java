@@ -2,9 +2,9 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.CustomManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -40,8 +40,8 @@ public class ItemOrb extends ItemMod implements IManaCell, IItemColorProvider {
 		this.addPropertyOverride(new ResourceLocation("fill"), new IItemPropertyGetter() {
 			@SideOnly(Side.CLIENT)
 			public float apply(@Nonnull ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
-				double mana = CapManager.getMana(stack);
-				double maxMana = CapManager.getMaxMana(stack);
+				double mana = ManaManager.getMana(stack);
+				double maxMana = ManaManager.getMaxMana(stack);
 
 				return (int) (10 * mana / maxMana) / 10f;
 			}
@@ -51,13 +51,13 @@ public class ItemOrb extends ItemMod implements IManaCell, IItemColorProvider {
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new CustomWizardryCapability(100, 100, stack.getItemDamage() * 100, 0));
+		return new ManaCapabilityProvider(new CustomManaCapability(100, 100, stack.getItemDamage() * 100, 0));
 	}
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
 		if (entityItem.getItem().getItemDamage() == 0) {
-			if (!CapManager.isManaEmpty(entityItem.getItem())) {
+			if (!ManaManager.isManaEmpty(entityItem.getItem())) {
 				entityItem.getItem().setItemDamage(1);
 			} else {
 				IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
@@ -68,13 +68,13 @@ public class ItemOrb extends ItemMod implements IManaCell, IItemColorProvider {
 				}
 			}
 		} else if (entityItem.getItem().getItemDamage() == 1) {
-			if (CapManager.isManaEmpty(entityItem.getItem())) {
+			if (ManaManager.isManaEmpty(entityItem.getItem())) {
 				entityItem.getItem().setItemDamage(0);
 			} else {
 				IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
 				if (state.getBlock() == ModFluids.MANA.getActualBlock()) {
-					CapManager.forObject(entityItem.getItem())
-							.setMana(CapManager.getMaxMana(entityItem.getItem()))
+					ManaManager.forObject(entityItem.getItem())
+							.setMana(ManaManager.getMaxMana(entityItem.getItem()))
 							.close();
 				}
 			}
@@ -84,16 +84,16 @@ public class ItemOrb extends ItemMod implements IManaCell, IItemColorProvider {
 
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean isSelected) {
-		if (CapManager.isManaEmpty(stack) && stack.getItemDamage() == 1)
+		if (ManaManager.isManaEmpty(stack) && stack.getItemDamage() == 1)
 			stack.setItemDamage(0);
-		else if (!CapManager.isManaEmpty(stack) && stack.getItemDamage() == 0)
+		else if (!ManaManager.isManaEmpty(stack) && stack.getItemDamage() == 0)
 			stack.setItemDamage(1);
 	}
 
 	@NotNull
 	@Override
 	public String getTranslationKey(@NotNull ItemStack stack) {
-		float percentage = (int) (10 * CapManager.getMana(stack) / CapManager.getMaxMana(stack)) / 10f;
+		float percentage = (int) (10 * ManaManager.getMana(stack) / ManaManager.getMaxMana(stack)) / 10f;
 		return super.getTranslationKey(stack) + ".fill." + ((int) (percentage * 100));
 	}
 
@@ -105,8 +105,8 @@ public class ItemOrb extends ItemMod implements IManaCell, IItemColorProvider {
 
 			for (int i = 1; i < 10; i++) {
 				ItemStack stack = new ItemStack(this, 1, 1);
-				CapManager.forObject(stack)
-						.setMana(CapManager.getMaxMana(stack) * i / 10.0)
+				ManaManager.forObject(stack)
+						.setMana(ManaManager.getMaxMana(stack) * i / 10.0)
 						.close();
 				subItems.add(stack);
 			}

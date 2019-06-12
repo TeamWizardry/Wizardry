@@ -14,9 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAvoidEntity;
-import net.minecraft.entity.ai.EntityAIFollow;
-import net.minecraft.entity.ai.EntityAIFollowOwnerFlying;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityFlying;
 import net.minecraft.entity.passive.EntityTameable;
@@ -27,9 +25,11 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNavigate;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 
 /**
@@ -48,9 +49,17 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
 
+	public BlockPos originPos = null;
+	public BlockPos targetPos = null;
+
+	private double previousDist = Double.MAX_VALUE;
+	private long lastFreeTime = Long.MAX_VALUE;
+	private boolean adjustingPath = false;
+
 	public EntityFairy(World worldIn) {
 		super(worldIn);
-		setSize(1F, 1F);
+		setSize(1f, 1f);
+
 		isAirBorne = true;
 		experienceValue = 5;
 		moveHelper = new FairyMoveHelper(this);
@@ -60,7 +69,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	public EntityFairy(World worldIn, FairyObject fairyObject) {
 		super(worldIn);
-		setSize(1F, 1F);
+		setSize(1f, 1f);
 		isAirBorne = true;
 		experienceValue = 5;
 		moveHelper = new FairyMoveHelper(this);
@@ -134,6 +143,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	@Override
 	public void initEntityAI() {
+		FairyObject dataFairy = getDataFairy();
+		if (dataFairy != null && dataFairy.isDepressed) return;
+
 		this.tasks.addTask(1, new EntityAIFollowOwnerFlying(this, 1.0D, 5.0F, 1.0F));
 		this.tasks.addTask(2, new FairyAIWanderAvoidWaterFlying(this, 1.0D));
 		this.tasks.addTask(3, new EntityAIFollow(this, 1.0D, 3.0F, 7.0F));
@@ -142,6 +154,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	@Override
 	protected void setupTamedAI() {
+		FairyObject dataFairy = getDataFairy();
+		if (dataFairy != null && dataFairy.isDepressed) return;
+
 		if (this.avoidEntity == null) {
 			this.avoidEntity = new EntityAIAvoidEntity<>(this, EntityPlayer.class, 16.0F, 2, 3);
 		}
@@ -164,6 +179,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(RandUtil.nextDouble(2, 3));
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(1);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(64);
 	}
 
 	@NotNull
@@ -187,19 +203,83 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	@Override
 	public void onUpdate() {
-		setNoGravity(true);
-		fallDistance = 0;
-		if (isAIDisabled()) return;
-
-		if (isDead) return;
-		FairyObject dataFairy = getDataFairy();
-		if (dataFairy != null && dataFairy.isDepressed) return;
-
 		super.onUpdate();
 
+		setNoGravity(true);
+		fallDistance = 0;
 
-		if (getNavigator().noPath()) {
-			getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 1);
+		FairyObject dataFairy = getDataFairy();
+		float size = dataFairy != null && dataFairy.wasTamperedWith ? 0.2f : 1f;
+		setScale(size);
+
+		//	if (isAIDisabled()) return;
+		if (isDead) return;
+
+		if (dataFairy != null && dataFairy.isDepressed) {
+
+			//	setNoAI(false);
+
+			ArrayList<EntityAITasks.EntityAITaskEntry> tempTasks = new ArrayList<>(tasks.taskEntries);
+			for (EntityAITasks.EntityAITaskEntry taskEntry : tempTasks) {
+				tasks.removeTask(taskEntry.action);
+			}
+
+			ArrayList<EntityAITasks.EntityAITaskEntry> tempTargetTasks = new ArrayList<>(targetTasks.taskEntries);
+			for (EntityAITasks.EntityAITaskEntry taskEntry : tempTargetTasks) {
+				targetTasks.removeTask(taskEntry.action);
+			}
+//			return;
+		}
+
+		if (getNavigator().getPath() != null) {
+			PathPoint pathPoint = getNavigator().getPath().getFinalPathPoint();
+			if (pathPoint != null) {
+
+				//	if (dist <= 1 * 1) {
+				//		getNavigator().noPath();
+				//		motionX = 0;
+				//		motionY = 0;
+				//		motionZ = 0;
+				//		getMoveHelper().setMoveTo(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, 1);
+				//	}
+			}
+		}
+
+		if (targetPos == null) {
+			motionX = 0;
+			motionY = 0;
+			motionZ = 0;
+			getMoveHelper().action = EntityMoveHelper.Action.WAIT;
+			resetPositionToBB();
+
+		}
+
+		if ((dataFairy == null || !dataFairy.isDepressed) && getNavigator().noPath()) {
+			getNavigator().tryMoveToXYZ(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 1);
+		} else if (targetPos != null && dataFairy != null && dataFairy.isDepressed && getNavigator().noPath()) {
+			Vec3d target = new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()).add(0.5, 0.5, 0.5);
+			double dist = target.squareDistanceTo(getPositionVector());
+			if (Math.abs(dist - previousDist) < 0.01) {
+				getMoveHelper().setMoveTo(RandUtil.nextDouble(-1, 1), RandUtil.nextDouble(-1, 1), RandUtil.nextDouble(-1, 1), 0.5);
+				previousDist = dist;
+				lastFreeTime = 5;
+				adjustingPath = true;
+				return;
+			} else if (adjustingPath && lastFreeTime <= 0) {
+
+				getMoveHelper().setMoveTo(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, 0.5);
+				adjustingPath = false;
+			} else if (adjustingPath) --lastFreeTime;
+
+			if (dist < 1.3) {
+				setPositionAndUpdate(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5);
+				motionX = 0;
+				motionY = 0;
+				motionZ = 0;
+				targetPos = null;
+			}
+
+			previousDist = dist;
 		}
 	}
 
@@ -258,6 +338,12 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		super.readEntityFromNBT(compound);
 
 		setDataFairy(FairyObject.deserialize(NBTHelper.getCompoundTag(compound, "fairy")));
+
+		if (NBTHelper.hasKey(compound, "origin_x") && NBTHelper.hasKey(compound, "origin_y") && NBTHelper.hasKey(compound, "origin_z"))
+			originPos = new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z"));
+
+		if (NBTHelper.hasKey(compound, "target_x") && NBTHelper.hasKey(compound, "target_y") && NBTHelper.hasKey(compound, "target_z"))
+			targetPos = new BlockPos(NBTHelper.getInteger(compound, "target_x"), NBTHelper.getInteger(compound, "target_y"), NBTHelper.getInteger(compound, "target_z"));
 	}
 
 	@Override
@@ -267,5 +353,18 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		FairyObject dataFairy = getDataFairy();
 		if (dataFairy != null)
 			NBTHelper.setCompoundTag(compound, "fairy", dataFairy.serializeNBT());
+
+		if (originPos != null) {
+			compound.setInteger("origin_x", originPos.getX());
+			compound.setInteger("origin_y", originPos.getY());
+			compound.setInteger("origin_z", originPos.getZ());
+		}
+
+		if (targetPos != null) {
+			compound.setInteger("target_x", targetPos.getX());
+			compound.setInteger("target_y", targetPos.getY());
+			compound.setInteger("target_z", targetPos.getZ());
+
+		}
 	}
 }

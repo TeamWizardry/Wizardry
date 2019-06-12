@@ -5,8 +5,8 @@ import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInven
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.TileManaNode;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.ICooldownSpellCaster;
 import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -42,9 +42,9 @@ public class TileOrbHolder extends TileManaNode implements ICooldownSpellCaster 
 
 	@Nullable
 	@Override
-	public IWizardryCapability getWizardryCap() {
+	public IManaCapability getWizardryCap() {
 		if (containsCell()) {
-			return WizardryCapabilityProvider.getCap(getItemStack());
+			return ManaCapabilityProvider.getCap(getItemStack());
 		}
 		return null;
 	}

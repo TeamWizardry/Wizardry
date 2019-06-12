@@ -1,9 +1,9 @@
-package com.teamwizardry.wizardry.api.capability.mana;
+package com.teamwizardry.wizardry.api.capability.player.mana;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.common.network.PacketUpdateCaps;
+import com.teamwizardry.wizardry.common.network.PacketUpdateManaCap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,35 +12,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import javax.annotation.Nullable;
 
 /**
- * Created by Demoniaque.
+ * Created by Demoniaque on 8/16/2016.
  */
 @Savable
-public class CustomWizardryCapability implements IWizardryCapability {
+public class DefaultManaCapability implements IManaCapability {
 
 	@Save
-	double mana = 0;
-	@Save
-	double maxMana = 100;
-	@Save
-	double burnout = 100;
-	@Save
-	double maxBurnout = 100;
+	double mana = 0, maxMana = 100, burnout = 100, maxBurnout = 100;
 	@Save
 	EnumBloodType bloodType;
 
-	CustomWizardryCapability() {
-	}
-
-	public CustomWizardryCapability(double maxMana, double maxBurnout) {
-		this.maxMana = maxMana;
-		this.maxBurnout = maxBurnout;
-	}
-
-	public CustomWizardryCapability(double maxMana, double maxBurnout, double mana, double burnout) {
-		this.maxMana = maxMana;
-		this.maxBurnout = maxBurnout;
-		this.mana = mana;
-		this.burnout = burnout;
+	public DefaultManaCapability() {
 	}
 
 	@Override
@@ -108,17 +90,17 @@ public class CustomWizardryCapability implements IWizardryCapability {
 
 	@Override
 	public NBTTagCompound serializeNBT() {
-		return (NBTTagCompound) WizardryCapabilityStorage.INSTANCE.writeNBT(WizardryCapabilityProvider.wizardryCapability, this, null);
+		return (NBTTagCompound) ManaCapabilityStorage.INSTANCE.writeNBT(ManaCapabilityProvider.manaCapability, this, null);
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound compound) {
-		WizardryCapabilityStorage.INSTANCE.readNBT(WizardryCapabilityProvider.wizardryCapability, this, null, compound);
+		ManaCapabilityStorage.INSTANCE.readNBT(ManaCapabilityProvider.manaCapability, this, null, compound);
 	}
 
 	@Override
 	public void dataChanged(Entity entity) {
-		if ((entity != null) && entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
-			PacketHandler.NETWORK.sendTo(new PacketUpdateCaps(serializeNBT()), (EntityPlayerMP) entity);
+		if (entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
+			PacketHandler.NETWORK.sendTo(new PacketUpdateManaCap(serializeNBT()), (EntityPlayerMP) entity);
 	}
 }

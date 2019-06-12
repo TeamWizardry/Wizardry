@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.block;
 
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,7 +16,7 @@ public interface ICraftingPlateRecipe {
 
 	boolean doesRecipeExistInWorld(World world, BlockPos pos);
 
-	void tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IWizardryCapability, Double> consumeMana);
+	void tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IManaCapability, Double> consumeMana);
 
 	boolean isDone(World world, BlockPos pos, ItemStack input);
 

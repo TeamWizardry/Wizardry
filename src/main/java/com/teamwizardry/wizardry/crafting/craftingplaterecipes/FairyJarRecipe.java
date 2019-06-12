@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.crafting.craftingplaterecipes;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -49,7 +49,7 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 	}
 
 	@Override
-	public void tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IWizardryCapability, Double> consumeMana) {
+	public void tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IManaCapability, Double> consumeMana) {
 		TileEntity tileEntity = world.getTileEntity(pos.offset(EnumFacing.UP));
 		if (!(tileEntity instanceof TileJar)) return;
 		TileJar jar = (TileJar) tileEntity;
@@ -57,8 +57,8 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 		if (jar.fairy != null
 				&& jar.fairy.infusedSpell == null
 				&& !jar.fairy.isDepressed
-				&& !CapManager.isManaFull(jar.fairy.handler)) {
-			CapManager.forObject(jar.fairy.handler).addMana(consumeMana.apply(jar.fairy.handler)).close();
+				&& !ManaManager.isManaFull(jar.fairy.handler)) {
+			ManaManager.forObject(jar.fairy.handler).addMana(consumeMana.apply(jar.fairy.handler)).close();
 			jar.markDirty();
 		}
 	}
@@ -119,7 +119,7 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 		if (!(tileEntity instanceof TileJar)) return false;
 		TileJar jar = (TileJar) tileEntity;
 
-		return CapManager.isManaFull(jar.fairy.handler);
+		return ManaManager.isManaFull(jar.fairy.handler);
 	}
 
 	@Override
@@ -128,8 +128,8 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 		if (!(tileEntity instanceof TileJar)) return;
 		TileJar jar = (TileJar) tileEntity;
 
-		if (!CapManager.isManaFull(jar.fairy.handler)) {
-			CapManager.forObject(jar.fairy.handler).setMana(0).close();
+		if (!ManaManager.isManaFull(jar.fairy.handler)) {
+			ManaManager.forObject(jar.fairy.handler).setMana(0).close();
 		}
 	}
 

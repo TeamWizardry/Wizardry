@@ -9,9 +9,9 @@ import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.CustomManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -60,12 +60,12 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 	public UUID owner = null;
 
 	@Save
-	public IWizardryCapability handler = new CustomWizardryCapability(1000, 1000, 0, 0);
+	public IManaCapability handler = new CustomManaCapability(1000, 1000, 0, 0);
 
 	public FairyObject() {
 	}
 
-	public FairyObject(boolean wasTamperedWith, @NotNull Color primaryColor, @NotNull Color secondaryColor, int age, boolean isDepressed, @Nullable SpellRing infusedSpell, UUID owner, @NotNull IWizardryCapability handler) {
+	public FairyObject(boolean wasTamperedWith, @NotNull Color primaryColor, @NotNull Color secondaryColor, int age, boolean isDepressed, @Nullable SpellRing infusedSpell, UUID owner, @NotNull IManaCapability handler) {
 		this.wasTamperedWith = wasTamperedWith;
 		this.primaryColor = primaryColor;
 		this.secondaryColor = secondaryColor;
@@ -131,13 +131,13 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 
 	@Override
 	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-		return capability == WizardryCapabilityProvider.wizardryCapability;
+		return capability == ManaCapabilityProvider.manaCapability;
 	}
 
 	@Nullable
 	@Override
 	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-		return capability == WizardryCapabilityProvider.wizardryCapability ? (T) handler : null;
+		return capability == ManaCapabilityProvider.manaCapability ? (T) handler : null;
 	}
 
 	@Override

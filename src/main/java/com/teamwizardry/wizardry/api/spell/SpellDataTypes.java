@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.capability.mana.DefaultWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.DefaultManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.spell.ProcessData.Process;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterDataType;
 import net.minecraft.block.state.IBlockState;
@@ -161,18 +161,18 @@ public class SpellDataTypes {
 		}
 	}
 
-	@RegisterDataType(storageType = "net.minecraft.nbt.NBTTagCompound", dataType = "com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability")
-	public static class WizardryCapabilityType implements Process<NBTTagCompound, IWizardryCapability> {
+	@RegisterDataType(storageType = "net.minecraft.nbt.NBTTagCompound", dataType = "com.teamwizardry.wizardry.api.capability.player.mana.IWizardryCapability")
+	public static class WizardryCapabilityType implements Process<NBTTagCompound, IManaCapability> {
 		@NotNull
 		@Override
-		public NBTTagCompound serialize(IWizardryCapability object) {
+		public NBTTagCompound serialize(IManaCapability object) {
 			if (object == null) return new NBTTagCompound();
 			return object.serializeNBT();
 		}
 
 		@Override
-		public IWizardryCapability deserialize(@NotNull NBTTagCompound object) {
-			DefaultWizardryCapability cap = new DefaultWizardryCapability();
+		public IManaCapability deserialize(@NotNull NBTTagCompound object) {
+			DefaultManaCapability cap = new DefaultManaCapability();
 			cap.deserializeNBT(object);
 			return cap;
 		}

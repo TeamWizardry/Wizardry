@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,7 +40,7 @@ public class ItemLevitationOrb extends ItemMod implements IItemColorProvider {
 	@NotNull
 	@Override
 	public String getTranslationKey(@NotNull ItemStack stack) {
-		float percentage = (int) (10 * CapManager.getMana(stack) / CapManager.getMaxMana(stack)) / 10f;
+		float percentage = (int) (10 * ManaManager.getMana(stack) / ManaManager.getMaxMana(stack)) / 10f;
 		return super.getTranslationKey(stack) + ".fill." + ((int) (percentage * 100));
 	}
 

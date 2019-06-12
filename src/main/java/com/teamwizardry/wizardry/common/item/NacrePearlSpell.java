@@ -5,8 +5,8 @@ import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.CustomManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.IPotionEffectExplodable;
 import com.teamwizardry.wizardry.api.item.ISpellInfusable;
@@ -45,7 +45,7 @@ public class NacrePearlSpell extends ItemMod implements ISpellInfusable, IPotion
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new CustomWizardryCapability(300, 300, 0, 0));
+		return new ManaCapabilityProvider(new CustomManaCapability(300, 300, 0, 0));
 	}
 
 	@Override

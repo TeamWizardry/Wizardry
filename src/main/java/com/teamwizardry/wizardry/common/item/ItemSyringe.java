@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -81,8 +81,8 @@ public class ItemSyringe extends ItemMod {
 				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 0, true, false));
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 1) {
-				CapManager.forObject(player)
-						.addMana(CapManager.getMaxMana(player))
+				ManaManager.forObject(player)
+						.addMana(ManaManager.getMaxMana(player))
 						.close();
 				player.attackEntityFrom(DamageSourceMana.INSTANCE, 2);
 				stack.setItemDamage(0);

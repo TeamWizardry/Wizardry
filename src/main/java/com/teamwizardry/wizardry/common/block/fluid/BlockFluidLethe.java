@@ -1,32 +1,28 @@
 package com.teamwizardry.wizardry.common.block.fluid;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import com.teamwizardry.librarianlib.features.base.fluid.BlockModFluid;
 import com.teamwizardry.librarianlib.features.base.fluid.ModFluid;
 import com.teamwizardry.librarianlib.features.forgeevents.EntityUpdateEvent;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager.CapManagerBuilder;
 import com.teamwizardry.wizardry.crafting.mana.FluidRecipeLoader;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class BlockFluidLethe extends BlockModFluid {
 

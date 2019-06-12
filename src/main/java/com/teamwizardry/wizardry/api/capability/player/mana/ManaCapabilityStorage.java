@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability.mana;
+package com.teamwizardry.wizardry.api.capability.player.mana;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,12 +11,12 @@ import static com.teamwizardry.wizardry.api.Constants.Data.*;
 /**
  * Created by Demoniaque on 8/16/2016.
  */
-public class WizardryCapabilityStorage implements IStorage<IWizardryCapability> {
+public class ManaCapabilityStorage implements IStorage<IManaCapability> {
 
-	public static final WizardryCapabilityStorage INSTANCE = new WizardryCapabilityStorage();
+	public static final ManaCapabilityStorage INSTANCE = new ManaCapabilityStorage();
 
 	@Override
-	public NBTBase writeNBT(Capability<IWizardryCapability> capability, IWizardryCapability instance, EnumFacing side) {
+	public NBTBase writeNBT(Capability<IManaCapability> capability, IManaCapability instance, EnumFacing side) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		if (instance.getBloodType() != null)
 			nbt.setString(BLOOD_TYPE, instance.getBloodType().id);
@@ -29,7 +29,7 @@ public class WizardryCapabilityStorage implements IStorage<IWizardryCapability> 
 	}
 
 	@Override
-	public void readNBT(Capability<IWizardryCapability> capability, IWizardryCapability instance, EnumFacing side, NBTBase nbt) {
+	public void readNBT(Capability<IManaCapability> capability, IManaCapability instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound tag = (NBTTagCompound) nbt;
 
 		instance.setMaxMana(tag.getDouble(MAX_MANA));

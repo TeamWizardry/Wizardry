@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -58,13 +58,13 @@ public class ModuleEffectLeech implements IModuleEffect {
 			targetEntity.hurtResistantTime = 0;
 			if (targetEntity instanceof EntityPlayer) {
 
-				double targetMana = CapManager.getMana(targetEntity);
+				double targetMana = ManaManager.getMana(targetEntity);
 
 				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 				if (targetEntity.isDead) {
 					targetMana /= 2;
 					targetMana = MathHelper.clamp(targetMana, targetMana, spellRing.getManaDrain(spell) * 2);
-					CapManager.forObject(caster).addMana(targetMana).close();
+					ManaManager.forObject(caster).addMana(targetMana).close();
 				}
 
 			} else if (targetEntity instanceof EntityWitch) {
@@ -73,7 +73,7 @@ public class ModuleEffectLeech implements IModuleEffect {
 
 				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 				if (targetEntity.isDead) {
-					CapManager.forObject(caster).addMana(targetMana).close();
+					ManaManager.forObject(caster).addMana(targetMana).close();
 				}
 
 			} else {

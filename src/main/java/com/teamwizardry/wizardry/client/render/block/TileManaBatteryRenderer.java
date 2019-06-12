@@ -11,7 +11,7 @@ import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
@@ -114,7 +114,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		else GlStateManager.shadeModel(GL11.GL_FLAT);
 
-		float fill = (float) (CapManager.getMana(tile.getWizardryCap()) / CapManager.getMaxMana(tile.getWizardryCap())) / 40.0f;
+		float fill = (float) (ManaManager.getMana(tile.getWizardryCap()) / ManaManager.getMaxMana(tile.getWizardryCap())) / 40.0f;
 
 
 		GlStateManager.translate(0, 0.5, 0);
@@ -176,7 +176,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 				particleBuilder.setAlphaFunction(new InterpFloatInOut(1, 1));
 				particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
 			});
-		} else if (tile.getWorld().getTotalWorldTime() % 10 == 0 && CapManager.forObject(tile.getWizardryCap()).isManaFull()) {
+		} else if (tile.getWorld().getTotalWorldTime() % 10 == 0 && ManaManager.forObject(tile.getWizardryCap()).isManaFull()) {
 			double radius = 1;
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
 			double r = radius * RandUtil.nextFloat();

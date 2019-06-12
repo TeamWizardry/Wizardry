@@ -13,7 +13,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IManaGenerator;
 import com.teamwizardry.wizardry.api.block.TileManaNode;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
@@ -87,8 +87,8 @@ public class TileManaBattery extends TileManaNode implements IManaGenerator {
 			}
 
 
-			if (world.getTotalWorldTime() % 20 == 0 && !CapManager.forObject(getWizardryCap()).isManaFull()) {
-				CapManager.forObject(getWizardryCap())
+			if (world.getTotalWorldTime() % 20 == 0 && !ManaManager.forObject(getWizardryCap()).isManaFull()) {
+				ManaManager.forObject(getWizardryCap())
 						.addMana(5)
 						.removeBurnout(5)
 						.close();
@@ -117,8 +117,8 @@ public class TileManaBattery extends TileManaNode implements IManaGenerator {
 			}
 
 		} else {
-			CapManager.forObject(getWizardryCap())
-					.setMana(CapManager.getMaxMana(getWizardryCap()))
+			ManaManager.forObject(getWizardryCap())
+					.setMana(ManaManager.getMaxMana(getWizardryCap()))
 					.setBurnout(0)
 					.close();
 		}

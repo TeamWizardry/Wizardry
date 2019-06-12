@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.crafting;
 
 import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
 import com.teamwizardry.wizardry.crafting.craftingplaterecipes.FairyJarRecipe;
 import com.teamwizardry.wizardry.crafting.craftingplaterecipes.PearlInfusionRecipe;
 import net.minecraft.item.ItemStack;
@@ -68,7 +68,7 @@ public final class CraftingPlateRecipeManager {
 		return false;
 	}
 
-	public static boolean tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IWizardryCapability, Double> consumeMana) {
+	public static boolean tick(World world, BlockPos pos, ItemStack input, ItemStackHandler inventoryHandler, Function<IManaCapability, Double> consumeMana) {
 		ICraftingPlateRecipe recipe = null;
 
 		for (ICraftingPlateRecipe search : recipes) {

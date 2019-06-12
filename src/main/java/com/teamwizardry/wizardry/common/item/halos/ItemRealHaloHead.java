@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.item.halos;
 import com.teamwizardry.librarianlib.features.base.item.ItemModArmor;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -29,16 +29,16 @@ public class ItemRealHaloHead extends ItemModArmor implements IHalo {
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		if (worldIn.isRemote) return;
 
-		double mana = CapManager.getMana(entityIn);
-		double burnout = CapManager.getBurnout(entityIn);
+		double mana = ManaManager.getMana(entityIn);
+		double burnout = ManaManager.getBurnout(entityIn);
 
-		CapManager.forObject(entityIn)
+		ManaManager.forObject(entityIn)
 				.setMaxMana(ConfigValues.realHaloBufferSize)
 				.setMaxBurnout(ConfigValues.realHaloBufferSize)
 				.setMana(mana > ConfigValues.crudeHaloBufferSize ? ConfigValues.crudeHaloBufferSize : mana)
 				.setBurnout(burnout > ConfigValues.crudeHaloBufferSize ? ConfigValues.crudeHaloBufferSize : burnout)
-				.removeBurnout(CapManager.getMaxBurnout(entityIn) * ConfigValues.haloGenSpeed)
-				.addMana(CapManager.getMaxMana(entityIn) * ConfigValues.haloGenSpeed)
+				.removeBurnout(ManaManager.getMaxBurnout(entityIn) * ConfigValues.haloGenSpeed)
+				.addMana(ManaManager.getMaxMana(entityIn) * ConfigValues.haloGenSpeed)
 		;
 	}
 

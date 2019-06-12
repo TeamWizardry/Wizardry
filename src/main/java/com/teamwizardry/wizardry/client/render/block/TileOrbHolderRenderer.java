@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.common.tile.TileOrbHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.Block;
@@ -77,7 +77,7 @@ public class TileOrbHolderRenderer extends TileEntitySpecialRenderer<TileOrbHold
 				RenderHelper.disableStandardItemLighting();
 
 				if (te.containsCell()) {
-					Color c = new Color(1f, 1f, 1f, (float) (CapManager.getMana(te.getWizardryCap()) / CapManager.getMaxMana(te.getWizardryCap())));
+					Color c = new Color(1f, 1f, 1f, (float) (ManaManager.getMana(te.getWizardryCap()) / ManaManager.getMaxMana(te.getWizardryCap())));
 					Minecraft.getMinecraft().getTextureManager().bindTexture(manaOrb);
 					renderCube(0.13, c);
 					Minecraft.getMinecraft().getTextureManager().bindTexture(glassOrb);

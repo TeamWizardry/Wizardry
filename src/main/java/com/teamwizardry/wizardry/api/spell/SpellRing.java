@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
@@ -263,7 +263,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		boolean fail = false;
 
-		try (CapManager.CapManagerBuilder mgr = CapManager.forObject(caster)) {
+		try (ManaManager.CapManagerBuilder mgr = ManaManager.forObject(caster)) {
 			if (mgr.getMana() < manaDrain) fail = true;
 
 			mgr.removeMana(manaDrain);
@@ -604,7 +604,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (caster == null || caster instanceof EntityLivingBase && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return 1;
 
-		double multiplier = CapManager.getBurnout(caster) / CapManager.getMaxBurnout(caster);
+		double multiplier = ManaManager.getBurnout(caster) / ManaManager.getMaxBurnout(caster);
 		double burnoutLimit = 0.5; //TODO: Probably put this into config, limit to [0, 1)
 		return Math.min(1, 1 - (multiplier - burnoutLimit) / (1 - burnoutLimit));
 	}

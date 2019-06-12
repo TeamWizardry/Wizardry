@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
@@ -26,7 +26,7 @@ public class RecipeManaSyringe extends IForgeRegistryEntry.Impl<IRecipe> impleme
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack.getItem() == ModItems.SYRINGE && stack.getItemDamage() == 0) {
 				foundSyringe = true;
-			} else if (stack.getItem() == ModItems.ORB && CapManager.isManaFull(stack)) {
+			} else if (stack.getItem() == ModItems.ORB && ManaManager.isManaFull(stack)) {
 				foundMana = true;
 			} else if (ItemStack.areItemStacksEqual(bucket, stack))
 				foundMana = true;

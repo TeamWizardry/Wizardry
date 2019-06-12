@@ -8,9 +8,9 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.TileManaNode;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketAddItemCraftingPlate;
@@ -108,9 +108,9 @@ public class TileCraftingPlate extends TileManaNode {
 
 	@Nullable
 	@Override
-	public IWizardryCapability getWizardryCap() {
+	public IManaCapability getWizardryCap() {
 		if (!input.getHandler().getStackInSlot(0).isEmpty())
-			return WizardryCapabilityProvider.getCap(input.getHandler().getStackInSlot(0));
+			return ManaCapabilityProvider.getCap(input.getHandler().getStackInSlot(0));
 		return null;
 	}
 
@@ -143,7 +143,7 @@ public class TileCraftingPlate extends TileManaNode {
 			markDirty();
 		}
 
-		if (!CapManager.isManaFull(getWizardryCap())) {
+		if (!ManaManager.isManaFull(getWizardryCap())) {
 			for (BlockPos relative : poses) {
 				BlockPos target = getPos().add(relative);
 				TileEntity tile = world.getTileEntity(target);

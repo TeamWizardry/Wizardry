@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,17 +26,17 @@ public class PotionSteroid extends PotionBase {
 	@Override
 	public void performEffect(@Nonnull EntityLivingBase entityLivingBaseIn, int p_76394_2_) {
 		if (!hasEffect(entityLivingBaseIn)) return;
-		CapManager.forObject(entityLivingBaseIn)
-				.setMana(CapManager.getMaxMana(entityLivingBaseIn))
+		ManaManager.forObject(entityLivingBaseIn)
+				.setMana(ManaManager.getMaxMana(entityLivingBaseIn))
 				.setBurnout(0)
 				.close();
 	}
 
 	@Override
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
-		CapManager.forObject(entityLivingBaseIn)
+		ManaManager.forObject(entityLivingBaseIn)
 				.setMana(0)
-				.setBurnout(CapManager.getMaxBurnout(entityLivingBaseIn))
+				.setBurnout(ManaManager.getMaxBurnout(entityLivingBaseIn))
 				.close();
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 200, 3, true, true));
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 200, 3, true, true));

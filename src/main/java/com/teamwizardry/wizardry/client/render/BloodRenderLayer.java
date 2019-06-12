@@ -2,9 +2,9 @@ package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.features.kotlin.ClientUtilMethods;
 import com.teamwizardry.librarianlib.features.shader.ShaderHelper;
-import com.teamwizardry.wizardry.api.capability.mana.EnumBloodType;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.EnumBloodType;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -33,7 +33,7 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 	public void doRenderLayer(@Nonnull AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		if (Minecraft.getMinecraft().player == null || Minecraft.getMinecraft().world == null) return;
 
-		IWizardryCapability cap = WizardryCapabilityProvider.getCap(entity);
+		IManaCapability cap = ManaCapabilityProvider.getCap(entity);
 		if (cap != null) {
 			EnumBloodType type = cap.getBloodType();
 			if (type != null && type != EnumBloodType.NONE) {

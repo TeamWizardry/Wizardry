@@ -8,7 +8,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBe
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
@@ -157,7 +157,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		private void animationLoop() {
 			if (tile.isInvalid()) return;
 
-			try (CapManager.CapManagerBuilder manager = CapManager.forObject(tile.getWizardryCap())) {
+			try (ManaManager.CapManagerBuilder manager = ManaManager.forObject(tile.getWizardryCap())) {
 
 				Vec3d newDest;
 				double t = tile.getWizardryCap() == null ? 1 : 1 - (manager.getMana() / manager.getMaxMana());

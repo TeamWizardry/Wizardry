@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability.mana;
+package com.teamwizardry.wizardry.api.capability.player.mana;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleCapability;
@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
  * @author WireSegal
  * Created at 12:20 PM on 3/24/18.
  */
-public class ManaModule extends ModuleCapability<CustomWizardryCapability> {
+public class ManaModule extends ModuleCapability<CustomManaCapability> {
 
-	public ManaModule(CustomWizardryCapability capability) {
-		super(WizardryCapabilityProvider.wizardryCapability, capability);
+	public ManaModule(CustomManaCapability capability) {
+		super(ManaCapabilityProvider.manaCapability, capability);
 	}
 
 	@Override

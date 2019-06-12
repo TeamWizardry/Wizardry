@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
@@ -55,7 +55,7 @@ public class HudRenderer {
 			emptyBurnoutBar.draw(ClientTickHandler.getTicks(), right, top + 6);
 			GlStateManager.popMatrix();
 
-			try (CapManager.CapManagerBuilder mgr = CapManager.forObject(player)) {
+			try (ManaManager.CapManagerBuilder mgr = ManaManager.forObject(player)) {
 				double mana = mgr.getMana();
 				double burnout = mgr.getBurnout();
 				double maxMana = mgr.getMaxMana();

@@ -10,10 +10,10 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.ManaModule;
+import com.teamwizardry.wizardry.api.capability.player.mana.CustomManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaModule;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
@@ -103,7 +103,7 @@ public class TileManaNode extends TileCachable implements ITickable {
 	private BlockPos structurePos = null;
 
 	public TileManaNode(double maxMana, double maxBurnout) {
-		cap = new ManaModule(new CustomWizardryCapability(maxMana, maxBurnout));
+		cap = new ManaModule(new CustomManaCapability(maxMana, maxBurnout));
 	}
 
 	public static void addSuckRule(SuckRule suckRule) {
@@ -128,10 +128,10 @@ public class TileManaNode extends TileCachable implements ITickable {
 				|| (!from.isPartOfStructure() && !to.isPartOfStructure());
 	}
 
-	public double suckMana(IWizardryCapability cap) {
+	public double suckMana(IManaCapability cap) {
 		double totalZucced = 0;
 
-		if (CapManager.isManaFull(cap)) return 0;
+		if (ManaManager.isManaFull(cap)) return 0;
 
 		for (SuckRule suckRule : suckRules) {
 			if (getClass().isAssignableFrom(suckRule.thisClazz)) {
@@ -160,7 +160,7 @@ public class TileManaNode extends TileCachable implements ITickable {
 	}
 
 	@Nullable
-	public IWizardryCapability getWizardryCap() {
+	public IManaCapability getWizardryCap() {
 		return cap.getHandler();
 	}
 
@@ -198,13 +198,13 @@ public class TileManaNode extends TileCachable implements ITickable {
 		this.canSuckFromOutside = canSuckFromOutside;
 	}
 
-	public double suckManaFrom(TileManaNode interacterFrom, SuckRule suckRule, IWizardryCapability cap) {
+	public double suckManaFrom(TileManaNode interacterFrom, SuckRule suckRule, IManaCapability cap) {
 
 		if (cap == null || interacterFrom.getWizardryCap() == null) return 0;
 		if (!suckRule.condition.test(this, interacterFrom)) return 0;
 
-		try (CapManager.CapManagerBuilder thisMgr = CapManager.forObject(cap)) {
-			try (CapManager.CapManagerBuilder theirMgr = CapManager.forObject(interacterFrom.getWizardryCap())) {
+		try (ManaManager.CapManagerBuilder thisMgr = ManaManager.forObject(cap)) {
+			try (ManaManager.CapManagerBuilder theirMgr = ManaManager.forObject(interacterFrom.getWizardryCap())) {
 
 				if (thisMgr.isManaFull()) return 0;
 				if (theirMgr.isManaEmpty()) return 0;
@@ -220,7 +220,7 @@ public class TileManaNode extends TileCachable implements ITickable {
 				double amount = interacterFrom.drainMana(suckRule.idealAmount);
 				if (amount <= 0) return 0;
 
-				CapManager.forObject(cap).addMana(amount).close();
+				ManaManager.forObject(cap).addMana(amount).close();
 
 				if (world.isRemote)
 					ClientRunnable.run(new ClientRunnable() {
@@ -246,12 +246,12 @@ public class TileManaNode extends TileCachable implements ITickable {
 	public double drainMana(double mana) {
 		if (!world.isBlockLoaded(pos)) return -1;
 
-		IWizardryCapability cap = getWizardryCap();
+		IManaCapability cap = getWizardryCap();
 		if (cap == null) return -1;
 
 		double amount = MathHelper.clamp(cap.getMana(), 0, mana);
 
-		CapManager.forObject(cap).removeMana(amount).close();
+		ManaManager.forObject(cap).removeMana(amount).close();
 
 		return amount;
 	}

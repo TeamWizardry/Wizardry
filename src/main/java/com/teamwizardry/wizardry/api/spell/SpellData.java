@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.saving.Savable;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
 import com.teamwizardry.wizardry.api.spell.ProcessData.DataType;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockSet;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache;
@@ -205,13 +205,13 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Nullable
-	public IWizardryCapability getCapability(World world) {
-		IWizardryCapability capability = getData(DefaultKeys.CAPABILITY);
+	public IManaCapability getCapability(World world) {
+		IManaCapability capability = getData(DefaultKeys.CAPABILITY);
 		if (capability == null) {
 			Entity caster = getCaster(world);
 			if (caster == null) {
 				return null;
-			} else return WizardryCapabilityProvider.getCap(caster);
+			} else return ManaCapabilityProvider.getCap(caster);
 		} else return capability;
 	}
 
@@ -257,7 +257,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			addData(DefaultKeys.YAW, entity.rotationYaw);
 			addData(DefaultKeys.PITCH, entity.rotationPitch);
 			addData(DefaultKeys.LOOK, entity.getLook(0));
-			addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
+			addData(DefaultKeys.CAPABILITY, ManaCapabilityProvider.getCap(entity));
 		} else {
 			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().add(0, entity.height / 2.0, 0));
 			addData(DefaultKeys.BLOCK_HIT, entity.getPosition());
@@ -407,7 +407,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		public static final DataField<Integer> ENTITY_HIT = constructField("entity_hit", Integer.class);
 		public static final DataField<BlockPos> BLOCK_HIT = constructField("block_hit", BlockPos.class);
 		public static final DataField<EnumFacing> FACE_HIT = constructField("face_hit", EnumFacing.class);
-		public static final DataField<IWizardryCapability> CAPABILITY = constructField("capability", IWizardryCapability.class);
+		public static final DataField<IManaCapability> CAPABILITY = constructField("capability", IManaCapability.class);
 		public static final DataField<Vec3d> TARGET_HIT = constructField("target_hit", Vec3d.class);
 		public static final DataField<IBlockState> BLOCK_STATE = constructField("block_state", IBlockState.class);
 		public static final DataField<Long> SEED = constructField("seed", Long.class);

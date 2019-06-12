@@ -3,10 +3,10 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.capability.mana.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.CustomManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.entity.FairyObject;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -62,7 +62,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new CustomWizardryCapability(1000, 1000, 0, 0));
+		return new ManaCapabilityProvider(new CustomManaCapability(1000, 1000, 0, 0));
 	}
 
 	@Nonnull
@@ -146,8 +146,8 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 			FairyObject fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
 			if (fairy == null) return super.getItemStackDisplayName(stack);
 
-			IWizardryCapability cap = fairy.handler;
-			double mana = CapManager.getMana(cap) / CapManager.getMaxMana(cap);
+			IManaCapability cap = fairy.handler;
+			double mana = ManaManager.getMana(cap) / ManaManager.getMaxMana(cap);
 			boolean dulled = fairy.isDepressed;
 
 			if (dulled) {
@@ -176,8 +176,8 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 			FairyObject fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
 			if (fairy == null) return;
 
-			IWizardryCapability cap = fairy.handler;
-			double mana = CapManager.getMana(cap) / CapManager.getMaxMana(cap);
+			IManaCapability cap = fairy.handler;
+			double mana = ManaManager.getMana(cap) / ManaManager.getMaxMana(cap);
 			boolean dulled = fairy.isDepressed;
 
 			if (dulled) {
