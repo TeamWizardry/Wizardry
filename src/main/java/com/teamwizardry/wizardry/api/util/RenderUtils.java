@@ -345,6 +345,7 @@ public final class RenderUtils {
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.disableTexture2D();
 		GlStateManager.enableColorMaterial();
+		GlStateManager.disableLighting();
 
 		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
 		Color colorRGB = new Color(color);
@@ -376,6 +377,7 @@ public final class RenderUtils {
 		if (enableDepth) GlStateManager.enableDepth();
 		else GlStateManager.disableDepth();
 
+		GlStateManager.disableLighting();
 		GlStateManager.disableCull();
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
@@ -425,6 +427,7 @@ public final class RenderUtils {
 
 		GlStateManager.disableDepth();
 
+		GlStateManager.disableLighting();
 		GlStateManager.disableCull();
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();

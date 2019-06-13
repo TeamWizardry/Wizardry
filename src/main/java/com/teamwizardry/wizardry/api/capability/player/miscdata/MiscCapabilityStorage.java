@@ -28,8 +28,8 @@ public class MiscCapabilityStorage implements IStorage<IMiscCapability> {
 	public void readNBT(Capability<IMiscCapability> capability, IMiscCapability instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound tag = (NBTTagCompound) nbt;
 
-		if (tag.hasKey("fairy_selected")) {
+		if (tag.hasUniqueId("fairy_selected")) {
 			instance.setSelectedFairy(NBTHelper.getUniqueId(tag, "fairy_selected"));
-		}
+		} else instance.setSelectedFairy(null);
 	}
 }

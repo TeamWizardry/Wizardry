@@ -260,7 +260,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		}
 
 		if ((dataFairy == null || !dataFairy.isDepressed) && getNavigator().noPath()) {
-			getNavigator().tryMoveToXYZ(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 1);
+			getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 2);
 
 		} else if (moving && moveTargetPos != null && dataFairy != null && dataFairy.isDepressed && getNavigator().noPath()) {
 			Vec3d target = new Vec3d(moveTargetPos.getX(), moveTargetPos.getY(), moveTargetPos.getZ()).add(0.5, 0.5, 0.5);
