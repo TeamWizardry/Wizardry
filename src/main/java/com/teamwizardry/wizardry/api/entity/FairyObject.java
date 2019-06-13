@@ -46,7 +46,7 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 	public Color secondaryColor = ColorUtils.generateRandomColor();
 
 	@Save
-	public int age = RandUtil.nextInt(100, 1000);
+	public int age = RandUtil.nextInt(100, 500);
 
 	@Save
 	public boolean isDepressed = false;

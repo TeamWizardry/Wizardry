@@ -50,11 +50,13 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
 
 	public BlockPos originPos = null;
-	public BlockPos targetPos = null;
+	public BlockPos moveTargetPos = null;
+	public Vec3d lookTargetPos = null;
 
 	private double previousDist = Double.MAX_VALUE;
 	private long lastFreeTime = Long.MAX_VALUE;
 	private boolean adjustingPath = false;
+	private boolean moving = false;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
@@ -217,6 +219,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		if (dataFairy != null && dataFairy.isDepressed) {
 
+			if (lookTargetPos != null)
+				getLookHelper().setLookPosition(lookTargetPos.x, lookTargetPos.y, lookTargetPos.z, 20, 20);
+
 			//	setNoAI(false);
 
 			ArrayList<EntityAITasks.EntityAITaskEntry> tempTasks = new ArrayList<>(tasks.taskEntries);
@@ -240,12 +245,12 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 				//		motionX = 0;
 				//		motionY = 0;
 				//		motionZ = 0;
-				//		getMoveHelper().setMoveTo(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, 1);
+				//		getMoveHelper().setMoveTo(moveTargetPos.getX() + 0.5, moveTargetPos.getY() + 0.5, moveTargetPos.getZ() + 0.5, 1);
 				//	}
 			}
 		}
 
-		if (targetPos == null) {
+		if (!moving) {
 			motionX = 0;
 			motionY = 0;
 			motionZ = 0;
@@ -256,8 +261,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		if ((dataFairy == null || !dataFairy.isDepressed) && getNavigator().noPath()) {
 			getNavigator().tryMoveToXYZ(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 1);
-		} else if (targetPos != null && dataFairy != null && dataFairy.isDepressed && getNavigator().noPath()) {
-			Vec3d target = new Vec3d(targetPos.getX(), targetPos.getY(), targetPos.getZ()).add(0.5, 0.5, 0.5);
+
+		} else if (moving && moveTargetPos != null && dataFairy != null && dataFairy.isDepressed && getNavigator().noPath()) {
+			Vec3d target = new Vec3d(moveTargetPos.getX(), moveTargetPos.getY(), moveTargetPos.getZ()).add(0.5, 0.5, 0.5);
 			double dist = target.squareDistanceTo(getPositionVector());
 			if (Math.abs(dist - previousDist) < 0.01) {
 				getMoveHelper().setMoveTo(RandUtil.nextDouble(-1, 1), RandUtil.nextDouble(-1, 1), RandUtil.nextDouble(-1, 1), 0.5);
@@ -267,20 +273,26 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 				return;
 			} else if (adjustingPath && lastFreeTime <= 0) {
 
-				getMoveHelper().setMoveTo(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, 0.5);
+				getMoveHelper().setMoveTo(moveTargetPos.getX() + 0.5, moveTargetPos.getY() + 0.5, moveTargetPos.getZ() + 0.5, 0.5);
 				adjustingPath = false;
 			} else if (adjustingPath) --lastFreeTime;
 
 			if (dist < 1.3) {
-				setPositionAndUpdate(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5);
+				setPositionAndUpdate(moveTargetPos.getX() + 0.5, moveTargetPos.getY() + 0.5, moveTargetPos.getZ() + 0.5);
 				motionX = 0;
 				motionY = 0;
 				motionZ = 0;
-				targetPos = null;
+				moving = false;
 			}
 
 			previousDist = dist;
 		}
+	}
+
+	public void moveTo(BlockPos pos) {
+		moveTargetPos = pos;
+		getMoveHelper().setMoveTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1);
+		moving = true;
 	}
 
 	@NotNull
@@ -342,8 +354,11 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		if (NBTHelper.hasKey(compound, "origin_x") && NBTHelper.hasKey(compound, "origin_y") && NBTHelper.hasKey(compound, "origin_z"))
 			originPos = new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z"));
 
-		if (NBTHelper.hasKey(compound, "target_x") && NBTHelper.hasKey(compound, "target_y") && NBTHelper.hasKey(compound, "target_z"))
-			targetPos = new BlockPos(NBTHelper.getInteger(compound, "target_x"), NBTHelper.getInteger(compound, "target_y"), NBTHelper.getInteger(compound, "target_z"));
+		if (NBTHelper.hasKey(compound, "move_target_x") && NBTHelper.hasKey(compound, "move_target_y") && NBTHelper.hasKey(compound, "move_target_z"))
+			moveTargetPos = new BlockPos(NBTHelper.getInteger(compound, "move_target_x"), NBTHelper.getInteger(compound, "move_target_y"), NBTHelper.getInteger(compound, "move_target_z"));
+
+		if (NBTHelper.hasKey(compound, "look_target_x") && NBTHelper.hasKey(compound, "look_target_y") && NBTHelper.hasKey(compound, "look_target_z"))
+			lookTargetPos = new Vec3d(NBTHelper.getDouble(compound, "look_target_x"), NBTHelper.getDouble(compound, "look_target_y"), NBTHelper.getDouble(compound, "look_target_z"));
 	}
 
 	@Override
@@ -360,11 +375,16 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			compound.setInteger("origin_z", originPos.getZ());
 		}
 
-		if (targetPos != null) {
-			compound.setInteger("target_x", targetPos.getX());
-			compound.setInteger("target_y", targetPos.getY());
-			compound.setInteger("target_z", targetPos.getZ());
+		if (moveTargetPos != null) {
+			compound.setInteger("move_target_x", moveTargetPos.getX());
+			compound.setInteger("move_target_y", moveTargetPos.getY());
+			compound.setInteger("move_target_z", moveTargetPos.getZ());
+		}
 
+		if (lookTargetPos != null) {
+			compound.setDouble("look_target_x", lookTargetPos.x);
+			compound.setDouble("look_target_y", lookTargetPos.y);
+			compound.setDouble("look_target_z", lookTargetPos.z);
 		}
 	}
 }
