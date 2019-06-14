@@ -55,6 +55,25 @@ public class ModSounds {
 	public static ModSoundEvent FIREWORK;
 	public static ModSoundEvent MARBLE_EXPLOSION;
 	public static ModSoundEvent SLIME_SQUISHING;
+	public static ModSoundEvent DARK_SPELL_WHISPERS;
+	public static ModSoundEvent DARK_SUCK_N_BLOW;
+	public static ModSoundEvent ECHOY_HORROR_BREATHE;
+	public static ModSoundEvent ELECTRIC_WHASHOOSH;
+	public static ModSoundEvent ENCHANTED_WHASHOOSH;
+	public static ModSoundEvent FROST_CRACKLE;
+	public static ModSoundEvent HELLFIRE_LIGHT_MATCH;
+	public static ModSoundEvent LARGE_BELL_BOINK;
+	public static ModSoundEvent HIGH_PITCHED_SOLO_BLEEP;
+	public static ModSoundEvent ICE_BREATHE;
+	public static ModSoundEvent MAGIC_GLINT_LIGHT_BREATHE;
+	public static ModSoundEvent NEGATIVELY_PITCHED_BREATHE_PUHH;
+	public static ModSoundEvent POSITIVELY_PITCHED_BREATHE_PUHH;
+	public static ModSoundEvent STUTTERY_ELECTRIC_GRILL;
+	public static ModSoundEvent SUBTLE_MAGIC_BOOK_GLINT;
+	public static ModSoundEvent SUDDEN_ANGELIC_SMOKE;
+	public static ModSoundEvent SUDDEN_DARK_PAFOOF;
+	public static ModSoundEvent TIME_REVERSE;
+	public static ModSoundEvent TINY_BELL;
 
 	public static void init() {
 		SPELL_FAIL = new ModSoundEvent("spell_fail");
@@ -106,6 +125,26 @@ public class ModSounds {
 		FIREWORK = new ModSoundEvent("firework");
 		MARBLE_EXPLOSION = new ModSoundEvent("marble_explosion");
 		SLIME_SQUISHING = new ModSoundEvent("slime_squishing");
+
+		DARK_SPELL_WHISPERS = new ModSoundEvent("dark_spell_whispers");
+		DARK_SUCK_N_BLOW = new ModSoundEvent("dark_suck_n_blow");
+		ECHOY_HORROR_BREATHE = new ModSoundEvent("echoy_horror_breathe");
+		ELECTRIC_WHASHOOSH = new ModSoundEvent("electric_whashoosh");
+		ENCHANTED_WHASHOOSH = new ModSoundEvent("enchanted_whashoosh");
+		FROST_CRACKLE = new ModSoundEvent("frost_crackle");
+		HELLFIRE_LIGHT_MATCH = new ModSoundEvent("hellfire_light_match");
+		LARGE_BELL_BOINK = new ModSoundEvent("large_bell_boink");
+		HIGH_PITCHED_SOLO_BLEEP = new ModSoundEvent("high_pitched_solo_bleep");
+		ICE_BREATHE = new ModSoundEvent("ice_breathe");
+		MAGIC_GLINT_LIGHT_BREATHE = new ModSoundEvent("magic_glint_light_breathe");
+		NEGATIVELY_PITCHED_BREATHE_PUHH = new ModSoundEvent("negatively_pitched_breathe_puhh");
+		POSITIVELY_PITCHED_BREATHE_PUHH = new ModSoundEvent("positively_pitched_breathe_puhh");
+		STUTTERY_ELECTRIC_GRILL = new ModSoundEvent("stuttery_electric_grill");
+		SUBTLE_MAGIC_BOOK_GLINT = new ModSoundEvent("subtle_magic_book_glint");
+		SUDDEN_ANGELIC_SMOKE = new ModSoundEvent("sudden_angelic_smoke");
+		SUDDEN_DARK_PAFOOF = new ModSoundEvent("sudden_dark_pafoof");
+		TIME_REVERSE = new ModSoundEvent("time_reverse");
+		TINY_BELL = new ModSoundEvent("tiny_bell");
 	}
 
 }
