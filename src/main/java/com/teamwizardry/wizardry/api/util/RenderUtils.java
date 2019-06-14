@@ -329,10 +329,15 @@ public final class RenderUtils {
 		GlStateManager.scale(1 / 8.0F, 1 / 8.0F, 1 / 8.0F);
 	}
 
-	/**
-	 * Convenience method for renderVisualization
-	 */
+
 	public static void drawCubeOutline(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
+		Color colorRGB = new Color(color);
+
+		drawCubeOutline(world, pos, state, colorRGB);
+	}
+
+	public static void drawCubeOutline(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, Color color) {
 		GlStateManager.pushMatrix();
 
 		GlStateManager.disableDepth();
@@ -347,12 +352,9 @@ public final class RenderUtils {
 		GlStateManager.enableColorMaterial();
 		GlStateManager.disableLighting();
 
-		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
-		Color colorRGB = new Color(color);
-
 		GlStateManager.glLineWidth(2f);
 
-		bufferBlockOutline(state.getSelectedBoundingBox(world, pos), colorRGB);
+		bufferBlockOutline(state.getSelectedBoundingBox(world, pos), color);
 
 		GlStateManager.disableBlend();
 		GlStateManager.enableDepth();
@@ -364,6 +366,13 @@ public final class RenderUtils {
 	}
 
 	public static void drawCircle(@Nonnull Vec3d pos, double radius, boolean flattenToScreen, boolean enableDepth) {
+		int color = MathHelper.hsvToRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
+		Color colorRGB = new Color(color);
+
+		drawCircle(pos, radius, flattenToScreen, enableDepth, colorRGB);
+	}
+
+	public static void drawCircle(@Nonnull Vec3d pos, double radius, boolean flattenToScreen, boolean enableDepth, Color color) {
 		GlStateManager.pushMatrix();
 
 		GlStateManager.translate(pos.x, pos.y, pos.z);
@@ -389,9 +398,6 @@ public final class RenderUtils {
 		GlStateManager.enableColorMaterial();
 		GlStateManager.translate(0, 0.01, 0);
 
-		int color = MathHelper.hsvToRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
-		Color colorRGB = new Color(color);
-
 		GlStateManager.glLineWidth(2f);
 
 		Tessellator tessellator = Tessellator.getInstance();
@@ -401,9 +407,9 @@ public final class RenderUtils {
 			double x = radius * MathHelper.cos((float) ((i / 360.0) * Math.PI * 2));
 			double z = radius * MathHelper.sin((float) ((i / 360.0) * Math.PI * 2));
 			if (flattenToScreen) {
-				bb.pos(x, z, 0).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
+				bb.pos(x, z, 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
 			} else {
-				bb.pos(x, 0, z).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
+				bb.pos(x, 0, z).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
 			}
 		}
 		tessellator.draw();
@@ -419,10 +425,14 @@ public final class RenderUtils {
 
 	}
 
-	/**
-	 * Convenience method for renderVisualization
-	 */
 	public static void drawFaceOutline(@Nonnull BlockPos pos, @Nonnull EnumFacing facing) {
+		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
+		Color colorRGB = new Color(color);
+
+		drawFaceOutline(pos, facing, colorRGB);
+	}
+
+	public static void drawFaceOutline(@Nonnull BlockPos pos, @Nonnull EnumFacing facing, Color color) {
 		GlStateManager.pushMatrix();
 
 		GlStateManager.disableDepth();
@@ -441,9 +451,6 @@ public final class RenderUtils {
 		Tessellator tessellator = Tessellator.getInstance();
 		tessellator.getBuffer().begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 
-		int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
-		Color colorRGB = new Color(color);
-
 		Vec3d directionOffsetVec = new Vec3d(facing.getDirectionVec()).scale(0.5);
 		Vec3d adjPos = new Vec3d(pos).add(0.5, 0.5, 0.5).add(directionOffsetVec);
 
@@ -458,7 +465,7 @@ public final class RenderUtils {
 				Vec3d p2 = new Vec3d(facing2.getDirectionVec()).scale(0.5);
 				Vec3d edge = adjPos.add(p1.add(p2));
 
-				tessellator.getBuffer().pos(edge.x, edge.y, edge.z).color(colorRGB.getRed(), colorRGB.getGreen(), colorRGB.getBlue(), 255).endVertex();
+				tessellator.getBuffer().pos(edge.x, edge.y, edge.z).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
 			}
 		}
 

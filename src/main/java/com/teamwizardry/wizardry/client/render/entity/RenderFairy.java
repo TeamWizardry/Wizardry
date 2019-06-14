@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
-import com.teamwizardry.wizardry.api.entity.FairyObject;
+import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
@@ -34,7 +34,7 @@ public class RenderFairy extends RenderLiving<EntityFairy> {
 	public void doRender(@NotNull EntityFairy entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 
-		FairyObject dataFairy = entity.getDataFairy();
+		FairyData dataFairy = entity.getDataFairy();
 		if (dataFairy == null) return;
 
 		dataFairy.render(entity.world, new Vec3d(entity.posX, entity.posY, entity.posZ), partialTicks);

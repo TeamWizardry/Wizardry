@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.entity.FairyObject;
+import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -58,7 +58,7 @@ public class BlockJar extends BlockModContainer {
 		TileEntity entity = worldIn.getTileEntity(pos);
 		if (entity instanceof TileJar) {
 			TileJar jar = (TileJar) entity;
-			jar.fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+			jar.fairy = FairyData.deserialize(NBTHelper.getCompound(stack, "fairy"));
 			jar.markDirty();
 			worldIn.checkLight(pos);
 		}

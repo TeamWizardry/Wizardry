@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants.NBT;
-import com.teamwizardry.wizardry.api.entity.FairyObject;
+import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.ai.FairyAIWanderAvoidWaterFlying;
 import com.teamwizardry.wizardry.common.entity.ai.FairyMoveHelper;
@@ -47,11 +47,12 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	private static final DataParameter<NBTTagCompound> DATA_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
 
+	private static final DataParameter<NBTTagCompound> DATA_LOOK_TARGET = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
+
 	private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
 
 	public BlockPos originPos = null;
 	public BlockPos moveTargetPos = null;
-	public Vec3d lookTargetPos = null;
 
 	private double previousDist = Double.MAX_VALUE;
 	private long lastFreeTime = Long.MAX_VALUE;
@@ -66,26 +67,52 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		experienceValue = 5;
 		moveHelper = new FairyMoveHelper(this);
 
-		setDataFairy(new FairyObject());
+		setDataFairy(new FairyData());
+		setLookTarget(null);
 	}
 
-	public EntityFairy(World worldIn, FairyObject fairyObject) {
+	public EntityFairy(World worldIn, FairyData fairyData) {
 		super(worldIn);
 		setSize(1f, 1f);
 		isAirBorne = true;
 		experienceValue = 5;
 		moveHelper = new FairyMoveHelper(this);
 
-		setDataFairy(fairyObject);
+		setDataFairy(fairyData);
+		setLookTarget(null);
 	}
 
 	@Nullable
-	public FairyObject getDataFairy() {
-		NBTTagCompound compound = this.getDataManager().get(DATA_FAIRY);
-		return FairyObject.deserialize(compound);
+	public Vec3d getLookTarget() {
+		NBTTagCompound compound = this.getDataManager().get(DATA_LOOK_TARGET);
+
+		if (NBTHelper.hasKey(compound, "look_target_x") && NBTHelper.hasKey(compound, "look_target_y") && NBTHelper.hasKey(compound, "look_target_z"))
+			return new Vec3d(NBTHelper.getDouble(compound, "look_target_x"), NBTHelper.getDouble(compound, "look_target_y"), NBTHelper.getDouble(compound, "look_target_z"));
+
+		return null;
 	}
 
-	public void setDataFairy(FairyObject fairy) {
+	public void setLookTarget(Vec3d lookTarget) {
+		NBTTagCompound compound = new NBTTagCompound();
+		if (lookTarget == null) return;
+		else {
+			compound.setDouble("look_target_x", lookTarget.x);
+			compound.setDouble("look_target_y", lookTarget.y);
+			compound.setDouble("look_target_z", lookTarget.z);
+		}
+
+		this.getDataManager().set(DATA_LOOK_TARGET, compound);
+		this.getDataManager().setDirty(DATA_LOOK_TARGET);
+	}
+
+
+	@Nullable
+	public FairyData getDataFairy() {
+		NBTTagCompound compound = this.getDataManager().get(DATA_FAIRY);
+		return FairyData.deserialize(compound);
+	}
+
+	public void setDataFairy(FairyData fairy) {
 		if (fairy == null) return;
 
 		this.getDataManager().set(DATA_FAIRY, fairy.serializeNBT());
@@ -140,12 +167,13 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		this.getDataManager().register(DATA_FAIRY, new FairyObject().serializeNBT());
+		this.getDataManager().register(DATA_FAIRY, new FairyData().serializeNBT());
+		this.getDataManager().register(DATA_LOOK_TARGET, new NBTTagCompound());
 	}
 
 	@Override
 	public void initEntityAI() {
-		FairyObject dataFairy = getDataFairy();
+		FairyData dataFairy = getDataFairy();
 		if (dataFairy != null && dataFairy.isDepressed) return;
 
 		this.tasks.addTask(1, new EntityAIFollowOwnerFlying(this, 1.0D, 5.0F, 1.0F));
@@ -156,7 +184,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	@Override
 	protected void setupTamedAI() {
-		FairyObject dataFairy = getDataFairy();
+		FairyData dataFairy = getDataFairy();
 		if (dataFairy != null && dataFairy.isDepressed) return;
 
 		if (this.avoidEntity == null) {
@@ -210,7 +238,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		setNoGravity(true);
 		fallDistance = 0;
 
-		FairyObject dataFairy = getDataFairy();
+		FairyData dataFairy = getDataFairy();
 		float size = dataFairy != null && dataFairy.wasTamperedWith ? 0.2f : 1f;
 		setScale(size);
 
@@ -219,8 +247,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		if (dataFairy != null && dataFairy.isDepressed) {
 
-			if (lookTargetPos != null)
-				getLookHelper().setLookPosition(lookTargetPos.x, lookTargetPos.y, lookTargetPos.z, 20, 20);
+			Vec3d lookTarget = getLookTarget();
+			if (lookTarget != null)
+				getLookHelper().setLookPosition(lookTarget.x, lookTarget.y, lookTarget.z, 20, 20);
 
 			//	setNoAI(false);
 
@@ -307,7 +336,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	}
 
 	private void succFairy(ItemStack stack, EntityPlayer player) {
-		FairyObject dataFairy = getDataFairy();
+		FairyData dataFairy = getDataFairy();
 		if (dataFairy == null) return;
 
 		stack.shrink(1);
@@ -323,7 +352,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	public void onDeath(@Nonnull DamageSource cause) {
 		super.onDeath(cause);
 
-		FairyObject dataFairy = getDataFairy();
+		FairyData dataFairy = getDataFairy();
 		if (dataFairy == null) return;
 
 		if (!world.isRemote && getHealth() <= 0)
@@ -334,7 +363,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	@Override
 	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @Nonnull DamageSource source) {
 		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
-		FairyObject dataFairy = getDataFairy();
+		FairyData dataFairy = getDataFairy();
 		if (dataFairy == null) return;
 
 		// TODO color
@@ -349,23 +378,20 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
 
-		setDataFairy(FairyObject.deserialize(NBTHelper.getCompoundTag(compound, "fairy")));
+		setDataFairy(FairyData.deserialize(NBTHelper.getCompoundTag(compound, "fairy")));
 
 		if (NBTHelper.hasKey(compound, "origin_x") && NBTHelper.hasKey(compound, "origin_y") && NBTHelper.hasKey(compound, "origin_z"))
 			originPos = new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z"));
 
 		if (NBTHelper.hasKey(compound, "move_target_x") && NBTHelper.hasKey(compound, "move_target_y") && NBTHelper.hasKey(compound, "move_target_z"))
 			moveTargetPos = new BlockPos(NBTHelper.getInteger(compound, "move_target_x"), NBTHelper.getInteger(compound, "move_target_y"), NBTHelper.getInteger(compound, "move_target_z"));
-
-		if (NBTHelper.hasKey(compound, "look_target_x") && NBTHelper.hasKey(compound, "look_target_y") && NBTHelper.hasKey(compound, "look_target_z"))
-			lookTargetPos = new Vec3d(NBTHelper.getDouble(compound, "look_target_x"), NBTHelper.getDouble(compound, "look_target_y"), NBTHelper.getDouble(compound, "look_target_z"));
 	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
 
-		FairyObject dataFairy = getDataFairy();
+		FairyData dataFairy = getDataFairy();
 		if (dataFairy != null)
 			NBTHelper.setCompoundTag(compound, "fairy", dataFairy.serializeNBT());
 
@@ -381,10 +407,5 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			compound.setInteger("move_target_z", moveTargetPos.getZ());
 		}
 
-		if (lookTargetPos != null) {
-			compound.setDouble("look_target_x", lookTargetPos.x);
-			compound.setDouble("look_target_y", lookTargetPos.y);
-			compound.setDouble("look_target_z", lookTargetPos.z);
-		}
 	}
 }

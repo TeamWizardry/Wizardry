@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.entity.FairyObject;
+import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.client.render.block.TileJarRenderer;
 
 /**
@@ -16,5 +16,5 @@ import com.teamwizardry.wizardry.client.render.block.TileJarRenderer;
 public class TileJar extends TileMod {
 
 	@Save
-	public FairyObject fairy = null;
+	public FairyData fairy = null;
 }

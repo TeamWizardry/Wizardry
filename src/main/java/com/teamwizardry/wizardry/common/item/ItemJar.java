@@ -7,7 +7,7 @@ import com.teamwizardry.wizardry.api.capability.player.mana.CustomManaCapability
 import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
-import com.teamwizardry.wizardry.api.entity.FairyObject;
+import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -103,7 +103,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 					TileEntity tileEntity = world.getTileEntity(replacable ? pos : offset);
 					if (tileEntity instanceof TileJar) {
 						TileJar jar = (TileJar) tileEntity;
-						jar.fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+						jar.fairy = FairyData.deserialize(NBTHelper.getCompound(stack, "fairy"));
 						jar.markDirty();
 						world.checkLight(replacable ? pos : offset);
 					}
@@ -131,7 +131,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return (stack, tintIndex) -> {
 			if ((tintIndex == 0 && stack.getItemDamage() != 0)) {
-				FairyObject object = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+				FairyData object = FairyData.deserialize(NBTHelper.getCompound(stack, "fairy"));
 				if (object != null && object.primaryColor != null) {
 					return object.primaryColor.getRGB();
 				}
@@ -143,7 +143,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
 		if (stack.getItemDamage() == 2) {
-			FairyObject fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+			FairyData fairy = FairyData.deserialize(NBTHelper.getCompound(stack, "fairy"));
 			if (fairy == null) return super.getItemStackDisplayName(stack);
 
 			IManaCapability cap = fairy.handler;
@@ -173,7 +173,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag
 			flagIn) {
 		if (stack.getItemDamage() == 2) {
-			FairyObject fairy = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+			FairyData fairy = FairyData.deserialize(NBTHelper.getCompound(stack, "fairy"));
 			if (fairy == null) return;
 
 			IManaCapability cap = fairy.handler;

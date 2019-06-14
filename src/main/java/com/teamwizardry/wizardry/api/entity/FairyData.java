@@ -34,7 +34,7 @@ import java.awt.*;
 import java.util.UUID;
 
 @Savable
-public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilityProvider {
+public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityProvider {
 
 	@Save
 	public boolean wasTamperedWith = false;
@@ -62,10 +62,10 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 	@Save
 	public IManaCapability handler = new CustomManaCapability(1000, 1000, 0, 0);
 
-	public FairyObject() {
+	public FairyData() {
 	}
 
-	public FairyObject(boolean wasTamperedWith, @NotNull Color primaryColor, @NotNull Color secondaryColor, int age, boolean isDepressed, @Nullable SpellRing infusedSpell, UUID owner, @NotNull IManaCapability handler) {
+	public FairyData(boolean wasTamperedWith, @NotNull Color primaryColor, @NotNull Color secondaryColor, int age, boolean isDepressed, @Nullable SpellRing infusedSpell, UUID owner, @NotNull IManaCapability handler) {
 		this.wasTamperedWith = wasTamperedWith;
 		this.primaryColor = primaryColor;
 		this.secondaryColor = secondaryColor;
@@ -77,12 +77,12 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 	}
 
 	@Nullable
-	public static FairyObject deserialize(NBTTagCompound compound) {
+	public static FairyData deserialize(NBTTagCompound compound) {
 		if (compound == null) return null;
 		if (!compound.hasKey("save")) return null;
-		FairyObject fairyObject = new FairyObject();
-		fairyObject.deserializeNBT(compound);
-		return fairyObject;
+		FairyData fairyData = new FairyData();
+		fairyData.deserializeNBT(compound);
+		return fairyData;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -106,11 +106,11 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 						build.setAcceleration(new Vec3d(0, -0.005, 0));
 					}
 				});
-		} else {
+		} else if (world.getTotalWorldTime() % 2 == 0) {
 			float excitement = (float) (handler.getMana() / handler.getMaxMana()) * (isDepressed ? 0 : 1);
 
 			Color color = primaryColor;
-			ParticleBuilder glitter = new ParticleBuilder((int) (RandUtil.nextInt(3, 5) + (10 * (1 - excitement))));
+			ParticleBuilder glitter = new ParticleBuilder((int) (RandUtil.nextInt(3, 5) + (20 * (1 - excitement))));
 			glitter.setColor(color);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
@@ -122,7 +122,7 @@ public class FairyObject implements INBTSerializable<NBTTagCompound>, ICapabilit
 			if (isDepressed) {
 				glitter.enableMotionCalculation();
 				glitter.setCollision(true);
-				glitter.setAcceleration(new Vec3d(0, -0.005, 0));
+				glitter.setAcceleration(new Vec3d(0, -0.002, 0));
 			}
 
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1);

@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.entity.FairyObject;
+import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -32,7 +32,7 @@ public class ItemFairy extends ItemMod {
 		if (stack.isEmpty()) return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		if (worldIn.isRemote) return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 
-		FairyObject object = FairyObject.deserialize(NBTHelper.getCompound(stack, "fairy"));
+		FairyData object = FairyData.deserialize(NBTHelper.getCompound(stack, "fairy"));
 		if (object == null) return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 
 		TileEntity tileEntity = worldIn.getTileEntity(pos);
