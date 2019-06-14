@@ -25,12 +25,12 @@ import javax.annotation.Nullable;
 /**
  * Created by Demoniaque on 6/10/2016.
  */
-public class BlockHaloInfuser extends BlockModContainer implements IStructure {
+public class BlockAltarSacrament extends BlockModContainer implements IStructure {
 
 	private static final AxisAlignedBB AABB_CRAFTING_PLATE = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.8125, 1.0);
 
-	public BlockHaloInfuser() {
-		super("halo_infuser", Material.WOOD);
+	public BlockAltarSacrament() {
+		super("altar_sacrament", Material.WOOD);
 		setHardness(2.0F);
 		setResistance(15.0f);
 		setSoundType(SoundType.WOOD);
