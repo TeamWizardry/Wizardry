@@ -101,6 +101,9 @@ item.wizardry:pearl_belt.name=Pearl Belt
 item.wizardry:fairy_bell=Fairy Bell
 item.wizardry:fairy_bell_moving_mode=Fairy Bell [mode: move fairy]
 item.wizardry:fairy_bell_aiming_mode=Fairy Bell [mode: aim fairy]
+item.wizardry:fairy_bell.status.deselected=Fairy Deselected
+item.wizardry:fairy_bell.status.fairy_moving=Fairy Selected. [mode: fairy moving]
+item.wizardry:fairy_bell.status.fairy_aiming=Fairy Selected. [mode: fairy aiming]
 
 item.wizardry:glass_orb.fill.0.name=Glass Orb
 item.wizardry:mana_orb.fill.0.name=Mana Orb 0%

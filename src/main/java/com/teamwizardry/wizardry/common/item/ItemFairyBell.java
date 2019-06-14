@@ -47,7 +47,7 @@ public class ItemFairyBell extends ItemMod {
 						cap.setSelectedFairy(null);
 						playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 0.25f);
 
-						playerIn.sendStatusMessage(new TextComponentTranslation("Fairy Deselected"), true);
+						playerIn.sendStatusMessage(new TextComponentTranslation("item.wizardry:fairy_bell.status.deselected"), true);
 					} else {
 						cap.setSelectedFairy(fairy.getUniqueID());
 
@@ -59,7 +59,7 @@ public class ItemFairyBell extends ItemMod {
 							playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 1.25f);
 						}
 
-						playerIn.sendStatusMessage(new TextComponentTranslation("Fairy Selected. Mode: " + (movingMode ? "fairy moving" : "fairy aiming")), true);
+						playerIn.sendStatusMessage(new TextComponentTranslation(movingMode ? "item.wizardry:fairy_bell.status.fairy_moving" : "item.wizardry:fairy_bell.status.fairy_aiming"), true);
 
 					}
 					cap.dataChanged(playerIn);
@@ -70,8 +70,9 @@ public class ItemFairyBell extends ItemMod {
 		return super.itemInteractionForEntity(stack, playerIn, target, hand);
 	}
 
+	@NotNull
 	@Override
-	public String getItemStackDisplayName(ItemStack stack) {
+	public String getItemStackDisplayName(@NotNull ItemStack stack) {
 		boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
 		if (movingMode) {
