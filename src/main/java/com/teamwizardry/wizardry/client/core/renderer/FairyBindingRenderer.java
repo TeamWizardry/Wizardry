@@ -26,6 +26,7 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -123,14 +124,19 @@ public class FairyBindingRenderer {
 				GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
 				RenderUtils.drawCircle(entityFairy.getPositionVector(), 0.25, true, false, Color.YELLOW);
+				GlStateManager.popMatrix();
 
 				Vec3d lookTarget = entityFairy.getLookTarget();
 				Vec3d fairyPos = entityFairy.getPositionVector();
 
 				if (lookTarget != null) {
+					GlStateManager.pushMatrix();
+					GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
+
 					RenderUtils.drawCircle(lookTarget, 0.1, true, false, Color.ORANGE);
 
 					GlStateManager.popMatrix();
+
 
 					GlStateManager.pushMatrix();
 					GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
@@ -162,13 +168,15 @@ public class FairyBindingRenderer {
 
 				UUID uuid = cap.getSelectedFairyUUID();
 				if (uuid != null && uuid.equals(entityFairy.getUniqueID())) {
-					if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
 
 						boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
 						if (!movingMode) {
 
 							Vec3d hitVec = Minecraft.getMinecraft().objectMouseOver.hitVec;
+							Vec3d subtract = hitVec.subtract(fairyPos);
+							double length = subtract.length();
+							hitVec = entityFairy.getPositionVector().add(subtract.normalize().scale(MathHelper.clamp(length, -3, 3)));
 
 							GlStateManager.pushMatrix();
 							GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
@@ -204,89 +212,90 @@ public class FairyBindingRenderer {
 							GlStateManager.popMatrix();
 
 						} else {
+							if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
 
-							BlockPos target = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
+								BlockPos target = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
 
-							GlStateManager.pushMatrix();
-							GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
-
-							RenderUtils.drawCubeOutline(entityFairy.world, target, entityFairy.world.getBlockState(target), Color.CYAN);
-							GlStateManager.popMatrix();
-
-
-							Vec3d tar = new Vec3d(target).add(0.5, 0.5, 0.5).add(new Vec3d(Minecraft.getMinecraft().objectMouseOver.sideHit.getDirectionVec()));
-							PathNavigate navigateFlying = entityFairy.getNavigator();
-							Path path = navigateFlying.getPathToXYZ(tar.x, tar.y, tar.z);
-
-
-							GlStateManager.pushMatrix();
-							GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
-
-							RenderUtils.drawCircle(tar, 0.25, true, false, Color.CYAN);
-							GlStateManager.popMatrix();
-
-							if (path != null) {
 								GlStateManager.pushMatrix();
 								GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
-								GlStateManager.disableLighting();
-								GlStateManager.disableCull();
-								GlStateManager.enableAlpha();
-								GlStateManager.enableBlend();
-								GlStateManager.shadeModel(GL11.GL_SMOOTH);
-								GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
-								GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-								GlStateManager.color(1, 1, 1, 1);
-								GlStateManager.disableTexture2D();
-								GlStateManager.enableColorMaterial();
-								GlStateManager.disableDepth();
-
-								bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-
-								Color c = Color.GREEN;
-
-								Vec3d lastPoint = null;
-								Vec3d center = new Vec3d(entityFairy.posX, entityFairy.posY + entityFairy.height / 2.0, entityFairy.posZ);
-								bb.pos(center.x, center.y, center.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-
-								for (int i = 0; i < path.getCurrentPathLength(); i++) {
-
-									Vec3d vec = path.getVectorFromIndex(entityFairy, i);
-
-									if (lastPoint != null) {
-										if (i >= path.getCurrentPathLength() - 1) {
-											continue;
-										}
-
-										Vec3d from = path.getVectorFromIndex(entityFairy, i - 1);
-										from = from.subtract(from.subtract(vec).scale(0.5));
-
-										Vec3d to = path.getVectorFromIndex(entityFairy, i + 1);
-										to = to.subtract(to.subtract(vec).scale(0.5));
-
-										Vec3d fromControl = vec.subtract(from).normalize().scale(0.4);
-										Vec3d toControl = vec.subtract(to).normalize().scale(0.4);
-
-										InterpBezier3D bezier = new InterpBezier3D(from, to, fromControl, toControl);
-
-										for (Vec3d dot : bezier.list(20)) {
-											bb.pos(dot.x, dot.y, dot.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-											lastPoint = dot;
-										}
-									} else {
-										bb.pos(vec.x, vec.y, vec.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-										lastPoint = vec;
-									}
-								}
-
-								bb.pos(tar.x, tar.y, tar.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-
-								tess.draw();
-
-								GlStateManager.enableTexture2D();
+								RenderUtils.drawCubeOutline(entityFairy.world, target, entityFairy.world.getBlockState(target), Color.CYAN);
 								GlStateManager.popMatrix();
+
+
+								Vec3d tar = new Vec3d(target).add(0.5, 0.5, 0.5).add(new Vec3d(Minecraft.getMinecraft().objectMouseOver.sideHit.getDirectionVec()));
+								PathNavigate navigateFlying = entityFairy.getNavigator();
+								Path path = navigateFlying.getPathToXYZ(tar.x, tar.y, tar.z);
+
+
+								GlStateManager.pushMatrix();
+								GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
+
+								RenderUtils.drawCircle(tar, 0.25, true, false, Color.CYAN);
+								GlStateManager.popMatrix();
+
+								if (path != null) {
+									GlStateManager.pushMatrix();
+									GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
+
+									GlStateManager.disableLighting();
+									GlStateManager.disableCull();
+									GlStateManager.enableAlpha();
+									GlStateManager.enableBlend();
+									GlStateManager.shadeModel(GL11.GL_SMOOTH);
+									GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
+									GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+									GlStateManager.color(1, 1, 1, 1);
+									GlStateManager.disableTexture2D();
+									GlStateManager.enableColorMaterial();
+									GlStateManager.disableDepth();
+
+									bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+
+									Color c = Color.GREEN;
+
+									Vec3d lastPoint = null;
+									Vec3d center = new Vec3d(entityFairy.posX, entityFairy.posY + entityFairy.height / 2.0, entityFairy.posZ);
+									bb.pos(center.x, center.y, center.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+
+									for (int i = 0; i < path.getCurrentPathLength(); i++) {
+
+										Vec3d vec = path.getVectorFromIndex(entityFairy, i);
+
+										if (lastPoint != null) {
+											if (i >= path.getCurrentPathLength() - 1) {
+												continue;
+											}
+
+											Vec3d from = path.getVectorFromIndex(entityFairy, i - 1);
+											from = from.subtract(from.subtract(vec).scale(0.5));
+
+											Vec3d to = path.getVectorFromIndex(entityFairy, i + 1);
+											to = to.subtract(to.subtract(vec).scale(0.5));
+
+											Vec3d fromControl = vec.subtract(from).normalize().scale(0.4);
+											Vec3d toControl = vec.subtract(to).normalize().scale(0.4);
+
+											InterpBezier3D bezier = new InterpBezier3D(from, to, fromControl, toControl);
+
+											for (Vec3d dot : bezier.list(20)) {
+												bb.pos(dot.x, dot.y, dot.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+												lastPoint = dot;
+											}
+										} else {
+											bb.pos(vec.x, vec.y, vec.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+											lastPoint = vec;
+										}
+									}
+
+									bb.pos(tar.x, tar.y, tar.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+
+									tess.draw();
+
+									GlStateManager.enableTexture2D();
+									GlStateManager.popMatrix();
+								}
 							}
-						}
 					}
 				}
 			}

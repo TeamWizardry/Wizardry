@@ -14,6 +14,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -94,6 +96,43 @@ public class ItemFairyBell extends ItemMod {
 			cap.dataChanged(playerIn);
 
 			return super.onItemRightClick(worldIn, playerIn, handIn);
+		} else if (!worldIn.isRemote) {
+			IMiscCapability cap = MiscCapabilityProvider.getCap(playerIn);
+			if (cap == null) return super.onItemRightClick(worldIn, playerIn, handIn);
+
+			EntityFairy entityFairy = cap.getSelectedFairyEntity(worldIn);
+			if (entityFairy == null) return super.onItemRightClick(worldIn, playerIn, handIn);
+
+			double reach = playerIn.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+			Vec3d posEyes = playerIn.getPositionVector().add(0, playerIn.getEyeHeight(), 0);
+			RayTraceResult rayTraceResult = worldIn.rayTraceBlocks(posEyes, posEyes.add(playerIn.getLook(1f).scale(reach)), false, false, true);
+			if (rayTraceResult == null || rayTraceResult.hitVec == null || rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK)
+				return super.onItemRightClick(worldIn, playerIn, handIn);
+
+			if (worldIn.isBlockLoaded(rayTraceResult.getBlockPos())) {
+				IBlockState state = worldIn.getBlockState(rayTraceResult.getBlockPos());
+				if (state.getBlock().isCollidable()) {
+
+					boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
+
+					if (entityFairy.originPos != null) {
+						if (!movingMode) {
+
+							Vec3d hitVec = rayTraceResult.hitVec;
+							Vec3d subtract = hitVec.subtract(entityFairy.getPositionVector());
+							double length = subtract.length();
+							hitVec = entityFairy.getPositionVector().add(subtract.normalize().scale(MathHelper.clamp(length, -3, 3)));
+
+							entityFairy.setLookTarget(hitVec);
+
+							playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 0.75f);
+
+							cap.setSelectedFairy(null);
+							cap.dataChanged(playerIn);
+						}
+					}
+				}
+			}
 		}
 
 		return super.onItemRightClick(worldIn, playerIn, handIn);
@@ -101,43 +140,40 @@ public class ItemFairyBell extends ItemMod {
 
 	@NotNull
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (worldIn.isRemote || player.isSneaking())
-			return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+	public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (worldIn.isRemote || playerIn.isSneaking())
+			return super.onItemUse(playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 
-		IMiscCapability cap = MiscCapabilityProvider.getCap(player);
-		if (cap == null) return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+		IMiscCapability cap = MiscCapabilityProvider.getCap(playerIn);
+		if (cap == null) return super.onItemUse(playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 
 		EntityFairy entityFairy = cap.getSelectedFairyEntity(worldIn);
-		if (entityFairy == null) return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+		if (entityFairy == null) return super.onItemUse(playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 
 		cap.setSelectedFairy(null);
-		cap.dataChanged(player);
+		cap.dataChanged(playerIn);
 
 		if (worldIn.isBlockLoaded(pos) && !worldIn.isAirBlock(pos)) {
 			IBlockState state = worldIn.getBlockState(pos);
 			if (state.getBlock().isCollidable()) {
 
-				ItemStack stack = player.getHeldItem(hand);
+				ItemStack stack = playerIn.getHeldItem(hand);
 				boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
 				if (entityFairy.originPos != null) {
 					if (!movingMode) {
 
-						entityFairy.setLookTarget(new Vec3d(pos).add(hitX, hitY, hitZ));
-
-						player.world.playSound(null, player.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 0.75f);
-
 					} else {
 
 						entityFairy.moveTo(pos.offset(facing));
+						entityFairy.setLookTarget(null);
 
-						player.world.playSound(null, player.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 1.25f);
+						playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 1.25f);
 					}
 				}
 			}
 		}
 
-		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+		return super.onItemUse(playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
 }

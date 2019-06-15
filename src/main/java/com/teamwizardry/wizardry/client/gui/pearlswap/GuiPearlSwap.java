@@ -584,6 +584,7 @@ public class GuiPearlSwap extends GuiBase {
 	}
 
 	private void renderText(String string) {
+		if (string == null) return;
 		if (string.isEmpty()) return;
 
 		List<String> lines = fontRenderer.listFormattedStringToWidth(string, 120);

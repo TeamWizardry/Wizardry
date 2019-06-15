@@ -285,7 +285,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			motionZ = 0;
 			getMoveHelper().action = EntityMoveHelper.Action.WAIT;
 			resetPositionToBB();
-
 		}
 
 		if ((dataFairy == null || !dataFairy.isDepressed) && getNavigator().noPath()) {
