@@ -161,8 +161,8 @@ public class SpellDataTypes {
 		}
 	}
 
-	@RegisterDataType(storageType = "net.minecraft.nbt.NBTTagCompound", dataType = "com.teamwizardry.wizardry.api.capability.player.mana.IWizardryCapability")
-	public static class WizardryCapabilityType implements Process<NBTTagCompound, IManaCapability> {
+	@RegisterDataType(storageType = "net.minecraft.nbt.NBTTagCompound", dataType = "com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability")
+	public static class ManaCapabilityType implements Process<NBTTagCompound, IManaCapability> {
 		@NotNull
 		@Override
 		public NBTTagCompound serialize(IManaCapability object) {
