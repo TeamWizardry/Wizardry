@@ -14,6 +14,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public final class BaublesSupport {
@@ -49,12 +51,16 @@ public final class BaublesSupport {
 		return ItemStack.EMPTY;
 	}
 
+	public static List<ItemStack> getAllBaubles(EntityLivingBase entity) {
+		return ArmorHolder.ACCESSOR.getBaublesOnly(entity);
+	}
+
 	public static boolean isBauble(ItemStack stack) {
 		return StackHolder.ACCESSOR.get(stack);
 	}
 
 	public static Iterable<ItemStack> getArmor(EntityLivingBase entity) {
-		return ArmorHolder.ACCESSOR.get(entity);
+		return ArmorHolder.ACCESSOR.getBaublesFallbackArmor(entity);
 	}
 
 	private static final class StackHolder {
@@ -66,8 +72,12 @@ public final class BaublesSupport {
 	}
 
 	private static class FallbackArmorAccessor {
-		public Iterable<ItemStack> get(EntityLivingBase entity) {
+		public Iterable<ItemStack> getBaublesFallbackArmor(EntityLivingBase entity) {
 			return entity.getArmorInventoryList();
+		}
+
+		public List<ItemStack> getBaublesOnly(EntityLivingBase entity) {
+			return new ArrayList<>();
 		}
 	}
 
@@ -80,9 +90,24 @@ public final class BaublesSupport {
 	private static final class ArmorAccessor extends FallbackArmorAccessor {
 		@Override
 		@Optional.Method(modid = "baubles")
-		public Iterable<ItemStack> get(EntityLivingBase entity) {
+		public Iterable<ItemStack> getBaublesFallbackArmor(EntityLivingBase entity) {
 			if (!(entity instanceof EntityPlayer)) return entity.getArmorInventoryList();
 			if (BaublesApi.getBaublesHandler((EntityPlayer) entity) == null) return entity.getArmorInventoryList();
+
+			ImmutableList.Builder<ItemStack> stacks = ImmutableList.builder();
+			IBaublesItemHandler inv = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+			for (BaubleType type : BaubleType.values())
+				for (int slot : type.getValidSlots()) {
+					stacks.add(inv.getStackInSlot(slot));
+				}
+			return stacks.build();
+		}
+
+		@Override
+		@Optional.Method(modid = "baubles")
+		public List<ItemStack> getBaublesOnly(EntityLivingBase entity) {
+			if (!(entity instanceof EntityPlayer)) return new ArrayList<>();
+			if (BaublesApi.getBaublesHandler((EntityPlayer) entity) == null) return new ArrayList<>();
 
 			ImmutableList.Builder<ItemStack> stacks = ImmutableList.builder();
 			IBaublesItemHandler inv = BaublesApi.getBaublesHandler((EntityPlayer) entity);

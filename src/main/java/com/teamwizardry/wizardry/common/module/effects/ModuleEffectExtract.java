@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -103,18 +104,17 @@ public class ModuleEffectExtract implements IModuleEffect {
 						}
 					}
 				} else {
-					// front to back with armor
-					if (targetEntity instanceof EntityPlayer) {
-						for (int i = 0; i < ((EntityPlayer) targetEntity).inventory.getSizeInventory(); i++) {
-							ItemStack invStack = ((EntityPlayer) targetEntity).inventory.getStackInSlot(i);
-							if (!invStack.isEmpty() && shouldContinue(caster, (EntityLivingBase) targetEntity, invStack)) {
-								stack = invStack;
-								success = true;
-								break;
-							}
+					//baubles
+					if (powerLevel >= 0.75) {
+						for (ItemStack bauble : BaublesSupport.getAllBaubles((EntityLivingBase) targetEntity)) {
+							if (bauble.isEmpty()) continue;
+							stack = bauble;
+							success = true;
+							break;
 						}
 					}
 
+					// remove armor
 					if (!success) {
 						for (ItemStack armorStack : targetEntity.getArmorInventoryList()) {
 							if (!armorStack.isEmpty()) {
@@ -122,6 +122,20 @@ public class ModuleEffectExtract implements IModuleEffect {
 								stack = armorStack;
 								success = true;
 								break;
+							}
+						}
+					}
+
+					// front to back
+					if (!success) {
+						if (targetEntity instanceof EntityPlayer) {
+							for (int i = 0; i < ((EntityPlayer) targetEntity).inventory.getSizeInventory(); i++) {
+								ItemStack invStack = ((EntityPlayer) targetEntity).inventory.getStackInSlot(i);
+								if (!invStack.isEmpty() && shouldContinue(caster, (EntityLivingBase) targetEntity, invStack)) {
+									stack = invStack;
+									success = true;
+									break;
+								}
 							}
 						}
 					}
@@ -134,8 +148,8 @@ public class ModuleEffectExtract implements IModuleEffect {
 
 			EntityItem entityitem = new EntityItem(world, targetEntity.posX, targetEntity.posY, targetEntity.posZ, left);
 			entityitem.setPickupDelay((int) (duration));
-			world.playSound(null, targetEntity.getPosition(), ModSounds.ENCHANTED_WHASHOOSH, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.5f, 1.5f));
 			world.spawnEntity(entityitem);
+			world.playSound(null, targetEntity.getPosition(), ModSounds.ENCHANTED_WHASHOOSH, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.5f, 1.5f));
 
 
 			return true;
@@ -163,6 +177,7 @@ public class ModuleEffectExtract implements IModuleEffect {
 							EntityItem entityitem = new EntityItem(world, pos.x, pos.y, pos.z, extracted);
 							entityitem.setPickupDelay((int) duration);
 							world.spawnEntity(entityitem);
+							world.playSound(null, targetPos, ModSounds.ENCHANTED_WHASHOOSH, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.5f, 1.5f));
 
 							return true;
 						}
