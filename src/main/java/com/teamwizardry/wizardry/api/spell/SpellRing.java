@@ -606,7 +606,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		double multiplier = ManaManager.getBurnout(caster) / ManaManager.getMaxBurnout(caster);
 		double burnoutLimit = 0.5; //TODO: Probably put this into config, limit to [0, 1)
-		return multiplier;
+		return Math.min(1, 1 - (multiplier - burnoutLimit) / (1 - burnoutLimit));
 	}
 
 	@Nonnull

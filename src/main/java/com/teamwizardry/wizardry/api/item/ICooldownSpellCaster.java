@@ -29,7 +29,8 @@ public interface ICooldownSpellCaster {
 			if (ring.isContinuous()) return;
 
 			if (ring.getModule() != null && ring.getModule().getModuleClass() instanceof IOverrideCooldown) {
-				maxCooldown = ((IOverrideCooldown) ring.getModule().getModuleClass()).getNewCooldown(world, data, ring);
+
+				maxCooldown = ring.getCooldownTime(world, data);
 				break;
 			}
 			if (ring.getCooldownTime() > maxCooldown)

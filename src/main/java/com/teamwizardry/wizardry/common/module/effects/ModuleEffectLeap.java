@@ -42,7 +42,7 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 
 	@Override
 	public int getNewCooldown(World world, @Nonnull SpellData spell, SpellRing ring) {
-		Entity target = spell.getVictim(world);
+		Entity target = spell.getCaster(world);
 		if (!(target instanceof EntityLivingBase))
 			return 50;
 
@@ -74,7 +74,6 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 		Vec3d lookVec = spell.getData(LOOK);
 		Entity target = spell.getVictim(world);
 
-		if (target == null) return true;
 		if (!(target instanceof EntityLivingBase)) return true;
 
 		ItemStack stack = ((EntityLivingBase) target).getHeldItemMainhand();

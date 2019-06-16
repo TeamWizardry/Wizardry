@@ -128,6 +128,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 				SpellData spell = new SpellData();
 				spell.processEntity(player, true);
 				SpellUtils.runSpell(world, stack, spell);
+
 				setCooldown(world, player, hand, stack, spell);
 			}
 			return new ActionResult<>(EnumActionResult.PASS, stack);
