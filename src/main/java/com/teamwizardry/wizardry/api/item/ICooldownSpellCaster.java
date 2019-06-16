@@ -28,12 +28,12 @@ public interface ICooldownSpellCaster {
 		for (SpellRing ring : rings) {
 			if (ring.isContinuous()) return;
 
-			if (ring.getModule() instanceof IOverrideCooldown) {
+			if (ring.getModule() != null && ring.getModule().getModuleClass() instanceof IOverrideCooldown) {
 				maxCooldown = ((IOverrideCooldown) ring.getModule().getModuleClass()).getNewCooldown(world, data, ring);
 				break;
 			}
-
-			maxCooldown += ring.getCooldownTime();
+			if (ring.getCooldownTime() > maxCooldown)
+				maxCooldown = ring.getCooldownTime();
 		}
 
 		if (maxCooldown <= 0) return;

@@ -64,7 +64,7 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 			List<AttributeModifier> modifiers = new LinkedList<>();
 			float capeReduction = getCapeReduction(player);
 			modifiers.add(new AttributeModifier(AttributeRegistry.MANA, capeReduction, Operation.MULTIPLY));
-			modifiers.add(new AttributeModifier(AttributeRegistry.BURNOUT, capeReduction, Operation.MULTIPLY));
+			//	modifiers.add(new AttributeModifier(AttributeRegistry.BURNOUT, capeReduction, Operation.MULTIPLY));
 			return modifiers;
 		});
 	}

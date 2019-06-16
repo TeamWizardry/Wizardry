@@ -48,7 +48,7 @@ public class ItemFakeHaloHead extends ItemModArmor implements IHalo {
 		try (ManaManager.CapManagerBuilder mgr = ManaManager.forObject(entityIn)) {
 			mgr.setMaxMana(ConfigValues.crudeHaloBufferSize);
 			mgr.setMaxBurnout(ConfigValues.crudeHaloBufferSize);
-			mgr.removeBurnout(mgr.getMaxBurnout() * ConfigValues.crudeHaloBufferSize);
+			mgr.removeBurnout(mgr.getMaxBurnout() * ConfigValues.haloGenSpeed);
 		}
 	}
 
