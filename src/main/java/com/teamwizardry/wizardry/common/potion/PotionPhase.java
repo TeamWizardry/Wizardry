@@ -56,6 +56,7 @@ public class PotionPhase extends PotionBase {
 		event.entity.isAirBorne = true;
 
 		Entity entity = event.entity;
+
 		double x = event.x;
 		double y = event.y;
 		double z = event.z;
@@ -89,7 +90,7 @@ public class PotionPhase extends PotionBase {
 					} else {
 						z += 0.05D;
 					}
-				}else z = 0.0D;
+				} else z = 0.0D;
 			}
 
 			for (; x != 0.0D && z != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(x, (double) (-entity.stepHeight), z)).isEmpty(); d4 = z) {
@@ -99,7 +100,7 @@ public class PotionPhase extends PotionBase {
 					} else {
 						x += 0.05D;
 					}
-				}else x = 0.0D;
+				} else x = 0.0D;
 
 				d2 = x;
 
@@ -109,7 +110,7 @@ public class PotionPhase extends PotionBase {
 					} else {
 						z += 0.05D;
 					}
-				}else y = 0.0D;
+				} else y = 0.0D;
 			}
 		}
 
@@ -125,7 +126,7 @@ public class PotionPhase extends PotionBase {
 					y = offsetY;
 			}
 
-			entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(0.0D, y, 0.0D));
+			entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(0.0D, y + (y == 0 && entity.isSneaking() ? -0.1 : 0), 0.0D));
 		}
 
 		if (x != 0.0D) entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(x, 0.0D, 0.0D));
