@@ -49,7 +49,7 @@ public class ModuleEffectLeech implements IModuleEffect {
 		Entity targetEntity = spell.getVictim(world);
 		Entity caster = spell.getCaster(world);
 
-		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 2;
+		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
 
 		if (!spellRing.taxCaster(world, spell, true)) return false;
 
