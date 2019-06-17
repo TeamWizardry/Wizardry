@@ -207,25 +207,24 @@ public class WorktableGui extends GuiBase {
 				for (TableModule head : getSpellHeads()) {
 					List<ModuleInstance> chain = new ArrayList<>();
 
-					TableModule lastModule = head;
-					CommonWorktableModule lastCommonModule = new CommonWorktableModule(lastModule.hashCode(), lastModule.getModule(), lastModule.getPos(), null, new HashMap<>());
+					CommonWorktableModule lastCommonModule = new CommonWorktableModule(head.hashCode(), head.getModule(), head.getPos(), null, new HashMap<>());
 					commonModules.add(lastCommonModule);
+					chain.add(head.getModule());
 
-					while (lastModule != null) {
-						if (lastModule.isInvalid()) continue;
-						chain.add(lastModule.getModule());
+					TableModule linksTo = head.getLinksTo();
+					while (linksTo != null) {
+						if (linksTo.isInvalid()) continue;
+						chain.add(linksTo.getModule());
 
-						if (lastModule != head) {
-							CommonWorktableModule commonModule = new CommonWorktableModule(lastModule.hashCode(), lastModule.getModule(), lastModule.getPos(), null, new HashMap<>());
-							lastCommonModule.setLinksTo(commonModule);
-							lastCommonModule = commonModule;
-						}
+						CommonWorktableModule commonModule = new CommonWorktableModule(linksTo.hashCode(), linksTo.getModule(), linksTo.getPos(), null, new HashMap<>());
+						lastCommonModule.setLinksTo(commonModule);
+						lastCommonModule = commonModule;
 
 						for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 							if (!(module instanceof ModuleInstanceModifier)) continue;
-							if (!lastModule.hasData(Integer.class, module.getNBTKey())) continue;
+							if (!linksTo.hasData(Integer.class, module.getNBTKey())) continue;
 
-							int count = lastModule.getData(Integer.class, module.getNBTKey());
+							int count = linksTo.getData(Integer.class, module.getNBTKey());
 
 							for (int i = 0; i < count; i++) {
 								chain.add(module);
@@ -234,7 +233,7 @@ public class WorktableGui extends GuiBase {
 							lastCommonModule.addModifier((ModuleInstanceModifier) module, count);
 						}
 
-						lastModule = lastModule.getLinksTo();
+						linksTo = linksTo.getLinksTo();
 					}
 
 					chains.add(chain);

@@ -249,6 +249,8 @@ public class ComponentModifiers extends GuiComponent {
 					anim.setCompletion(fakePlate::invalidate);
 
 					worktable.getMainComponents().add(anim);
+
+					worktable.paper.BUS.fire(new TableModule.ModuleUpdateEvent());
 				});
 
 				add(bar);
