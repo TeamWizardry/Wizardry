@@ -80,7 +80,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		if (recipeForItem != null) recipeForItem.renderInput(tile.getWorld(), tile.getPos(), input, partialTicks);
 
 		if (!errors.isEmpty() && tile.revealStructure && tile.getBlockType() instanceof IStructure) {
-			ModStructures.structureManager.draw(ModStructures.CRAFTING_PLATE, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.3f);
+			ModStructures.structureManager.draw(ModStructures.CRAFTING_PLATE, (float) (Math.sin(ClientTickHandler.getTicks() / 10.0) + 1) / 10.0f + 0.3f);
 		}
 
 		if (!errors.isEmpty()) {
@@ -105,9 +105,9 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 					GlStateManager.pushMatrix();
 					GlStateManager.translate(0.5 + locationsAndAngle.location.x, 1 + locationsAndAngle.location.y, 0.5 + locationsAndAngle.location.z);
 					GlStateManager.scale(0.3, 0.3, 0.3);
-					GlStateManager.rotate((locationsAndAngle.randX + tile.getWorld().getTotalWorldTime()) + ClientTickHandler.getPartialTicks(), 0, 1, 0);
-					GlStateManager.rotate((locationsAndAngle.randY + tile.getWorld().getTotalWorldTime()) + ClientTickHandler.getPartialTicks(), 1, 0, 0);
-					GlStateManager.rotate((locationsAndAngle.randZ + tile.getWorld().getTotalWorldTime()) + ClientTickHandler.getPartialTicks(), 0, 0, 1);
+					GlStateManager.rotate((locationsAndAngle.randX + ClientTickHandler.getTicks()), 0, 1, 0);
+					GlStateManager.rotate((locationsAndAngle.randY + ClientTickHandler.getTicks()), 1, 0, 0);
+					GlStateManager.rotate((locationsAndAngle.randZ + ClientTickHandler.getTicks()), 0, 0, 1);
 
 					GlStateManager.enableLighting();
 					RenderHelper.disableStandardItemLighting();

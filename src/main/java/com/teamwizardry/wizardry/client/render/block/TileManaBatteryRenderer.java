@@ -122,7 +122,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 
 		{
 			double x = RandUtil.nextDouble(-fill, fill), y = RandUtil.nextDouble(-fill, fill), z = RandUtil.nextDouble(-fill, fill);
-			GlStateManager.translate(0, Math.sin((tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks()) / 40) / 8, 0);
+			GlStateManager.translate(0, Math.sin((ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks()) / 40) / 8, 0);
 
 			GlStateManager.translate(x, y, z);
 			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelCrystal, 1.0F, 1, 1, 1);
@@ -130,14 +130,14 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		}
 
 		GlStateManager.translate(0.5, 0, 0.5);
-		GlStateManager.rotate(tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, 1, 0);
+		GlStateManager.rotate(ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks(), 0, 1, 0);
 		GlStateManager.translate(-0.5, 0, -0.5);
 
 		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelRing, 1.0F, 1, 1, 1);
 
 		GlStateManager.translate(0.5, 0, 0.5);
-		GlStateManager.rotate(tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, -1, 0);
-		GlStateManager.rotate(tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, -1, 0);
+		GlStateManager.rotate(ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks(), 0, -1, 0);
+		GlStateManager.rotate(ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks(), 0, -1, 0);
 		GlStateManager.translate(-0.5, 0, -0.5);
 
 		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelRingOuter, 1.0F, 1, 1, 1);
@@ -155,12 +155,12 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		}
 
 		if (!errors.isEmpty() && tile.revealStructure && tile.getBlockType() instanceof IStructure) {
-			ModStructures.structureManager.draw(ModStructures.MANA_BATTERY, (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.3f);
+			ModStructures.structureManager.draw(ModStructures.MANA_BATTERY, (float) (Math.sin(ClientTickHandler.getTicks() / 10.0) + 1) / 10.0f + 0.3f);
 			return;
 		}
 
 		if (tile.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {
-			double angle = tile.getWorld().getTotalWorldTime() / 10.0;
+			double angle = ClientTickHandler.getTicks() / 10.0;
 			double x1 = Math.cos((float) angle);
 			double y1 = Math.sin((float) angle);
 
@@ -176,7 +176,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 				particleBuilder.setAlphaFunction(new InterpFloatInOut(1, 1));
 				particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
 			});
-		} else if (tile.getWorld().getTotalWorldTime() % 10 == 0 && ManaManager.forObject(tile.getWizardryCap()).isManaFull()) {
+		} else if (ClientTickHandler.getTicks() % 10 == 0 && ManaManager.forObject(tile.getWizardryCap()).isManaFull()) {
 			double radius = 1;
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
 			double r = radius * RandUtil.nextFloat();

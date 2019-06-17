@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.render.block;
 
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.common.tile.TileOrbHolder;
@@ -40,7 +41,7 @@ public class TileOrbHolderRenderer extends TileEntitySpecialRenderer<TileOrbHold
 			GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
 			GlStateManager.disableRescaleNormal();
 
-			float sin = (float) Math.sin((te.getWorld().getTotalWorldTime() + partialTicks + te.getPos().hashCode()) / 10.0);
+			float sin = (float) Math.sin((ClientTickHandler.getTicks() + partialTicks + te.getPos().hashCode()) / 10.0);
 
 			boolean gravitating = false;
 			// Hover towards block
@@ -64,7 +65,7 @@ public class TileOrbHolderRenderer extends TileEntitySpecialRenderer<TileOrbHold
 
 			if (!gravitating) GlStateManager.translate(0, sin / 10.0, 0);
 
-			GlStateManager.rotate((te.getWorld().getTotalWorldTime() + partialTicks) * 4.0f, 0, 1, 0);
+			GlStateManager.rotate((ClientTickHandler.getTicks() + partialTicks) * 4.0f, 0, 1, 0);
 
 			GlStateManager.translate(0, 0.6, 0);
 			GlStateManager.rotate(45f, 1, 0, 1);

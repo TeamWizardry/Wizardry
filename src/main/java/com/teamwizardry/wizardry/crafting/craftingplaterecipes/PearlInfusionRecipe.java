@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.crafting.craftingplaterecipes;
 
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
@@ -131,8 +132,8 @@ public class PearlInfusionRecipe implements ICraftingPlateRecipe {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0.5, 1, 0.5);
 		GlStateManager.scale(0.4, 0.4, 0.4);
-		GlStateManager.rotate((float) (world.getTotalWorldTime() * 10.0), 0, 1, 0);
-		GlStateManager.translate(0, 0.5 + Math.sin((world.getTotalWorldTime() + partialTicks) / 5) / 10.0, 0);
+		GlStateManager.rotate((float) (ClientTickHandler.getTicks() * 10.0), 0, 1, 0);
+		GlStateManager.translate(0, 0.5 + Math.sin((ClientTickHandler.getTicks() + partialTicks) / 5) / 10.0, 0);
 		Minecraft.getMinecraft().getRenderItem().renderItem(input, ItemCameraTransforms.TransformType.NONE);
 		GlStateManager.popMatrix();
 	}
