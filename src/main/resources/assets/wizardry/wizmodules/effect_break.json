@@ -4,8 +4,12 @@
   "item": "minecraft:sand",
   "primary_color": "A52A2A",
   "secondary_color": "FFA7A7",
-  "mana": { "min": 50 },
-  "burnout": { "min": 50 },
+  "mana": {
+    "min": 30
+  },
+  "burnout": {
+    "min": 20
+  },
   "area": { "min": 1, "max": 64 },
   "potency": {
     "min": 2,

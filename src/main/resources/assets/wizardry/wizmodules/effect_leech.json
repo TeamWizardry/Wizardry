@@ -5,7 +5,7 @@
   "primary_color": "00ffff",
   "secondary_color": "00ff61",
   "mana": {
-    "min": 50
+    "min": 30
   },
   "burnout": {
     "min": 50

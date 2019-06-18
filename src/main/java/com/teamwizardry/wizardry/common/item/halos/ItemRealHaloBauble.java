@@ -34,7 +34,7 @@ public class ItemRealHaloBauble extends ItemModBauble implements IHalo {
 		try (ManaManager.CapManagerBuilder mgr = ManaManager.forObject(player)) {
 			mgr.setMaxMana(ConfigValues.realHaloBufferSize);
 			mgr.setMaxBurnout(ConfigValues.realHaloBufferSize);
-			mgr.removeBurnout(mgr.getMaxBurnout() * ConfigValues.haloGenSpeed);
+			mgr.removeBurnout(mgr.getMaxBurnout() * ConfigValues.haloGenSpeed * 2);
 			mgr.addMana(mgr.getMaxMana() * ConfigValues.haloGenSpeed);
 		}
 	}

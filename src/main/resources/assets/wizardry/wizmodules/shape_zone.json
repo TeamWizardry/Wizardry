@@ -3,12 +3,14 @@
     "reference_module_id": "shape_zone",
 	"item": "minecraft:glass",
 	"mana": {
-		"min": 50
+		"min": 10
 	},
 	"burnout": {
+		"min": 5
+	},
+	"cooldown": {
 		"min": 20
 	},
-	"cooldown": { "min": 100 },
 	"area": {  "min": 3, "max": 10 },
 	"potency": {
 		"min": 1,

@@ -5,13 +5,13 @@
   "primary_color": "381700",
   "secondary_color": "8e0000",
   "mana": {
-    "min": 300
+    "min": 50
   },
   "burnout": {
-    "min": 300
+    "min": 40
   },
   "cooldown": {
-    "min": 100
+    "min": 20
   },
   "duration": { "min": 5, "max": 30 }
 }

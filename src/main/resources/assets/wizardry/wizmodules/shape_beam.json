@@ -3,10 +3,10 @@
   "reference_module_id": "shape_beam",
   "item": "wizardry:unicorn_horn",
   "mana": {
-    "min": 10
+    "min": 5
   },
   "burnout": {
-    "min": 5
+    "min": 2
   },
   "range": { "min": 10, "max": 30 },
   "potency": {

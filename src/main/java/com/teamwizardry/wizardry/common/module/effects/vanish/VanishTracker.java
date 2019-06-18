@@ -176,14 +176,7 @@ public class VanishTracker {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void doRenderOverride(RenderLivingEvent.Pre event) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
 		EntityLivingBase entity = event.getEntity();
-
-		boolean theyWalked = new Vec3d(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ).distanceTo(new Vec3d(event.getEntity().prevPosX, event.getEntity().prevPosY, event.getEntity().prevPosZ)) > 0.15;
-
-		boolean renderingSelf = event.getEntity().getEntityId() == player.getEntityId();
-
-		boolean hide = false;
 
 		if (isVanished(entity)) {
 			event.setCanceled(true);

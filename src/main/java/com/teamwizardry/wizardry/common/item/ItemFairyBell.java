@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
@@ -8,7 +9,6 @@ import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -78,8 +78,8 @@ public class ItemFairyBell extends ItemMod {
 		boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
 		if (movingMode) {
-			return I18n.format("item.wizardry:fairy_bell_moving_mode");
-		} else return I18n.format("item.wizardry:fairy_bell_aiming_mode");
+			return LibrarianLib.PROXY.translate("item.wizardry:fairy_bell_moving_mode");
+		} else return LibrarianLib.PROXY.translate("item.wizardry:fairy_bell_aiming_mode");
 	}
 
 	@NotNull

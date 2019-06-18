@@ -6,7 +6,7 @@
     "min": 30
   },
   "burnout": {
-    "min": 30
+    "min": 20
   },
   "cooldown": { "min": 30 }
 }

@@ -37,9 +37,9 @@ public class ItemRealHaloHead extends ItemModArmor implements IHalo {
 				.setMaxBurnout(ConfigValues.realHaloBufferSize)
 				.setMana(mana > ConfigValues.crudeHaloBufferSize ? ConfigValues.crudeHaloBufferSize : mana)
 				.setBurnout(burnout > ConfigValues.crudeHaloBufferSize ? ConfigValues.crudeHaloBufferSize : burnout)
-				.removeBurnout(ManaManager.getMaxBurnout(entityIn) * ConfigValues.haloGenSpeed)
+				.removeBurnout(ManaManager.getMaxBurnout(entityIn) * ConfigValues.haloGenSpeed * 2)
 				.addMana(ManaManager.getMaxMana(entityIn) * ConfigValues.haloGenSpeed)
-		;
+				.close();
 	}
 
 	@Override

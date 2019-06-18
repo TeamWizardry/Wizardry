@@ -27,11 +27,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -136,6 +132,7 @@ public final class BlockUtils {
 		if (block.removedByPlayer(oldState, world, pos, player, true)) {
 			block.onPlayerDestroy(world, pos, oldState);
 			block.harvestBlock(world, player, pos, oldState, tile, ItemStack.EMPTY);
+			world.notifyBlockUpdate(pos, oldState, Blocks.AIR.getDefaultState(), 3);
 		} else return false;
 
 		return true;
