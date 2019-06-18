@@ -19,9 +19,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -65,12 +65,9 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 			if (stacks.isEmpty()) return true;
 			
 			int stackCount = instance.getCountOfStacks(stacks);
-			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, Math.min(stackCount, (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
-				if (BlockUtils.isAnyAir(targetState)) return true;
-
-				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
-				IBlockState adjacentState = world.getBlockState(mutable.offset(facing));
-				if (adjacentState.getBlock() != Blocks.AIR) return true;
+			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, Math.min(stackCount, (int) area), MathHelper.ceil(MathHelper.sqrt(area)) / 2, pos -> {
+				BlockPos front = pos.offset(facing);
+				if (!world.getBlockState(front).getBlock().isReplaceable(world, front)) return true;
 
 				IBlockState state = world.getBlockState(pos);
 				return state.getBlock() != targetState.getBlock();
@@ -79,24 +76,16 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 				blocks.add(targetPos);
 			}
 
-			for (BlockPos areaPos : blocks) {
+			for (BlockPos pos : blocks) {
 				if (!spellRing.taxCaster(world, spell, 1 / area, false)) return false;
-				
-				BlockPos pos = blocks.size() > 1 ? areaPos.offset(facing) : areaPos;
-
-				IBlockState oldState = world.getBlockState(pos);
 
 				ItemStack availableStack = instance.getAvailableStack(stacks);
 				if (availableStack == null) return true;
 
 				BlockUtils.placeBlock(world, pos, facing, availableStack);
-				world.playSound(null, pos, selected.getBlock().getSoundType(selected, world, pos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
-				((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, world.rand, 0)));
 			}
 
 		} else {
-			if (!BlockUtils.isAnyAir(world, targetPos)) return true;
-
 			List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(targetPos).grow(3, 3, 3));
 			if (items.isEmpty()) return true;
 
@@ -106,7 +95,6 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 			if (item.getItem().getItem() instanceof ItemBlock) {
 				if (!spellRing.taxCaster(world, spell, true)) return false;
 				BlockUtils.placeBlock(world, targetPos, facing, item.getItem());
-				world.playSound(null, targetPos, ((ItemBlock) item.getItem().getItem()).getBlock().getSoundType(((ItemBlock) item.getItem().getItem()).getBlock().getDefaultState(), world, targetPos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 			}
 		}
 		return true;

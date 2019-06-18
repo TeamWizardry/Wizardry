@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -11,11 +10,10 @@ import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeZone;
-import com.teamwizardry.wizardry.common.network.PacketBreakBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -58,22 +56,18 @@ public class ModuleEffectBreak implements IModuleEffect {
 				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
 
 		if (targetPos == null || facing == null) return false;
-		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range) + 1) / 2), pos ->
-		{
-			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
+		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range) + 1) / 2), pos -> {
 			if (world.isAirBlock(pos)) return true;
-			if (!world.isAirBlock(mutable.offset(facing))) return true;
+			if (!world.isAirBlock(pos.offset(facing))) return true;
 			IBlockState state = world.getBlockState(pos);
-
 			float hardness = state.getBlockHardness(world, pos);
 			return hardness < 0 || hardness > strength;
 		});
 		for (BlockPos pos : blocks) {
-			if (!spellRing.taxCaster(world, spell, 1 / range, false)) continue;
-			world.destroyBlock(pos, true);
-			if (caster instanceof EntityPlayerMP) {
-				PacketHandler.NETWORK.sendTo(new PacketBreakBlock(pos), (EntityPlayerMP) caster);
-			}
+			if (!spellRing.taxCaster(world, spell, 1 / range, false)) return false;
+			IBlockState state = world.getBlockState(pos);
+			BlockUtils.breakBlock(world, pos, state, BlockUtils.makeBreaker(world, pos, caster));
+			world.playEvent(2001, pos, Block.getStateId(state));
 		}
 
 		return true;

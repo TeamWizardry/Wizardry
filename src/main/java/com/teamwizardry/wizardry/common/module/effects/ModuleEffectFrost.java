@@ -23,8 +23,6 @@ import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
@@ -101,30 +99,28 @@ public class ModuleEffectFrost implements IModuleEffect {
 
 		if (targetPos != null) {
 			world.playSound(null, targetPos, ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
-			for (int x = (int) range; x >= -range; x--)
-				for (int y = (int) range; y >= -range; y--)
-					for (int z = (int) range; z >= -range; z--) {
-						BlockPos pos = targetPos.add(x, y, z);
-						double dist = pos.getDistance(targetPos.getX(), targetPos.getY(), targetPos.getZ());
-						if (dist > range) continue;
+			for (BlockPos pos : BlockPos.getAllInBox(targetPos.add(-range, -range, -range), targetPos.add(range + 1, range + 1, range + 1))) {
+				double dist = pos.distanceSq(targetPos);
+				if (dist > range) continue;
 
-						for (EnumFacing facing : EnumFacing.VALUES) {
-							IBlockState state = world.getBlockState(pos.offset(facing));
-							if (state.getBlock() == Blocks.FIRE) {
-								BlockUtils.breakBlock(world, pos.offset(facing), state, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, false);
-							}
-						}
-
-						if (world.getBlockState(pos).isSideSolid(world, pos, EnumFacing.UP) && world.isAirBlock(pos.offset(EnumFacing.UP))) {
-							int layerSize = (int) (Math.max(1, Math.min(8, Math.max(1, (dist / range) * 6.0))));
-							layerSize = Math.max(1, Math.min(layerSize + RandUtil.nextInt(-1, 1), 8));
-							BlockUtils.placeBlock(world, pos.offset(EnumFacing.UP), Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layerSize), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-						}
-
-						if (world.getBlockState(pos).getBlock() == Blocks.WATER) {
-							BlockUtils.placeBlock(world, pos, Blocks.ICE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-						}
+				for (EnumFacing facing : EnumFacing.VALUES) {
+					IBlockState state = world.getBlockState(pos.offset(facing));
+					if (state.getBlock() == Blocks.FIRE) {
+						BlockUtils.breakBlock(world, pos.offset(facing), state, BlockUtils.makeBreaker(world, pos, caster));
 					}
+				}
+
+				BlockPos up = pos.offset(EnumFacing.UP);
+				if (world.getBlockState(pos).isSideSolid(world, pos, EnumFacing.UP) && world.isAirBlock(up)) {
+					int layerSize = (int) (Math.max(1, Math.min(8, Math.max(1, (dist / range) * 6.0))));
+					layerSize = Math.max(1, Math.min(layerSize + RandUtil.nextInt(-1, 1), 8));
+					BlockUtils.placeBlock(world, up, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layerSize), BlockUtils.makePlacer(world, up, caster));
+				}
+
+				if (world.getBlockState(pos).getBlock() == Blocks.WATER) {
+					BlockUtils.placeBlock(world, pos, Blocks.ICE.getDefaultState(), BlockUtils.makePlacer(world, pos, caster));
+				}
+			}
 		}
 		return true;
 	}

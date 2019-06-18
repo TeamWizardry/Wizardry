@@ -19,7 +19,6 @@ import com.teamwizardry.wizardry.common.tile.TileLight;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -53,7 +52,7 @@ public class ModuleEffectLight implements IModuleEffect {
 
 		if (targetPos == null) return true;
 
-		BlockUtils.placeBlock(world, finalPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
+		BlockUtils.placeBlock(world, finalPos, ModBlocks.LIGHT.getDefaultState(), BlockUtils.makePlacer(world, finalPos, caster));
 		TileLight te = BlockUtils.getTileEntity(world, finalPos, TileLight.class);
 		if( te != null ) {
 			// Should be always the case.

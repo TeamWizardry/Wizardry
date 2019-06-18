@@ -11,8 +11,6 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
@@ -24,7 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
 
@@ -66,10 +64,10 @@ public class ModuleEffectBurn implements IModuleEffect {
 						if (dist > area) continue;
 						if (facing != null) {
 							if (!world.isAirBlock(pos.offset(facing))) continue;
-							BlockUtils.placeBlock(world, pos.offset(facing), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
+							BlockUtils.placeBlock(world, pos.offset(facing), Blocks.FIRE.getDefaultState(), BlockUtils.makePlacer(world, pos, caster));
 						} else for (EnumFacing face : EnumFacing.VALUES) {
 							if (world.isAirBlock(pos.offset(face)) || world.getBlockState(pos.offset(face)).getBlock() == Blocks.SNOW_LAYER) {
-								BlockUtils.placeBlock(world, pos.offset(face), Blocks.AIR.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
+								BlockUtils.placeBlock(world, pos.offset(face), Blocks.AIR.getDefaultState(), BlockUtils.makePlacer(world, pos, caster));
 							}
 						}
 					}
