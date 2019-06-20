@@ -6,51 +6,47 @@ import com.teamwizardry.librarianlib.features.facade.component.GuiLayerEvents;
 import com.teamwizardry.librarianlib.features.facade.layers.RectLayer;
 import com.teamwizardry.librarianlib.features.math.Rect2d;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
-import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class WorktableGui2 extends GuiBase {
 
 	private static final int sidebarWidth = 100;
 	private static final int recipeBarHeight = 50;
-	private static final int cardWidth = 100;
-	private static final int cardHeight = 100;
+	protected static final int cardWidth = 100;
+	protected static final int cardHeight = 200;
+
+	public final Set<ComponentAddCard> cards = new HashSet<>();
 
 	public WorktableGui2(BlockPos pos) {
 		getMain().setSize(new Vec2d(512, 256));
 
-		RectLayer base = new RectLayer(Color.DARK_GRAY, 0, 0, 512, 256);
+		GuiComponent base = new GuiComponent();
 		getMain().add(base);
 
+		RectLayer bg = new RectLayer(Color.DARK_GRAY, 0, 0, 512, 256);
+		getMain().add(bg);
+
 		RectLayer spellInfo = new RectLayer(Color.ORANGE);
-		base.add(spellInfo);
+		bg.add(spellInfo);
 
 		RectLayer spellRecipe = new RectLayer(Color.RED);
-		base.add(spellRecipe);
+		bg.add(spellRecipe);
 
-
-		RectLayer cardArea = new RectLayer(Color.CYAN, 5, spellRecipe.getHeighti() + 10, base.getWidthi() - 15 - spellInfo.getWidthi(), base.getHeighti() - 15 - spellRecipe.getHeighti());
-		base.add(cardArea);
-
-
-		InterpLine distribution = new InterpLine(new Vec3d(0, cardArea.getHeight(), 0), new Vec3d(cardArea.getWidth(), cardArea.getHeight(), 0));
-		List<Vec3d> list = distribution.list(5);
-		for (int i = 0; i < list.size(); i++) {
-			Vec3d vec = list.get(i);
-			ComponentAddCard card = new ComponentAddCard(i, i * cardWidth + i * 5, cardArea.getHeighti());
-			cardArea.componentWrapper().add(card);
-		}
+		RectLayer cardArea = new RectLayer(Color.CYAN);
+		cardArea.setClipToBounds(true);
+		bg.add(cardArea);
 
 		getMain().BUS.hook(GuiLayerEvents.LayoutChildren.class, e -> {
-			spellInfo.setFrame(new Rect2d(base.getWidthi() - sidebarWidth - 5, 5, sidebarWidth, base.getHeighti() - 10));
-			spellRecipe.setFrame(new Rect2d(5, 5, base.getWidthi() - 15 - sidebarWidth, recipeBarHeight));
+			base.setFrame(bg.getFrame());
+			spellInfo.setFrame(new Rect2d(bg.getWidthi() - sidebarWidth - 5, 5, sidebarWidth, bg.getHeighti() - 10));
+			spellRecipe.setFrame(new Rect2d(5, 5, bg.getWidthi() - 15 - sidebarWidth, recipeBarHeight));
+			cardArea.setFrame(new Rect2d(5, spellRecipe.getHeighti() + 10, bg.getWidthi() - 15 - spellInfo.getWidthi(), bg.getHeighti() - 15 - spellRecipe.getHeighti()));
 
-			cardArea.setPos(new Vec2d(5, spellRecipe.getHeighti() + 10));
-			cardArea.setSize(new Vec2d(base.getWidthi() - 15 - spellInfo.getWidthi(), base.getHeighti() - 15 - spellRecipe.getHeighti()));
+			card.setPos(new Vec2d(card.index * cardWidth + card.index * 5, cardArea.getHeighti() / 2.0 - cardHeight / 2.0));
 		});
 	}
 
@@ -59,15 +55,4 @@ public class WorktableGui2 extends GuiBase {
 		return false;
 	}
 
-	private static class ComponentAddCard extends GuiComponent {
-
-		private final int index;
-
-		public ComponentAddCard(final int index, final int x, final int y) {
-			super(x, y);
-			this.index = index;
-			RectLayer base = new RectLayer(Color.BLUE, 0, 0, cardWidth, cardHeight);
-			add(base);
-		}
-	}
 }

@@ -352,7 +352,7 @@ public final class RenderUtils {
 		GlStateManager.enableColorMaterial();
 		GlStateManager.disableLighting();
 
-		GlStateManager.glLineWidth(2f);
+		GlStateManager.glLineWidth(0.5f);
 
 		bufferBlockOutline(state.getSelectedBoundingBox(world, pos), color);
 
@@ -398,7 +398,7 @@ public final class RenderUtils {
 		GlStateManager.enableColorMaterial();
 		GlStateManager.translate(0, 0.01, 0);
 
-		GlStateManager.glLineWidth(2f);
+		GlStateManager.glLineWidth(0.5f);
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bb = tessellator.getBuffer();
@@ -454,7 +454,7 @@ public final class RenderUtils {
 		Vec3d directionOffsetVec = new Vec3d(facing.getDirectionVec()).scale(0.5);
 		Vec3d adjPos = new Vec3d(pos).add(0.5, 0.5, 0.5).add(directionOffsetVec);
 
-		GlStateManager.glLineWidth(2f);
+		GlStateManager.glLineWidth(0.5f);
 
 		for (EnumFacing facing1 : getPerpendicularFacings(facing)) {
 			for (EnumFacing facing2 : getPerpendicularFacings(facing)) {

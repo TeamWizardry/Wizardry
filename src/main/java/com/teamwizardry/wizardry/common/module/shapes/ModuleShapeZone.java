@@ -18,8 +18,8 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
-import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.client.fx.ParticleSmoke;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -187,7 +187,10 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
 		double aoe = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 
-		RenderUtils.drawCircle(target, aoe, false, false);
+		//	RenderUtils.drawCircle(target, aoe, false, false);
+
+		ParticleSmoke particleSmoke = new ParticleSmoke();
+		particleSmoke.spawn(RandUtil.nextDouble(20, 50), RandUtil.nextDouble(0.5, 1), target, new Vec3d(RandUtil.nextDouble(-aoe, aoe), 0, RandUtil.nextDouble(-aoe, aoe)).scale(0.1));
 
 		return data;
 	}
