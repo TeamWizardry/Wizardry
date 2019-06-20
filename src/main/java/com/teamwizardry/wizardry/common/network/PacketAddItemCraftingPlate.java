@@ -56,8 +56,9 @@ public class PacketAddItemCraftingPlate extends PacketBase {
 						plate.realInventory.getHandler().insertItem(i, stack, false);
 
 						if (plate.renderHandler != null) {
-							((TileCraftingPlateRenderer) plate.renderHandler).update(i);
+							((TileCraftingPlateRenderer) plate.renderHandler).update(i, stack);
 						}
+						break;
 					}
 				}
 			}

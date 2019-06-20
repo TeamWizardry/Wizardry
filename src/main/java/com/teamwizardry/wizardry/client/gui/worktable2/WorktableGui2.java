@@ -37,11 +37,11 @@ public class WorktableGui2 extends GuiBase {
 		base.add(cardArea);
 
 
-		InterpLine distribution = new InterpLine(new Vec3d(0, cardArea.getHeight() / 2.0, 0), new Vec3d(cardArea.getWidth(), cardArea.getHeight() / 2.0, 0));
+		InterpLine distribution = new InterpLine(new Vec3d(0, cardArea.getHeight(), 0), new Vec3d(cardArea.getWidth(), cardArea.getHeight(), 0));
 		List<Vec3d> list = distribution.list(5);
 		for (int i = 0; i < list.size(); i++) {
 			Vec3d vec = list.get(i);
-			ComponentAddCard card = new ComponentAddCard(i, (int) vec.x, (int) vec.y);
+			ComponentAddCard card = new ComponentAddCard(i, i * cardWidth + i * 5, cardArea.getHeighti());
 			cardArea.componentWrapper().add(card);
 		}
 
@@ -64,8 +64,9 @@ public class WorktableGui2 extends GuiBase {
 		private final int index;
 
 		public ComponentAddCard(final int index, final int x, final int y) {
+			super(x, y);
 			this.index = index;
-			RectLayer base = new RectLayer(Color.BLUE, x, y - cardHeight / 2, cardWidth, cardHeight);
+			RectLayer base = new RectLayer(Color.BLUE, 0, 0, cardWidth, cardHeight);
 			add(base);
 		}
 	}

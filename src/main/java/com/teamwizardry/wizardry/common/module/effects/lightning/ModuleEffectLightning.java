@@ -91,7 +91,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		HashSet<EntityLivingBase> entities = new HashSet<>();
 		for (BlockPos position : positions)
 			entities.addAll(world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(position).contract(0.2, 0.2, 0.2)));
-		entities.remove(caster);
+		if (caster != null) entities.remove(caster);
 
 		for (Entity entity : entities)
 			LightningTracker.INSTANCE.addEntity(from, entity, caster, potency, duration);
@@ -120,7 +120,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		if (!childRing.taxCaster(world, data, true)) return;
 
 		double range = childRing.getAttributeValue(world, AttributeRegistry.RANGE, data);
-		double potency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data) / 2;
+		double potency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data);
 		double duration = childRing.getAttributeValue(world, AttributeRegistry.DURATION, data);
 
 		RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
@@ -196,7 +196,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		if (!childRing.taxCaster(world, data, true)) return;
 
 		double lightningRange = childRing.getAttributeValue(world, AttributeRegistry.RANGE, data);
-		double lightningPotency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data) / 2.0;
+		double lightningPotency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data);
 		double lightningDuration = childRing.getAttributeValue(world, AttributeRegistry.DURATION, data);
 		double beamRange = shape.getAttributeValue(world, AttributeRegistry.RANGE, data);
 
@@ -257,7 +257,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		if (!childRing.taxCaster(world, data, true)) return true;
 
 		double lightningRange = childRing.getAttributeValue(world, AttributeRegistry.RANGE, data);
-		double lightningPotency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data) / 2.0;
+		double lightningPotency = childRing.getAttributeValue(world, AttributeRegistry.POTENCY, data);
 		double lightningDuration = childRing.getAttributeValue(world, AttributeRegistry.DURATION, data);
 		double zoneAoE = shape.getAttributeValue(world, AttributeRegistry.AREA, data);
 		double zoneRange = shape.getAttributeValue(world, AttributeRegistry.RANGE, data);
