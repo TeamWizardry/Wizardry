@@ -2,17 +2,16 @@ package com.teamwizardry.wizardry.client.gui.worktable2;
 
 import com.teamwizardry.librarianlib.features.facade.GuiBase;
 import com.teamwizardry.librarianlib.features.facade.component.GuiComponent;
-import com.teamwizardry.librarianlib.features.facade.component.GuiLayer;
 import com.teamwizardry.librarianlib.features.facade.component.GuiLayerEvents;
 import com.teamwizardry.librarianlib.features.facade.layers.RectLayer;
 import com.teamwizardry.librarianlib.features.math.Rect2d;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
-import kotlin.jvm.functions.Function1;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
+import java.util.List;
 
 public class WorktableGui2 extends GuiBase {
 
@@ -27,15 +26,31 @@ public class WorktableGui2 extends GuiBase {
 		RectLayer base = new RectLayer(Color.DARK_GRAY, 0, 0, 512, 256);
 		getMain().add(base);
 
-		RectLayer spellInfo = new RectLayer(Color.ORANGE, base.getWidthi() - sidebarWidth - 5, 5, sidebarWidth, base.getHeighti() - 10);
+		RectLayer spellInfo = new RectLayer(Color.ORANGE);
 		base.add(spellInfo);
 
-		RectLayer spellRecipe = new RectLayer(Color.RED, 5, 5, base.getWidthi() - 15 - sidebarWidth, recipeBarHeight);
+		RectLayer spellRecipe = new RectLayer(Color.RED);
 		base.add(spellRecipe);
+
+
+		RectLayer cardArea = new RectLayer(Color.CYAN, 5, spellRecipe.getHeighti() + 10, base.getWidthi() - 15 - spellInfo.getWidthi(), base.getHeighti() - 15 - spellRecipe.getHeighti());
+		base.add(cardArea);
+
+
+		InterpLine distribution = new InterpLine(new Vec3d(0, cardArea.getHeight() / 2.0, 0), new Vec3d(cardArea.getWidth(), cardArea.getHeight() / 2.0, 0));
+		List<Vec3d> list = distribution.list(5);
+		for (int i = 0; i < list.size(); i++) {
+			Vec3d vec = list.get(i);
+			ComponentAddCard card = new ComponentAddCard(i, (int) vec.x, (int) vec.y);
+			cardArea.componentWrapper().add(card);
+		}
 
 		getMain().BUS.hook(GuiLayerEvents.LayoutChildren.class, e -> {
 			spellInfo.setFrame(new Rect2d(base.getWidthi() - sidebarWidth - 5, 5, sidebarWidth, base.getHeighti() - 10));
 			spellRecipe.setFrame(new Rect2d(5, 5, base.getWidthi() - 15 - sidebarWidth, recipeBarHeight));
+
+			cardArea.setPos(new Vec2d(5, spellRecipe.getHeighti() + 10));
+			cardArea.setSize(new Vec2d(base.getWidthi() - 15 - spellInfo.getWidthi(), base.getHeighti() - 15 - spellRecipe.getHeighti()));
 		});
 	}
 
@@ -46,140 +61,12 @@ public class WorktableGui2 extends GuiBase {
 
 	private static class ComponentAddCard extends GuiComponent {
 
-		public ComponentAddCard() {
+		private final int index;
 
-		}
-
-		@Override
-		public double getHeight() {
-			return super.getHeight();
-		}
-
-		@Override
-		public void setHeight(double value) {
-
-		}
-
-		@Override
-		public float getHeightf() {
-			return 0;
-		}
-
-		@Override
-		public void setHeightf(float value) {
-
-		}
-
-		@Override
-		public int getHeighti() {
-			return 0;
-		}
-
-		@Override
-		public void setHeighti(int value) {
-
-		}
-
-		@Override
-		public double getWidth() {
-			return 0;
-		}
-
-		@Override
-		public void setWidth(double value) {
-
-		}
-
-		@Override
-		public float getWidthf() {
-			return 0;
-		}
-
-		@Override
-		public void setWidthf(float value) {
-
-		}
-
-		@Override
-		public int getWidthi() {
-			return 0;
-		}
-
-		@Override
-		public void setWidthi(int value) {
-
-		}
-
-		@Override
-		public double getX() {
-			return 0;
-		}
-
-		@Override
-		public void setX(double value) {
-
-		}
-
-		@Override
-		public float getXf() {
-			return 0;
-		}
-
-		@Override
-		public void setXf(float value) {
-
-		}
-
-		@Override
-		public int getXi() {
-			return 0;
-		}
-
-		@Override
-		public void setXi(int value) {
-
-		}
-
-		@Override
-		public double getY() {
-			return 0;
-		}
-
-		@Override
-		public void setY(double value) {
-
-		}
-
-		@Override
-		public float getYf() {
-			return 0;
-		}
-
-		@Override
-		public void setYf(float value) {
-
-		}
-
-		@Override
-		public int getYi() {
-			return 0;
-		}
-
-		@Override
-		public void setYi(int value) {
-
-		}
-
-		@Nullable
-		@Override
-		public Rect2d getContentsBounds() {
-			return null;
-		}
-
-		@Nullable
-		@Override
-		public Rect2d getContentsBounds(@NotNull Function1<? super GuiLayer, Boolean> includeLayer) {
-			return null;
+		public ComponentAddCard(final int index, final int x, final int y) {
+			this.index = index;
+			RectLayer base = new RectLayer(Color.BLUE, x, y - cardHeight / 2, cardWidth, cardHeight);
+			add(base);
 		}
 	}
 }
