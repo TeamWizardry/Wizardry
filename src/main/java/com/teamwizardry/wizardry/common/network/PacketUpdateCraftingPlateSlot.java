@@ -17,17 +17,17 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
 @PacketRegister(Side.CLIENT)
-public class PacketAddItemCraftingPlate extends PacketBase {
+public class PacketUpdateCraftingPlateSlot extends PacketBase {
 
 	@Save
 	private BlockPos pos;
 	@Save
 	private ItemStack stack;
 
-	public PacketAddItemCraftingPlate() {
+	public PacketUpdateCraftingPlateSlot() {
 	}
 
-	public PacketAddItemCraftingPlate(BlockPos pos, ItemStack stack) {
+	public PacketUpdateCraftingPlateSlot(BlockPos pos, ItemStack stack) {
 
 		this.pos = pos;
 		this.stack = stack;

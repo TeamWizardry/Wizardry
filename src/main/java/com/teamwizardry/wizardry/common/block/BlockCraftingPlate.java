@@ -11,9 +11,9 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.structure.WizardryStructure;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.common.network.PacketAddItemCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.network.PacketRemoveItemCraftingPlate;
+import com.teamwizardry.wizardry.common.network.PacketUpdateCraftingPlateSlot;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.crafting.CraftingPlateRecipeManager;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -124,7 +124,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 						plate.markDirty();
 						playerIn.openContainer.detectAndSendChanges();
 
-						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+						PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateSlot(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 
 					} else if (!recipeExists) {
 						ItemHandlerHelper.insertItem(plate.realInventory.getHandler(), stack, false);
@@ -132,7 +132,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 						plate.markDirty();
 						playerIn.openContainer.detectAndSendChanges();
 
-						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+						PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateSlot(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 					}
 
 					return true;

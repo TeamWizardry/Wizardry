@@ -13,7 +13,7 @@ import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvid
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
-import com.teamwizardry.wizardry.common.network.PacketAddItemCraftingPlate;
+import com.teamwizardry.wizardry.common.network.PacketUpdateCraftingPlateSlot;
 import com.teamwizardry.wizardry.crafting.CraftingPlateRecipeManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -171,7 +171,7 @@ public class TileCraftingPlate extends TileManaNode {
 
 					input.getHandler().insertItem(0, stack, false);
 
-					PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(getPos(), stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+					PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateSlot(getPos(), stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 
 				} else if (!(CraftingPlateRecipeManager.doesRecipeExistForItem(entityItem.getItem()))) {
 
@@ -181,7 +181,7 @@ public class TileCraftingPlate extends TileManaNode {
 					ItemStack left = ItemHandlerHelper.insertItem(realInventory.getHandler(), stack, false);
 					if (left.isEmpty()) {
 						entityItem.getItem().shrink(1);
-						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(getPos(), stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+						PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateSlot(getPos(), stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 					}
 				}
 			}

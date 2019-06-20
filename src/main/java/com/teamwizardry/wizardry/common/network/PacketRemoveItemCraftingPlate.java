@@ -3,9 +3,11 @@ package com.teamwizardry.wizardry.common.network;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -53,6 +55,9 @@ public class PacketRemoveItemCraftingPlate extends PacketBase {
 
 			} else {
 				plate.realInventory.getHandler().extractItem(slot, player.isSneaking() ? 64 : 1, false);
+				if (plate.renderHandler != null) {
+					((TileCraftingPlateRenderer) plate.renderHandler).update(slot, ItemStack.EMPTY);
+				}
 			}
 		}
 	}
