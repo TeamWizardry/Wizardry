@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
@@ -26,7 +27,7 @@ public class Wizardry {
     public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
     public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
     public static final String DEPENDENCIES = "required-after:librarianlib";
-    public static Logger LOGGER;
+    public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static DimensionType underWorld;
     public static DimensionType torikki;
     @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
@@ -40,8 +41,6 @@ public class Wizardry {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        LOGGER = event.getModLog();
-
         Wizardry.LOGGER.info("IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
 	    PROXY.preInit(event);
