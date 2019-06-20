@@ -35,7 +35,6 @@ public class Wizardry {
     public static Wizardry instance;
 
     static {
-        UnsafeKt.hookIntoUnsafe();
         FluidRegistry.enableUniversalBucket();
     }
 
