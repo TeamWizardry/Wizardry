@@ -36,7 +36,7 @@ public class ItemFakeHaloBauble extends ItemModBauble implements IHalo {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-		if (worldIn.getBlockState(pos).getBlock() == ModBlocks.HALO_INFUSER) {
+		if (worldIn.getBlockState(pos).getBlock() == ModBlocks.ALTAR_SACRAMENT) {
 			return EnumActionResult.SUCCESS;
 		}
 

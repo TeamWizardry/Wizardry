@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.client.fx
 
 import com.teamwizardry.librarianlib.features.animator.Easing
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut
 import com.teamwizardry.librarianlib.features.particlesystem.ParticleSystem
-import com.teamwizardry.librarianlib.features.particlesystem.bindings.InterpBinding
+import com.teamwizardry.librarianlib.features.particlesystem.bindings.EaseBinding
 import com.teamwizardry.librarianlib.features.particlesystem.modules.BasicPhysicsUpdateModule
+import com.teamwizardry.librarianlib.features.particlesystem.modules.SetValueUpdateModule
 import com.teamwizardry.librarianlib.features.particlesystem.modules.SpriteRenderModule
 import com.teamwizardry.wizardry.Wizardry
 import net.minecraft.util.ResourceLocation
@@ -29,12 +29,16 @@ class ParticleSmoke : ParticleSystem() {
                 friction = 0.1f
         ))
 
+        updateModules.add(SetValueUpdateModule(
+                alpha, EaseBinding(lifetime = lifetime, age = age, bindingSize = 1, easing = Easing.easeInOutLinear(0.5f, 1f, 0.5f))
+        ))
+
         renderModules.add(SpriteRenderModule(
                 sprite = ResourceLocation(Wizardry.MODID, "textures/particles/smoke_2.png"),
                 enableBlend = true,
                 previousPosition = prevPos,
                 position = pos,
-                alphaMultiplier = InterpBinding(lifetime, age, interp = InterpFloatInOut(0, 1, 0), easing = Easing.easeOutQuart),
+                alphaMultiplier = alpha,
                 size = size))
     }
 

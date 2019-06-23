@@ -24,7 +24,8 @@ public class ModBlocks {
 	public static BlockManaBattery MANA_BATTERY;
 	public static BlockCreativeManaBattery CREATIVE_MANA_BATTERY;
 	public static BlockOrbHolder PEARL_HOLDER;
-	public static BlockAltarSacrament HALO_INFUSER;
+	public static BlockAltarSacrament ALTAR_SACRAMENT;
+	public static BlockAltarConfession ALTAR_CONFESSION;
 	public static BlockCloud CLOUD;
 	public static BlockManaMagnet MANA_MAGNET;
 	public static BlockLight LIGHT;
@@ -57,7 +58,8 @@ public class ModBlocks {
 		MANA_BATTERY = new BlockManaBattery();
 		CREATIVE_MANA_BATTERY = new BlockCreativeManaBattery();
 		PEARL_HOLDER = new BlockOrbHolder();
-		HALO_INFUSER = new BlockAltarSacrament();
+		ALTAR_SACRAMENT = new BlockAltarSacrament();
+		ALTAR_CONFESSION = new BlockAltarConfession();
 		CLOUD = new BlockCloud();
 		NACRE = new BlockNacre();
 		NACRE_BRICK = new BlockNacreBrick();
