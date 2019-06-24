@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
 import com.teamwizardry.wizardry.api.entity.FairyData;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
@@ -86,27 +87,33 @@ public class ItemFairyBell extends ItemMod {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @NotNull EnumHand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
-		if (playerIn.isSneaking() && !worldIn.isRemote) {
-			NBTHelper.setBoolean(stack, "moving_mode", !NBTHelper.getBoolean(stack, "moving_mode", true));
+		if (worldIn.isRemote) return super.onItemRightClick(worldIn, playerIn, handIn);
 
-			IMiscCapability cap = MiscCapabilityProvider.getCap(playerIn);
-			if (cap == null) return super.onItemRightClick(worldIn, playerIn, handIn);
+		IMiscCapability cap = MiscCapabilityProvider.getCap(playerIn);
+		if (cap == null) return super.onItemRightClick(worldIn, playerIn, handIn);
+
+		EntityFairy entityFairy = cap.getSelectedFairyEntity(worldIn);
+
+
+		double reach = playerIn.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
+		Vec3d posEyes = playerIn.getPositionVector().add(0, playerIn.getEyeHeight(), 0);
+		RayTraceResult rayTraceResult = new RayTrace(worldIn, playerIn.getLook(1f), posEyes, reach).setEntityFilter(input -> input != null && !input.getUniqueID().equals(playerIn.getUniqueID())).setReturnLastUncollidableBlock(true).setIgnoreBlocksWithoutBoundingBoxes(true).trace();
+
+		if (rayTraceResult.typeOfHit == RayTraceResult.Type.ENTITY && rayTraceResult.entityHit instanceof EntityFairy && entityFairy != null && rayTraceResult.entityHit.getUniqueID().equals(entityFairy.getUniqueID()))
+			return super.onItemRightClick(worldIn, playerIn, handIn);
+
+		if (playerIn.isSneaking()) {
+			NBTHelper.setBoolean(stack, "moving_mode", !NBTHelper.getBoolean(stack, "moving_mode", true));
 
 			cap.setSelectedFairy(null);
 			cap.dataChanged(playerIn);
 
 			return super.onItemRightClick(worldIn, playerIn, handIn);
-		} else if (!worldIn.isRemote) {
-			IMiscCapability cap = MiscCapabilityProvider.getCap(playerIn);
-			if (cap == null) return super.onItemRightClick(worldIn, playerIn, handIn);
+		} else {
 
-			EntityFairy entityFairy = cap.getSelectedFairyEntity(worldIn);
 			if (entityFairy == null) return super.onItemRightClick(worldIn, playerIn, handIn);
 
-			double reach = playerIn.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
-			Vec3d posEyes = playerIn.getPositionVector().add(0, playerIn.getEyeHeight(), 0);
-			RayTraceResult rayTraceResult = worldIn.rayTraceBlocks(posEyes, posEyes.add(playerIn.getLook(1f).scale(reach)), false, false, true);
-			if (rayTraceResult == null || rayTraceResult.hitVec == null || rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK)
+			if (rayTraceResult.hitVec == null || rayTraceResult.typeOfHit != RayTraceResult.Type.BLOCK)
 				return super.onItemRightClick(worldIn, playerIn, handIn);
 
 			if (worldIn.isBlockLoaded(rayTraceResult.getBlockPos())) {

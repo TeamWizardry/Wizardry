@@ -25,7 +25,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -253,30 +252,20 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 			//	setNoAI(false);
 
-			ArrayList<EntityAITasks.EntityAITaskEntry> tempTasks = new ArrayList<>(tasks.taskEntries);
-			for (EntityAITasks.EntityAITaskEntry taskEntry : tempTasks) {
-				tasks.removeTask(taskEntry.action);
+			if (!tasks.taskEntries.isEmpty()) {
+				ArrayList<EntityAITasks.EntityAITaskEntry> tempTasks = new ArrayList<>(tasks.taskEntries);
+				for (EntityAITasks.EntityAITaskEntry taskEntry : tempTasks) {
+					tasks.removeTask(taskEntry.action);
+				}
 			}
 
-			ArrayList<EntityAITasks.EntityAITaskEntry> tempTargetTasks = new ArrayList<>(targetTasks.taskEntries);
-			for (EntityAITasks.EntityAITaskEntry taskEntry : tempTargetTasks) {
-				targetTasks.removeTask(taskEntry.action);
+			if (!targetTasks.taskEntries.isEmpty()) {
+				ArrayList<EntityAITasks.EntityAITaskEntry> tempTargetTasks = new ArrayList<>(targetTasks.taskEntries);
+				for (EntityAITasks.EntityAITaskEntry taskEntry : tempTargetTasks) {
+					targetTasks.removeTask(taskEntry.action);
+				}
 			}
 //			return;
-		}
-
-		if (getNavigator().getPath() != null) {
-			PathPoint pathPoint = getNavigator().getPath().getFinalPathPoint();
-			if (pathPoint != null) {
-
-				//	if (dist <= 1 * 1) {
-				//		getNavigator().noPath();
-				//		motionX = 0;
-				//		motionY = 0;
-				//		motionZ = 0;
-				//		getMoveHelper().setMoveTo(moveTargetPos.getX() + 0.5, moveTargetPos.getY() + 0.5, moveTargetPos.getZ() + 0.5, 1);
-				//	}
-			}
 		}
 
 		if (!moving) {
@@ -384,6 +373,10 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		if (NBTHelper.hasKey(compound, "move_target_x") && NBTHelper.hasKey(compound, "move_target_y") && NBTHelper.hasKey(compound, "move_target_z"))
 			moveTargetPos = new BlockPos(NBTHelper.getInteger(compound, "move_target_x"), NBTHelper.getInteger(compound, "move_target_y"), NBTHelper.getInteger(compound, "move_target_z"));
+
+		if (NBTHelper.hasKey(compound, "moving")) {
+			moving = NBTHelper.getBoolean(compound, "moving", true);
+		}
 	}
 
 	@Override
@@ -406,5 +399,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			compound.setInteger("move_target_z", moveTargetPos.getZ());
 		}
 
+		compound.setBoolean("moving", moving);
 	}
 }
