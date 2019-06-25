@@ -29,7 +29,8 @@ class ComponentAddCard extends GuiComponent {
 
 	@Hook
 	private void click(GuiComponentEvents.MouseClickEvent e) {
-		gui.selectModuleType.reveal();
+		gui.selectModuleType.reveal(() -> {
+		});
 	}
 
 	@Override

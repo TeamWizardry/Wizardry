@@ -189,9 +189,6 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
 		RenderUtils.drawCircle(target, aoe, false, false);
 
-		//	ModParticles.PARTICLE_SMOKE.spawn(RandUtil.nextDouble(20, 50), RandUtil.nextDouble(0.5, 1), target, new Vec3d(RandUtil.nextDouble(-aoe, aoe), 0, RandUtil.nextDouble(-aoe, aoe)).scale(0.1));
-		//	ModParticles.PARTICLE_SMOKE.configure();
-
 		return data;
 	}
 

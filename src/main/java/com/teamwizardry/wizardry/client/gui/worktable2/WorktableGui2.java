@@ -17,7 +17,7 @@ public class WorktableGui2 extends GuiBase {
 	protected static final int cardWidth = 100;
 	protected static final int cardHeight = 120;
 
-	public final ComponentSelectModuleType selectModuleType = new ComponentSelectModuleType();
+	public final ComponentModuleSelectionMenu selectModuleType = new ComponentModuleSelectionMenu();
 
 	public WorktableGui2(BlockPos pos) {
 		getMain().setSize(new Vec2d(512, 256));

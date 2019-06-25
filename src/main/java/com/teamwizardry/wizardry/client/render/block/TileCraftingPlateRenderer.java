@@ -172,7 +172,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 					.to(newDest)
 					.duration((float) (RandUtil.nextDouble(50, 100) * (tile.suckingCooldown <= 0 ? MathHelper.clamp(t * 2, 0, 1) : t)))
 					.completion(this::animationLoop)
-					.addTo(Animator.global);
+					.addTo(animator);
 		}
 	}
 }
