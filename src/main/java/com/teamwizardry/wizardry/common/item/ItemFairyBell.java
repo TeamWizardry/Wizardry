@@ -3,13 +3,18 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
 import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.common.network.capability.PacketUpdateMiscCapToServer;
+import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -20,15 +25,48 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.input.Keyboard;
 
 import java.util.UUID;
 
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class ItemFairyBell extends ItemMod {
 
 	public ItemFairyBell() {
 		super("fairy_bell");
 	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public static void onScroll(MouseEvent event) {
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player == null) return;
+
+		if (Keyboard.isCreated() && event.getDwheel() != 0) {
+
+			for (EnumHand hand : EnumHand.values()) {
+				ItemStack stack = player.getHeldItem(hand);
+
+				if (stack.getItem() != ModItems.FAIRY_BELL)
+					continue;
+
+
+				IMiscCapability cap = MiscCapabilityProvider.getCap(Minecraft.getMinecraft().player);
+				if (cap == null) continue;
+
+				cap.setSelectedFairy(null);
+
+				PacketHandler.NETWORK.sendToServer(new PacketUpdateMiscCapToServer(cap.serializeNBT()));
+			}
+		}
+	}
+
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {

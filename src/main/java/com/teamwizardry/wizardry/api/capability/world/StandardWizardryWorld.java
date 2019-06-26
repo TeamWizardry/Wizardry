@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.capability.world;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.SpellObjectManager;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
-import com.teamwizardry.wizardry.common.network.PacketSyncWizardryWorld;
+import com.teamwizardry.wizardry.common.network.capability.PacketSyncWizardryWorld;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

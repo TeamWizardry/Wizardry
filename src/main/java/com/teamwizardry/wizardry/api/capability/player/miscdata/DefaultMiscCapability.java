@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.api.capability.player.miscdata;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.common.network.PacketUpdateMiscCap;
+import com.teamwizardry.wizardry.common.network.capability.PacketUpdateMiscCapToClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -58,6 +58,6 @@ public class DefaultMiscCapability implements IMiscCapability {
 	@Override
 	public void dataChanged(Entity entity) {
 		if (entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
-			PacketHandler.NETWORK.sendTo(new PacketUpdateMiscCap(serializeNBT()), (EntityPlayerMP) entity);
+			PacketHandler.NETWORK.sendTo(new PacketUpdateMiscCapToClient(serializeNBT()), (EntityPlayerMP) entity);
 	}
 }

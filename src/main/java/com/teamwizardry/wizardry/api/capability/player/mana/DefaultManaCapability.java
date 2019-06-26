@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.capability.player.mana;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.common.network.PacketUpdateManaCap;
+import com.teamwizardry.wizardry.common.network.capability.PacketUpdateManaCap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

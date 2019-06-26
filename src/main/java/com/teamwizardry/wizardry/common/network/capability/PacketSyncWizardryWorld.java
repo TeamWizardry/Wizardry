@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.network;
+package com.teamwizardry.wizardry.common.network.capability;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
