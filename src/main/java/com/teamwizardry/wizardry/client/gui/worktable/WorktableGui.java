@@ -69,7 +69,7 @@ public class WorktableGui extends GuiBase {
 	static final Sprite PLATE = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate.png"));
 	static final Sprite PLATE_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate_highlighted.png"));
 	static final Sprite PLATE_HIGHLIGHTED_ERROR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate_highlighted_error.png"));
-	static final Sprite STREAK = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
+	static final Sprite STREAK = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"), 16, 16);
 	static final Sprite BOOK_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/book.png"));
 	static final Sprite SAVE_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/save.png"));
 	static final Sprite BROOM_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/broom.png"));

@@ -10,7 +10,7 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.block.IManaGenerator;
 import com.teamwizardry.wizardry.api.block.TileManaNode;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
@@ -102,7 +102,7 @@ public class TileManaBattery extends TileManaNode implements IManaGenerator {
 							Vec3d to = from.add(RandUtil.nextDouble(-1, 1), -3, RandUtil.nextDouble(-1, 1));
 
 							ParticleBuilder helix = new ParticleBuilder(200);
-							helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+							helix.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 							helix.setAlphaFunction(new InterpFloatInOut(0.1f, 0.1f));
 							ParticleSpawner.spawn(helix, world, new StaticInterp<>(to), 5, 0, (someFloat, particleBuilder) -> {
 								particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));

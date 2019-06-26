@@ -1,14 +1,14 @@
 package com.teamwizardry.wizardry.common.entity.angel.zachriel;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.arena.Arena;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -226,7 +226,7 @@ public class EntityZachriel extends EntityAngel {
 					@SideOnly(Side.CLIENT)
 					public void runIfClient() {
 						ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
-						glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+						glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 						glitter.enableMotionCalculation();
 						glitter.setCollision(burstTimer > 0);
 						glitter.setCanBounce(burstTimer > 0);

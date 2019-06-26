@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellData.DataField;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -99,7 +99,7 @@ public class ModuleEffectZoom implements IModuleEffect {
 		Vec3d to = entity.getPositionVector();
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFloatInOut(0.0f, 0.3f));
 
 		glitter.enableMotionCalculation();

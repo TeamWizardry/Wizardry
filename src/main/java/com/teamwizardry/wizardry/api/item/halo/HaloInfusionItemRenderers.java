@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.api.item.halo;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +31,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(5) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0xff8300));
 
@@ -45,7 +45,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(2) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0x0022FF));
 			glitter.setCollision(true);
@@ -74,7 +74,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(3) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0x16bf00));
 
@@ -93,7 +93,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(2) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0x63e2a7));
 
@@ -120,7 +120,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(1) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColorFunction(new InterpColorHSV(RandUtil.nextBoolean() ? Color.RED : Color.ORANGE, Color.GRAY));
 
@@ -147,7 +147,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(2) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0xff6df5));
 
@@ -175,7 +175,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(2) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0xdabfff));
 
@@ -208,7 +208,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(2) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0xb118bf));
 
@@ -237,7 +237,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(2) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0f, 1f));
 			glitter.setColor(new Color(0x561d8c));
 
@@ -270,7 +270,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(2) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0x8200ff));
 
@@ -299,7 +299,7 @@ public class HaloInfusionItemRenderers {
 			if (RandUtil.nextInt(2) != 0) return;
 
 			ParticleBuilder glitter = new ParticleBuilder(5);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0xff4c4c));
 			glitter.setScaleFunction(new InterpScale(RandUtil.nextFloat(3f, 3.5f), 0));
@@ -343,7 +343,7 @@ public class HaloInfusionItemRenderers {
 		addRender(HaloInfusionItemRegistry.UNDERWORLD_FAIRY_DUST, (vec3d, world) -> {
 
 			ParticleBuilder glitter = new ParticleBuilder(20);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 1f));
 			glitter.setColor(new Color(0xffffff));
 

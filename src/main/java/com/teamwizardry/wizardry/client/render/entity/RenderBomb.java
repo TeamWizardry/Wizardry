@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.entity.EntityBomb;
@@ -42,7 +42,7 @@ public class RenderBomb extends Render<EntityBomb> {
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setAlphaFunction(new InterpFloatInOut(0f, 0.3f));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 		glitter.enableMotionCalculation();
 		glitter.setCollision(true);
 		glitter.setCanBounce(true);

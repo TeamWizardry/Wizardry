@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBe
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
 import com.teamwizardry.wizardry.api.entity.FairyData;
@@ -62,6 +62,9 @@ public class FairyBindingRenderer {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		World world = Minecraft.getMinecraft().world;
 
+		ItemStack stack = player.getHeldItemMainhand();
+
+		if (stack.getItem() != ModItems.FAIRY_BELL) return;
 
 		if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY) {
 			Entity entityHit = Minecraft.getMinecraft().objectMouseOver.entityHit;
@@ -105,38 +108,83 @@ public class FairyBindingRenderer {
 			FairyData dataFairy = entityFairy.getDataFairy();
 			if (dataFairy == null) return;
 
-			ItemStack stack = player.getHeldItemMainhand();
+			IMiscCapability cap = MiscCapabilityProvider.getCap(Minecraft.getMinecraft().player);
+			if (cap == null) return;
 
-			if (stack.getItem() == ModItems.FAIRY_BELL) {
-				IMiscCapability cap = MiscCapabilityProvider.getCap(Minecraft.getMinecraft().player);
-				if (cap == null) return;
+			double interpPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
+			double interpPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
+			double interpPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
 
-				double interpPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
-				double interpPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
-				double interpPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
+			Tessellator tess = Tessellator.getInstance();
+			BufferBuilder bb = tess.getBuffer();
 
-				Tessellator tess = Tessellator.getInstance();
-				BufferBuilder bb = tess.getBuffer();
+			GlStateManager.glLineWidth(2f);
 
-				GlStateManager.glLineWidth(2f);
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
+
+			RenderUtils.drawCircle(entityFairy.getPositionVector(), 0.25, true, false, Color.YELLOW);
+			GlStateManager.popMatrix();
+
+			Vec3d lookTarget = entityFairy.getLookTarget();
+			Vec3d fairyPos = entityFairy.getPositionVector();
+
+			if (lookTarget != null) {
+				Vec3d to = fairyPos.add(lookTarget);
 
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
-				RenderUtils.drawCircle(entityFairy.getPositionVector(), 0.25, true, false, Color.YELLOW);
+				RenderUtils.drawCircle(to, 0.1, true, false, Color.ORANGE);
+
 				GlStateManager.popMatrix();
 
-				Vec3d lookTarget = entityFairy.getLookTarget();
-				Vec3d fairyPos = entityFairy.getPositionVector();
 
-				if (lookTarget != null) {
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
+
+				GlStateManager.disableLighting();
+				GlStateManager.disableCull();
+				GlStateManager.enableAlpha();
+				GlStateManager.enableBlend();
+				GlStateManager.shadeModel(GL11.GL_SMOOTH);
+				GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
+				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+				GlStateManager.color(1, 1, 1, 1);
+				GlStateManager.disableTexture2D();
+				GlStateManager.enableColorMaterial();
+				GlStateManager.enableDepth();
+
+				bb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+
+				Color c = Color.ORANGE;
+
+				bb.pos(to.x, to.y, to.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				bb.pos(fairyPos.x, fairyPos.y, fairyPos.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+
+				tess.draw();
+
+				GlStateManager.enableTexture2D();
+				GlStateManager.popMatrix();
+			}
+
+			UUID uuid = cap.getSelectedFairyUUID();
+			if (uuid != null && uuid.equals(entityFairy.getUniqueID())) {
+
+				boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
+
+				if (!movingMode) {
+
+					Vec3d hitVec = Minecraft.getMinecraft().objectMouseOver.hitVec;
+					Vec3d subtract = hitVec.subtract(fairyPos);
+					double length = subtract.length();
+					hitVec = entityFairy.getPositionVector().add(subtract.normalize().scale(MathHelper.clamp(length, -3, 3)));
+
 					GlStateManager.pushMatrix();
 					GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
-					RenderUtils.drawCircle(lookTarget, 0.1, true, false, Color.ORANGE);
-
+					RenderUtils.drawCircle(hitVec, 0.2, true, false, Color.CYAN);
 					GlStateManager.popMatrix();
-
 
 					GlStateManager.pushMatrix();
 					GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
@@ -155,35 +203,40 @@ public class FairyBindingRenderer {
 
 					bb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 
-					Color c = Color.ORANGE;
+					Color c = Color.GREEN;
 
-					bb.pos(lookTarget.x, lookTarget.y, lookTarget.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+					bb.pos(hitVec.x, hitVec.y, hitVec.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
 					bb.pos(fairyPos.x, fairyPos.y, fairyPos.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
 
 					tess.draw();
 
 					GlStateManager.enableTexture2D();
 					GlStateManager.popMatrix();
-				}
 
-				UUID uuid = cap.getSelectedFairyUUID();
-				if (uuid != null && uuid.equals(entityFairy.getUniqueID())) {
+				} else {
+					if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
 
-						boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
+						BlockPos target = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
 
-						if (!movingMode) {
+						GlStateManager.pushMatrix();
+						GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
-							Vec3d hitVec = Minecraft.getMinecraft().objectMouseOver.hitVec;
-							Vec3d subtract = hitVec.subtract(fairyPos);
-							double length = subtract.length();
-							hitVec = entityFairy.getPositionVector().add(subtract.normalize().scale(MathHelper.clamp(length, -3, 3)));
+						RenderUtils.drawCubeOutline(entityFairy.world, target, entityFairy.world.getBlockState(target), Color.CYAN);
+						GlStateManager.popMatrix();
 
-							GlStateManager.pushMatrix();
-							GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
-							RenderUtils.drawCircle(hitVec, 0.2, true, false, Color.CYAN);
-							GlStateManager.popMatrix();
+						Vec3d tar = new Vec3d(target).add(0.5, 0.5, 0.5).add(new Vec3d(Minecraft.getMinecraft().objectMouseOver.sideHit.getDirectionVec()));
+						PathNavigate navigateFlying = entityFairy.getNavigator();
+						Path path = navigateFlying.getPathToXYZ(tar.x, tar.y, tar.z);
 
+
+						GlStateManager.pushMatrix();
+						GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
+
+						RenderUtils.drawCircle(tar, 0.25, true, false, Color.CYAN);
+						GlStateManager.popMatrix();
+
+						if (path != null) {
 							GlStateManager.pushMatrix();
 							GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
@@ -197,114 +250,63 @@ public class FairyBindingRenderer {
 							GlStateManager.color(1, 1, 1, 1);
 							GlStateManager.disableTexture2D();
 							GlStateManager.enableColorMaterial();
-							GlStateManager.enableDepth();
+							GlStateManager.disableDepth();
 
-							bb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+							bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 
 							Color c = Color.GREEN;
 
-							bb.pos(hitVec.x, hitVec.y, hitVec.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-							bb.pos(fairyPos.x, fairyPos.y, fairyPos.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+							Vec3d lastPoint = null;
+							Vec3d center = new Vec3d(entityFairy.posX, entityFairy.posY + entityFairy.height / 2.0, entityFairy.posZ);
+							bb.pos(center.x, center.y, center.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+
+							for (int i = 0; i < path.getCurrentPathLength(); i++) {
+
+								Vec3d vec = path.getVectorFromIndex(entityFairy, i);
+
+								if (lastPoint != null) {
+									if (i >= path.getCurrentPathLength() - 1) {
+										continue;
+									}
+
+									Vec3d from = path.getVectorFromIndex(entityFairy, i - 1);
+									from = from.subtract(from.subtract(vec).scale(0.5));
+
+									Vec3d to = path.getVectorFromIndex(entityFairy, i + 1);
+									to = to.subtract(to.subtract(vec).scale(0.5));
+
+									Vec3d fromControl = vec.subtract(from).normalize().scale(0.4);
+									Vec3d toControl = vec.subtract(to).normalize().scale(0.4);
+
+									InterpBezier3D bezier = new InterpBezier3D(from, to, fromControl, toControl);
+
+									for (Vec3d dot : bezier.list(20)) {
+										bb.pos(dot.x, dot.y, dot.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+										lastPoint = dot;
+									}
+								} else {
+									bb.pos(vec.x, vec.y, vec.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+									lastPoint = vec;
+								}
+							}
+
+							bb.pos(tar.x, tar.y, tar.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
 
 							tess.draw();
 
 							GlStateManager.enableTexture2D();
 							GlStateManager.popMatrix();
-
-						} else {
-							if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
-
-								BlockPos target = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
-
-								GlStateManager.pushMatrix();
-								GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
-
-								RenderUtils.drawCubeOutline(entityFairy.world, target, entityFairy.world.getBlockState(target), Color.CYAN);
-								GlStateManager.popMatrix();
-
-
-								Vec3d tar = new Vec3d(target).add(0.5, 0.5, 0.5).add(new Vec3d(Minecraft.getMinecraft().objectMouseOver.sideHit.getDirectionVec()));
-								PathNavigate navigateFlying = entityFairy.getNavigator();
-								Path path = navigateFlying.getPathToXYZ(tar.x, tar.y, tar.z);
-
-
-								GlStateManager.pushMatrix();
-								GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
-
-								RenderUtils.drawCircle(tar, 0.25, true, false, Color.CYAN);
-								GlStateManager.popMatrix();
-
-								if (path != null) {
-									GlStateManager.pushMatrix();
-									GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
-
-									GlStateManager.disableLighting();
-									GlStateManager.disableCull();
-									GlStateManager.enableAlpha();
-									GlStateManager.enableBlend();
-									GlStateManager.shadeModel(GL11.GL_SMOOTH);
-									GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
-									GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-									GlStateManager.color(1, 1, 1, 1);
-									GlStateManager.disableTexture2D();
-									GlStateManager.enableColorMaterial();
-									GlStateManager.disableDepth();
-
-									bb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-
-									Color c = Color.GREEN;
-
-									Vec3d lastPoint = null;
-									Vec3d center = new Vec3d(entityFairy.posX, entityFairy.posY + entityFairy.height / 2.0, entityFairy.posZ);
-									bb.pos(center.x, center.y, center.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-
-									for (int i = 0; i < path.getCurrentPathLength(); i++) {
-
-										Vec3d vec = path.getVectorFromIndex(entityFairy, i);
-
-										if (lastPoint != null) {
-											if (i >= path.getCurrentPathLength() - 1) {
-												continue;
-											}
-
-											Vec3d from = path.getVectorFromIndex(entityFairy, i - 1);
-											from = from.subtract(from.subtract(vec).scale(0.5));
-
-											Vec3d to = path.getVectorFromIndex(entityFairy, i + 1);
-											to = to.subtract(to.subtract(vec).scale(0.5));
-
-											Vec3d fromControl = vec.subtract(from).normalize().scale(0.4);
-											Vec3d toControl = vec.subtract(to).normalize().scale(0.4);
-
-											InterpBezier3D bezier = new InterpBezier3D(from, to, fromControl, toControl);
-
-											for (Vec3d dot : bezier.list(20)) {
-												bb.pos(dot.x, dot.y, dot.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-												lastPoint = dot;
-											}
-										} else {
-											bb.pos(vec.x, vec.y, vec.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-											lastPoint = vec;
-										}
-									}
-
-									bb.pos(tar.x, tar.y, tar.z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-
-									tess.draw();
-
-									GlStateManager.enableTexture2D();
-									GlStateManager.popMatrix();
-								}
-							}
+						}
 					}
 				}
 			}
 		}
+
 	}
 
 	private static void light(World world, Vec3d pos, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(1);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 		glitter.disableRandom();
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (i, build) -> {
 			build.setScale(0.25f);

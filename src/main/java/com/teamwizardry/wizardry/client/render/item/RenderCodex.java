@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -453,7 +453,7 @@ public class RenderCodex {
 	}
 
 	public String[] getSpellStructureLines(ItemStack stack) {
-		NBTTagList moduleList = NBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+		NBTTagList moduleList = NBTHelper.getList(stack, NBTConstants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 		if (moduleList == null) return new String[0];
 
 		List<List<ModuleInstance>> spellModules = SpellUtils.deserializeModuleList(moduleList);
@@ -506,7 +506,7 @@ public class RenderCodex {
 	public List<ItemStack> getSpellInventory(ItemStack stack) {
 		if (!NBTHelper.getBoolean(stack, "has_spell", false)) return new ArrayList<>();
 
-		NBTTagList spellList = NBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+		NBTTagList spellList = NBTHelper.getList(stack, NBTConstants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 		if (spellList == null) return new ArrayList<>();
 
 		return SpellUtils.getSpellItems(SpellUtils.deserializeModuleList(spellList));

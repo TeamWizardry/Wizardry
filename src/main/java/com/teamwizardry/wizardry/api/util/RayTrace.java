@@ -80,7 +80,7 @@ public class RayTrace {
 	 */
 	@Nonnull
 	public RayTraceResult trace() {
-		Vec3d lookVec = origin.add(slope.scale(range));
+		Vec3d lookVec = origin.add(slope.normalize().scale(range));
 
 		RayTraceResult entityResult = null;
 		RayTraceResult blockResult = null;// world.rayTraceBlocks(origin, lookVec, false, ignoreBlocksWithoutBoundingBoxes, returnLastUncollidableBlock);

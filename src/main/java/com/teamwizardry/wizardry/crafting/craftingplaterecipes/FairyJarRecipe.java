@@ -45,7 +45,7 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 		if (!(tileEntity instanceof TileJar)) return false;
 		TileJar jar = (TileJar) tileEntity;
 
-		return jar.fairy != null && jar.fairy.infusedSpell == null && !jar.fairy.isDepressed;
+		return jar.fairy != null && jar.fairy.infusedSpell.isEmpty() && !jar.fairy.isDepressed;
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 		TileJar jar = (TileJar) tileEntity;
 
 		if (jar.fairy != null
-				&& jar.fairy.infusedSpell == null
+				&& jar.fairy.infusedSpell.isEmpty()
 				&& !jar.fairy.isDepressed
 				&& !ManaManager.isManaFull(jar.fairy.handler)) {
 			ManaManager.forObject(jar.fairy.handler).addMana(consumeMana.apply(jar.fairy.handler)).close();
@@ -87,7 +87,8 @@ public class FairyJarRecipe implements ICraftingPlateRecipe {
 			list.appendTag(spellRing.serializeNBT());
 		}
 
-		jar.fairy.infusedSpell = builder.getSpell().get(0);
+		jar.fairy.infusedSpell.clear();
+		jar.fairy.infusedSpell.addAll(builder.getSpell());
 
 		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).add(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, true),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));

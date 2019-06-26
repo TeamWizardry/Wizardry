@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -95,7 +95,7 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), 10, 10, (aFloat, particleBuilder) -> {
 			particleBuilder.setScale((float) RandUtil.nextDouble(0.3, 1));
 			particleBuilder.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
-			particleBuilder.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			particleBuilder.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			particleBuilder.setLifetime(RandUtil.nextInt(20, 30));
 			particleBuilder.setScaleFunction(new InterpScale(1, 0));
 

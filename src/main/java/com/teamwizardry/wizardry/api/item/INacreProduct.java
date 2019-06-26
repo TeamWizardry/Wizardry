@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.api.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.api.NBTConstants.NBT;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.block.state.IBlockState;

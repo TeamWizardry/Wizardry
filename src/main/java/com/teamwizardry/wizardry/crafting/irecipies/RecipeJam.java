@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
@@ -52,7 +52,7 @@ public class RecipeJam extends IForgeRegistryEntry.Impl<IRecipe> implements IRec
 		if (jar.isEmpty()) return ItemStack.EMPTY;
 
 		ItemStack jamJar = new ItemStack(ModItems.JAR_ITEM);
-		NBTHelper.setInt(jamJar, Constants.NBT.FAIRY_COLOR, NBTHelper.getInt(jar, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
+		NBTHelper.setInt(jamJar, NBTConstants.NBT.FAIRY_COLOR, NBTHelper.getInt(jar, NBTConstants.NBT.FAIRY_COLOR, 0xFFFFFF));
 		jamJar.setItemDamage(1);
 
 		return jamJar;

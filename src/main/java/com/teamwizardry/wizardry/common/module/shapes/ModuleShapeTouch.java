@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCi
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
@@ -56,7 +56,7 @@ public class ModuleShapeTouch implements IModuleShape {
 
 		RayTraceResult result = new RayTrace(
 				world, look, origin,
-				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
+				caster instanceof EntityLivingBase && ((EntityLivingBase) caster).getAttributeMap().getAllAttributes().contains(EntityPlayer.REACH_DISTANCE) ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(true)
@@ -121,7 +121,7 @@ public class ModuleShapeTouch implements IModuleShape {
 		if (targetEntity == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(1);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 		ParticleSpawner.spawn(glitter, world, new InterpCircle(targetEntity.getPositionVector().add(0, targetEntity.height / 2.0, 0), new Vec3d(0, 1, 0), 1, 10), 50, RandUtil.nextInt(10, 15), (aFloat, particleBuilder) -> {
 			if (RandUtil.nextBoolean()) {
 				glitter.setColor(spellRing.getPrimaryColor());

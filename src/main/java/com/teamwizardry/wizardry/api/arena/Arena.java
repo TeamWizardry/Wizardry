@@ -9,7 +9,7 @@ import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
@@ -105,7 +105,7 @@ public class Arena implements INBTSerializable<NBTTagCompound> {
 				@SideOnly(Side.CLIENT)
 				public void runIfClient() {
 					ParticleBuilder glitter = new ParticleBuilder(10);
-					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+					glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 					glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 					glitter.setCollision(true);
 					glitter.enableMotionCalculation();

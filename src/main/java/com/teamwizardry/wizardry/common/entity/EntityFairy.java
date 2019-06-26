@@ -2,14 +2,18 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.api.NBTConstants.NBT;
 import com.teamwizardry.wizardry.api.entity.FairyData;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.entity.ai.FairyAIWanderAvoidWaterFlying;
 import com.teamwizardry.wizardry.common.entity.ai.FairyMoveHelper;
 import com.teamwizardry.wizardry.common.entity.ai.WizardryFlyablePathNavigator;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,6 +33,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -205,10 +210,12 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	public void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
+		this.getAttributeMap().registerAttribute(EntityPlayer.REACH_DISTANCE);
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(RandUtil.nextDouble(2, 3));
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(1);
 		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(64);
+		this.getEntityAttribute(EntityPlayer.REACH_DISTANCE).setBaseValue(5);
 	}
 
 	@NotNull
@@ -244,9 +251,13 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		//	if (isAIDisabled()) return;
 		if (isDead) return;
 
+		Vec3d lookTarget = getLookTarget();
+		if (lookTarget != null) {
+			Minecraft.getMinecraft().player.sendChatMessage(lookTarget.normalize().toString());
+		}
+
 		if (dataFairy != null && dataFairy.isDepressed) {
 
-			Vec3d lookTarget = getLookTarget();
 			if (lookTarget != null)
 				getLookHelper().setLookPosition(lookTarget.x, lookTarget.y, lookTarget.z, 20, 20);
 
@@ -274,6 +285,28 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			motionZ = 0;
 			getMoveHelper().action = EntityMoveHelper.Action.WAIT;
 			resetPositionToBB();
+
+			if (dataFairy != null && dataFairy.isDepressed && lookTarget != null && !dataFairy.infusedSpell.isEmpty()) {
+
+				dataFairy.handler.setMana(dataFairy.handler.getMaxMana());
+
+				if (ticksExisted % 30 == 0) {
+					SpellData data = new SpellData();
+					data.processEntity(this, true);
+					data.addData(SpellData.DefaultKeys.LOOK, lookTarget);
+					data.addData(SpellData.DefaultKeys.CAPABILITY, dataFairy.handler);
+
+					// TODO: config for fairy reach
+					RayTraceResult result = new RayTrace(world, lookTarget, getPositionVector(), 5)
+							.setEntityFilter(input -> input != null && !input.getUniqueID().equals(getUniqueID()))
+							.setReturnLastUncollidableBlock(true)
+							.setIgnoreBlocksWithoutBoundingBoxes(true)
+							.trace();
+					data.processTrace(result);
+
+					SpellUtils.runSpell(world, dataFairy.infusedSpell, data);
+				}
+			}
 		}
 
 		if ((dataFairy == null || !dataFairy.isDepressed) && getNavigator().noPath()) {

@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.command;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -51,7 +51,7 @@ public class CommandGenStaff extends CommandBase {
 			NBTTagList list = new NBTTagList();
 			for (SpellRing spellRing : builder.getSpell())
 				list.appendTag(spellRing.serializeNBT());
-			NBTHelper.setList(item, Constants.NBT.SPELL, list);
+			NBTHelper.setList(item, NBTConstants.NBT.SPELL, list);
 			NBTHelper.setBoolean(item, "infused", true);
 
 			((EntityPlayerMP) entity).addItemStackToInventory(item);

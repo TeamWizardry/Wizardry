@@ -9,7 +9,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
@@ -165,7 +165,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			double y1 = Math.sin((float) angle);
 
 			ParticleBuilder builder = new ParticleBuilder(10);
-			builder.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			builder.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			builder.setCollision(true);
 			builder.disableRandom();
 			builder.disableMotionCalculation();
@@ -184,7 +184,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			double z = r * MathHelper.sin((float) theta);
 
 			ParticleBuilder helix = new ParticleBuilder(20);
-			helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			helix.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			helix.setAlphaFunction(new InterpFloatInOut(0.1f, 0.4f));
 			ParticleSpawner.spawn(helix, tile.getWorld(), new StaticInterp<>(new Vec3d(tile.getPos()).add(0.5, 0.5, 0.5)), 1, 0, (someFloat, particleBuilder) -> {
 				particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));

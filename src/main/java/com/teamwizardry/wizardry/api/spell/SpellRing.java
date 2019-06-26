@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
@@ -255,15 +256,15 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	//TODO: orb holders
 	public boolean taxCaster(@Nonnull World world, SpellData data, double multiplier, boolean failSound) {
-		Entity caster = data.getCaster(world);
-		if (caster == null) return false;
+		IManaCapability cap = data.getData(SpellData.DefaultKeys.CAPABILITY);
+		if (cap == null) return false;
 
 		double manaDrain = getManaDrain(data) * multiplier;
 		double burnoutFill = getBurnoutFill(data) * multiplier;
 
 		boolean fail = false;
 
-		try (ManaManager.CapManagerBuilder mgr = ManaManager.forObject(caster)) {
+		try (ManaManager.CapManagerBuilder mgr = ManaManager.forObject(cap)) {
 			if (mgr.getMana() < manaDrain) fail = true;
 
 			mgr.removeMana(manaDrain);

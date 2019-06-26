@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api;
 /**
  * Created by Demoniaque on 6/14/2016.
  */
-public class Constants {
+public class NBTConstants {
 
 	public static class MISC {
 		public static final String DIAMOND = "particles/diamond";

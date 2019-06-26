@@ -9,7 +9,7 @@ import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.capability.player.mana.CustomManaCapability;
 import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
@@ -228,7 +228,7 @@ public class TileManaNode extends TileCachable implements ITickable {
 						@SideOnly(Side.CLIENT)
 						public void runIfClient() {
 							ParticleBuilder helix = new ParticleBuilder(200);
-							helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+							helix.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 							helix.setAlphaFunction(new InterpFloatInOut(0.1f, 0.1f));
 							ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(interacterFrom.getPos()).add(0.5, 1, 0.5)), 1, 0, (someFloat, particleBuilder) -> {
 								particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));

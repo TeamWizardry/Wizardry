@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.api.item;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -48,13 +48,13 @@ public interface ICooldownSpellCaster {
 				else PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(false, true), (EntityPlayerMP) player);
 		}
 
-		NBTHelper.setInt(stack, Constants.NBT.LAST_COOLDOWN, maxCooldown);
-		NBTHelper.setLong(stack, Constants.NBT.LAST_CAST, world.getTotalWorldTime());
+		NBTHelper.setInt(stack, NBTConstants.NBT.LAST_COOLDOWN, maxCooldown);
+		NBTHelper.setLong(stack, NBTConstants.NBT.LAST_CAST, world.getTotalWorldTime());
 	}
 
 	default boolean isCoolingDown(World world, ItemStack stack) {
-		int lastCooldown = NBTHelper.getInt(stack, Constants.NBT.LAST_COOLDOWN, 0);
-		long lastCast = NBTHelper.getLong(stack, Constants.NBT.LAST_CAST, 0);
+		int lastCooldown = NBTHelper.getInt(stack, NBTConstants.NBT.LAST_COOLDOWN, 0);
+		long lastCast = NBTHelper.getLong(stack, NBTConstants.NBT.LAST_CAST, 0);
 		long currentCast = world.getTotalWorldTime();
 
 		long sub = currentCast - lastCast;

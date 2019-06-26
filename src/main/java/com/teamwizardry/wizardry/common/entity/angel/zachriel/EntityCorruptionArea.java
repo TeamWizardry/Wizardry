@@ -2,13 +2,13 @@ package com.teamwizardry.wizardry.common.entity.angel.zachriel;
 
 import com.teamwizardry.librarianlib.features.base.entity.EntityMod;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.block.material.EnumPushReaction;
@@ -107,7 +107,7 @@ public class EntityCorruptionArea extends EntityMod {
 			@SideOnly(Side.CLIENT)
 			public void runIfClient() {
 				ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 				glitter.enableMotionCalculation();
 				glitter.setCollision(true);
 				glitter.setCanBounce(true);

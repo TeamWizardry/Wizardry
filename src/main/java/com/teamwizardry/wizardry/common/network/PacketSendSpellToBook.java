@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.network;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.CommonWorktableModule;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -54,7 +54,7 @@ public class PacketSendSpellToBook extends PacketBase {
 			if (stack.getItem() == ModItems.BOOK) {
 
 				NBTHelper.setList(stack, "common_modules", commonModules);
-				NBTHelper.setList(stack, Constants.NBT.SPELL, moduleList);
+				NBTHelper.setList(stack, NBTConstants.NBT.SPELL, moduleList);
 				NBTHelper.setBoolean(stack, "has_spell", true);
 				NBTHelper.setInt(stack, "page", 0);
 			}

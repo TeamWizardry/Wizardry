@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.tile.TileLight;
@@ -46,7 +46,7 @@ public class TileLightRenderer extends TileRenderHandler<TileLight> {
 			}
 
 			ParticleBuilder glitter = new ParticleBuilder(30);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 			glitter.setColorFunction(new InterpColorHSV(Color.CYAN, Color.BLUE));
 			glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(1, 3), 0));

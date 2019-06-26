@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICooldownSpellCaster;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
@@ -269,12 +269,12 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 			TooltipHelper.addToTooltip(tooltip, "wizardry.misc.sneak_expanded");
 		}
 
-		if (spellRings.isEmpty() && NBTHelper.getFloat(stack, Constants.NBT.PURITY_OVERRIDE, -1f) < 0) {
+		if (spellRings.isEmpty() && NBTHelper.getFloat(stack, NBTConstants.NBT.PURITY_OVERRIDE, -1f) < 0) {
 			float purity = getQuality(stack);
 			String desc = super.getTranslationKey(stack) + ".";
 			if (purity >= 1) desc += "perfect";
 			else {
-				boolean over = NBTHelper.getInt(stack, Constants.NBT.PURITY, 0) > Constants.NBT.NACRE_PURITY_CONVERSION;
+				boolean over = NBTHelper.getInt(stack, NBTConstants.NBT.PURITY, 0) > NBTConstants.NBT.NACRE_PURITY_CONVERSION;
 				if (purity >= 5 / 6.0)
 					if (over)
 						desc += "over_near";

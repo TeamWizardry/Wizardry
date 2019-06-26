@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFlo
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockSet;
@@ -259,7 +259,7 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 				if (thisState.getBlock() != ModBlocks.FAKE_AIR) continue;
 
 				ParticleBuilder glitter2 = new ParticleBuilder(10);
-				glitter2.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter2.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 				glitter2.disableRandom();
 				ParticleSpawner.spawn(glitter2, world, new StaticInterp<>(new Vec3d(entry.getKey()).add(0.5, 0.5, 0.5)), 5, (int) duration, (aFloat, build) -> {
 					build.setColor(Color.CYAN);
@@ -316,7 +316,7 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 								Vec3d cross = new Vec3d(adjSubFacing.getDirectionVec()).crossProduct(new Vec3d(facing.getDirectionVec())).normalize().scale(0.5);
 
 								ParticleBuilder glitter = new ParticleBuilder(10);
-								glitter.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+								glitter.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 								glitter.disableRandom();
 								ParticleSpawner.spawn(glitter, world, new StaticInterp<>(midPointVec), 50, (int) duration, (aFloat, build) -> {
 									build.setColor(Color.CYAN);

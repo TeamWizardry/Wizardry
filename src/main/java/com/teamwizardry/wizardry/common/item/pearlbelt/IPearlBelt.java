@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item.pearlbelt;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlStorageHolder;
 import kotlin.jvm.functions.Function2;
@@ -61,14 +61,14 @@ public interface IPearlBelt extends IPearlStorageHolder, INacreProduct.INacreDec
 			if (!stack.hasTagCompound())
 				return Color.HSBtoRGB(MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f), 0.75f, 1f);
 
-			long lastCast = NBTHelper.getLong(stack, Constants.NBT.LAST_CAST, -1);
-			int decayCooldown = NBTHelper.getInt(stack, Constants.NBT.LAST_COOLDOWN, -1);
+			long lastCast = NBTHelper.getLong(stack, NBTConstants.NBT.LAST_CAST, -1);
+			int decayCooldown = NBTHelper.getInt(stack, NBTConstants.NBT.LAST_COOLDOWN, -1);
 			long tick = Minecraft.getMinecraft().world.getTotalWorldTime();
 			long timeSinceCooldown = tick - lastCast;
 			float decayStage = (decayCooldown > 0) ? ((float) timeSinceCooldown) / decayCooldown : 1f;
 
 
-			float rand = NBTHelper.getFloat(stack, Constants.NBT.RAND, -1);
+			float rand = NBTHelper.getFloat(stack, NBTConstants.NBT.RAND, -1);
 			float hue = rand < 0 ? (tick / 140f) % 140f : rand;
 			float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 

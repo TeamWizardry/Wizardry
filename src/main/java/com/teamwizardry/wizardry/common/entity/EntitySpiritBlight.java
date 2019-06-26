@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -143,7 +143,7 @@ public class EntitySpiritBlight extends EntityMob {
 			@SideOnly(Side.CLIENT)
 			public void runIfClient() {
 				ParticleBuilder glitter = new ParticleBuilder(30);
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 				glitter.setAlphaFunction(new InterpFloatInOut(1f, 1f));
 				glitter.setColor(new Color(0xf404d4));
 
@@ -209,7 +209,7 @@ public class EntitySpiritBlight extends EntityMob {
 			public void runIfClient() {
 				ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(100, 150));
 				glitter.setColor(Color.WHITE);
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
 				glitter.setAlphaFunction(new InterpFloatInOut(0.1f, 0.1f));
 				glitter.setAcceleration(Vec3d.ZERO);
 

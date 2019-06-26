@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.Constants.MISC;
+import com.teamwizardry.wizardry.api.NBTConstants.MISC;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;

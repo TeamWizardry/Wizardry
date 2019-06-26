@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -36,7 +37,7 @@ public class SpellUtils {
 		if (spell == null) return;
 
 		if (to.getItem() instanceof INacreProduct && from.getItem() instanceof INacreProduct) {
-			NBTHelper.setFloat(to, Constants.NBT.RAND, NBTHelper.getFloat(from, Constants.NBT.RAND, -1));
+			NBTHelper.setFloat(to, NBTConstants.NBT.RAND, NBTHelper.getFloat(from, NBTConstants.NBT.RAND, -1));
 		}
 
 		infuseSpell(to, spell);
@@ -47,7 +48,7 @@ public class SpellUtils {
 		if (spell == null) return;
 
 		if (to.getItem() instanceof INacreProduct.INacreDecayProduct && from.getItem() instanceof INacreProduct.INacreDecayProduct) {
-			NBTHelper.setFloat(to, Constants.NBT.RAND, NBTHelper.getFloat(from, Constants.NBT.RAND, -1));
+			NBTHelper.setFloat(to, NBTConstants.NBT.RAND, NBTHelper.getFloat(from, NBTConstants.NBT.RAND, -1));
 		}
 
 		infuseSpell(to, spell);
@@ -55,8 +56,8 @@ public class SpellUtils {
 
 	@Nullable
 	public static NBTTagList getSpell(ItemStack spellHolder) {
-		if (NBTHelper.hasNBTEntry(spellHolder, Constants.NBT.SPELL)) {
-			return NBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+		if (NBTHelper.hasNBTEntry(spellHolder, NBTConstants.NBT.SPELL)) {
+			return NBTHelper.getList(spellHolder, NBTConstants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
 		}
 
 		return null;
@@ -64,7 +65,7 @@ public class SpellUtils {
 
 	public static void infuseSpell(ItemStack toInfuse, NBTTagList spell) {
 		NBTHelper.setBoolean(toInfuse, "infused", true);
-		NBTHelper.setList(toInfuse, Constants.NBT.SPELL, spell);
+		NBTHelper.setList(toInfuse, NBTConstants.NBT.SPELL, spell);
 	}
 
 	@Nullable
@@ -72,9 +73,9 @@ public class SpellUtils {
 		if (NBTHelper.hasNBTEntry(toUninfuse, "infused"))
 			NBTHelper.removeNBTEntry(toUninfuse, "infused");
 
-		if (NBTHelper.hasNBTEntry(toUninfuse, Constants.NBT.SPELL)) {
-			NBTTagList spell = NBTHelper.getList(toUninfuse, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-			NBTHelper.removeNBTEntry(toUninfuse, Constants.NBT.SPELL);
+		if (NBTHelper.hasNBTEntry(toUninfuse, NBTConstants.NBT.SPELL)) {
+			NBTTagList spell = NBTHelper.getList(toUninfuse, NBTConstants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+			NBTHelper.removeNBTEntry(toUninfuse, NBTConstants.NBT.SPELL);
 
 			return spell;
 		}
@@ -120,6 +121,18 @@ public class SpellUtils {
 		}
 	}
 
+	public static void runSpell(@Nonnull World world, @Nonnull List<SpellRing> chains, @Nonnull SpellData data) {
+		if (world.isRemote) return;
+
+		Entity caster = data.getCaster(world);
+		if ((data.getData(SpellData.DefaultKeys.CAPABILITY) == null) || (caster instanceof EntityPlayer && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty()))
+			return;
+
+		for (SpellRing spellRing : chains) {
+			spellRing.runSpellRing(world, data, false);
+		}
+	}
+
 	/**
 	 * Gets all SpellRings that exist in an ItemStack with the children of each ring inside
 	 * of them, compressed essentially.
@@ -131,7 +144,7 @@ public class SpellUtils {
 	public static List<SpellRing> getSpellChains(@Nonnull ItemStack spellHolder) {
 		List<SpellRing> rings = new ArrayList<>();
 
-		NBTTagList list = NBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+		NBTTagList list = NBTHelper.getList(spellHolder, NBTConstants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
 		if (list == null) return rings;
 
 		return getSpellChains(list);

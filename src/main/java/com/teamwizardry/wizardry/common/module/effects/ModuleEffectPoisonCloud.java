@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFlo
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -80,7 +80,7 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
 		if (RandUtil.nextInt(5) != 0)
 			glitter.setColor(instance.getPrimaryColor());
 		else glitter.setColor(instance.getSecondaryColor());
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SMOKE));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SMOKE));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), 20, 0, (aFloat, particleBuilder) -> {
 			particleBuilder.setLifetime(RandUtil.nextInt(10, 40));

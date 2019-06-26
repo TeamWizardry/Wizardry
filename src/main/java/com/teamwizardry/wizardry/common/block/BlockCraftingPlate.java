@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.block.ICraftingPlateRecipe;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
@@ -83,7 +83,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 				if (heldItem.getItem() == ModItems.BOOK && playerIn.isCreative()) {
 					ItemStack pearl = new ItemStack(ModItems.PEARL_NACRE);
 
-					NBTTagList moduleList = NBTHelper.getList(heldItem, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+					NBTTagList moduleList = NBTHelper.getList(heldItem, NBTConstants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 					if (moduleList == null) return false;
 
 					SpellBuilder builder = new SpellBuilder(SpellUtils.getSpellItems(SpellUtils.deserializeModuleList(moduleList)));
@@ -92,7 +92,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					for (SpellRing spellRing : builder.getSpell()) {
 						list.appendTag(spellRing.serializeNBT());
 					}
-					NBTHelper.setList(pearl, Constants.NBT.SPELL, list);
+					NBTHelper.setList(pearl, NBTConstants.NBT.SPELL, list);
 					NBTHelper.setBoolean(pearl, "infused", true);
 
 					//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
@@ -100,7 +100,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
 					//NBTHelper.setFloat(pearl, "hue", hsv[0]);
 					//NBTHelper.setFloat(pearl, "saturation", hsv[1]);
-					NBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
+					NBTHelper.setFloat(pearl, NBTConstants.NBT.RAND, playerIn.world.rand.nextFloat());
 
 					plate.output.getHandler().setStackInSlot(0, pearl);
 					plate.markDirty();

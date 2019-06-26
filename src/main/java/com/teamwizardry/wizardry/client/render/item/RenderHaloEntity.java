@@ -12,7 +12,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.RenderFunction;
 import com.teamwizardry.librarianlib.features.particle.functions.RenderFunctionBasic;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ClientConfigValues;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -88,7 +88,7 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 			InterpCircle circle = new InterpCircle(Vec3d.ZERO, new Vec3d(0, 1, 0), 0.3f, RandUtil.nextFloat(), RandUtil.nextFloat());
 
 			for (Vec3d origin : circle.list(5)) {
-				RenderFunction baseRenderFunction = new RenderFunctionBasic(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED), false);
+				RenderFunction baseRenderFunction = new RenderFunctionBasic(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED), false);
 				ParticleBuilder glitter = new ParticleBuilder(3);
 				glitter.setAlphaFunction(new InterpFloatInOut(1f, 1f));
 				glitter.disableMotionCalculation();

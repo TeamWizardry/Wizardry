@@ -6,7 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 
-import static com.teamwizardry.wizardry.api.Constants.Data.*;
+import static com.teamwizardry.wizardry.api.NBTConstants.Data.*;
 
 /**
  * Created by Demoniaque on 8/16/2016.

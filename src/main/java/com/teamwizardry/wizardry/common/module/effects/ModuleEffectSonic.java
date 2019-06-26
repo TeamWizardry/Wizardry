@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -93,7 +93,7 @@ public class ModuleEffectSonic implements IModuleEffect {
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.DIAMOND));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.DIAMOND));
 		glitter.setDeceleration(new Vec3d(0.5, 0.5, 0.5));
 		glitter.setCollision(true);
 		glitter.setCanBounce(true);

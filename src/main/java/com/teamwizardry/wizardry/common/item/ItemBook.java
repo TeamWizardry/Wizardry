@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.gui.provided.book.IBookGui;
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.book.Book;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.client.gui.book.GuiBook;
@@ -61,7 +61,7 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 				if (!NBTHelper.getBoolean(stack, "has_spell", false))
 					return;
 
-				NBTTagList moduleList = NBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+				NBTTagList moduleList = NBTHelper.getList(stack, NBTConstants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 				if (moduleList == null)
 					return;
 
