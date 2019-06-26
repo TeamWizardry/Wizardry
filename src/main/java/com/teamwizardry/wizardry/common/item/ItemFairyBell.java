@@ -208,6 +208,19 @@ public class ItemFairyBell extends ItemMod {
 				if (entityFairy.originPos != null) {
 					if (!movingMode) {
 
+						Vec3d hitVec = new Vec3d(pos).add(hitX, hitY, hitZ);
+						Vec3d subtract = hitVec.subtract(entityFairy.getPositionVector());
+						double length = subtract.length();
+						hitVec = entityFairy.getPositionVector().add(subtract.normalize().scale(MathHelper.clamp(length, -3, 3)));
+
+						entityFairy.setLookTarget(hitVec);
+
+						playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 0.75f);
+
+						cap.setSelectedFairy(null);
+						cap.dataChanged(playerIn);
+
+
 					} else {
 
 						entityFairy.moveTo(pos.offset(facing));
