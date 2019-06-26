@@ -7,5 +7,7 @@
 	"mana": { "min": 100 },
 	"burnout": { "min": 50 },
 	"area": { "min": 2, "max": 8 },
-	"potency": { "min": 4, "max": 24 }
+	"potency": { "min": 4, "max": 24 },
+	"tags": [ "air", "explosion", "combat" ],
+	"hidden_tags": [ "normal" ]
 }

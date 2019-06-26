@@ -6,5 +6,7 @@
 	"secondary_color": "0080FF",
 	"mana": { "min": 100 },
 	"burnout": { "min": 50 },
-	"potency": { "min": 2, "max": 20 }
+	"potency": { "min": 2, "max": 20 },
+	"tags": [ "water", "combat" ],
+	"hidden_tags": [ "normal" ]
 }

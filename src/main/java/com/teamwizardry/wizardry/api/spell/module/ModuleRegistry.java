@@ -1,6 +1,35 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import com.google.gson.*;
+import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.io.FileUtils;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
@@ -14,22 +43,13 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler.OverrideMethod;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import org.apache.commons.io.FileUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * Created by Demoniaque.
@@ -41,6 +61,8 @@ public class ModuleRegistry {
 	public ArrayList<ModuleInstance> modules = new ArrayList<>();
 	public HashMap<String, ModuleFactory> IDtoModuleFactory = new HashMap<>();
 	public HashMap<String, OverrideDefaultMethod> IDtoOverrideDefaultMethod = new HashMap<>();
+	public Multimap<String, ModuleInstance> tagMap = HashMultimap.create();
+	public Multimap<String, ModuleInstance> hiddenTagMap = HashMultimap.create();
 
 	private ModuleRegistry() {
 	}
@@ -308,6 +330,9 @@ public class ModuleRegistry {
 			Color secondaryColor = Color.WHITE;
 			int itemMeta = 0;
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
+			
+			List<String> tags = new LinkedList<>();
+			List<String> hiddenTags = new LinkedList<>();
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null || item.getRegistryName() == null) {
@@ -344,6 +369,20 @@ public class ModuleRegistry {
 						secondaryColor = new Color(Integer.parseInt(entry.getValue().getAsJsonPrimitive().getAsString(), 16));
 						if (ConfigValues.debugInfo)
 							Wizardry.LOGGER.info(" | | |_ Found Secondary Color:    " + secondaryColor.getRGB());
+						break;
+					}
+					case "tags": {
+						JsonArray array = entry.getValue().getAsJsonArray();
+						array.forEach(tag -> tags.add(tag.getAsString()));
+						if (ConfigValues.debugInfo)
+							Wizardry.LOGGER.info(" | | |_ Registered " + array.size() + " tags");
+						break;
+					}
+					case "hidden_tags": {
+						JsonArray array = entry.getValue().getAsJsonArray();
+						array.forEach(tag -> hiddenTags.add(tag.getAsString()));
+						if (ConfigValues.debugInfo)
+							Wizardry.LOGGER.info(" | | |_ Registered " + array.size() + " hidden tags");
 						break;
 					}
 					default: {
@@ -429,6 +468,8 @@ public class ModuleRegistry {
 			}
 
 			modules.add(module);
+			tags.forEach(tag -> tagMap.put(tag, module));
+			hiddenTags.forEach(tag -> hiddenTagMap.put(tag, module));
 			Wizardry.LOGGER.info(" | |_ Module " + moduleName + " registered successfully!");
 		}
 

@@ -1,13 +1,11 @@
 {
-  "sub_module_id": "effect_light",
-  "reference_module_id": "effect_light",
-  "item": "minecraft:glowstone",
-  "primary_color": "00FFFF",
-  "secondary_color": "FF0000",
-  "mana": {
-    "min": 100
-  },
-  "burnout": {
-    "min": 100
-  }
+	"sub_module_id": "effect_light",
+	"reference_module_id": "effect_light",
+	"item": "minecraft:glowstone",
+	"primary_color": "00FFFF",
+	"secondary_color": "FF0000",
+	"mana": { "min": 100 },
+	"burnout": { "min": 100 },
+	"tags": [ "light" ],
+	"hidden_tags": [ "normal" ]
 }

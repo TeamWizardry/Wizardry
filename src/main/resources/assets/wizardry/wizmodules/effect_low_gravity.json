@@ -1,17 +1,13 @@
 {
-  "sub_module_id": "effect_low_gravity",
-  "reference_module_id": "effect_low_gravity",
-  "item": "minecraft:feather",
-  "mana_drain": 200.0,
-  "burnout_fill": 100.0,
-  "primary_color": "FFFFFF",
-  "secondary_color": "00FFFF",
-  "mana": {
-    "min": 60
-  },
-  "burnout": {
-    "min": 40
-  },
-  "potency": { "min": 2, "max": 16 },
-  "duration": { "min": 5, "max": 40 }
+	"sub_module_id": "effect_low_gravity",
+	"reference_module_id": "effect_low_gravity",
+	"item": "minecraft:feather",
+	"primary_color": "FFFFFF",
+	"secondary_color": "00FFFF",
+	"mana": { "min": 60 },
+	"burnout": { "min": 40 },
+	"potency": { "min": 2, "max": 16 },
+	"duration": { "min": 5, "max": 40 },
+	"tags": [ "gravity", "movement" ],
+	"hidden_tags": [ "uriel" ]
 }
