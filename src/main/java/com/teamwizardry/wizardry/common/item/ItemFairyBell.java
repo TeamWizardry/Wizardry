@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
 import com.teamwizardry.wizardry.api.entity.FairyData;
@@ -165,7 +166,7 @@ public class ItemFairyBell extends ItemMod {
 
 							Vec3d hitVec = rayTraceResult.hitVec;
 							Vec3d subtract = hitVec.subtract(entityFairy.getPositionVector());
-							subtract = new Vec3d(MathHelper.clamp(subtract.x, -3, 3), MathHelper.clamp(subtract.y, -3, 3), MathHelper.clamp(subtract.z, -3, 3));
+							subtract = new Vec3d(MathHelper.clamp(subtract.x, -ConfigValues.fairyReach, ConfigValues.fairyReach), MathHelper.clamp(subtract.y, -ConfigValues.fairyReach, ConfigValues.fairyReach), MathHelper.clamp(subtract.z, -ConfigValues.fairyReach, ConfigValues.fairyReach));
 
 							entityFairy.setLookTarget(subtract);
 
@@ -211,7 +212,7 @@ public class ItemFairyBell extends ItemMod {
 
 						Vec3d hitVec = new Vec3d(pos).add(hitX, hitY, hitZ);
 						Vec3d subtract = hitVec.subtract(entityFairy.getPositionVector());
-						subtract = new Vec3d(MathHelper.clamp(subtract.x, -3, 3), MathHelper.clamp(subtract.y, -3, 3), MathHelper.clamp(subtract.z, -3, 3));
+						subtract = new Vec3d(MathHelper.clamp(subtract.x, -ConfigValues.fairyReach, ConfigValues.fairyReach), MathHelper.clamp(subtract.y, -ConfigValues.fairyReach, ConfigValues.fairyReach), MathHelper.clamp(subtract.z, -ConfigValues.fairyReach, ConfigValues.fairyReach));
 
 						entityFairy.setLookTarget(subtract);
 

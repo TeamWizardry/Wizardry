@@ -151,7 +151,7 @@ public class EntitySpiritWight extends EntityMob {
 
 	@Override
 	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
-		if (source.isMagicDamage()) {
+		if (source.isMagicDamage() || source == DamageSource.OUT_OF_WORLD) {
 			super.attackEntityFrom(source, amount);
 			ClientRunnable.run(new ClientRunnable() {
 				@Override

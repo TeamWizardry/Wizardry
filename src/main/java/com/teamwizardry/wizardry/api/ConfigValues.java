@@ -56,6 +56,10 @@ public class ConfigValues {
 	@ConfigProperty(category = "items", comment = "Pearl belt inventory size")
 	public static int pearlBeltInvSize = 8;
 
+	@ConfigDoubleRange(min = 1, max = 16)
+	@ConfigProperty(category = "entity", comment = "Defines the reach distance of fairies in terms of blocks")
+	public static double fairyReach = 3;
+
 	@ConfigDoubleRange(min = 1, max = 2)
 	@ConfigProperty(category = "spells", comment = "The multiplier a spellData gets for a perfect or ancient quality output. [1,2]\n" +
 			"This will be multiplied by the quality value of the output, which is 1.0 for apex pearls and greater for ancient pearls.")

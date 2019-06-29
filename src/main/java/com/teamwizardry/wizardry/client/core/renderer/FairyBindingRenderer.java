@@ -3,7 +3,9 @@ package com.teamwizardry.wizardry.client.core.renderer;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.wizardry.Wizardry;
@@ -11,6 +13,7 @@ import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
 import com.teamwizardry.wizardry.api.entity.FairyData;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -33,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -49,6 +53,51 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 @SideOnly(Side.CLIENT)
 public class FairyBindingRenderer {
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public static void clientTick(TickEvent.ClientTickEvent event) {
+		if (Minecraft.getMinecraft().world == null) return;
+		if (Minecraft.getMinecraft().player == null) return;
+		if (event.side == Side.SERVER) return;
+		if (event.phase != TickEvent.Phase.END) return;
+
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		World world = Minecraft.getMinecraft().world;
+
+		ItemStack stack = player.getHeldItemMainhand();
+
+		if (stack.getItem() != ModItems.FAIRY_BELL) return;
+
+		for (EntityFairy entityFairy : world.getEntities(EntityFairy.class, input -> {
+			if (input == null) return false;
+			FairyData dataFairy = input.getDataFairy();
+			if (dataFairy == null) return false;
+			return dataFairy.isDepressed;
+		})) {
+			Vec3d look = entityFairy.getLookTarget();
+			if (look == null) continue;
+
+			ParticleBuilder glitter = new ParticleBuilder(10);
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
+			glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 1f));
+
+			glitter.setColor(Color.ORANGE);
+			glitter.setCollision(true);
+			glitter.disableRandom();
+			glitter.disableMotionCalculation();
+
+			if (ClientTickHandler.getTicks() % 10 == 0)
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(entityFairy.getPositionVector().add(0, entityFairy.height, 0)), 1, 0, (aFloat, particleBuilder) -> {
+
+					particleBuilder.setScaleFunction(new InterpFloatInOut(0, 1f));
+					particleBuilder.setAlphaFunction(new InterpFloatInOut(0.3f, 1f));
+					particleBuilder.setScale(RandUtil.nextFloat(0.2f, 0.5f));
+					particleBuilder.setLifetime(RandUtil.nextInt(10, 20));
+					particleBuilder.setPositionFunction(new InterpLine(Vec3d.ZERO, look));
+				});
+		}
+	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
@@ -85,13 +134,13 @@ public class FairyBindingRenderer {
 						GlStateManager.pushMatrix();
 						GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
-						RenderUtils.drawCircle(fairy.getPositionVector(), 0.3, true, false, Color.RED);
+						RenderUtils.drawCircle(fairy.getPositionVector().add(0, fairy.height, 0), 0.3, true, false, Color.RED);
 						GlStateManager.popMatrix();
 					} else {
 						GlStateManager.pushMatrix();
 						GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
-						RenderUtils.drawCircle(fairy.getPositionVector(), (Math.sin(ClientTickHandler.getTicks() / 5.0f) + 2.5) / 10.0, true, false);
+						RenderUtils.drawCircle(fairy.getPositionVector().add(0, fairy.height, 0), (Math.sin(ClientTickHandler.getTicks() / 5.0f) + 2.5) / 10.0, true, false);
 						GlStateManager.popMatrix();
 					}
 				}
@@ -123,11 +172,11 @@ public class FairyBindingRenderer {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
 
-			RenderUtils.drawCircle(entityFairy.getPositionVector(), 0.25, true, false, Color.YELLOW);
+			RenderUtils.drawCircle(entityFairy.getPositionVector().add(0, entityFairy.height, 0), 0.25, true, false, Color.YELLOW);
 			GlStateManager.popMatrix();
 
 			Vec3d lookTarget = entityFairy.getLookTarget();
-			Vec3d fairyPos = entityFairy.getPositionVector();
+			Vec3d fairyPos = entityFairy.getPositionVector().add(0, entityFairy.height, 0);
 
 			if (lookTarget != null) {
 				Vec3d to = fairyPos.add(lookTarget);
@@ -178,7 +227,7 @@ public class FairyBindingRenderer {
 					Vec3d hitVec = Minecraft.getMinecraft().objectMouseOver.hitVec;
 					Vec3d subtract = hitVec.subtract(fairyPos);
 					double length = subtract.length();
-					hitVec = entityFairy.getPositionVector().add(subtract.normalize().scale(MathHelper.clamp(length, -3, 3)));
+					hitVec = entityFairy.getPositionVector().add(0, entityFairy.height, 0).add(subtract.normalize().scale(MathHelper.clamp(length, -3, 3)));
 
 					GlStateManager.pushMatrix();
 					GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);

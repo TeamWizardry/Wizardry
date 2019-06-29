@@ -49,20 +49,21 @@ public class ModuleEffectThrive implements IModuleEffect {
 		Entity caster = spell.getCaster(world);
 		Vec3d pos = spell.getTarget(world);
 
-		if (pos != null)
-			world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
+		if (pos == null) return true;
+
 		if (targetEntity instanceof EntityLivingBase) {
 			double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 2;
 
 			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			((EntityLivingBase) targetEntity).heal((float) potency);
+			world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 		}
 
 		if (targetPos != null) {
 			if (world.getBlockState(targetPos).getBlock() instanceof IGrowable) {
 				if (!spellRing.taxCaster(world, spell, true)) return false;
-				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)))
+				if (!(caster instanceof EntityPlayerMP) || BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster))
 					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, targetPos);
 			} else if (world.getBlockState(targetPos).getBlock() instanceof IPlantable) {
 				IBlockState state = world.getBlockState(targetPos);
@@ -75,6 +76,7 @@ public class ModuleEffectThrive implements IModuleEffect {
 						block = state.getBlock();
 					}
 					world.immediateBlockTick(targetPos, state, RandUtil.random);
+					world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 				}
 			}
 		}

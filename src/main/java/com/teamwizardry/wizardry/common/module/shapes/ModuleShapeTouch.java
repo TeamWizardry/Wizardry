@@ -59,7 +59,7 @@ public class ModuleShapeTouch implements IModuleShape {
 				caster instanceof EntityLivingBase && ((EntityLivingBase) caster).getAttributeMap().getAllAttributes().contains(EntityPlayer.REACH_DISTANCE) ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
-				.setIgnoreBlocksWithoutBoundingBoxes(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(false)
 				.trace();
 
 		spell.processTrace(result);
@@ -86,7 +86,7 @@ public class ModuleShapeTouch implements IModuleShape {
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
-				.setIgnoreBlocksWithoutBoundingBoxes(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(false)
 				.trace();
 
 		data.processTrace(result);

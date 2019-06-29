@@ -74,6 +74,7 @@ public class ModSounds {
 	public static ModSoundEvent SUDDEN_DARK_PAFOOF;
 	public static ModSoundEvent TIME_REVERSE;
 	public static ModSoundEvent TINY_BELL;
+	public static ModSoundEvent POSITIVE_LIGHT_TWINKLE;
 
 	public static void init() {
 		SPELL_FAIL = new ModSoundEvent("spell_fail");
@@ -145,6 +146,7 @@ public class ModSounds {
 		SUDDEN_DARK_PAFOOF = new ModSoundEvent("sudden_dark_pafoof");
 		TIME_REVERSE = new ModSoundEvent("time_reverse");
 		TINY_BELL = new ModSoundEvent("tiny_bell");
+		POSITIVE_LIGHT_TWINKLE = new ModSoundEvent("positive_light_twinkle");
 	}
 
 }

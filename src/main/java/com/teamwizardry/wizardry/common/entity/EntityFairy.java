@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.NBTConstants.NBT;
 import com.teamwizardry.wizardry.api.entity.FairyData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -13,12 +14,13 @@ import com.teamwizardry.wizardry.common.entity.ai.FairyMoveHelper;
 import com.teamwizardry.wizardry.common.entity.ai.WizardryFlyablePathNavigator;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.client.Minecraft;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityFlying;
 import net.minecraft.entity.passive.EntityTameable;
@@ -32,6 +34,7 @@ import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -84,6 +87,8 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		setDataFairy(fairyData);
 		setLookTarget(null);
+
+		if (fairyData.isDepressed) setEntityInvulnerable(true);
 	}
 
 	@Nullable
@@ -151,19 +156,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 3.0F);
 	}
 
-	@Override
-	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
-		if (this.isEntityInvulnerable(source)) {
-			return false;
-		} else {
-			if (this.aiSit != null) {
-				this.aiSit.setSitting(false);
-			}
-
-			return super.attackEntityFrom(source, amount);
-		}
-	}
-
 	public boolean isFlying() {
 		return !this.onGround;
 	}
@@ -228,13 +220,18 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	public void collideWithEntity(Entity entity) {
 		if (getHealth() > 0) {
 			if (entity.getName().equals(getName())) return;
-			((EntityLivingBase) entity).motionY += 0.3;
+			((EntityLivingBase) entity).motionY += 0.1;
 			((EntityLivingBase) entity).setRevengeTarget(this);
 		}
 		entity.fallDistance = 0;
 
 		//if (entity.world.isRemote)
 		//	LibParticles.AIR_THROTTLE(world, getPositionVector(), entity, primaryColor, primaryColor.brighter(), -1);
+	}
+
+	@Override
+	public boolean canBeCollidedWith() {
+		return true;
 	}
 
 	@Override
@@ -252,9 +249,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		if (isDead) return;
 
 		Vec3d lookTarget = getLookTarget();
-		if (lookTarget != null) {
-			Minecraft.getMinecraft().player.sendChatMessage(lookTarget.normalize().toString());
-		}
 
 		if (dataFairy != null && dataFairy.isDepressed) {
 
@@ -296,8 +290,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 					data.addData(SpellData.DefaultKeys.LOOK, lookTarget);
 					data.addData(SpellData.DefaultKeys.CAPABILITY, dataFairy.handler);
 
-					// TODO: config for fairy reach
-					RayTraceResult result = new RayTrace(world, lookTarget, getPositionVector(), 5)
+					RayTraceResult result = new RayTrace(world, lookTarget, getPositionVector(), ConfigValues.fairyReach)
 							.setEntityFilter(input -> input != null && !input.getUniqueID().equals(getUniqueID()))
 							.setReturnLastUncollidableBlock(true)
 							.setIgnoreBlocksWithoutBoundingBoxes(true)
@@ -348,9 +341,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	@NotNull
 	@Override
 	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
-		ItemStack jar = player.getHeldItemMainhand();
-		if (jar.getItem() == ModItems.JAR_ITEM && jar.getItemDamage() == 0) {
-			succFairy(jar, player);
+		ItemStack heldItem = player.getHeldItemMainhand();
+		if (heldItem.getItem() == ModItems.JAR_ITEM && heldItem.getItemDamage() == 0) {
+			succFairy(heldItem, player);
 			return EnumActionResult.SUCCESS;
 		}
 		return super.applyPlayerInteraction(player, vec, hand);
@@ -370,15 +363,83 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	}
 
 	@Override
+	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
+
+		if (!world.isRemote) {
+			FairyData dataFairy = getDataFairy();
+			if (dataFairy == null) return super.attackEntityFrom(source, amount);
+
+			if (dataFairy.isDepressed) {
+
+				ItemStack stack = new ItemStack(ModItems.FAIRY_ITEM);
+				NBTHelper.setTag(stack, "fairy", dataFairy.serializeNBT());
+
+				world.removeEntity(this);
+
+				EntityItem entityItem = new EntityItem(world);
+				entityItem.setPosition(posX, posY, posZ);
+				entityItem.setItem(stack);
+				entityItem.setPickupDelay(20);
+				entityItem.setNoDespawn();
+
+				world.spawnEntity(entityItem);
+				playHurtSound(source);
+				return false;
+			}
+
+			if (getIsInvulnerable()) return false;
+		}
+
+		if (this.aiSit != null) {
+			this.aiSit.setSitting(false);
+		}
+
+		return super.attackEntityFrom(source, amount);
+	}
+
+	@Override
 	public void onDeath(@Nonnull DamageSource cause) {
-		super.onDeath(cause);
+		if (getIsInvulnerable()) return;
 
-		FairyData dataFairy = getDataFairy();
-		if (dataFairy == null) return;
+		if (!world.isRemote) {
+			FairyData dataFairy = getDataFairy();
+			if (dataFairy == null) return;
 
-		if (!world.isRemote && getHealth() <= 0)
-			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().add(0, 0.25, 0), dataFairy.primaryColor, dataFairy.secondaryColor, 0.5, 0.5, RandUtil.nextInt(100, 200), 75, 25, true),
-					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
+			if (dataFairy.isDepressed) {
+
+				ItemStack stack = new ItemStack(ModItems.FAIRY_ITEM);
+				NBTHelper.setTag(stack, "fairy", dataFairy.serializeNBT());
+
+				world.removeEntity(this);
+
+				EntityItem entityItem = new EntityItem(world);
+				entityItem.setPosition(posX, posY, posZ);
+				entityItem.setItem(stack);
+				entityItem.setPickupDelay(20);
+				entityItem.setNoDespawn();
+
+				world.spawnEntity(entityItem);
+				return;
+			}
+
+			super.onDeath(cause);
+
+			if (getHealth() <= 0)
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().add(0, 0.25, 0), dataFairy.primaryColor, dataFairy.secondaryColor, 0.5, 0.5, RandUtil.nextInt(100, 200), 75, 25, true),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
+		}
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+		return ModSounds.SUBTLE_MAGIC_BOOK_GLINT;
+	}
+
+	@Nullable
+	@Override
+	protected SoundEvent getDeathSound() {
+		return ModSounds.SUBTLE_MAGIC_BOOK_GLINT;
 	}
 
 	@Override
@@ -401,6 +462,10 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		setDataFairy(FairyData.deserialize(NBTHelper.getCompoundTag(compound, "fairy")));
 
+		if (NBTHelper.hasKey(compound, "look_target_x") && NBTHelper.hasKey(compound, "look_target_y") && NBTHelper.hasKey(compound, "look_target_z"))
+			setLookTarget(new Vec3d(NBTHelper.getDouble(compound, "look_target_x"), NBTHelper.getDouble(compound, "look_target_y"), NBTHelper.getDouble(compound, "look_target_z")));
+		else setLookTarget(null);
+
 		if (NBTHelper.hasKey(compound, "origin_x") && NBTHelper.hasKey(compound, "origin_y") && NBTHelper.hasKey(compound, "origin_z"))
 			originPos = new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z"));
 
@@ -419,6 +484,13 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		FairyData dataFairy = getDataFairy();
 		if (dataFairy != null)
 			NBTHelper.setCompoundTag(compound, "fairy", dataFairy.serializeNBT());
+
+		Vec3d targetLook = getLookTarget();
+		if (targetLook != null) {
+			compound.setDouble("look_target_x", targetLook.x);
+			compound.setDouble("look_target_y", targetLook.y);
+			compound.setDouble("look_target_z", targetLook.z);
+		}
 
 		if (originPos != null) {
 			compound.setInteger("origin_x", originPos.getX());

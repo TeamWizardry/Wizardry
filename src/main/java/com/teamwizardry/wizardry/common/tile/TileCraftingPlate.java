@@ -13,6 +13,7 @@ import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvid
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
+import com.teamwizardry.wizardry.common.network.PacketClearCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketUpdateCraftingPlateSlot;
 import com.teamwizardry.wizardry.crafting.CraftingPlateRecipeManager;
 import net.minecraft.entity.item.EntityItem;
@@ -192,6 +193,9 @@ public class TileCraftingPlate extends TileManaNode {
 			ItemStack inputStack = input.getHandler().extractItem(0, 1, false);
 			if (!inputStack.isEmpty()) {
 				output.getHandler().insertItem(0, inputStack, false);
+				for (int i = 0; i < realInventory.getHandler().getSlots(); i++)
+					realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
+				PacketHandler.NETWORK.sendToAllAround(new PacketClearCraftingPlate(pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 128));
 			}
 			markDirty();
 		}

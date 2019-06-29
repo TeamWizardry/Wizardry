@@ -43,6 +43,8 @@ public class TileMagiciansWorktable extends TileMod {
 					NBTTagCompound compound = (NBTTagCompound) base;
 
 					CommonWorktableModule commonModule = CommonWorktableModule.deserailize(compound);
+					if (commonModule.module == null) continue;
+
 					commonModules.add(commonModule);
 				}
 			}
