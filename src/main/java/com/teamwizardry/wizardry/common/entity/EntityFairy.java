@@ -1,25 +1,31 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.features.animator.Animator;
+import com.teamwizardry.librarianlib.features.animator.Easing;
+import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
+import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.NBTConstants.NBT;
-import com.teamwizardry.wizardry.api.entity.FairyData;
-import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
+import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTask;
+import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.entity.ai.FairyAIWanderAvoidWaterFlying;
 import com.teamwizardry.wizardry.common.entity.ai.FairyMoveHelper;
 import com.teamwizardry.wizardry.common.entity.ai.WizardryFlyablePathNavigator;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.EntityAIAvoidEntity;
+import net.minecraft.entity.ai.EntityAIFollow;
+import net.minecraft.entity.ai.EntityAIFollowOwnerFlying;
+import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityFlying;
@@ -30,13 +36,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigate;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -51,20 +58,31 @@ import java.util.ArrayList;
  * Created by Demoniaque on 8/21/2016.
  */
 public class EntityFairy extends EntityTameable implements EntityFlying {
+	private static final Animator ANIMATOR = new Animator();
+	private static final DataParameter<ItemStack> DATA_HELD_ITEM = EntityDataManager.createKey(EntityFairy.class, DataSerializers.ITEM_STACK);
 
 	private static final DataParameter<NBTTagCompound> DATA_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
 
 	private static final DataParameter<NBTTagCompound> DATA_LOOK_TARGET = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
+	private static final DataParameter<BlockPos> DATA_ORIGIN = EntityDataManager.createKey(EntityFairy.class, DataSerializers.BLOCK_POS);
+
+	static {
+		ANIMATOR.setUseWorldTicks(true);
+	}
 
 	private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
 
-	public BlockPos originPos = null;
 	public BlockPos moveTargetPos = null;
 
 	private double previousDist = Double.MAX_VALUE;
 	private long lastFreeTime = Long.MAX_VALUE;
 	private boolean adjustingPath = false;
 	private boolean moving = false;
+
+	public Vec3d animatingPos = Vec3d.ZERO;
+	private Path path = null;
+	@Nullable
+	private FairyTask fairyTask = null;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
@@ -128,6 +146,27 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		this.getDataManager().setDirty(DATA_FAIRY);
 	}
 
+	public BlockPos getDataOrigin() {
+		return this.getDataManager().get(DATA_ORIGIN);
+	}
+
+	public void setDataOrigin(BlockPos origin) {
+		if (origin == null) return;
+
+		this.getDataManager().set(DATA_ORIGIN, origin);
+		this.getDataManager().setDirty(DATA_ORIGIN);
+	}
+
+	@Nonnull
+	public ItemStack getDataHeldItem() {
+		return this.getDataManager().get(DATA_HELD_ITEM);
+	}
+
+	public void setDataHeldItem(@Nonnull ItemStack stack) {
+		this.getDataManager().set(DATA_HELD_ITEM, stack);
+		this.getDataManager().setDirty(DATA_HELD_ITEM);
+	}
+
 	@Nullable
 	@Override
 	public EntityAgeable createChild(@NotNull EntityAgeable ageable) {
@@ -165,6 +204,8 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		super.entityInit();
 		this.getDataManager().register(DATA_FAIRY, new FairyData().serializeNBT());
 		this.getDataManager().register(DATA_LOOK_TARGET, new NBTTagCompound());
+		this.getDataManager().register(DATA_HELD_ITEM, ItemStack.EMPTY);
+		this.getDataManager().register(DATA_ORIGIN, BlockPos.ORIGIN);
 	}
 
 	@Override
@@ -273,69 +314,55 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 //			return;
 		}
 
-		if (!moving) {
-			motionX = 0;
-			motionY = 0;
-			motionZ = 0;
-			getMoveHelper().action = EntityMoveHelper.Action.WAIT;
-			resetPositionToBB();
-
-			if (dataFairy != null && dataFairy.isDepressed && lookTarget != null && !dataFairy.infusedSpell.isEmpty()) {
-
-				dataFairy.handler.setMana(dataFairy.handler.getMaxMana());
-
-				if (ticksExisted % 30 == 0) {
-					SpellData data = new SpellData();
-					data.processEntity(this, true);
-					data.addData(SpellData.DefaultKeys.LOOK, lookTarget);
-					data.addData(SpellData.DefaultKeys.CAPABILITY, dataFairy.handler);
-
-					RayTraceResult result = new RayTrace(world, lookTarget, getPositionVector(), ConfigValues.fairyReach)
-							.setEntityFilter(input -> input != null && !input.getUniqueID().equals(getUniqueID()))
-							.setReturnLastUncollidableBlock(true)
-							.setIgnoreBlocksWithoutBoundingBoxes(true)
-							.trace();
-					data.processTrace(result);
-
-					SpellUtils.runSpell(world, dataFairy.infusedSpell, data);
-				}
+		if (fairyTask != null) {
+			if (fairyTask.shouldTrigger(this)) {
+				fairyTask.onTrigger(this);
 			}
 		}
 
-		if ((dataFairy == null || !dataFairy.isDepressed) && getNavigator().noPath()) {
-			getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 2);
+		if (dataFairy != null && getNavigator().noPath())
+			if (!dataFairy.isDepressed) {
+				getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 2);
 
-		} else if (moving && moveTargetPos != null && dataFairy != null && dataFairy.isDepressed && getNavigator().noPath()) {
-			Vec3d target = new Vec3d(moveTargetPos.getX(), moveTargetPos.getY(), moveTargetPos.getZ()).add(0.5, 0.5, 0.5);
-			double dist = target.squareDistanceTo(getPositionVector());
-			if (Math.abs(dist - previousDist) < 0.01) {
-				getMoveHelper().setMoveTo(RandUtil.nextDouble(-1, 1), RandUtil.nextDouble(-1, 1), RandUtil.nextDouble(-1, 1), 0.5);
-				previousDist = dist;
-				lastFreeTime = 5;
-				adjustingPath = true;
-				return;
-			} else if (adjustingPath && lastFreeTime <= 0) {
-
-				getMoveHelper().setMoveTo(moveTargetPos.getX() + 0.5, moveTargetPos.getY() + 0.5, moveTargetPos.getZ() + 0.5, 0.5);
-				adjustingPath = false;
-			} else if (adjustingPath) --lastFreeTime;
-
-			if (dist < 1.3) {
-				setPositionAndUpdate(moveTargetPos.getX() + 0.5, moveTargetPos.getY() + 0.5, moveTargetPos.getZ() + 0.5);
-				motionX = 0;
-				motionY = 0;
-				motionZ = 0;
-				moving = false;
+			} else if (moving && moveTargetPos != null) {
+				Minecraft.getMinecraft().player.sendChatMessage(animatingPos.toString());
+				setPosition(animatingPos.x, animatingPos.y, animatingPos.z);
 			}
-
-			previousDist = dist;
-		}
 	}
 
 	public void moveTo(BlockPos pos) {
+
+		Vec3d to = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+		Path path = getNavigator().getPathToXYZ(to.x, to.y, to.z);
+
+		if (path != null) {
+
+			Keyframe[] frames = new Keyframe[path.getCurrentPathLength()];
+			for (int i = 0; i < path.getCurrentPathLength(); i++) {
+				PathPoint pathPoint = path.getPathPointFromIndex(i);
+				Vec3d node = new Vec3d(pathPoint.x + 0.5, pathPoint.y + 0.5, pathPoint.z + 0.5);
+
+				frames[i] = new Keyframe((float) i / (float) path.getCurrentPathLength(), node, i == 0 || i == path.getCurrentPathLength() ? Easing.easeOutQuint : Easing.linear);
+			}
+
+			KeyframeAnimation<EntityFairy> animation = new KeyframeAnimation(this, "animatingPos");
+			animation.setKeyframes(frames);
+			animation.setDuration((float) (getPositionVector().distanceTo(to) * 10));
+			animation.setCompletion(() -> moving = false);
+			ANIMATOR.add(animation);
+			moving = true;
+		}
+
 		moveTargetPos = pos;
-		getMoveHelper().setMoveTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1);
 		moving = true;
+	}
+
+	public boolean isMoving() {
+		return moving;
+	}
+
+	public BlockPos getOriginPos() {
+		return getDataOrigin();
 	}
 
 	@NotNull
@@ -344,6 +371,12 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		ItemStack heldItem = player.getHeldItemMainhand();
 		if (heldItem.getItem() == ModItems.JAR_ITEM && heldItem.getItemDamage() == 0) {
 			succFairy(heldItem, player);
+			return EnumActionResult.SUCCESS;
+		} else if (!heldItem.isEmpty() && heldItem.getItem() != ModItems.FAIRY_BELL) {
+			FairyTask task = FairyTaskManager.INSTANCE.getTaskForItemStack(heldItem);
+			if (task != null) fairyTask = task;
+			playSound(ModSounds.POSITIVE_LIGHT_TWINKLE, 1f, RandUtil.nextFloat());
+			heldItem.shrink(1);
 			return EnumActionResult.SUCCESS;
 		}
 		return super.applyPlayerInteraction(player, vec, hand);
@@ -360,41 +393,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		NBTHelper.setTag(jar, "fairy", dataFairy.serializeNBT());
 		player.addItemStackToInventory(jar);
 		world.removeEntity(this);
-	}
-
-	@Override
-	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
-
-		if (!world.isRemote) {
-			FairyData dataFairy = getDataFairy();
-			if (dataFairy == null) return super.attackEntityFrom(source, amount);
-
-			if (dataFairy.isDepressed) {
-
-				ItemStack stack = new ItemStack(ModItems.FAIRY_ITEM);
-				NBTHelper.setTag(stack, "fairy", dataFairy.serializeNBT());
-
-				world.removeEntity(this);
-
-				EntityItem entityItem = new EntityItem(world);
-				entityItem.setPosition(posX, posY, posZ);
-				entityItem.setItem(stack);
-				entityItem.setPickupDelay(20);
-				entityItem.setNoDespawn();
-
-				world.spawnEntity(entityItem);
-				playHurtSound(source);
-				return false;
-			}
-
-			if (getIsInvulnerable()) return false;
-		}
-
-		if (this.aiSit != null) {
-			this.aiSit.setSitting(false);
-		}
-
-		return super.attackEntityFrom(source, amount);
 	}
 
 	@Override
@@ -462,18 +460,28 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		setDataFairy(FairyData.deserialize(NBTHelper.getCompoundTag(compound, "fairy")));
 
+		if (NBTHelper.hasKey(compound, "held_item")) {
+			NBTTagCompound heldItem = NBTHelper.getCompoundTag(compound, "held_item");
+			if (heldItem != null)
+				setDataHeldItem(new ItemStack(heldItem));
+		}
+
 		if (NBTHelper.hasKey(compound, "look_target_x") && NBTHelper.hasKey(compound, "look_target_y") && NBTHelper.hasKey(compound, "look_target_z"))
 			setLookTarget(new Vec3d(NBTHelper.getDouble(compound, "look_target_x"), NBTHelper.getDouble(compound, "look_target_y"), NBTHelper.getDouble(compound, "look_target_z")));
 		else setLookTarget(null);
 
-		if (NBTHelper.hasKey(compound, "origin_x") && NBTHelper.hasKey(compound, "origin_y") && NBTHelper.hasKey(compound, "origin_z"))
-			originPos = new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z"));
-
 		if (NBTHelper.hasKey(compound, "move_target_x") && NBTHelper.hasKey(compound, "move_target_y") && NBTHelper.hasKey(compound, "move_target_z"))
 			moveTargetPos = new BlockPos(NBTHelper.getInteger(compound, "move_target_x"), NBTHelper.getInteger(compound, "move_target_y"), NBTHelper.getInteger(compound, "move_target_z"));
 
+		if (NBTHelper.hasKey(compound, "origin_x") && NBTHelper.hasKey(compound, "origin_y") && NBTHelper.hasKey(compound, "origin_z"))
+			setDataOrigin(new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z")));
+
 		if (NBTHelper.hasKey(compound, "moving")) {
 			moving = NBTHelper.getBoolean(compound, "moving", true);
+		}
+
+		if (NBTHelper.hasKey(compound, "fairy_task")) {
+			fairyTask = FairyTaskManager.INSTANCE.getTaskFromKey("fairy_task");
 		}
 	}
 
@@ -485,17 +493,15 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		if (dataFairy != null)
 			NBTHelper.setCompoundTag(compound, "fairy", dataFairy.serializeNBT());
 
+		NBTTagCompound stackCompound = new NBTTagCompound();
+		getDataHeldItem().writeToNBT(stackCompound);
+		NBTHelper.setCompoundTag(compound, "held_item", stackCompound);
+
 		Vec3d targetLook = getLookTarget();
 		if (targetLook != null) {
 			compound.setDouble("look_target_x", targetLook.x);
 			compound.setDouble("look_target_y", targetLook.y);
 			compound.setDouble("look_target_z", targetLook.z);
-		}
-
-		if (originPos != null) {
-			compound.setInteger("origin_x", originPos.getX());
-			compound.setInteger("origin_y", originPos.getY());
-			compound.setInteger("origin_z", originPos.getZ());
 		}
 
 		if (moveTargetPos != null) {
@@ -504,6 +510,17 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			compound.setInteger("move_target_z", moveTargetPos.getZ());
 		}
 
+		BlockPos origin = getDataOrigin();
+		if (origin != null) {
+			compound.setInteger("origin_x", origin.getX());
+			compound.setInteger("origin_y", origin.getY());
+			compound.setInteger("origin_z", origin.getZ());
+		}
+
 		compound.setBoolean("moving", moving);
+
+		if (fairyTask != null) {
+			NBTHelper.setString(compound, "fairy_task", fairyTask.getNBTKey());
+		}
 	}
 }

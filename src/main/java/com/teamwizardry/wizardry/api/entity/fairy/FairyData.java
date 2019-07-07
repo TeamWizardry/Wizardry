@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.entity;
+package com.teamwizardry.wizardry.api.entity.fairy;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;

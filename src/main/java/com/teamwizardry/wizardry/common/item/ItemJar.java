@@ -7,7 +7,7 @@ import com.teamwizardry.wizardry.api.capability.player.mana.CustomManaCapability
 import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
-import com.teamwizardry.wizardry.api.entity.FairyData;
+import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;

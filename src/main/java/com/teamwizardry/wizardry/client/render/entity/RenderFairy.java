@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
-import com.teamwizardry.wizardry.api.entity.FairyData;
+import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;

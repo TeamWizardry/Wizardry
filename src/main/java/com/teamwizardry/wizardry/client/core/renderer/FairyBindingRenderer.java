@@ -12,7 +12,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.NBTConstants;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
-import com.teamwizardry.wizardry.api.entity.FairyData;
+import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RenderUtils;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;

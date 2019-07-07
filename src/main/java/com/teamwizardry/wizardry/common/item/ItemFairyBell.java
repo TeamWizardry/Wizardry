@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
 import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
-import com.teamwizardry.wizardry.api.entity.FairyData;
+import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.network.capability.PacketUpdateMiscCapToServer;
@@ -161,7 +161,7 @@ public class ItemFairyBell extends ItemMod {
 
 					boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
-					if (entityFairy.originPos != null) {
+					if (entityFairy.getDataOrigin() != null) {
 						if (!movingMode) {
 
 							Vec3d hitVec = rayTraceResult.hitVec;
@@ -207,7 +207,7 @@ public class ItemFairyBell extends ItemMod {
 				ItemStack stack = playerIn.getHeldItem(hand);
 				boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
-				if (entityFairy.originPos != null) {
+				if (entityFairy.getDataOrigin() != null) {
 					if (!movingMode) {
 
 						Vec3d hitVec = new Vec3d(pos).add(hitX, hitY, hitZ);

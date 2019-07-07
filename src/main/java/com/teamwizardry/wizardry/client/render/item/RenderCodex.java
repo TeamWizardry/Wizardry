@@ -106,7 +106,7 @@ public class RenderCodex {
 		try {
 			renderItemInFirstPerson(mc.player, evt.getHand(), evt.getSwingProgress(), evt.getItemStack(), evt.getEquipProgress());
 		} catch (Throwable throwable) {
-			Wizardry.LOGGER.warn("Failed to renderSpell book in hand");
+			Wizardry.LOGGER.warn("Failed to render book in hand");
 		}
 	}
 

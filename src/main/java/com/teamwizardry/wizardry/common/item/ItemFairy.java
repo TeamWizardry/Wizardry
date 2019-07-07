@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
-import com.teamwizardry.wizardry.api.entity.FairyData;
+import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -50,7 +50,8 @@ public class ItemFairy extends ItemMod {
 			BlockPos offsetpos = pos.offset(facing);
 			EntityFairy entity = new EntityFairy(worldIn, object);
 			entity.setPosition(offsetpos.getX() + 0.5, offsetpos.getY() + 0.5, offsetpos.getZ() + 0.5);
-			entity.originPos = pos;
+			entity.setDataOrigin(offsetpos);
+			entity.setHomePosAndDistance(offsetpos, 1);
 
 			worldIn.spawnEntity(entity);
 		}

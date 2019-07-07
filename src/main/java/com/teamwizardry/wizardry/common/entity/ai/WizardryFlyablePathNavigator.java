@@ -18,4 +18,6 @@ public class WizardryFlyablePathNavigator extends PathNavigateFlying {
 	public boolean canEntityStandOnPos(BlockPos pos) {
 		return true;
 	}
+
+
 }
