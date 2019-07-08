@@ -2,26 +2,12 @@ package com.teamwizardry.wizardry.api.entity.fairy.fairytasks;
 
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class FairyTask {
-
-	/**
-	 * @return The NBT key to serialize the fairy task to nbt wherever convenient.
-	 */
-	@Nonnull
-	public abstract String getNBTKey();
-
-	/**
-	 * @return The ItemStack that you can feed a fairy to have it's task changed to this task.
-	 */
-	@Nonnull
-	public abstract ItemStack getFoodItem();
 
 	/**
 	 * Do things to the fairy and the world when the task is executed. shouldTrigger is not the only method that

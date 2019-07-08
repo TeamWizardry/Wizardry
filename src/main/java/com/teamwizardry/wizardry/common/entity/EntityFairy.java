@@ -8,8 +8,8 @@ import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.NBTConstants.NBT;
 import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
-import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTask;
-import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskManager;
+import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskController;
+import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskRegistry;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.ai.FairyAIWanderAvoidWaterFlying;
 import com.teamwizardry.wizardry.common.entity.ai.FairyMoveHelper;
@@ -17,7 +17,6 @@ import com.teamwizardry.wizardry.common.entity.ai.WizardryFlyablePathNavigator;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
@@ -39,10 +38,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -52,6 +48,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+
+import static com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskRegistry.IDLE_TASK;
 
 
 /**
@@ -74,15 +72,12 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	public BlockPos moveTargetPos = null;
 
-	private double previousDist = Double.MAX_VALUE;
-	private long lastFreeTime = Long.MAX_VALUE;
-	private boolean adjustingPath = false;
 	private boolean moving = false;
 
 	public Vec3d animatingPos = Vec3d.ZERO;
-	private Path path = null;
-	@Nullable
-	private FairyTask fairyTask = null;
+
+	@Nonnull
+	private final FairyTaskController fairyTaskController = new FairyTaskController();
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
@@ -314,18 +309,13 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 //			return;
 		}
 
-		if (fairyTask != null) {
-			if (fairyTask.shouldTrigger(this)) {
-				fairyTask.onTrigger(this);
-			}
-		}
+		fairyTaskController.tick(this);
 
 		if (dataFairy != null && getNavigator().noPath())
 			if (!dataFairy.isDepressed) {
 				getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 2);
 
 			} else if (moving && moveTargetPos != null) {
-				Minecraft.getMinecraft().player.sendChatMessage(animatingPos.toString());
 				setPosition(animatingPos.x, animatingPos.y, animatingPos.z);
 			}
 	}
@@ -373,10 +363,13 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			succFairy(heldItem, player);
 			return EnumActionResult.SUCCESS;
 		} else if (!heldItem.isEmpty() && heldItem.getItem() != ModItems.FAIRY_BELL) {
-			FairyTask task = FairyTaskManager.INSTANCE.getTaskForItemStack(heldItem);
-			if (task != null) fairyTask = task;
-			playSound(ModSounds.POSITIVE_LIGHT_TWINKLE, 1f, RandUtil.nextFloat());
-			heldItem.shrink(1);
+
+			ResourceLocation task = FairyTaskRegistry.getAcceptableTask(heldItem, this);
+			if (task != IDLE_TASK) {
+				fairyTaskController.setTask(task);
+				playSound(ModSounds.POSITIVE_LIGHT_TWINKLE, 1f, RandUtil.nextFloat());
+				heldItem.shrink(1);
+			} else playSound(ModSounds.NEGATIVELY_PITCHED_BREATHE_PUHH, 1, RandUtil.nextFloat());
 			return EnumActionResult.SUCCESS;
 		}
 		return super.applyPlayerInteraction(player, vec, hand);
@@ -480,8 +473,11 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			moving = NBTHelper.getBoolean(compound, "moving", true);
 		}
 
+		fairyTaskController.setTask(IDLE_TASK);
 		if (NBTHelper.hasKey(compound, "fairy_task")) {
-			fairyTask = FairyTaskManager.INSTANCE.getTaskFromKey("fairy_task");
+			String resource = NBTHelper.getString(compound, "fairy_task");
+			if (resource != null)
+				fairyTaskController.setTask(new ResourceLocation(resource));
 		}
 	}
 
@@ -519,8 +515,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		compound.setBoolean("moving", moving);
 
-		if (fairyTask != null) {
-			NBTHelper.setString(compound, "fairy_task", fairyTask.getNBTKey());
-		}
+		NBTHelper.setString(compound, "fairy_task", fairyTaskController.getLocation().toString());
 	}
 }

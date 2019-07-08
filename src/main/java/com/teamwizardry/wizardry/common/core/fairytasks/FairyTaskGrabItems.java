@@ -1,30 +1,17 @@
-package com.teamwizardry.wizardry.api.entity.fairy.fairytasks;
+package com.teamwizardry.wizardry.common.core.fairytasks;
 
+import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTask;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class FairyTaskGrabItems extends FairyTask {
-	@NotNull
-	@Override
-	public String getNBTKey() {
-		return "grab_items";
-	}
-
-	@Nonnull
-	@Override
-	public ItemStack getFoodItem() {
-		return new ItemStack(Items.APPLE);
-	}
 
 	@Override
 	public void onTrigger(EntityFairy fairy) {

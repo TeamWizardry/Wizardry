@@ -8,6 +8,8 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.capability.chunk.WizardryChunkCapability;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
+import com.teamwizardry.wizardry.api.plugin.PluginContext;
+import com.teamwizardry.wizardry.api.plugin.WizardryPlugin;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -26,6 +28,7 @@ import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld
 import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import com.teamwizardry.wizardry.init.*;
+import com.teamwizardry.wizardry.init.plugin.PluginLoaderContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.DimensionType;
@@ -38,6 +41,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
+import java.util.ServiceLoader;
 
 public class CommonProxy {
 
@@ -46,6 +50,8 @@ public class CommonProxy {
 	public File getWizardryDirectory() {
 		return directory;
 	}
+
+	private final PluginContext context = new PluginLoaderContext();
 
 	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 	}
@@ -105,6 +111,13 @@ public class CommonProxy {
 
 		PageTypes.INSTANCE.registerPageProvider("wizardry_structure", PageWizardryStructure::new);
 		ItemBook.BOOK = new Book("book");
+
+		Wizardry.LOGGER.info("Initializing fairy task plugins...");
+		for (final WizardryPlugin plugin : ServiceLoader.load(WizardryPlugin.class)) {
+			Wizardry.LOGGER.info("Initializing plugin {}", plugin.getClass().getName());
+			plugin.onInit(context);
+		}
+		Wizardry.LOGGER.info("Initialization complete!");
 	}
 
 	public void init(FMLInitializationEvent event) {
