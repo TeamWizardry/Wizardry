@@ -37,6 +37,10 @@ public class RenderFairy extends RenderLiving<EntityFairy> {
 		FairyData dataFairy = entity.getDataFairy();
 		if (dataFairy == null) return;
 
-		dataFairy.render(entity.world, new Vec3d(entity.posX, entity.posY + (dataFairy.isDepressed ? entity.height : 0), entity.posZ), partialTicks);
+		dataFairy.render(
+				entity.world,
+				new Vec3d(entity.posX, entity.posY + (dataFairy.isDepressed ? entity.height : 0), entity.posZ),
+				new Vec3d(entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ),
+				partialTicks);
 	}
 }

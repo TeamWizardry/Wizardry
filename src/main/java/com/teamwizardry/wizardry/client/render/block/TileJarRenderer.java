@@ -31,7 +31,7 @@ public class TileJarRenderer extends TileRenderHandler<TileJar> {
 		if (te.fairy == null) return;
 		Vec3d pos = new Vec3d(te.getPos()).add(0.5, 0.35, 0.5).add(fairyPos);
 
-		te.fairy.render(tile.getWorld(), pos, partialTicks);
+		te.fairy.render(tile.getWorld(), pos, pos, partialTicks);
 	}
 
 	private void animCurve() {

@@ -70,7 +70,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
 
-	public BlockPos moveTargetPos = null;
+	public Vec3d moveTargetPos = null;
 
 	private boolean moving = false;
 
@@ -312,7 +312,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		if (!world.isRemote)
 			fairyTaskController.tick(this);
 
-		if (dataFairy != null && getNavigator().noPath())
+		if (!world.isRemote && dataFairy != null && getNavigator().noPath())
 			if (!dataFairy.isDepressed) {
 				getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 2);
 
@@ -322,8 +322,12 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	}
 
 	public void moveTo(BlockPos pos) {
-
 		Vec3d to = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+		moveTo(to);
+	}
+
+	public void moveTo(Vec3d to) {
+
 		Path path = getNavigator().getPathToXYZ(to.x, to.y, to.z);
 
 		if (path != null) {
@@ -333,19 +337,20 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 				PathPoint pathPoint = path.getPathPointFromIndex(i);
 				Vec3d node = new Vec3d(pathPoint.x + 0.5, pathPoint.y + 0.5, pathPoint.z + 0.5);
 
-				frames[i] = new Keyframe((float) i / (float) path.getCurrentPathLength(), node, i == 0 || i == path.getCurrentPathLength() ? Easing.easeOutQuint : Easing.linear);
+				frames[i] = new Keyframe((float) i / (float) path.getCurrentPathLength(), node, i == 0 ? Easing.easeInQuint : Easing.linear);
 			}
+			//	frames[frames.length - 1] = new Keyframe(1, to, Easing.easeOutQuint);
 
 			KeyframeAnimation<EntityFairy> animation = new KeyframeAnimation(this, "animatingPos");
 			animation.setKeyframes(frames);
-			animation.setDuration((float) (getPositionVector().distanceTo(to) * 10));
-			animation.setCompletion(() -> moving = false);
+			animation.setDuration((float) (getPositionVector().distanceTo(to) * 15));
+			animation.setCompletion(() -> {
+				moving = false;
+			});
 			ANIMATOR.add(animation);
 			moving = true;
+			moveTargetPos = to;
 		}
-
-		moveTargetPos = pos;
-		moving = true;
 	}
 
 	public boolean isMoving() {
@@ -465,7 +470,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		else setLookTarget(null);
 
 		if (NBTHelper.hasKey(compound, "move_target_x") && NBTHelper.hasKey(compound, "move_target_y") && NBTHelper.hasKey(compound, "move_target_z"))
-			moveTargetPos = new BlockPos(NBTHelper.getInteger(compound, "move_target_x"), NBTHelper.getInteger(compound, "move_target_y"), NBTHelper.getInteger(compound, "move_target_z"));
+			moveTargetPos = new Vec3d(NBTHelper.getDouble(compound, "move_target_x"), NBTHelper.getDouble(compound, "move_target_y"), NBTHelper.getDouble(compound, "move_target_z"));
 
 		if (NBTHelper.hasKey(compound, "origin_x") && NBTHelper.hasKey(compound, "origin_y") && NBTHelper.hasKey(compound, "origin_z"))
 			setDataOrigin(new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z")));
@@ -502,9 +507,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		}
 
 		if (moveTargetPos != null) {
-			compound.setInteger("move_target_x", moveTargetPos.getX());
-			compound.setInteger("move_target_y", moveTargetPos.getY());
-			compound.setInteger("move_target_z", moveTargetPos.getZ());
+			compound.setDouble("move_target_x", moveTargetPos.x);
+			compound.setDouble("move_target_y", moveTargetPos.y);
+			compound.setDouble("move_target_z", moveTargetPos.z);
 		}
 
 		BlockPos origin = getDataOrigin();

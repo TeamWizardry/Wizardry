@@ -420,7 +420,6 @@ public final class RenderUtils {
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableColorMaterial();
 
-		GlStateManager.enableDepth();
 		GlStateManager.popMatrix();
 
 	}

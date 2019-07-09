@@ -14,11 +14,18 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -28,6 +35,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,6 +43,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityProvider {
 
@@ -80,7 +91,7 @@ public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityP
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void render(World world, Vec3d pos, float partialTicks) {
+	public void render(World world, Vec3d pos, Vec3d prevPos, float partialTicks) {
 		if (!wasTamperedWith && !isDepressed) {
 			LibParticles.FAIRY_HEAD(world, pos.add(0, 0.25, 0), primaryColor);
 
@@ -100,26 +111,107 @@ public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityP
 						build.setAcceleration(new Vec3d(0, -0.005, 0));
 					}
 				});
-		} else if (world.getTotalWorldTime() % 2 == 0) {
-			float excitement = (float) (handler.getMana() / handler.getMaxMana()) * (isDepressed ? 0 : 1);
+		} else {
 
-			Color color = primaryColor;
-			ParticleBuilder glitter = new ParticleBuilder((int) (RandUtil.nextInt(3, 5) + (20 * (1 - excitement))));
-			glitter.setColor(color);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
-			glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
-			glitter.setScale(0.3f + (excitement * 3));
-			if (RandUtil.nextBoolean())
-				glitter.setColor(primaryColor);
-			else glitter.setColor(secondaryColor);
+			{
+				GlStateManager.pushMatrix();
 
-			if (isDepressed) {
-				glitter.enableMotionCalculation();
-				glitter.setCollision(true);
-				glitter.setAcceleration(new Vec3d(0, -0.002, 0));
+				EntityPlayer player = Minecraft.getMinecraft().player;
+				if (player == null) return;
+
+				double interpPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+				double interpPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
+				double interpPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+
+				GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
+
+				GlStateManager.translate(pos.x, pos.y, pos.z);
+
+				GlStateManager.pushMatrix();
+				GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+				GlStateManager.rotate((float) (Minecraft.getMinecraft().getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+
+				GlStateManager.enableDepth();
+				GlStateManager.disableCull();
+				GlStateManager.enableAlpha();
+				GlStateManager.enableBlend();
+				GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
+				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+				GlStateManager.color(1, 1, 1, 1);
+				GlStateManager.disableTexture2D();
+				GlStateManager.enableColorMaterial();
+				GlStateManager.disableLighting();
+
+				Tessellator tessellator = Tessellator.getInstance();
+				BufferBuilder bb = tessellator.getBuffer();
+
+				bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+				double radius = 0.1;
+				Color color = primaryColor;
+
+				for (int i = 0; i <= 360; i++) {
+					double x = radius * MathHelper.cos((float) ((i / 360.0) * Math.PI * 2));
+
+					double z = radius * MathHelper.sin((float) ((i / 360.0) * Math.PI * 2));
+
+					bb.pos(x, z, 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+				}
+				tessellator.draw();
+
+				GlStateManager.popMatrix();
+
+				bb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
+
+
+				Vec3d sub = pos.subtract(prevPos).scale(-1).add(0, 0.2, 0).scale(3);
+				Vec3d posCross = sub.crossProduct(new Vec3d(0, 1, 0)).normalize();
+				Vec3d posPerp = posCross.crossProduct(sub).normalize().scale(radius - 0.2);
+
+				Vec3d vec1 = posPerp;
+				Vec3d vec2 = posPerp.scale(-1);
+				bb.pos(sub.x, sub.y, sub.z).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+				bb.pos(vec1.x, vec1.y, vec1.z).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+				bb.pos(vec2.x, vec2.y, vec2.z).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+
+				Vec3d vec3 = posCross.scale(radius);
+				Vec3d vec4 = posCross.scale(-1).scale(radius);
+				bb.pos(sub.x, sub.y, sub.z).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+				bb.pos(vec3.x, vec3.y, vec3.z).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+				bb.pos(vec4.x, vec4.y, vec4.z).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+
+				tessellator.draw();
+
+				GlStateManager.disableBlend();
+				GlStateManager.enableAlpha();
+				GlStateManager.enableTexture2D();
+				GlStateManager.disableColorMaterial();
+
+				GlStateManager.enableDepth();
+				GlStateManager.popMatrix();
 			}
 
-			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1);
+			if (false) {
+
+				float excitement = (float) (handler.getMana() / handler.getMaxMana()) * (isDepressed ? 0 : 1);
+
+				Color color = primaryColor;
+				ParticleBuilder glitter = new ParticleBuilder((int) (RandUtil.nextInt(3, 5) + (20 * (1 - excitement))));
+				glitter.setColor(color);
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
+				glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
+				glitter.setScale(0.3f + (excitement * 3));
+				if (RandUtil.nextBoolean())
+					glitter.setColor(primaryColor);
+				else glitter.setColor(secondaryColor);
+
+				if (isDepressed) {
+					glitter.enableMotionCalculation();
+					glitter.setCollision(true);
+					glitter.setAcceleration(new Vec3d(0, -0.002, 0));
+				}
+
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos.add(RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.1, 0.1))), 1);
+			}
 		}
 	}
 

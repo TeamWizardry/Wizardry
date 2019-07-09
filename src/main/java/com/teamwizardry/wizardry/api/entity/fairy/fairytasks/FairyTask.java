@@ -9,10 +9,6 @@ import javax.annotation.Nullable;
 
 public abstract class FairyTask {
 
-	public int phase = 0;
-
-	public boolean isTaskChoked = true;
-
 	/**
 	 * Do things to the fairy and the world when the task is executed. shouldTrigger is not the only method that
 	 * can trigger it. Some other tasks can trigger it as well.
