@@ -309,7 +309,8 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 //			return;
 		}
 
-		fairyTaskController.tick(this);
+		if (!world.isRemote)
+			fairyTaskController.tick(this);
 
 		if (dataFairy != null && getNavigator().noPath())
 			if (!dataFairy.isDepressed) {

@@ -18,23 +18,43 @@ public class FairyTaskGrabItems extends FairyTask {
 		if (fairy.isMoving()) return;
 
 		ItemStack heldItem = fairy.getDataHeldItem();
-		if (!heldItem.isEmpty()) {
-			if (fairy.getPositionVector().subtract(new Vec3d(fairy.getHomePosition())).lengthSquared() < 1) {
 
-				EntityItem entityItem = new EntityItem(fairy.world, fairy.posX, fairy.posY, fairy.posZ, heldItem);
+		switch (phase) {
+			case 1: {
+				break;
+			}
+			case 2: {
+				break;
+			}
+			case 3: {
+				break;
+			}
+			case 4: {
+				break;
+			}
+			case 5: {
+				break;
+			}
+		}
+
+
+		if (!heldItem.isEmpty()) {
+			if (fairy.getPositionVector().subtract(new Vec3d(fairy.getDataOrigin())).lengthSquared() < 1) {
+
+				EntityItem entityItem = new EntityItem(fairy.world, fairy.posX, fairy.posY, fairy.posZ, heldItem.copy());
+				entityItem.setPickupDelay(50);
 				if (fairy.world.spawnEntity(entityItem)) {
 					fairy.setDataHeldItem(ItemStack.EMPTY);
 				}
 			}
-		}
+		} else
+			for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(4))) {
+				if (entityItem == null || entityItem.cannotPickup()) continue;
 
-		if (heldItem.isEmpty())
-			for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(3))) {
-				if (entityItem == null) continue;
-
-				if (fairy.getPositionVector().subtract(entityItem.getPositionVector()).lengthSquared() < 1) {
-					fairy.setDataHeldItem(entityItem.getItem());
+				if (fairy.getPositionVector().distanceTo(entityItem.getPositionVector()) < 1) {
+					fairy.setDataHeldItem(entityItem.getItem().copy());
 					entityItem.getItem().setCount(0);
+					fairy.world.removeEntity(entityItem);
 					fairy.moveTo(fairy.getDataOrigin());
 				} else {
 					fairy.moveTo(entityItem.getPosition());
