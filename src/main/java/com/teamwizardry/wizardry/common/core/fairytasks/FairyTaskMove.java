@@ -30,11 +30,15 @@ public class FairyTaskMove extends FairyTask {
 			return;
 		}
 
-		double fairyToTarget = fairy.getPositionVector().distanceTo(new Vec3d(fairy.getDataTargetBlock()).add(0.5, 0.5, 0.5));
+		if (fairy.targetPos == null || fairy.originPos == null) return;
+
+		double fairyToTarget = fairy.getPositionVector().distanceTo(new Vec3d(fairy.targetPos).add(0.5, 0.5, 0.5));
+		double fairyToOrigin = fairy.getPositionVector().distanceTo(new Vec3d(fairy.originPos).add(0.5, 0.5, 0.5));
 
 		if (fairyToTarget > 0.25) {
-			fairy.moveTo(fairy.getDataTargetBlock());
-		} else fairy.moveTo(fairy.getDataOriginBlock());
+			fairy.moveTo(fairy.targetPos);
+		} else if (fairyToOrigin > 0.25)
+			fairy.moveTo(fairy.originPos);
 	}
 
 	@Override

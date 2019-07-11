@@ -181,7 +181,7 @@ public class ItemFairyBell extends ItemMod {
 
 					boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
-					if (entityFairy.getDataOriginBlock() != null) {
+					if (entityFairy.originPos != null) {
 						if (!movingMode) {
 
 							Vec3d hitVec = rayTraceResult.hitVec;
@@ -227,7 +227,7 @@ public class ItemFairyBell extends ItemMod {
 				ItemStack stack = playerIn.getHeldItem(hand);
 				boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
-				if (entityFairy.getDataOriginBlock() != null) {
+				if (entityFairy.originPos != null) {
 					if (!movingMode) {
 
 						Vec3d hitVec = new Vec3d(pos).add(hitX, hitY, hitZ);
@@ -244,7 +244,7 @@ public class ItemFairyBell extends ItemMod {
 
 					} else {
 
-						entityFairy.moveTo(pos.offset(facing));
+						entityFairy.targetPos = pos.offset(facing);
 						entityFairy.setLookTarget(null);
 
 						playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 1.25f);

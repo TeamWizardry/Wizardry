@@ -58,8 +58,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	private static final DataParameter<ItemStack> DATA_HELD_ITEM = EntityDataManager.createKey(EntityFairy.class, DataSerializers.ITEM_STACK);
 	private static final DataParameter<NBTTagCompound> DATA_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
 	private static final DataParameter<NBTTagCompound> DATA_LOOK_TARGET = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
-	private static final DataParameter<BlockPos> DATA_ORIGIN_BLOCK = EntityDataManager.createKey(EntityFairy.class, DataSerializers.BLOCK_POS);
-	private static final DataParameter<BlockPos> DATA_TARGET_BLOCK = EntityDataManager.createKey(EntityFairy.class, DataSerializers.BLOCK_POS);
 	private static final DataParameter<Optional<UUID>> DATA_ATTACHED_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
 	static {
@@ -80,6 +78,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	private double targetDeltaX;
 	private double targetDeltaY;
 	private double targetDeltaZ;
+
+	@Nullable
+	public BlockPos originPos = null, targetPos = null;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
@@ -153,24 +154,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		this.getDataManager().setDirty(DATA_FAIRY);
 	}
 
-	public BlockPos getDataOriginBlock() {
-		return this.getDataManager().get(DATA_ORIGIN_BLOCK);
-	}
-
-	public void setDataOriginBlock(BlockPos origin) {
-		this.getDataManager().set(DATA_ORIGIN_BLOCK, origin);
-		this.getDataManager().setDirty(DATA_ORIGIN_BLOCK);
-	}
-
-	public BlockPos getDataTargetBlock() {
-		return this.getDataManager().get(DATA_TARGET_BLOCK);
-	}
-
-	public void setDataTargetBlock(BlockPos origin) {
-		this.getDataManager().set(DATA_TARGET_BLOCK, origin);
-		this.getDataManager().setDirty(DATA_TARGET_BLOCK);
-	}
-
 	@Nonnull
 	public ItemStack getDataHeldItem() {
 		return this.getDataManager().get(DATA_HELD_ITEM);
@@ -219,8 +202,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		this.getDataManager().register(DATA_FAIRY, new FairyData().serializeNBT());
 		this.getDataManager().register(DATA_LOOK_TARGET, new NBTTagCompound());
 		this.getDataManager().register(DATA_HELD_ITEM, ItemStack.EMPTY);
-		this.getDataManager().register(DATA_ORIGIN_BLOCK, BlockPos.ORIGIN);
-		this.getDataManager().register(DATA_TARGET_BLOCK, BlockPos.ORIGIN);
 		this.getDataManager().register(DATA_ATTACHED_FAIRY, Optional.absent());
 	}
 
@@ -398,10 +379,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 	public boolean isMoving() {
 		return moving;
-	}
-
-	public BlockPos getOriginPos() {
-		return getDataOriginBlock();
 	}
 
 	private void setDirection(@Nullable EnumFacing directionIn) {
@@ -603,10 +580,10 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			currentTarget = new Vec3d(NBTHelper.getDouble(compound, "current_target_x"), NBTHelper.getDouble(compound, "current_target_y"), NBTHelper.getDouble(compound, "current_target_z"));
 
 		if (NBTHelper.hasKey(compound, "origin_x") && NBTHelper.hasKey(compound, "origin_y") && NBTHelper.hasKey(compound, "origin_z"))
-			setDataOriginBlock(new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z")));
+			originPos = new BlockPos(NBTHelper.getInteger(compound, "origin_x"), NBTHelper.getInteger(compound, "origin_y"), NBTHelper.getInteger(compound, "origin_z"));
 
 		if (NBTHelper.hasKey(compound, "target_x") && NBTHelper.hasKey(compound, "target_y") && NBTHelper.hasKey(compound, "target_z"))
-			setDataTargetBlock(new BlockPos(NBTHelper.getInteger(compound, "target_x"), NBTHelper.getInteger(compound, "target_y"), NBTHelper.getInteger(compound, "target_z")));
+			targetPos = new BlockPos(NBTHelper.getInteger(compound, "target_x"), NBTHelper.getInteger(compound, "target_y"), NBTHelper.getInteger(compound, "target_z"));
 
 		if (NBTHelper.hasKey(compound, "moving")) {
 			moving = NBTHelper.getBoolean(compound, "moving", true);
@@ -657,14 +634,14 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			compound.setDouble("current_target_z", currentTarget.z);
 		}
 
-		BlockPos origin = getDataOriginBlock();
+		BlockPos origin = originPos;
 		if (origin != null) {
 			compound.setInteger("origin_x", origin.getX());
 			compound.setInteger("origin_y", origin.getY());
 			compound.setInteger("origin_z", origin.getZ());
 		}
 
-		BlockPos target = getDataTargetBlock();
+		BlockPos target = targetPos;
 		if (target != null) {
 			compound.setInteger("target_x", target.getX());
 			compound.setInteger("target_y", target.getY());
