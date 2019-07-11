@@ -14,13 +14,25 @@ import javax.annotation.Nullable;
 public class FairyTaskGrabItems extends FairyTask {
 
 	@Override
-	public void onTrigger(EntityFairy fairy) {
+	public int getPriority() {
+		return 0;
+	}
+
+	@Override
+	public void onStart(EntityFairy fairy) {
+
+	}
+
+	@Override
+	public void onTick(EntityFairy fairy) {
 		if (fairy.isMoving()) return;
 
 		ItemStack heldItem = fairy.getDataHeldItem();
 
+		boolean isPriorityTaken = doesAttachedFairyTakePriority(fairy);
+
 		if (!heldItem.isEmpty()) {
-			if (fairy.getPositionVector().subtract(new Vec3d(fairy.getDataOrigin())).lengthSquared() < 1) {
+			if (fairy.getPositionVector().subtract(new Vec3d(fairy.getDataOriginBlock())).lengthSquared() < 1) {
 
 				EntityItem entityItem = new EntityItem(fairy.world, fairy.posX, fairy.posY, fairy.posZ, heldItem.copy());
 				entityItem.motionX = 0;
@@ -30,41 +42,39 @@ public class FairyTaskGrabItems extends FairyTask {
 				if (fairy.world.spawnEntity(entityItem)) {
 					fairy.setDataHeldItem(ItemStack.EMPTY);
 				}
-			} else {
-				fairy.moveTo(fairy.getDataOrigin());
+			} else if (isPriorityTaken) {
+				fairy.moveTo(fairy.getDataOriginBlock());
 			}
-		} else
+		} else {
 			for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(5))) {
 				if (entityItem == null || entityItem.cannotPickup()) continue;
 
-				double distFairyToItem = fairy.getPositionVector().distanceTo(entityItem.getPositionVector());
-				double distItemToHome = new Vec3d(fairy.getDataOrigin()).add(0.5, 0.5, 0.5).distanceTo(entityItem.getPositionVector());
-				if (distItemToHome > 0.5 && distFairyToItem <= 0.5) {
-					fairy.setDataHeldItem(entityItem.getItem().copy());
-					entityItem.getItem().setCount(0);
-					fairy.world.removeEntity(entityItem);
-					fairy.moveTo(fairy.getDataOrigin());
-				} else {
-					fairy.moveTo(entityItem.getPositionVector());
-				}
+				if (isPriorityTaken) {
+					fairy.setDataHeldItem(entityItem.getItem());
 
+				} else {
+					double distFairyToItem = fairy.getPositionVector().distanceTo(entityItem.getPositionVector());
+					double distItemToHome = new Vec3d(fairy.getDataOriginBlock()).add(0.5, 0.5, 0.5).distanceTo(entityItem.getPositionVector());
+					if (distItemToHome > 0.5 && distFairyToItem <= 0.5) {
+						fairy.setDataHeldItem(entityItem.getItem());
+						fairy.world.removeEntity(entityItem);
+						fairy.moveTo(fairy.getDataOriginBlock());
+					} else {
+						fairy.moveTo(entityItem.getPositionVector());
+					}
+				}
 				return;
 			}
+		}
+	}
+
+	@Override
+	public void onEnd(EntityFairy fairy) {
+
 	}
 
 	@Override
 	public void onConfigure(EntityFairy fairy, @Nullable BlockPos targetBlock, @Nullable Entity targetEntity, Vec3d lookVec) {
 
-	}
-
-	@Override
-	public boolean shouldTrigger(EntityFairy fairy) {
-		for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(3))) {
-			if (entityItem == null) continue;
-
-			return true;
-		}
-
-		return !fairy.getDataHeldItem().isEmpty();
 	}
 }

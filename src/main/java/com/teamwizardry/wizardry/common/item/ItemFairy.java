@@ -50,8 +50,7 @@ public class ItemFairy extends ItemMod {
 			BlockPos offsetpos = pos.offset(facing);
 			EntityFairy entity = new EntityFairy(worldIn, object);
 			entity.setPosition(offsetpos.getX() + 0.5, offsetpos.getY() + 0.5, offsetpos.getZ() + 0.5);
-			entity.setDataOrigin(offsetpos);
-			entity.setHomePosAndDistance(offsetpos, 1);
+			entity.setDataOriginBlock(offsetpos);
 
 			worldIn.spawnEntity(entity);
 		}

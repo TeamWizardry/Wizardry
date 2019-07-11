@@ -127,10 +127,8 @@ public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityP
 
 				GlStateManager.translate(pos.x, pos.y, pos.z);
 
-				GlStateManager.pushMatrix();
-				GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-				GlStateManager.rotate((float) (Minecraft.getMinecraft().getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
 
+				Minecraft.getMinecraft().entityRenderer.disableLightmap();
 				GlStateManager.enableDepth();
 				GlStateManager.disableCull();
 				GlStateManager.enableAlpha();
@@ -141,18 +139,27 @@ public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityP
 				GlStateManager.disableTexture2D();
 				GlStateManager.enableColorMaterial();
 				GlStateManager.disableLighting();
+				GlStateManager.shadeModel(GL11.GL_SMOOTH);
+
+				int alphaFunc = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
+				float alphaTest = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
+				GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
+
+				GlStateManager.pushMatrix();
+				GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+				GlStateManager.rotate((float) (Minecraft.getMinecraft().getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
 
 				Tessellator tessellator = Tessellator.getInstance();
 				BufferBuilder bb = tessellator.getBuffer();
 
-				bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
 				double radius = 0.1;
 				Color color = primaryColor;
 
-				for (int i = 0; i <= 360; i++) {
-					double x = radius * MathHelper.cos((float) ((i / 360.0) * Math.PI * 2));
+				bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+				for (int i = 0; i <= 50; i++) {
+					double x = radius * MathHelper.cos((float) ((i / 50.0) * Math.PI * 2));
 
-					double z = radius * MathHelper.sin((float) ((i / 360.0) * Math.PI * 2));
+					double z = radius * MathHelper.sin((float) ((i / 50.0) * Math.PI * 2));
 
 					bb.pos(x, z, 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
 				}
@@ -160,8 +167,8 @@ public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityP
 
 				GlStateManager.popMatrix();
 
-				bb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
 
+				bb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
 
 				Vec3d sub = pos.subtract(prevPos).scale(-1).add(0, 0.2, 0).scale(3);
 				Vec3d posCross = sub.crossProduct(new Vec3d(0, 1, 0)).normalize();
@@ -181,36 +188,62 @@ public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityP
 
 				tessellator.draw();
 
+				GlStateManager.pushMatrix();
+				GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+				GlStateManager.rotate((float) (Minecraft.getMinecraft().getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+
+
+				int sections = 50;
+				float epsilon = 2 * (float) Math.PI / sections;
+
+				double innerRadius = radius;
+				double outerRadius = radius + 0.01;
+				Color inner = primaryColor;
+				Color outer = new Color(primaryColor.getRed(), primaryColor.getGreen(), primaryColor.getBlue(), 0);
+				bb.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+				for (int i = 0; i <= sections; i++) {
+					float angle = i * epsilon;
+					float nextAngle = (i + 1) * epsilon;
+
+					float x1 = (float) (MathHelper.cos(angle) * innerRadius);
+					float y1 = (float) (MathHelper.sin(angle) * innerRadius);
+
+					float x2 = (float) (MathHelper.cos(nextAngle) * outerRadius);
+					float y2 = (float) (MathHelper.sin(nextAngle) * outerRadius);
+
+					bb.pos(x1, y1, 0).color(inner.getRed(), inner.getGreen(), inner.getBlue(), inner.getAlpha()).endVertex();
+					bb.pos(x2, y2, 0).color(outer.getRed(), outer.getGreen(), outer.getBlue(), outer.getAlpha()).endVertex();
+				}
+				tessellator.draw();
+
+				radius = 0.2;
+				color = secondaryColor;
+
+				GlStateManager.translate(0, 0, 0.01);
+				bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+				bb.pos(0, 0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), 100).endVertex();
+				for (int i = 0; i <= 50; i++) {
+					double x = radius * MathHelper.cos((float) ((i / 50.0) * Math.PI * 2));
+
+					double z = radius * MathHelper.sin((float) ((i / 50.0) * Math.PI * 2));
+
+					bb.pos(x, z, 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
+				}
+				tessellator.draw();
+				GlStateManager.translate(0, 0, -0.01);
+
+
+				GlStateManager.alphaFunc(alphaFunc, alphaTest);
 				GlStateManager.disableBlend();
 				GlStateManager.enableAlpha();
 				GlStateManager.enableTexture2D();
 				GlStateManager.disableColorMaterial();
 
+				Minecraft.getMinecraft().entityRenderer.enableLightmap();
 				GlStateManager.enableDepth();
 				GlStateManager.popMatrix();
-			}
 
-			if (false) {
-
-				float excitement = (float) (handler.getMana() / handler.getMaxMana()) * (isDepressed ? 0 : 1);
-
-				Color color = primaryColor;
-				ParticleBuilder glitter = new ParticleBuilder((int) (RandUtil.nextInt(3, 5) + (20 * (1 - excitement))));
-				glitter.setColor(color);
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, NBTConstants.MISC.SPARKLE_BLURRED));
-				glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
-				glitter.setScale(0.3f + (excitement * 3));
-				if (RandUtil.nextBoolean())
-					glitter.setColor(primaryColor);
-				else glitter.setColor(secondaryColor);
-
-				if (isDepressed) {
-					glitter.enableMotionCalculation();
-					glitter.setCollision(true);
-					glitter.setAcceleration(new Vec3d(0, -0.002, 0));
-				}
-
-				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos.add(RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.1, 0.1))), 1);
+				GlStateManager.popMatrix();
 			}
 		}
 	}

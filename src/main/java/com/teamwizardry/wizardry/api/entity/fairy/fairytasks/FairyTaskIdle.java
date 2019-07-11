@@ -10,17 +10,27 @@ import javax.annotation.Nullable;
 public class FairyTaskIdle extends FairyTask {
 
 	@Override
-	public void onTrigger(EntityFairy fairy) {
+	public int getPriority() {
+		return -1;
+	}
+
+	@Override
+	public void onStart(EntityFairy fairy) {
+
+	}
+
+	@Override
+	public void onTick(EntityFairy fairy) {
+
+	}
+
+	@Override
+	public void onEnd(EntityFairy fairy) {
 
 	}
 
 	@Override
 	public void onConfigure(EntityFairy fairy, @Nullable BlockPos targetBlock, @Nullable Entity targetEntity, Vec3d lookVec) {
 
-	}
-
-	@Override
-	public boolean shouldTrigger(EntityFairy fairy) {
-		return false;
 	}
 }

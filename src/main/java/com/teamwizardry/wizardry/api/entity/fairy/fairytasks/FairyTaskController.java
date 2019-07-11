@@ -19,9 +19,7 @@ public class FairyTaskController {
 	}
 
 	public void tick(EntityFairy fairy) {
-		if (task.shouldTrigger(fairy)) {
-			task.onTrigger(fairy);
-		}
+		task.onTick(fairy);
 	}
 
 	@Nonnull
@@ -29,9 +27,11 @@ public class FairyTaskController {
 		return task;
 	}
 
-	public void setTask(@Nonnull ResourceLocation location) {
+	public void setTask(EntityFairy fairy, @Nonnull ResourceLocation location) {
 		this.location = location;
+		this.task.onEnd(fairy);
 		this.task = FairyTaskRegistry.createTaskFromResource(location);
+		this.task.onStart(fairy);
 	}
 
 	@Nonnull

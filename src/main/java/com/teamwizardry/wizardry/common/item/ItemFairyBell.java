@@ -16,6 +16,7 @@ import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,6 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 
+import java.util.List;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
@@ -76,22 +78,40 @@ public class ItemFairyBell extends ItemMod {
 
 		if (target instanceof EntityFairy) {
 
-			EntityFairy fairy = (EntityFairy) target;
-			FairyData fairyData = fairy.getDataFairy();
+			EntityFairy targetFairy = (EntityFairy) target;
+			FairyData targetData = targetFairy.getDataFairy();
 
-			if (fairyData == null) return super.itemInteractionForEntity(stack, playerIn, target, hand);
+			if (targetData == null) return super.itemInteractionForEntity(stack, playerIn, target, hand);
 
-			if (fairyData.isDepressed) {
+			if (targetData.isDepressed) {
 				IMiscCapability cap = MiscCapabilityProvider.getCap(playerIn);
 				if (cap != null) {
 					UUID selected = cap.getSelectedFairyUUID();
-					if (selected != null && selected.equals(fairy.getUniqueID())) {
+
+					if (selected != null && selected.equals(targetFairy.getUniqueID())) {
 						cap.setSelectedFairy(null);
 						playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 0.25f);
 
 						playerIn.sendStatusMessage(new TextComponentTranslation("item.wizardry:fairy_bell.status.deselected"), true);
+
+					} else if (selected != null && !selected.equals(targetFairy.getUniqueID())) {
+
+						List<Entity> list = playerIn.world.loadedEntityList;
+						for (Entity entity : list) {
+							if (entity instanceof EntityFairy && entity.getUniqueID().equals(selected)) {
+								if (entity.isDead) continue;
+
+								((EntityFairy) entity).setAttachedFairy(targetFairy.getUniqueID());
+								targetFairy.setAttachedFairy(selected);
+
+								playerIn.sendStatusMessage(new TextComponentTranslation("item.wizardry:fairy_bell.status.linked_to_fairy"), true);
+
+								break;
+							}
+						}
+
 					} else {
-						cap.setSelectedFairy(fairy.getUniqueID());
+						cap.setSelectedFairy(targetFairy.getUniqueID());
 
 						boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
@@ -161,7 +181,7 @@ public class ItemFairyBell extends ItemMod {
 
 					boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
-					if (entityFairy.getDataOrigin() != null) {
+					if (entityFairy.getDataOriginBlock() != null) {
 						if (!movingMode) {
 
 							Vec3d hitVec = rayTraceResult.hitVec;
@@ -207,7 +227,7 @@ public class ItemFairyBell extends ItemMod {
 				ItemStack stack = playerIn.getHeldItem(hand);
 				boolean movingMode = NBTHelper.getBoolean(stack, "moving_mode", true);
 
-				if (entityFairy.getDataOrigin() != null) {
+				if (entityFairy.getDataOriginBlock() != null) {
 					if (!movingMode) {
 
 						Vec3d hitVec = new Vec3d(pos).add(hitX, hitY, hitZ);
