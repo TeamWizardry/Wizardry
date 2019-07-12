@@ -25,7 +25,9 @@ public class FairyTaskMove extends FairyTask {
 		if (fairy.isMoving()) {
 			EntityFairy attached = getAttachedFairy(fairy);
 			if (attached != null && attached.fairyTaskController.getTask().getPriority() < getPriority()) {
-
+				Vec3d look = fairy.getLookVec();
+				Vec3d targetPos = fairy.getPositionVector().add(look);
+				attached.setPosition(targetPos.x, targetPos.y, targetPos.z);
 			}
 			return;
 		}

@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
 import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskController;
 import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskRegistry;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.entity.ai.FairyMoveHelper;
 import com.teamwizardry.wizardry.common.entity.ai.WizardryFlyablePathNavigator;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -36,6 +37,7 @@ import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -401,7 +403,13 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		double d3 = (double) blockpos.getZ() + 0.5D;
 		EnumFacing enumfacing = null;
 
-		if (blockpos.distanceSqToCenter(this.posX, this.posY, this.posZ) >= 4.0D) {
+		RayTraceResult result = new RayTrace(world, getPositionVector().subtract(lastTickPosX, lastTickPosY, lastTickPosZ).normalize(), getPositionVector(), 1)
+				.setSkipEntities(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(true)
+				.setReturnLastUncollidableBlock(false)
+				.trace();
+
+		if (result.typeOfHit == RayTraceResult.Type.BLOCK && !world.isAirBlock(result.getBlockPos()) && blockpos.distanceSqToCenter(this.posX, this.posY, this.posZ) >= 4.0D) {
 			BlockPos blockpos1 = new BlockPos(this);
 			List<EnumFacing> list = Lists.newArrayList();
 
