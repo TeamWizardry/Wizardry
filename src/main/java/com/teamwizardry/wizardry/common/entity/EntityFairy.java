@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.teamwizardry.librarianlib.features.animator.Animator;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.NBTConstants.NBT;
@@ -56,15 +55,10 @@ import static com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskReg
  * Created by Demoniaque on 8/21/2016.
  */
 public class EntityFairy extends EntityTameable implements EntityFlying {
-	private static final Animator ANIMATOR = new Animator();
 	private static final DataParameter<ItemStack> DATA_HELD_ITEM = EntityDataManager.createKey(EntityFairy.class, DataSerializers.ITEM_STACK);
 	private static final DataParameter<NBTTagCompound> DATA_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
 	private static final DataParameter<NBTTagCompound> DATA_LOOK_TARGET = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
-	private static final DataParameter<Optional<UUID>> DATA_ATTACHED_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.OPTIONAL_UNIQUE_ID);
-
-	static {
-		ANIMATOR.setUseWorldTicks(true);
-	}
+	private static final DataParameter<Optional<UUID>> DATA_CHAINED_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
 	private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
 	@Nonnull
@@ -134,13 +128,13 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		this.getDataManager().setDirty(DATA_LOOK_TARGET);
 	}
 
-	public UUID getAttachedFairy() {
-		return this.getDataManager().get(DATA_ATTACHED_FAIRY).orNull();
+	public UUID getChainedFairy() {
+		return this.getDataManager().get(DATA_CHAINED_FAIRY).orNull();
 	}
 
-	public void setAttachedFairy(UUID uuid) {
-		this.getDataManager().set(DATA_ATTACHED_FAIRY, Optional.fromNullable(uuid));
-		this.getDataManager().setDirty(DATA_ATTACHED_FAIRY);
+	public void setChainedFairy(UUID uuid) {
+		this.getDataManager().set(DATA_CHAINED_FAIRY, Optional.fromNullable(uuid));
+		this.getDataManager().setDirty(DATA_CHAINED_FAIRY);
 	}
 
 	@Nullable
@@ -204,7 +198,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		this.getDataManager().register(DATA_FAIRY, new FairyData().serializeNBT());
 		this.getDataManager().register(DATA_LOOK_TARGET, new NBTTagCompound());
 		this.getDataManager().register(DATA_HELD_ITEM, ItemStack.EMPTY);
-		this.getDataManager().register(DATA_ATTACHED_FAIRY, Optional.absent());
+		this.getDataManager().register(DATA_CHAINED_FAIRY, Optional.absent());
 	}
 
 	@Override
@@ -576,8 +570,8 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 				setDataHeldItem(new ItemStack(heldItem));
 		}
 
-		if (NBTHelper.hasKey(compound, "attached_fairy")) {
-			setAttachedFairy(NBTHelper.getUniqueId(compound, "attached_fairy"));
+		if (NBTHelper.hasKey(compound, "chained_fairy")) {
+			setChainedFairy(NBTHelper.getUniqueId(compound, "chained_fairy"));
 		}
 
 		if (NBTHelper.hasKey(compound, "look_target_x") && NBTHelper.hasKey(compound, "look_target_y") && NBTHelper.hasKey(compound, "look_target_z"))
@@ -624,9 +618,9 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		getDataHeldItem().writeToNBT(stackCompound);
 		NBTHelper.setCompoundTag(compound, "held_item", stackCompound);
 
-		UUID uuid = getAttachedFairy();
+		UUID uuid = getChainedFairy();
 		if (uuid != null) {
-			NBTHelper.setUniqueId(compound, "attached_fairy", uuid);
+			NBTHelper.setUniqueId(compound, "chained_fairy", uuid);
 		}
 
 		Vec3d targetLook = getLookTarget();

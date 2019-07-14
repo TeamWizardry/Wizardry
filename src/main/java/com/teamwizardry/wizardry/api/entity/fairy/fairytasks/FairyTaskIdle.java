@@ -30,6 +30,11 @@ public class FairyTaskIdle extends FairyTask {
 	}
 
 	@Override
+	public void onForceTrigger(EntityFairy fairy) {
+
+	}
+
+	@Override
 	public void onConfigure(EntityFairy fairy, @Nullable BlockPos targetBlock, @Nullable Entity targetEntity, Vec3d lookVec) {
 
 	}

@@ -32,8 +32,8 @@ public abstract class FairyTask {
 	public abstract void onEnd(EntityFairy fairy);
 
 	@Nullable
-	public EntityFairy getAttachedFairy(EntityFairy fairy) {
-		UUID attachedUUID = fairy.getAttachedFairy();
+	protected static EntityFairy getChainedFairy(EntityFairy fairy) {
+		UUID attachedUUID = fairy.getChainedFairy();
 
 		List<Entity> list = fairy.world.loadedEntityList;
 		for (Entity entity : list) {
@@ -47,8 +47,8 @@ public abstract class FairyTask {
 		return null;
 	}
 
-	public boolean doesAttachedFairyTakePriority(EntityFairy fairy) {
-		UUID attachedUUID = fairy.getAttachedFairy();
+	protected static boolean isPriorityTaken(EntityFairy fairy) {
+		UUID attachedUUID = fairy.getChainedFairy();
 
 		List<Entity> list = fairy.world.loadedEntityList;
 		for (Entity entity : list) {
@@ -56,12 +56,14 @@ public abstract class FairyTask {
 				if (entity.isDead) continue;
 
 				EntityFairy attachedFairy = (EntityFairy) entity;
-				return attachedFairy.fairyTaskController.getTask().getPriority() > getPriority();
+				return attachedFairy.fairyTaskController.getTask().getPriority() > fairy.fairyTaskController.getTask().getPriority();
 			}
 		}
 
 		return false;
 	}
+
+	public abstract void onForceTrigger(EntityFairy fairy);
 
 	/**
 	 * You may add additional processing to the fairy whenever it is reconfigured with a bell.

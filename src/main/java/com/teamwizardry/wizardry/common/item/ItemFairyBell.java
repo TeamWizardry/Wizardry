@@ -101,8 +101,8 @@ public class ItemFairyBell extends ItemMod {
 							if (entity instanceof EntityFairy && entity.getUniqueID().equals(selected)) {
 								if (entity.isDead) continue;
 
-								((EntityFairy) entity).setAttachedFairy(targetFairy.getUniqueID());
-								targetFairy.setAttachedFairy(selected);
+								((EntityFairy) entity).setChainedFairy(targetFairy.getUniqueID());
+								targetFairy.setChainedFairy(selected);
 
 								playerIn.sendStatusMessage(new TextComponentTranslation("item.wizardry:fairy_bell.status.linked_to_fairy"), true);
 
