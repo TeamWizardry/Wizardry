@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.core.fairytasks;
 
-import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairySequence;
-import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairySequenceBuilder;
+import com.teamwizardry.wizardry.api.StateGraph;
 import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTask;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.entity.Entity;
@@ -12,7 +11,7 @@ import javax.annotation.Nullable;
 
 public class FairyTaskMove extends FairyTask {
 
-	private static final FairySequence sequence = new FairySequenceBuilder()
+	private final StateGraph<EntityFairy> graph = new StateGraph.Builder<EntityFairy>()
 			.run(fairy -> {
 				if (fairy.isMoving()) return false;
 
@@ -70,7 +69,7 @@ public class FairyTaskMove extends FairyTask {
 
 	@Override
 	public void onTick(EntityFairy fairy) {
-		sequence.tick(fairy);
+		graph.offer(fairy);
 	}
 
 	@Override

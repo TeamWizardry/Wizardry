@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.core.fairytasks;
 
-import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairySequence;
-import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairySequenceBuilder;
+import com.teamwizardry.wizardry.api.StateGraph;
 import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTask;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.entity.Entity;
@@ -15,61 +14,58 @@ import javax.annotation.Nullable;
 
 public class FairyTaskGrabItems extends FairyTask {
 
-	private static FairySequence sequence = new FairySequenceBuilder()
-			.run(fairy -> {
-				if (fairy.isMoving()) return false;
+	private final StateGraph<EntityFairy> graph = new StateGraph.Builder<EntityFairy>()
+			.runWhile(fairy -> true, entityFairyBuilder -> entityFairyBuilder
+					.runIf(fairy -> !fairy.isMoving(), fairy -> {
+						boolean isPriorityTaken = isPriorityTaken(fairy);
 
-				boolean isPriorityTaken = isPriorityTaken(fairy);
+						for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(5))) {
+							if (entityItem == null || entityItem.cannotPickup()) continue;
 
-				for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(5))) {
-					if (entityItem == null || entityItem.cannotPickup()) continue;
+							if (isPriorityTaken && fairy.getDataHeldItem().isEmpty()) {
+								fairy.setDataHeldItem(entityItem.getItem());
+							} else fairy.moveTo(entityItem.getPositionVector());
 
-					if (isPriorityTaken) {
-						fairy.setDataHeldItem(entityItem.getItem());
-					} else fairy.moveTo(entityItem.getPositionVector());
+							return true;
+						}
 
-					return true;
-				}
-				return false;
-			})
-			.waitIf(fairy -> fairy.isMoving() || !isPriorityTaken(fairy), 5)
-			.run(fairy -> {
-				if (fairy.isMoving()) return false;
-				if (fairy.originPos == null) return true;
+						return false;
+					})
+					.waitIf(fairy -> !isPriorityTaken(fairy), 10)
+					.runIf(fairy -> !fairy.isMoving(), fairy -> {
+						if (fairy.originPos == null) return false;
 
-				boolean isPriorityTaken = isPriorityTaken(fairy);
+						boolean isPriorityTaken = isPriorityTaken(fairy);
+						if (isPriorityTaken) return true;
 
-				if (!isPriorityTaken) {
-					for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(5))) {
-						if (entityItem == null || entityItem.cannotPickup()) continue;
+						for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(5))) {
+							if (entityItem == null || entityItem.cannotPickup()) continue;
 
-						fairy.setDataHeldItem(entityItem.getItem());
-						fairy.world.removeEntity(entityItem);
-						fairy.moveTo(fairy.originPos);
-						return true;
-					}
-				} else return true;
+							fairy.setDataHeldItem(entityItem.getItem());
+							fairy.world.removeEntity(entityItem);
+							fairy.moveTo(fairy.originPos);
+							return true;
+						}
 
-				return false;
-			})
-			.run(fairy -> {
-				if (fairy.isMoving()) return false;
-
-				ItemStack heldItem = fairy.getDataHeldItem();
-				if (heldItem.isEmpty()) return true;
-
-				EntityItem entityItem = new EntityItem(fairy.world, fairy.posX, fairy.posY, fairy.posZ, heldItem.copy());
-				entityItem.motionX = 0;
-				entityItem.motionY = 0;
-				entityItem.motionZ = 0;
-				entityItem.setPickupDelay(50);
-				if (fairy.world.spawnEntity(entityItem)) {
-					fairy.setDataHeldItem(ItemStack.EMPTY);
-				}
-
-				return true;
-			})
+						return false;
+					})
+					.runOnceIf(fairy -> !fairy.isMoving(), FairyTaskGrabItems::popItemFromHand)
+					.waitIf(fairy -> !isPriorityTaken(fairy), 10))
 			.build();
+
+	private static void popItemFromHand(EntityFairy fairy) {
+		ItemStack heldItem = fairy.getDataHeldItem();
+		if (heldItem.isEmpty()) return;
+
+		EntityItem entityItem = new EntityItem(fairy.world, fairy.posX, fairy.posY, fairy.posZ, heldItem.copy());
+		entityItem.motionX = 0;
+		entityItem.motionY = 0;
+		entityItem.motionZ = 0;
+		entityItem.setPickupDelay(50);
+		if (fairy.world.spawnEntity(entityItem)) {
+			fairy.setDataHeldItem(ItemStack.EMPTY);
+		}
+	}
 
 	@Override
 	public int getPriority() {
@@ -83,23 +79,13 @@ public class FairyTaskGrabItems extends FairyTask {
 
 	@Override
 	public void onTick(EntityFairy fairy) {
-		sequence.tick(fairy);
+		graph.offer(fairy);
 	}
 
 	@Override
 	public void onForceTrigger(EntityFairy fairy) {
 
-		ItemStack heldItem = fairy.getDataHeldItem();
-		if (heldItem.isEmpty()) return;
-
-		EntityItem entityItem = new EntityItem(fairy.world, fairy.posX, fairy.posY, fairy.posZ, heldItem.copy());
-		entityItem.motionX = 0;
-		entityItem.motionY = 0;
-		entityItem.motionZ = 0;
-		entityItem.setPickupDelay(50);
-		if (fairy.world.spawnEntity(entityItem)) {
-			fairy.setDataHeldItem(ItemStack.EMPTY);
-		}
+		popItemFromHand(fairy);
 	}
 
 	@Override
