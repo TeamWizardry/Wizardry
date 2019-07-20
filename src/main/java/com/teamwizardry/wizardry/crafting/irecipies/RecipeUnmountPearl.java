@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
@@ -23,7 +24,7 @@ public class RecipeUnmountPearl extends IForgeRegistryEntry.Impl<IRecipe> implem
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.STAFF) {
+			if (stack.getItem() instanceof IPearlSwappable) {
 
 				if (stack.getItemDamage() == 1) {
 					if (foundStaff) return false;
@@ -41,7 +42,7 @@ public class RecipeUnmountPearl extends IForgeRegistryEntry.Impl<IRecipe> implem
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.STAFF) {
+			if (stack.getItem() instanceof IPearlSwappable) {
 
 				if (stack.getItemDamage() == 1) {
 					foundStaff = stack;
@@ -76,8 +77,8 @@ public class RecipeUnmountPearl extends IForgeRegistryEntry.Impl<IRecipe> implem
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.STAFF) {
-				remainingItems.set(i, new ItemStack(ModItems.STAFF));
+			if (stack.getItem() instanceof IPearlSwappable) {
+				remainingItems.set(i, new ItemStack(stack.getItem()));
 			}
 		}
 
