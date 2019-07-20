@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
@@ -17,6 +18,8 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque on 6/13/2016.
  */
 public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+	
+	
 	@Override
 	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
 		boolean foundBaseItem = false;
@@ -24,7 +27,7 @@ public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implemen
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.STAFF) {
+			if (stack.getItem() instanceof IPearlSwappable) {
 
 				if (stack.getItemDamage() == 0)
 					foundBaseItem = true;
@@ -46,7 +49,7 @@ public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implemen
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.STAFF) {
+			if (stack.getItem() instanceof IPearlSwappable) {
 				if (stack.getItemDamage() == 0)
 					staff = stack;
 			}
