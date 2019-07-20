@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 public class ManaCapabilityProvider implements ICapabilitySerializable<NBTTagCompound> {
 
 	@CapabilityInject(IManaCapability.class)
-	public static final Capability<IManaCapability> manaCapability = null;
+	public static final Capability<IManaCapability> MANA_CAPABILITY = null;
 	private final IManaCapability capability;
 
 	public ManaCapabilityProvider() {
@@ -34,7 +34,7 @@ public class ManaCapabilityProvider implements ICapabilitySerializable<NBTTagCom
 
 	@Nullable
 	public static IManaCapability getCap(Entity entity) {
-		return entity.getCapability(manaCapability, null);
+		return entity.getCapability(MANA_CAPABILITY, null);
 	}
 
 	@Nullable
@@ -42,24 +42,24 @@ public class ManaCapabilityProvider implements ICapabilitySerializable<NBTTagCom
 		if (!world.isBlockLoaded(pos)) return null;
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile == null) return null;
-		return tile.getCapability(manaCapability, facing);
+		return tile.getCapability(MANA_CAPABILITY, facing);
 	}
 
 	@Nullable
 	public static IManaCapability getCap(ItemStack stack) {
 		if (BaublesSupport.isBauble(stack)) return new BaubleManaCapability(stack);
-		return stack.getCapability(manaCapability, null);
+		return stack.getCapability(MANA_CAPABILITY, null);
 	}
 
 	@Override
 	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-		return capability == manaCapability;
+		return capability == MANA_CAPABILITY;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-		if ((manaCapability != null) && (capability == manaCapability)) return (T) this.capability;
+		if ((MANA_CAPABILITY != null) && (capability == MANA_CAPABILITY)) return (T) this.capability;
 		return null;
 	}
 

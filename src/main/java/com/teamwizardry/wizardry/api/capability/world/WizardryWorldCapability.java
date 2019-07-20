@@ -26,7 +26,7 @@ public final class WizardryWorldCapability {
 
 	public static Capability<WizardryWorld> capability() {
 		//noinspection ConstantConditions
-		return Objects.requireNonNull(CAPABILITY, "CAPABILITY");
+		return Objects.requireNonNull(CAPABILITY, "MANA_CAPABILITY");
 	}
 
 	// call in preinit

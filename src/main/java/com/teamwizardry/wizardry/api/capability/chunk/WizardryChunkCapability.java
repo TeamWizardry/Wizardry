@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.api.capability.chunk;
 
-import java.util.Objects;
-
 import com.teamwizardry.wizardry.Wizardry;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -16,6 +13,8 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.Objects;
+
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public final class WizardryChunkCapability
 {
@@ -27,7 +26,7 @@ public final class WizardryChunkCapability
 	
 	public static Capability<WizardryChunk> capability()
 	{
-		return Objects.requireNonNull(CAPABILITY, "CAPABILITY");
+		return Objects.requireNonNull(CAPABILITY, "MANA_CAPABILITY");
 	}
 	
 	public static void init()

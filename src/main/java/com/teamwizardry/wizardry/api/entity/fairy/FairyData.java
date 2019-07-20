@@ -250,13 +250,13 @@ public class FairyData implements INBTSerializable<NBTTagCompound>, ICapabilityP
 
 	@Override
 	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-		return capability == ManaCapabilityProvider.manaCapability;
+		return capability == ManaCapabilityProvider.MANA_CAPABILITY;
 	}
 
 	@Nullable
 	@Override
 	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-		return capability == ManaCapabilityProvider.manaCapability ? (T) handler : null;
+		return capability == ManaCapabilityProvider.MANA_CAPABILITY ? (T) handler : null;
 	}
 
 	@Override

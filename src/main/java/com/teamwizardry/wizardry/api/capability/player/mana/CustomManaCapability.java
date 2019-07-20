@@ -108,12 +108,12 @@ public class CustomManaCapability implements IManaCapability {
 
 	@Override
 	public NBTTagCompound serializeNBT() {
-		return (NBTTagCompound) ManaCapabilityStorage.INSTANCE.writeNBT(ManaCapabilityProvider.manaCapability, this, null);
+		return (NBTTagCompound) ManaCapabilityStorage.INSTANCE.writeNBT(ManaCapabilityProvider.MANA_CAPABILITY, this, null);
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound compound) {
-		ManaCapabilityStorage.INSTANCE.readNBT(ManaCapabilityProvider.manaCapability, this, null, compound);
+		ManaCapabilityStorage.INSTANCE.readNBT(ManaCapabilityProvider.MANA_CAPABILITY, this, null, compound);
 	}
 
 	@Override

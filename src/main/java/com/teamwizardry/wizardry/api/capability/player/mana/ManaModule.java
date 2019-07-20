@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class ManaModule extends ModuleCapability<CustomManaCapability> {
 
 	public ManaModule(CustomManaCapability capability) {
-		super(ManaCapabilityProvider.manaCapability, capability);
+		super(ManaCapabilityProvider.MANA_CAPABILITY, capability);
 	}
 
 	@Override
