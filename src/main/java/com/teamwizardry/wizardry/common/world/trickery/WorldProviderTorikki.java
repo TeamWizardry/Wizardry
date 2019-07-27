@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.world.trickery;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.common.world.biome.BiomeTorikki;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -45,6 +46,11 @@ public class WorldProviderTorikki extends WorldProvider {
 	@Override
 	public Biome getBiomeForCoords(@Nonnull BlockPos pos) {
 		return new BiomeTorikki(new Biome.BiomeProperties("torikki"));
+	}
+
+	@Override
+	public void init() {
+		setDimension(ConfigValues.torikkiID);
 	}
 
 	@Override
