@@ -11,47 +11,76 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class FairyTaskGrabItems extends FairyTask {
 
 	private final StateGraph<EntityFairy> graph = new StateGraph.Builder<EntityFairy>()
 			.runWhile(fairy -> true, entityFairyBuilder -> entityFairyBuilder
-					.runIf(fairy -> !fairy.isMoving(), fairy -> {
-						boolean isPriorityTaken = isPriorityTaken(fairy);
+					.run(fairy -> {
+						if (fairy.isMoving()) return false;
 
-						for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(5))) {
-							if (entityItem == null || entityItem.cannotPickup()) continue;
+						EntityItem farthestItem = getFarthestStack(fairy);
+						if (farthestItem == null || farthestItem.getDistanceSq(fairy) < 1) return false;
 
-							if (isPriorityTaken && fairy.getDataHeldItem().isEmpty()) {
-								fairy.setDataHeldItem(entityItem.getItem());
-							} else fairy.moveTo(entityItem.getPositionVector());
+						if (isPriorityTaken(fairy)) {
+							fairy.setDataHeldItem(farthestItem.getItem());
+							fairy.world.removeEntity(farthestItem);
+						} else fairy.moveTo(farthestItem.getPosition());
 
-							return true;
-						}
-
-						return false;
+						return true;
 					})
-					.waitIf(fairy -> !isPriorityTaken(fairy), 10)
-					.runIf(fairy -> !fairy.isMoving(), fairy -> {
+
+
+					.run(fairy -> {
+						if (fairy.isMoving()) return false;
 						if (fairy.originPos == null) return false;
 
-						boolean isPriorityTaken = isPriorityTaken(fairy);
-						if (isPriorityTaken) return true;
+						if (isPriorityTaken(fairy)) return true;
 
-						for (EntityItem entityItem : fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(5))) {
-							if (entityItem == null || entityItem.cannotPickup()) continue;
+						EntityItem closestItem = getClosestStack(fairy);
+						if (closestItem == null) return false;
 
-							fairy.setDataHeldItem(entityItem.getItem());
-							fairy.world.removeEntity(entityItem);
-							fairy.moveTo(fairy.originPos);
-							return true;
-						}
+						fairy.setDataHeldItem(closestItem.getItem());
+						fairy.world.removeEntity(closestItem);
+						fairy.moveTo(fairy.originPos);
+						return true;
 
-						return false;
 					})
-					.runOnceIf(fairy -> !fairy.isMoving(), FairyTaskGrabItems::popItemFromHand)
-					.waitIf(fairy -> !isPriorityTaken(fairy), 10))
+
+					.run(fairy -> {
+						if (fairy.isMoving()) return false;
+						if (isPriorityTaken(fairy)) return true;
+
+						popItemFromHand(fairy);
+						return true;
+					})
+
+					.wait(5))
+
 			.build();
+
+	private static List<EntityItem> getEntityItems(EntityFairy fairy) {
+		return fairy.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(fairy.getPosition()).grow(3), input -> input != null && !input.cannotPickup());
+	}
+
+	@Nullable
+	private static EntityItem getClosestStack(EntityFairy fairy) {
+		List<EntityItem> list = getEntityItems(fairy);
+		list.sort((o1, o2) -> o1.getDistanceSq(fairy) < o2.getDistanceSq(fairy) ? -1 : 1);
+
+		if (list.isEmpty()) return null;
+		else return list.get(0);
+	}
+
+	@Nullable
+	private static EntityItem getFarthestStack(EntityFairy fairy) {
+		List<EntityItem> list = getEntityItems(fairy);
+		list.sort((o1, o2) -> o1.getDistanceSq(fairy) < o2.getDistanceSq(fairy) ? 1 : -1);
+
+		if (list.isEmpty()) return null;
+		else return list.get(0);
+	}
 
 	private static void popItemFromHand(EntityFairy fairy) {
 		ItemStack heldItem = fairy.getDataHeldItem();

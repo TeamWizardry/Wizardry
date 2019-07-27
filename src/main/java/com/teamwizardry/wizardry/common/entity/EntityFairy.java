@@ -288,6 +288,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 			}
 		}
 
+		ProjectileHelper.rotateTowardsMovement(this, 0.5F);
 		if (!world.isRemote)
 			fairyTaskController.tick(this);
 
@@ -299,7 +300,8 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 				if (currentTarget == null) return;
 
-				if (getPositionVector().distanceTo(currentTarget) < 0.5) {
+				double v = getPositionVector().distanceTo(currentTarget);
+				if (v <= 0.5) {
 					setPosition(currentTarget.x, currentTarget.y, currentTarget.z);
 					motionX = 0;
 					motionY = 0;
@@ -324,7 +326,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 				}
 
 				this.setPosition(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-				ProjectileHelper.rotateTowardsMovement(this, 0.5F);
 
 				if (this.world.isRemote) {
 					this.world.spawnParticle(EnumParticleTypes.END_ROD, this.posX - this.motionX, this.posY - this.motionY + 0.15D, this.posZ - this.motionZ, 0.0D, 0.0D, 0.0D);

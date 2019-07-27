@@ -12,49 +12,49 @@ import javax.annotation.Nullable;
 public class FairyTaskMove extends FairyTask {
 
 	private final StateGraph<EntityFairy> graph = new StateGraph.Builder<EntityFairy>()
-			.run(fairy -> {
-				if (fairy.isMoving()) return false;
+			.runWhile(fairy -> true, entityFairyBuilder -> entityFairyBuilder
 
+					.run(fairy -> {
+						if (fairy.isMoving()) return false;
+						if (fairy.targetPos == null) return false;
+
+						fairy.moveTo(fairy.targetPos);
+
+						return true;
+					})
+
+					.run(fairy -> {
+						EntityFairy chained = getChainedFairy(fairy);
+						if (chained != null) {
+							chained.fairyTaskController.getTask().onForceTrigger(chained);
+						}
+
+						return true;
+					})
+
+					.wait(5)
+
+					.run(fairy -> {
+						if (fairy.isMoving()) return false;
+						if (fairy.originPos == null) return false;
+
+						fairy.moveTo(fairy.originPos);
+
+						return true;
+					})
+					.wait(10))
+			.build();
+
+	private final StateGraph<EntityFairy> draggerGraph = new StateGraph.Builder<EntityFairy>()
+			.runWhile(fairy -> true, entityFairyBuilder -> entityFairyBuilder.run(fairy -> {
 				EntityFairy attached = getChainedFairy(fairy);
 				if (attached != null && attached.fairyTaskController.getTask().getPriority() < fairy.fairyTaskController.getTask().getPriority()) {
 					Vec3d look = fairy.getLookVec();
 					Vec3d targetPos = fairy.getPositionVector().add(look);
-					attached.setPosition(targetPos.x, targetPos.y, targetPos.z);
+					attached.setPositionAndUpdate(targetPos.x, targetPos.y, targetPos.z);
 				}
-
-				if (fairy.targetPos == null) return false;
-
-				fairy.moveTo(fairy.targetPos);
-
 				return true;
-			})
-			.wait(5)
-			.run(fairy -> {
-				EntityFairy chained = getChainedFairy(fairy);
-				if (chained != null) {
-					chained.fairyTaskController.getTask().onForceTrigger(chained);
-				}
-
-				return true;
-			})
-			.wait(5)
-			.run(fairy -> {
-				if (fairy.isMoving()) return false;
-
-				EntityFairy attached = getChainedFairy(fairy);
-				if (attached != null && attached.fairyTaskController.getTask().getPriority() < fairy.fairyTaskController.getTask().getPriority()) {
-					Vec3d look = fairy.getLookVec();
-					Vec3d targetPos = fairy.getPositionVector().add(look);
-					attached.setPosition(targetPos.x, targetPos.y, targetPos.z);
-				}
-
-				if (fairy.originPos == null) return false;
-
-				fairy.moveTo(fairy.originPos);
-
-				return true;
-			})
-			.wait(10)
+			}).wait(1))
 			.build();
 
 	@Override
@@ -70,6 +70,7 @@ public class FairyTaskMove extends FairyTask {
 	@Override
 	public void onTick(EntityFairy fairy) {
 		graph.offer(fairy);
+		draggerGraph.offer(fairy);
 	}
 
 	@Override

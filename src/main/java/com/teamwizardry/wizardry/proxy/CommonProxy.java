@@ -82,7 +82,7 @@ public class CommonProxy {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", ConfigValues.underworldID, WorldProviderUnderWorld.class, false);
-		Wizardry.torikki = DimensionType.register("torikki","_dim",ConfigValues.torikkiID, WorldProviderTorikki.class,false);
+		Wizardry.torikki = DimensionType.register("torikki", "_dim", ConfigValues.torikkiID, WorldProviderTorikki.class, false);
 		DimensionManager.registerDimension(ConfigValues.underworldID, Wizardry.underWorld);
 		DimensionManager.registerDimension(ConfigValues.torikkiID, Wizardry.torikki);
 

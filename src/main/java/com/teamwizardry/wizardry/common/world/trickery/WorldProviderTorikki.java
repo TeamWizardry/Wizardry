@@ -50,6 +50,7 @@ public class WorldProviderTorikki extends WorldProvider {
 
 	@Override
 	public void init() {
+		super.init();
 		setDimension(ConfigValues.torikkiID);
 	}
 

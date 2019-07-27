@@ -51,6 +51,7 @@ public class WorldProviderUnderWorld extends WorldProvider {
 
 	@Override
 	public void init() {
+		super.init();
 		biomeProvider = new BiomeProviderSingle(ModBiomes.BIOME_UNDERWORLD);
 		setDimension(ConfigValues.underworldID);
 	}
