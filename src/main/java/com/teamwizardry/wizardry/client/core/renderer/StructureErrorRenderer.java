@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -34,7 +35,7 @@ public class StructureErrorRenderer {
 	private static final List<ParticleError> errors = new ArrayList<>();
 	private static final Deque<ParticleError> adds = new ArrayDeque<>();
 
-	public static void addError(BlockPos pos) {
+	public static void addError(@Nonnull BlockPos pos) {
 		for (ParticleError error : errors) {
 			if (error == null) continue;
 			if (error.pos.equals(pos)) return;

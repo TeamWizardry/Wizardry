@@ -54,7 +54,7 @@ public class FairyTaskMove extends FairyTask {
 					attached.setPositionAndUpdate(targetPos.x, targetPos.y, targetPos.z);
 				}
 				return true;
-			}).wait(1))
+			}))
 			.build();
 
 	@Override

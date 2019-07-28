@@ -39,7 +39,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -54,6 +58,7 @@ import static com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskReg
 /**
  * Created by Demoniaque on 8/21/2016.
  */
+@Mod.EventBusSubscriber
 public class EntityFairy extends EntityTameable implements EntityFlying {
 	private static final DataParameter<ItemStack> DATA_HELD_ITEM = EntityDataManager.createKey(EntityFairy.class, DataSerializers.ITEM_STACK);
 	private static final DataParameter<NBTTagCompound> DATA_FAIRY = EntityDataManager.createKey(EntityFairy.class, DataSerializers.COMPOUND_TAG);
@@ -74,6 +79,8 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 	private double targetDeltaX;
 	private double targetDeltaY;
 	private double targetDeltaZ;
+
+	private boolean stunned = false;
 
 	@Nullable
 	public BlockPos originPos = null, targetPos = null;
@@ -253,6 +260,51 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		return true;
 	}
 
+	@SubscribeEvent
+	public static void onStun(TickEvent.WorldTickEvent event) {
+		if (event.side == Side.CLIENT) return;
+
+		for (EntityFairy fairy : event.world.getEntities(EntityFairy.class, input -> input != null && !input.isDead)) {
+
+			fairy.stunned = false;
+
+			secondary:
+			for (EntityPlayer player : event.world.getEntitiesWithinAABB(EntityPlayer.class, fairy.getEntityBoundingBox().grow(5))) {
+
+				for (EnumHand hand : EnumHand.values()) {
+					ItemStack stack = player.getHeldItem(hand);
+
+					if (stack.getItem() == ModItems.FAIRY_BELL) {
+						fairy.stunned = true;
+						break secondary;
+					}
+				}
+			}
+		}
+	}
+
+	public void moveTo(@Nonnull BlockPos pos) {
+		Vec3d to = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+		moveTo(to);
+	}
+
+	public void moveTo(@Nonnull Vec3d to) {
+		currentTarget = to;
+		currentOrigin = getPositionVector();
+		moving = true;
+
+		for (EnumFacing facing : EnumFacing.values()) {
+			if (world.isAirBlock(getPosition().offset(facing))) {
+				this.selectNextMoveDirection(facing.getAxis());
+				return;
+			}
+		}
+	}
+
+	public boolean isMoving() {
+		return moving;
+	}
+
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
@@ -289,14 +341,14 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		}
 
 		ProjectileHelper.rotateTowardsMovement(this, 0.5F);
-		if (!world.isRemote)
+		if (!world.isRemote && !isStunned())
 			fairyTaskController.tick(this);
 
 		if (dataFairy != null && getNavigator().noPath())
 			if (!dataFairy.isDepressed) {
 				getMoveHelper().setMoveTo(posX + RandUtil.nextDouble(-32, 32), posY + RandUtil.nextDouble(-32, 32), posZ + RandUtil.nextDouble(-32, 32), 2);
 
-			} else if (moving) {
+			} else if (moving && !isStunned()) {
 
 				if (currentTarget == null) return;
 
@@ -327,9 +379,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 				this.setPosition(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
-				if (this.world.isRemote) {
-					this.world.spawnParticle(EnumParticleTypes.END_ROD, this.posX - this.motionX, this.posY - this.motionY + 0.15D, this.posZ - this.motionZ, 0.0D, 0.0D, 0.0D);
-				} else if (this.currentTarget != null) {
+				if (this.currentTarget != null) {
 					if (this.steps > 0) {
 						--this.steps;
 
@@ -354,28 +404,6 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 					}
 				}
 			}
-	}
-
-	public void moveTo(@Nonnull BlockPos pos) {
-		Vec3d to = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-		moveTo(to);
-	}
-
-	public void moveTo(@Nonnull Vec3d to) {
-		currentTarget = to;
-		currentOrigin = getPositionVector();
-		moving = true;
-
-		for (EnumFacing facing : EnumFacing.values()) {
-			if (world.isAirBlock(getPosition().offset(facing))) {
-				this.selectNextMoveDirection(facing.getAxis());
-				return;
-			}
-		}
-	}
-
-	public boolean isMoving() {
-		return moving;
 	}
 
 	private void setDirection(@Nullable EnumFacing directionIn) {
@@ -559,6 +587,10 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		entityDropItem(fairyWings, RandUtil.nextFloat());
 	}
 
+	public boolean isStunned() {
+		return stunned;
+	}
+
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
@@ -590,6 +622,10 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 
 		if (NBTHelper.hasKey(compound, "moving")) {
 			moving = NBTHelper.getBoolean(compound, "moving", true);
+		}
+
+		if (NBTHelper.hasKey(compound, "stunned")) {
+			stunned = NBTHelper.getBoolean(compound, "stunned", true);
 		}
 
 		if (NBTHelper.hasKey(compound, "fairy_task")) {
@@ -652,6 +688,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		}
 
 		compound.setBoolean("moving", moving);
+		compound.setBoolean("stunned", stunned);
 
 		NBTHelper.setString(compound, "fairy_task", fairyTaskController.getLocation().toString());
 	}
