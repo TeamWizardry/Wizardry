@@ -394,7 +394,7 @@ wizardry.pearlui.belt_full=Belt Full
 wizardry.pearlui.pop_pearls=Click any of the pearls to pop them out of the belt
 wizardry.pearlui.attach_pearls=Click here to attach all pearls in your inventory to this belt
 
-wizardry.table.spell_loaded=Spell loaded from condex.
+wizardry.table.spell_loaded=Spell loaded from codex.
 wizardry.table.paper_cleared=Paper cleared.
 wizardry.table.spell_saved=Spell saved to codex successfully! Open the book and check the new spell recipe tab.
 wizardry.table.no_codex_found=You do not have a codex in your inventory! Once you have one, you can save your spell into the book.
