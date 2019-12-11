@@ -210,7 +210,20 @@ public class WorktableGui extends GuiBase {
 					CommonWorktableModule lastCommonModule = new CommonWorktableModule(head.hashCode(), head.getModule(), head.getPos(), null, new HashMap<>());
 					commonModules.add(lastCommonModule);
 					chain.add(head.getModule());
+					
+					// Add head modifiers
+					for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+						if (!(module instanceof ModuleInstanceModifier)) continue;
+						if (!head.hasData(Integer.class, module.getNBTKey())) continue;
 
+						int count = head.getData(Integer.class, module.getNBTKey());
+						lastCommonModule.addModifier((ModuleInstanceModifier) module, count);
+
+						for (int i = 0; i < count; i++) {
+							chain.add(module);
+						}
+					}
+					
 					TableModule linksTo = head.getLinksTo();
 					while (linksTo != null) {
 						if (linksTo.isInvalid()) continue;
