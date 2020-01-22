@@ -12,6 +12,8 @@ All that is still to come, however, for now it is time to take your first steps.
 
 Good luck.
 
+# FRESH START, STILL VERY WIP
+
 ## For Packmakers:
 
 ### Mana Recipe Format

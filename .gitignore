@@ -26,3 +26,6 @@ kotlinlib/
 
 .DS_Store
 /src/main/java/com/teamwizardry/wizardry/client/quaeritumrender/
+
+# Files from Forge MDK
+forge*changelog.txt

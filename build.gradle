@@ -1,93 +1,101 @@
 buildscript {
     repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+version = '0.1'
+group = 'com.teamwizardry.wizardry'
+archivesBaseName = 'wizardry'
 
-version = "$mod_version"
-group = "com.teamwizardry"
-archivesBaseName = "wizardry"
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    version = "$mc_version-$forge_version"
-    runDir = "run"
-    mappings = "$mcp_version"
+    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    replace 'GRADLE:VERSION', "$mod_version"
-    replace 'required-before:librarianlib', "required-before:librarianlib@[$liblib_version]"
+    runs {
+        client {
+            workingDirectory project.file('run')
 
-    replaceIn 'Wizardry.java'
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
-    clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin,com.teamwizardry.librarianlib.asm.LibLibCorePlugin"]
-    serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin,com.teamwizardry.librarianlib.asm.LibLibCorePlugin"]
-}
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-    maven { url = "http://maven.bluexin.be/repository/snapshots/" }
-	maven { url = "http://dvs1.progwml6.com/files/maven" }
-	maven { url = "http://tehnut.info/maven" }
-	maven { url = "http://maven.tterrag.com/" }
-    maven { url = "http://maven.thiakil.com" }
+            mods {
+                wizardry {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                wizardry {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                wizardry {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 dependencies {
-	compile ("com.teamwizardry.librarianlib:librarianlib-1.12.2:feature-neogui-4.20-SNAPSHOT") {changing = true}
-	deobfCompile "mezz.jei:jei_1.12.2:$jei_version:api"
-	runtime "mezz.jei:jei_1.12.2:$jei_version"
-	runtime "team.chisel.ctm:CTM:$ctm_version"
-    deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.0'
 
-    // https://mvnrepository.com/artifact/ai.api/libai
-    //compile group: 'ai.api', name: 'libai', version: '1.6.12'
-
+    implementation 'org.yaml:snakeyaml:1.21'
 }
 
-jar {
-    manifest {
-        attributes(
-                "FMLCorePluginContainsFMLMod": "true",
-                "FMLCorePlugin": "$core_plugin"
-        )
-    }
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
 }
-
-processResources {
-    inputs.property 'mod_version', project.version
-    inputs.property 'mc_version', project.minecraft.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info', 'pack.mcmeta'
-        expand  'mod_version': project.version,
-                'mc_version': project.minecraft.version
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact reobfArtifact
+        }
     }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info', 'pack.mcmeta'
-    }
-}
-
-idea {
-    module {
-        inheritOutputDirs = false
-        outputDir = compileJava.destinationDir
-        testOutputDir = compileTestJava.destinationDir
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
     }
 }
