@@ -1,5 +1,5 @@
 # Wizardry
-[![Wizardry Curse Stats](http://cf.way2muchnoise.eu/full_278155_downloads.svg)](https://minecraft.curseforge.com/projects/wizardry-mod)
+[![Wizardry Curse Stats](http://cf.way2muchnoise.eu/full_278155_downloads.svg)](https://curseforge.com/minecraft/mc-mods/wizardry-mod)
 [![Build Status](https://travis-ci.org/TeamWizardry/Wizardry.svg?branch=master)](https://travis-ci.org/TeamWizardry/Wizardry)
 
 Power is everything. It is what has driven you to learn the craft of wizardry; what has driven you to shun the limited teachings of Botanists, Thaumaturges and their ilk to create your own spells. You are only just now taking the first steps of this journey by studying this book you hold in your hands but, with dedication, you can become the master of these arts and break the chains on magic.
