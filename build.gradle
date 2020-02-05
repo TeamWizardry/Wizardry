@@ -65,7 +65,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'wizardry', '--all', '--output', file('src/generated/resources/')
 
             mods {
                 wizardry {
@@ -76,10 +76,20 @@ minecraft {
     }
 }
 
+allprojects {
+	repositories {
+		maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+	}
+}
+
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.1.0'
 
     implementation 'org.yaml:snakeyaml:1.21'
+    implementation 'com.github.thecodewarrior:Prism:-SNAPSHOT'
 }
 
 def reobfFile = file("$buildDir/reobfJar/output.jar")

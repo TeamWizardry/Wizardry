@@ -24,9 +24,7 @@ public class Module
     private final List<String> tags;
     private final List<String> hiddenTags;
 
-    public Module(Pattern pattern, String name, Item item, Color primary,
-            Color secondary, Map<String, Range<Integer>> attributeRanges,
-            List<String> tags, List<String> hiddenTags)
+    public Module(Pattern pattern, String name, Item item, Color primary, Color secondary, Map<String, Range<Integer>> attributeRanges, List<String> tags, List<String> hiddenTags)
     {
         this.pattern = pattern;
         this.name = name;
@@ -64,8 +62,6 @@ public class Module
 
     public String toString()
     {
-        return PatternRegistry.getName(pattern) + ":" + name + " = [" + item
-                + ", " + primaryColor + ", " + secondaryColor + ", "
-                + attributeRanges + ", " + tags + ", " + hiddenTags + "]";
+        return PatternRegistry.getName(pattern) + ":" + name + " = [" + item + ", " + primaryColor + ", " + secondaryColor + ", " + attributeRanges + ", " + tags + ", " + hiddenTags + "]";
     }
 }

@@ -51,8 +51,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  * These individual tags must be in any order, but the nesting structure must be
  * preserved. The use of {@code []} may be used to inline lists of values
  * beginning with -, while <code>{}</code> may be used to inline other values,
- * but
- * ultimately the structure of the yaml must be as written.
+ * but ultimately the structure of the yaml must be as written.
  */
 @SuppressWarnings("unchecked")
 public class ModuleLoader
@@ -80,10 +79,7 @@ public class ModuleLoader
         {
             FileInputStream stream = new FileInputStream(file);
             Iterable<Object> out = yaml.loadAll(stream);
-            out.forEach(obj -> {
-                LOGGER.error(obj);
-                modules.add(compileModule((Map<String, Object>) obj));
-            });
+            out.forEach(obj -> { LOGGER.error(obj); modules.add(compileModule((Map<String, Object>) obj)); });
             stream.close();
         }
         catch (Exception e)
@@ -108,8 +104,7 @@ public class ModuleLoader
         // Straightforward components
         Pattern pattern = PatternRegistry.getPattern((String) yaml.get(MODULE));
         String name = (String) yaml.get(NAME);
-        Item item = ForgeRegistries.ITEMS
-                .getValue(new ResourceLocation((String) yaml.get(ITEM)));
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation((String) yaml.get(ITEM)));
         List<String> tags = (List<String>) yaml.get(TAGS);
         List<String> hiddenTags = (List<String>) yaml.get(HIDDEN);
         // Colors
@@ -117,16 +112,15 @@ public class ModuleLoader
         Color primary = new Color(colorMap.get(PRIMARY));
         Color secondary = new Color(colorMap.get(SECONDARY));
         // Attributes
-        Map<String, Map<String, Integer>> attributeMap = (Map<String, Map<String, Integer>>) yaml
-                .get(ATTRIBUTES);
+        Map<String, Map<String, Integer>> attributeMap = (Map<String, Map<String, Integer>>) yaml.get(ATTRIBUTES);
         Map<String, Range<Integer>> attributeRanges = new HashMap<>();
-        attributeMap.entrySet().stream().forEach(attribute -> {
-            int min = attribute.getValue().getOrDefault(MIN, 0);
-            int max = attribute.getValue().getOrDefault(MAX, Integer.MAX_VALUE);
-            attributeRanges.put(attribute.getKey(), Range.between(min, max));
-        });
+        attributeMap.entrySet().stream()
+                .forEach(attribute -> {
+                    int min = attribute.getValue().getOrDefault(MIN, 0);
+                    int max = attribute.getValue().getOrDefault(MAX, Integer.MAX_VALUE);
+                    attributeRanges.put(attribute.getKey(), Range.between(min, max));
+                });
 
-        return new Module(pattern, name, item, primary, secondary,
-                attributeRanges, tags, hiddenTags);
+        return new Module(pattern, name, item, primary, secondary, attributeRanges, tags, hiddenTags);
     }
 }
