@@ -7,6 +7,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.teamwizardry.wizardry.Wizardry;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+
 /**
  * Registry for mapping {@code modid:name} to Patterns for Module loading and
  * construction.
@@ -54,5 +57,11 @@ public class PatternRegistry
     }
 
     public static void registerPatterns()
-    { addPatterns(Wizardry.MODID, Pair.of("burn", new Pattern())); }
+    {
+        addPatterns(Wizardry.MODID, Pair.of("burn", new Pattern() {
+            @Override public void run() {}
+            @Override public void affectEntity(Entity entity) {}
+            @Override public void affectBlock(BlockPos pos) {}
+        }));
+    }
 }
