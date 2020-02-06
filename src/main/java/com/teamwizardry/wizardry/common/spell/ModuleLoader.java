@@ -3,10 +3,14 @@ package com.teamwizardry.wizardry.common.spell;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Range;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +22,8 @@ import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternRegistry;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -67,30 +73,35 @@ public class ModuleLoader
     private static final String MAX = "max";
     private static final String TAGS = "tags";
     private static final String HIDDEN = "hiddenTags";
+    
+    private static final Yaml yaml = new Yaml();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final FilenameFilter filter = (dir, name) -> name.endsWith(".yaml");
 
     public static void loadModules()
     {
-        Yaml yaml = new Yaml();
-        Logger LOGGER = LogManager.getLogger();
-        File file = new File("burnTest.yaml");
+        File modulesDir = new File("../src/main/resources/assets/wizardry/modules");
+        File shapesDir = new File(modulesDir, "shapes");
+        List<Module> shapes = Arrays.stream(shapesDir.list(filter))
+                                    .map(ModuleLoader::loadModules)
+                                    .flatMap(List::stream)
+                                    .collect(Collectors.toList());
+        shapes.forEach(LOGGER::info);
+    }
+    
+    public static List<Module> loadModules(String fileLocation)
+    {
         List<Module> modules = new LinkedList<>();
-
         try
         {
-            FileInputStream stream = new FileInputStream(file);
-            Iterable<Object> out = yaml.loadAll(stream);
-            out.forEach(obj -> { LOGGER.error(obj); modules.add(compileModule((Map<String, Object>) obj)); });
-            stream.close();
+            Iterable<Object> yamls = yaml.loadAll(new FileInputStream(new File(fileLocation)));
+            yamls.forEach(map -> modules.add(compileModule((Map<String, Object>) map)));
         }
-        catch (Exception e)
+        catch (FileNotFoundException e)
         {
             e.printStackTrace();
         }
-        finally
-        {
-            LOGGER.error("Finished parsing modules:");
-            modules.stream().forEach(LOGGER::error);
-        }
+        return modules;
     }
 
     /**
@@ -104,7 +115,16 @@ public class ModuleLoader
         // Straightforward components
         Pattern pattern = PatternRegistry.getPattern((String) yaml.get(MODULE));
         String name = (String) yaml.get(NAME);
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation((String) yaml.get(ITEM)));
+        Item item;
+        try
+        {
+            item = ForgeRegistries.ITEMS.getValue(new ResourceLocation((String) yaml.get(ITEM)));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            item = null;
+        }
         List<String> tags = (List<String>) yaml.get(TAGS);
         List<String> hiddenTags = (List<String>) yaml.get(HIDDEN);
         // Colors

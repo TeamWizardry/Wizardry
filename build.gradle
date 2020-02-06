@@ -90,6 +90,13 @@ dependencies {
 
     implementation 'org.yaml:snakeyaml:1.21'
     implementation 'com.github.thecodewarrior:Prism:-SNAPSHOT'
+    
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
+}
+
+test {
+	useJUnitPlatform()
+	testLogging.exceptionFormat = 'full'
 }
 
 def reobfFile = file("$buildDir/reobfJar/output.jar")

@@ -1,0 +1,32 @@
+module: wizardry:test
+name: zero
+item: minecraft:structure_block
+color: { primary: 0xFF3C3C, secondary: 0xA10000 }
+attributes:
+  mana:
+   min: 100
+  burnout:
+   min: 50
+  foo:
+   min: 1
+   max: 16
+  bar:
+   min: 5
+   max: 20
+tags: [ test, module ]
+hiddenTags: []
+---
+module: wizardry:test
+name: one
+item: minecraft:structure_void
+color: { primary: 0xFF3C3C, secondary: 0xA10000 }
+attributes:
+  mana:
+   min: 100
+  burnout:
+   min: 50
+  baz:
+   min: 20
+   max: 40
+tags: [ second, test ]
+hiddenTags: [ module ]
