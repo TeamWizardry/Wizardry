@@ -22,8 +22,6 @@ import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternRegistry;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -77,30 +75,32 @@ public class ModuleLoader
     private static final Yaml yaml = new Yaml();
     private static final Logger LOGGER = LogManager.getLogger();
     private static final FilenameFilter filter = (dir, name) -> name.endsWith(".yaml");
-
+    
+    public static boolean forgeLoaded = false;
+    
     public static void loadModules()
     {
         File modulesDir = new File("../src/main/resources/assets/wizardry/modules");
         File shapesDir = new File(modulesDir, "shapes");
         List<Module> shapes = Arrays.stream(shapesDir.list(filter))
+                                    .map(File::new)
                                     .map(ModuleLoader::loadModules)
                                     .flatMap(List::stream)
                                     .collect(Collectors.toList());
         shapes.forEach(LOGGER::info);
     }
     
-    public static List<Module> loadModules(String fileLocation)
+    public static List<Module> loadModules(File file)
     {
         List<Module> modules = new LinkedList<>();
-        try
-        {
-            Iterable<Object> yamls = yaml.loadAll(new FileInputStream(new File(fileLocation)));
-            yamls.forEach(map -> modules.add(compileModule((Map<String, Object>) map)));
-        }
-        catch (FileNotFoundException e)
-        {
+        FileInputStream stream;
+        try { stream = new FileInputStream(file); }
+        catch (FileNotFoundException e) {
             e.printStackTrace();
+            return modules;
         }
+        yaml.loadAll(stream).forEach(map -> 
+            modules.add(compileModule((Map<String, Object>) map)));
         return modules;
     }
 
@@ -115,16 +115,7 @@ public class ModuleLoader
         // Straightforward components
         Pattern pattern = PatternRegistry.getPattern((String) yaml.get(MODULE));
         String name = (String) yaml.get(NAME);
-        Item item;
-        try
-        {
-            item = ForgeRegistries.ITEMS.getValue(new ResourceLocation((String) yaml.get(ITEM)));
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            item = null;
-        }
+        Item item = forgeLoaded ? ForgeRegistries.ITEMS.getValue(new ResourceLocation((String) yaml.get(ITEM))) : null;
         List<String> tags = (List<String>) yaml.get(TAGS);
         List<String> hiddenTags = (List<String>) yaml.get(HIDDEN);
         // Colors

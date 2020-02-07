@@ -46,7 +46,7 @@ public class PatternRegistry
 
     public static String getName(Pattern pattern)
     {
-        return "Pattern=" + patterns.entrySet().stream()
+        return patterns.entrySet().stream()
                 .filter(mapEntry -> mapEntry.getValue().containsValue(pattern))
                 .findFirst().map(map -> {
                     return map.getKey() + ":" + map.getValue().entrySet()
