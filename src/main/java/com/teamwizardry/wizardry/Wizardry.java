@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.teamwizardry.wizardry.api.spell.PatternRegistry;
-import com.teamwizardry.wizardry.common.spell.ModuleLoader;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -27,6 +26,6 @@ public class Wizardry
 	public void init(final FMLCommonSetupEvent event)
 	{
 		LOGGER.info("Initializing!");
-		ModuleLoader.loadModules();
+//		ModuleLoader.loadModules();
 	}
 }

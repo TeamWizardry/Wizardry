@@ -1,27 +1,29 @@
 package com.teamwizardry.wizardry.common.spell;
 
 import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.Range;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternRegistry;
 
 import net.minecraft.item.Item;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -74,34 +76,40 @@ public class ModuleLoader
     
     private static final Yaml yaml = new Yaml();
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final FilenameFilter filter = (dir, name) -> name.endsWith(".yaml");
     
-    public static boolean forgeLoaded = false;
+    private static final String folder = Wizardry.MODID + "/module";
     
-    public static void loadModules()
+    public static void loadModules(IResourceManager resourceManager)
     {
-        File modulesDir = new File("../src/main/resources/assets/wizardry/modules");
-        File shapesDir = new File(modulesDir, "shapes");
-        List<Module> shapes = Arrays.stream(shapesDir.list(filter))
-                                    .map(File::new)
-                                    .map(ModuleLoader::loadModules)
-                                    .flatMap(List::stream)
-                                    .collect(Collectors.toList());
+        List<Module> shapes = new LinkedList<>();
+        
+        for (ResourceLocation file : resourceManager.getAllResourceLocations(folder, n -> n.endsWith(".yaml")))
+        {
+            try
+            {
+                for (IResource resource : resourceManager.getAllResources(file))
+                {
+                    shapes.addAll(loadModules(resource.getInputStream(),
+                                              PatternRegistry::getPattern,
+                                              ForgeRegistries.ITEMS::getValue));
+                }
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
         shapes.forEach(LOGGER::info);
     }
     
-    public static List<Module> loadModules(File file)
+    public static List<Module> loadModules(InputStream file, Function<String, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
     {
-        List<Module> modules = new LinkedList<>();
-        FileInputStream stream;
-        try { stream = new FileInputStream(file); }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return modules;
-        }
-        yaml.loadAll(stream).forEach(map -> 
-            modules.add(compileModule((Map<String, Object>) map)));
-        return modules;
+        return StreamSupport.stream(yaml.loadAll(file).spliterator(), false)
+                            .map(map -> compileModule(
+                                    (Map<String, Object>) map,
+                                    patternSupplier,
+                                    itemSupplier))
+                            .collect(Collectors.toList());
     }
 
     /**
@@ -110,12 +118,12 @@ public class ModuleLoader
      * @param yaml The parsed yaml
      * @return A {@link Module} constructed from the values in the yaml
      */
-    private static Module compileModule(Map<String, Object> yaml)
+    private static Module compileModule(Map<String, Object> yaml, Function<String, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
     {
         // Straightforward components
-        Pattern pattern = PatternRegistry.getPattern((String) yaml.get(MODULE));
+        Pattern pattern = patternSupplier.apply((String) yaml.get(MODULE));
         String name = (String) yaml.get(NAME);
-        Item item = forgeLoaded ? ForgeRegistries.ITEMS.getValue(new ResourceLocation((String) yaml.get(ITEM))) : null;
+        Item item = itemSupplier.apply(new ResourceLocation((String) yaml.get(ITEM)));
         List<String> tags = (List<String>) yaml.get(TAGS);
         List<String> hiddenTags = (List<String>) yaml.get(HIDDEN);
         // Colors

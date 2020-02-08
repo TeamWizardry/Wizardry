@@ -2,8 +2,11 @@ package com.teamwizardry.wizardry.common.spell;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,7 +39,18 @@ public class ModuleLoaderTest
     @Test
     public void loadModules()
     {
-        List<Module> modules = ModuleLoader.loadModules(new File("src/test/resources/testModule.yaml"));
+        List<Module> modules;
+        try {
+            modules = ModuleLoader.loadModules(new FileInputStream(new File("src/test/resources/testModule.yaml")),
+                                               PatternRegistry::getPattern,
+                                               str -> null);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+            return;
+        }
         assertEquals(2, modules.size());
         
         Module zero = modules.get(0);
