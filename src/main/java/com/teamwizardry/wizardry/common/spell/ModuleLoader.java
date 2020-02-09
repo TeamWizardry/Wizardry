@@ -18,7 +18,10 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.Pattern;
+import com.teamwizardry.wizardry.api.spell.PatternEffect;
 
 import net.minecraft.item.Item;
 import net.minecraft.resources.IResource;
@@ -145,10 +148,6 @@ public class ModuleLoader
         Item item = itemSupplier.apply(new ResourceLocation((String) yaml.get(ITEM)));
         List<String> tags = (List<String>) yaml.get(TAGS);
         List<String> hiddenTags = (List<String>) yaml.get(HIDDEN);
-        // Colors
-        Map<String, Integer> colorMap = (Map<String, Integer>) yaml.get(COLOR);
-        Color primary = new Color(colorMap.get(PRIMARY));
-        Color secondary = new Color(colorMap.get(SECONDARY));
         // Attributes
         Map<String, Map<String, Integer>> attributeMap = (Map<String, Map<String, Integer>>) yaml.get(ATTRIBUTES);
         Map<String, Range<Integer>> attributeRanges = new HashMap<>();
@@ -159,6 +158,15 @@ public class ModuleLoader
                     attributeRanges.put(attribute.getKey(), Range.between(min, max));
                 });
 
-        return new Module(pattern, name, item, primary, secondary, attributeRanges, tags, hiddenTags);
+        if (pattern instanceof PatternEffect)
+        {
+            // Colors
+            Map<String, Integer> colorMap = (Map<String, Integer>) yaml.get(COLOR);
+            Color primary = new Color(colorMap.get(PRIMARY));
+            Color secondary = new Color(colorMap.get(SECONDARY));
+            return new ModuleEffect(pattern, name, item, primary, secondary, attributeRanges, tags, hiddenTags);
+        }
+        // Only pattern types are Shapes and Effects, so if not an Effect...
+        return new ModuleShape(pattern, name, item, attributeRanges, tags, hiddenTags);
     }
 }

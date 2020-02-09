@@ -1,7 +1,6 @@
 module: wizardry:test
 name: zero
 item: minecraft:structure_block
-color: { primary: 0xFF3C3C, secondary: 0xA10000 }
 attributes:
   mana:
    min: 100
@@ -19,7 +18,6 @@ hiddenTags: []
 module: wizardry:test
 name: one
 item: minecraft:structure_void
-color: { primary: 0xFF3C3C, secondary: 0xA10000 }
 attributes:
   mana:
    min: 100

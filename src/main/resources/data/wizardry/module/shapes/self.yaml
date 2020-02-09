@@ -1,0 +1,12 @@
+module: wizardry:self
+name: self
+item: minecraft:diamond
+attributes:
+  mana:
+    min: 30
+  burnout:
+    min: 20
+  cooldown:
+    min: 30
+tags: []
+hiddenTags: [ normal ]

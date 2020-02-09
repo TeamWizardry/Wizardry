@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 
@@ -11,26 +10,22 @@ import net.minecraft.item.Item;
 public class Module
 {
     // Identifying data - must be unique
-    private final Pattern pattern;
-    private final String name;
-    private final Item item;
+    protected final Pattern pattern;
+    protected final String name;
+    protected final Item item;
 
     // Variable data
-    private final Color primaryColor;
-    private final Color secondaryColor;
-    private final Map<String, Range<Integer>> attributeRanges;
+    protected final Map<String, Range<Integer>> attributeRanges;
 
     // Modifier and Usage Metadata
-    private final List<String> tags;
-    private final List<String> hiddenTags;
+    protected final List<String> tags;
+    protected final List<String> hiddenTags;
 
-    public Module(Pattern pattern, String name, Item item, Color primary, Color secondary, Map<String, Range<Integer>> attributeRanges, List<String> tags, List<String> hiddenTags)
+    public Module(Pattern pattern, String name, Item item, Map<String, Range<Integer>> attributeRanges, List<String> tags, List<String> hiddenTags)
     {
         this.pattern = pattern;
         this.name = name;
         this.item = item;
-        this.primaryColor = primary;
-        this.secondaryColor = secondary;
         this.attributeRanges = attributeRanges;
         this.tags = tags;
         this.hiddenTags = hiddenTags;
@@ -45,12 +40,6 @@ public class Module
     public Item getItem()
     { return item; }
 
-    public Color getPrimaryColor()
-    { return primaryColor; }
-
-    public Color getSecondaryColor()
-    { return secondaryColor; }
-
     public Map<String, Range<Integer>> getAttributeRanges()
     { return attributeRanges; }
 
@@ -62,6 +51,6 @@ public class Module
 
     public String toString()
     {
-        return pattern.getRegistryName() + ":" + name + " = [" + item + ", " + primaryColor + ", " + secondaryColor + ", " + attributeRanges + ", " + tags + ", " + hiddenTags + "]";
+        return pattern.getRegistryName() + ":" + name + " = [" + item + ", " + attributeRanges + ", " + tags + ", " + hiddenTags + "]";
     }
 }

@@ -4,9 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.teamwizardry.wizardry.api.spell.Pattern;
+import com.teamwizardry.wizardry.common.init.PatternInit;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -31,16 +31,15 @@ public class Wizardry
 	
 	private void registerRegistries(RegistryEvent.NewRegistry event)
 	{
-	    new RegistryBuilder<Pattern>().setType(Pattern.class).disableSaving().create();
+	    new RegistryBuilder<Pattern>().setType(Pattern.class)
+	                                  .setName(new ResourceLocation(MODID, "pattern"))
+	                                  .disableSaving()
+	                                  .create();
 	}
 	
 	private void registerPatterns(RegistryEvent.Register<Pattern> event)
 	{
-	    event.getRegistry().register(new Pattern() {
-	        @Override public void run() {}
-	        @Override public void affectEntity(Entity entity) {}
-	        @Override public void affectBlock(BlockPos pos) {}
-	    }.setRegistryName(MODID, "burn"));
+	    PatternInit.init(event.getRegistry());
 	}
 	
 	public void init(final FMLCommonSetupEvent event)

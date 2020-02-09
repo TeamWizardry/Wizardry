@@ -1,0 +1,12 @@
+module: wizardry:touch
+name: touch
+item: minecraft:beef
+attributes:
+  mana:
+    min: 30
+  burnout:
+    min: 20
+  cooldown:
+    min: 30
+tags: []
+hiddenTags: [ normal ]

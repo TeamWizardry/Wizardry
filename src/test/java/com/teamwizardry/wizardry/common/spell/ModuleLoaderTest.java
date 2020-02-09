@@ -35,8 +35,6 @@ public class ModuleLoaderTest
 
         Module zero = modules.get(0);
         assertEquals("zero", zero.getName());
-        assertEquals(0xFFFF3C3C, zero.getPrimaryColor().getRGB()); // Colors prepended with FF due to no alpha = 255
-        assertEquals(0xFFA10000, zero.getSecondaryColor().getRGB());
         assertEquals(2, zero.getTags().size());
         assertEquals("test", zero.getTags().get(0));
         assertEquals("module", zero.getTags().get(1));
@@ -44,8 +42,6 @@ public class ModuleLoaderTest
 
         Module one = modules.get(1);
         assertEquals("one", one.getName());
-        assertEquals(0xFFFF3C3C, one.getPrimaryColor().getRGB()); // Colors prepended with FF due to no alpha = 255
-        assertEquals(0xFFA10000, one.getSecondaryColor().getRGB());
         assertEquals(2, one.getTags().size());
         assertEquals("second", one.getTags().get(0));
         assertEquals("test", one.getTags().get(1));

@@ -1,0 +1,20 @@
+module: wizardry:cone
+name: cone
+item: minecraft:gunpowder
+attributes:
+  mana:
+    min: 10
+  burnout:
+    min: 5
+  cooldown:
+    min: 30
+  chargeup:
+    min: 5
+  range:
+    min: 5
+    max: 16
+  potency:
+    min: 5
+    max: 32
+tags: [ area ]
+hiddenTags: [ normal ]

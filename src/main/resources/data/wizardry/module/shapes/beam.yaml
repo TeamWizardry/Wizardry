@@ -1,0 +1,16 @@
+module: wizardry:beam
+name: beam
+item: wizardry:unicorn_horn
+attributes:
+  mana:
+    min: 5
+  burnout:
+    min: 2
+  range:
+    min: 10
+    max: 30
+  potency:
+    min: 1
+    max: 10
+tags: [ continuous ]
+hiddenTags: [ normal ]
