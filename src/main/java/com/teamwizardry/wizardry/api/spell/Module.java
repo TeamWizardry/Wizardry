@@ -62,6 +62,6 @@ public class Module
 
     public String toString()
     {
-        return PatternRegistry.getName(pattern) + ":" + name + " = [" + item + ", " + primaryColor + ", " + secondaryColor + ", " + attributeRanges + ", " + tags + ", " + hiddenTags + "]";
+        return pattern.getRegistryName() + ":" + name + " = [" + item + ", " + primaryColor + ", " + secondaryColor + ", " + attributeRanges + ", " + tags + ", " + hiddenTags + "]";
     }
 }

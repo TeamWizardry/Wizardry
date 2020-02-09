@@ -19,12 +19,12 @@ import org.yaml.snakeyaml.Yaml;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.Pattern;
-import com.teamwizardry.wizardry.api.spell.PatternRegistry;
 
 import net.minecraft.item.Item;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
@@ -79,6 +79,11 @@ public class ModuleLoader
     
     private static final String folder = Wizardry.MODID + "/module";
     
+    /**
+     * Reads all .yaml files under {@code data/<domain>/wizardry/module/} and any subfolders
+     * 
+     * @see #loadModules(InputStream, Function, Function)
+     */
     public static void loadModules(IResourceManager resourceManager)
     {
         List<Module> shapes = new LinkedList<>();
@@ -88,11 +93,9 @@ public class ModuleLoader
             try
             {
                 for (IResource resource : resourceManager.getAllResources(file))
-                {
                     shapes.addAll(loadModules(resource.getInputStream(),
-                                              PatternRegistry::getPattern,
+                                              GameRegistry.findRegistry(Pattern.class)::getValue,
                                               ForgeRegistries.ITEMS::getValue));
-                }
             }
             catch (IOException e)
             {
@@ -102,7 +105,19 @@ public class ModuleLoader
         shapes.forEach(LOGGER::info);
     }
     
-    public static List<Module> loadModules(InputStream file, Function<String, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
+    /**
+     * Creates a {@link Module} list from an input stream, using the given
+     * supplier functions for both a {@link Pattern} and an {@link Item}
+     * 
+     * @param file            the input stream to read modules from
+     * @param patternSupplier the function used to convert a {@code modid:name}
+     *                        string into a {@code Pattern}
+     * @param itemSupplier    the function used to convert a {@code modid:name}
+     *                        string into a {@code Item}
+     * @return the List of {@code Module} objects compiled from the input yaml
+     *         stream
+     */
+    public static List<Module> loadModules(InputStream file, Function<ResourceLocation, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
     {
         return StreamSupport.stream(yaml.loadAll(file).spliterator(), false)
                             .map(map -> compileModule(
@@ -116,12 +131,16 @@ public class ModuleLoader
      * Helper method to compile the map from parsing a module yaml
      * 
      * @param yaml The parsed yaml
+     * @param patternSupplier the function used to convert a {@code modid:name}
+     *                        string into a {@code Pattern}
+     * @param itemSupplier    the function used to convert a {@code modid:name}
+     *                        string into a {@code Item}
      * @return A {@link Module} constructed from the values in the yaml
      */
-    private static Module compileModule(Map<String, Object> yaml, Function<String, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
+    private static Module compileModule(Map<String, Object> yaml, Function<ResourceLocation, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
     {
         // Straightforward components
-        Pattern pattern = patternSupplier.apply((String) yaml.get(MODULE));
+        Pattern pattern = patternSupplier.apply(new ResourceLocation((String) yaml.get(MODULE)));
         String name = (String) yaml.get(NAME);
         Item item = itemSupplier.apply(new ResourceLocation((String) yaml.get(ITEM)));
         List<String> tags = (List<String>) yaml.get(TAGS);
