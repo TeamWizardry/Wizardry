@@ -10,6 +10,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
 
 version = '0.1'
@@ -97,6 +98,13 @@ dependencies {
 test {
 	useJUnitPlatform()
 	testLogging.exceptionFormat = 'full'
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	reports {
+		html.destination file("$projectDir/jacoco")
+	}
 }
 
 def reobfFile = file("$buildDir/reobfJar/output.jar")

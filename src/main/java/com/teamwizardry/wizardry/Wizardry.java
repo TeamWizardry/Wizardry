@@ -5,10 +5,14 @@ import org.apache.logging.log4j.Logger;
 
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.PatternInit;
+import com.teamwizardry.wizardry.common.spell.ModuleLoader;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -26,7 +30,7 @@ public class Wizardry
 	    IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 	    eventBus.addListener(this::init);
 	    eventBus.addListener(this::registerRegistries);
-	    eventBus.addListener(this::registerPatterns);
+	    eventBus.addGenericListener(Pattern.class, this::registerPatterns);
 	}
 	
 	private void registerRegistries(RegistryEvent.NewRegistry event)
@@ -46,9 +50,11 @@ public class Wizardry
 	{
 		LOGGER.info("Initializing!");
 		/* Let's leave this until we need to do things in-game */
-//		DeferredWorkQueue.runLater(() -> {
-//		    IResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-//		    ModuleLoader.loadModules(resourceManager);
-//		});
+		DeferredWorkQueue.runLater(() -> {
+		    LOGGER.info("Loading Modules");
+		    IResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+		    ModuleLoader.loadModules(resourceManager);
+		    LOGGER.info("Finished loading Modules");
+		});
 	}
 }

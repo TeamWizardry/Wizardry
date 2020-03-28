@@ -1,6 +1,6 @@
-module: wizardry:test
+module: wizardry:test_shape
 name: zero
-item: minecraft:structure_block
+item: wizardry:test_shape
 attributes:
   mana:
    min: 100
@@ -15,9 +15,12 @@ attributes:
 tags: [ test, module ]
 hiddenTags: []
 ---
-module: wizardry:test
+module: wizardry:test_effect
 name: one
-item: minecraft:structure_void
+item: wizardry:test_effect
+color:
+  primary: 0x123456
+  secondary: 0xABCDEF
 attributes:
   mana:
    min: 100

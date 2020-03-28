@@ -23,6 +23,7 @@ run
 logs
 libs/librarianlib-1.0.jar
 kotlinlib/
+jacoco/
 
 .DS_Store
 /src/main/java/com/teamwizardry/wizardry/client/quaeritumrender/

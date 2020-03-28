@@ -21,6 +21,11 @@ public class PatternInit
                              new TempPatternShape().setRegistryName(Wizardry.MODID, "zone"));
     }
     
+    /**
+     * Temporary class
+     * <p>
+     * TODO: Delete once real patterns exist
+     */
     private static class TempPatternShape extends PatternShape
     {
         @Override public void run() {}

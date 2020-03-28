@@ -83,6 +83,11 @@ public class ModuleLoader
     private static final String folder = Wizardry.MODID + "/module";
     
     /**
+     * Unconstructable
+     */
+    private ModuleLoader() {}
+    
+    /**
      * Reads all .yaml files under {@code data/<domain>/wizardry/module/} and any subfolders
      * 
      * @see #loadModules(InputStream, Function, Function)
@@ -96,9 +101,12 @@ public class ModuleLoader
             try
             {
                 for (IResource resource : resourceManager.getAllResources(file))
+                {
+                    LOGGER.info("Found Module file: " + file.getPath());
                     shapes.addAll(loadModules(resource.getInputStream(),
                                               GameRegistry.findRegistry(Pattern.class)::getValue,
                                               ForgeRegistries.ITEMS::getValue));
+                }
             }
             catch (IOException e)
             {
