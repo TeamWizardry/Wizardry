@@ -20,7 +20,7 @@ archivesBaseName = 'wizardry'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    mappings channel: mcp_mappings_channel , version: mcp_version
     
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -87,7 +87,7 @@ allprojects {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.0'
+    minecraft group: 'net.minecraftforge', name: 'forge', version: "${mc_version}-${forge_version}"
 
     implementation 'org.yaml:snakeyaml:1.21'
     implementation 'com.github.thecodewarrior:Prism:-SNAPSHOT'
