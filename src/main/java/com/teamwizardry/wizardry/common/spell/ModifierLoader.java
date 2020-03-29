@@ -13,6 +13,8 @@ import com.teamwizardry.wizardry.api.spell.Pattern;
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Handles loading Modules from yaml resources. Relies heavily on a cohesive
@@ -38,15 +40,16 @@ public class ModifierLoader extends YamlLoader
     /**
      * Reads all .yaml files under {@code data/<domain>/wizardry/module/} and any subfolders
      * 
-     * @see #loadModules(InputStream, Function, Function)
+     * @see #loadModifiers(InputStream, Function, Function)
      */
     public static void loadModifiers(IReloadableResourceManager resourceManager)
     {
-        YamlLoader.loadYamls(resourceManager, folder, ModifierLoader::compileModifier);
+        YamlLoader.loadYamls(resourceManager, folder,
+                map -> ModifierLoader.compileModifier(map, ForgeRegistries.ITEMS::getValue));
     }
     
     /**
-     * Creates a {@link Module} list from an input stream, using the given
+     * Creates a {@link Modifier} list from an input stream, using the given
      * supplier functions for both a {@link Pattern} and an {@link Item}
      * 
      * @param file            the input stream to read modules from
@@ -57,9 +60,10 @@ public class ModifierLoader extends YamlLoader
      * @return the List of {@code Module} objects compiled from the input yaml
      *         stream
      */
-    public static List<Modifier> loadModules(InputStream file, Function<ResourceLocation, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
+    public static List<Modifier> loadModifiers(InputStream file, Function<ResourceLocation, Item> itemSupplier)
     {
-        return YamlLoader.loadYamls(file, patternSupplier, itemSupplier, ModifierLoader::compileModifier);
+        return YamlLoader.loadYamls(file, 
+                map -> ModifierLoader.compileModifier(map, itemSupplier));
     }
 
     /**
@@ -72,7 +76,7 @@ public class ModifierLoader extends YamlLoader
      *                        string into a {@code Item}
      * @return A {@link Module} constructed from the values in the yaml
      */
-    private static Modifier compileModifier(Map<String, Object> yaml, Function<ResourceLocation, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
+    private static Modifier compileModifier(Map<String, Object> yaml, Function<ResourceLocation, Item> itemSupplier)
     {
         return new Modifier();
     }

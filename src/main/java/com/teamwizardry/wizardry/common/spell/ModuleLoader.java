@@ -19,6 +19,8 @@ import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Handles loading Modules from yaml resources. Relies heavily on a cohesive
@@ -80,7 +82,10 @@ public class ModuleLoader
      */
     public static void loadModules(IReloadableResourceManager resourceManager)
     {
-        YamlLoader.loadYamls(resourceManager, folder, ModuleLoader::compileModule);
+        YamlLoader.loadYamls(resourceManager, folder,
+                map -> ModuleLoader.compileModule(map,
+                                                  GameRegistry.findRegistry(Pattern.class)::getValue,
+                                                  ForgeRegistries.ITEMS::getValue));
     }
     
     /**
@@ -97,7 +102,8 @@ public class ModuleLoader
      */
     public static List<Module> loadModules(InputStream file, Function<ResourceLocation, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier)
     {
-        return YamlLoader.loadYamls(file, patternSupplier, itemSupplier, ModuleLoader::compileModule);
+        return YamlLoader.loadYamls(file,
+                map -> ModuleLoader.compileModule(map, patternSupplier, itemSupplier));
     }
 
     /**

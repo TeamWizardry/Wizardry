@@ -1,28 +1,37 @@
 package com.teamwizardry.wizardry.common.spell;
 
-import com.google.common.base.Joiner;
-import com.teamwizardry.wizardry.api.spell.*;
-import net.minecraft.item.Item;
-import net.minecraft.resources.*;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.packs.ModFileResourcePack;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.yaml.snakeyaml.Yaml;
+
+import com.google.common.base.Joiner;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.Pattern;
+
+import net.minecraft.item.Item;
+import net.minecraft.resources.FallbackResourceManager;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.ResourcePack;
+import net.minecraft.resources.ResourcePackType;
+import net.minecraft.resources.SimpleReloadableResourceManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.packs.ModFileResourcePack;
 
 /**
  * Handles loading data from yaml resources. Relies heavily on a cohesive
@@ -44,9 +53,9 @@ public class YamlLoader
     /**
      * Reads all .yaml files under {@code data/<domain>/wizardry/module/} and any subfolders
      * 
-     * @see #loadModules(InputStream, Function, Function)
+     * @see #loadModifiers(InputStream, Function, Function)
      */
-    protected static <T> List<T> loadYamls(IReloadableResourceManager resourceManager, String folder, LoadFunction<T> compiler)
+    protected static <T> List<T> loadYamls(IReloadableResourceManager resourceManager, String folder, Function<Map<String, Object>, T> compiler)
     {
         if(!(resourceManager instanceof SimpleReloadableResourceManager))
             return new LinkedList<>();
@@ -63,8 +72,6 @@ public class YamlLoader
                         LOGGER.info("Found Module file: " + resourceLocation);
                         try {
                             objects.addAll(loadYamls(pack.getResourceStream(ResourcePackType.SERVER_DATA, resourceLocation),
-                                    GameRegistry.findRegistry(Pattern.class)::getValue,
-                                    ForgeRegistries.ITEMS::getValue,
                                     compiler));
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -75,8 +82,6 @@ public class YamlLoader
                         LOGGER.info("Found Module file: " + resourceLocation);
                         try {
                             objects.addAll(loadYamls(pack.getResourceStream(ResourcePackType.SERVER_DATA, resourceLocation),
-                                    GameRegistry.findRegistry(Pattern.class)::getValue,
-                                    ForgeRegistries.ITEMS::getValue,
                                     compiler));
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -84,10 +89,7 @@ public class YamlLoader
                     }
 
                 }
-
-
             }
-
         }
         return objects;
     }
@@ -105,13 +107,10 @@ public class YamlLoader
      *         stream
      */
     @SuppressWarnings("unchecked")
-    protected static <T> List<T> loadYamls(InputStream file, Function<ResourceLocation, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier, LoadFunction<T> compiler)
+    protected static <T> List<T> loadYamls(InputStream file, Function<Map<String, Object>, T> compiler)
     {
         return StreamSupport.stream(yaml.loadAll(file).spliterator(), false)
-                            .map(map -> compiler.compile(
-                                    (Map<String, Object>) map,
-                                    patternSupplier,
-                                    itemSupplier))
+                            .map(map -> compiler.apply((Map<String, Object>) map))
                             .collect(Collectors.toList());
     }
 
@@ -150,11 +149,5 @@ public class YamlLoader
         {
             return Collections.emptyList();
         }
-    }
-    
-    @FunctionalInterface
-    protected interface LoadFunction<T>
-    {
-        T compile(Map<String, Object> yaml, Function<ResourceLocation, Pattern> patternSupplier, Function<ResourceLocation, Item> itemSupplier);
     }
 }
