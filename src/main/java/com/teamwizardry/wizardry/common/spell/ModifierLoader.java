@@ -1,19 +1,22 @@
 package com.teamwizardry.wizardry.common.spell;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.Modifier;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 
+import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
@@ -21,6 +24,15 @@ import net.minecraftforge.registries.ForgeRegistries;
  * structure:
  * 
  * <pre>
+ * name: modifierName
+ * item: modid:item
+ * attributes:
+ *   mana:
+ *     add: double (default 0)
+ *     baseMultiply: double (default 0)
+ *     multiply: double (default 1)
+ *   burnout:
+ *      ... (repeat for all relevant attributes)
  * </pre>
  * 
  * These individual tags must be in any order, but the nesting structure must be
@@ -30,6 +42,13 @@ import net.minecraftforge.registries.ForgeRegistries;
  */
 public class ModifierLoader extends YamlLoader
 {
+    private static final String NAME = "name";
+    private static final String ITEM = "item";
+    private static final String ATTRIBUTES = "attributes";
+    private static final String ADDITION = "add";
+    private static final String MULTIPLY_BASE = "baseMultiply";
+    private static final String MULTIPLY_TOTAL = "multiply";
+    
     private static final String folder =  Wizardry.MODID + "/modifier";
     
     /**
@@ -76,8 +95,23 @@ public class ModifierLoader extends YamlLoader
      *                        string into a {@code Item}
      * @return A {@link Module} constructed from the values in the yaml
      */
+    @SuppressWarnings("unchecked")
     private static Modifier compileModifier(Map<String, Object> yaml, Function<ResourceLocation, Item> itemSupplier)
     {
-        return new Modifier();
+        String name = (String) yaml.get(NAME);
+        Item item = itemSupplier.apply(new ResourceLocation((String) yaml.get(ITEM)));
+        Map<String, Map<String, Double>> attributeMap = (Map<String, Map<String, Double>>) yaml.get(ATTRIBUTES);
+        Map<String, List<AttributeModifier>> attributeModifiers = new HashMap<>();
+        attributeMap.entrySet().forEach(attribute -> {
+            List<AttributeModifier> modifierList = attributeModifiers.computeIfAbsent(attribute.getKey(), key -> new LinkedList<>());
+            modifierList.add(new AttributeModifier(Operation.ADDITION,
+                    attribute.getValue().getOrDefault(ADDITION, 0.)));
+            modifierList.add(new AttributeModifier(Operation.MULTIPLY_BASE,
+                    attribute.getValue().getOrDefault(MULTIPLY_BASE, 0.)));
+            modifierList.add(new AttributeModifier(Operation.MULTIPLY_TOTAL,
+                    attribute.getValue().getOrDefault(MULTIPLY_TOTAL, 0.)));
+        });
+        
+        return new Modifier(name, item, attributeModifiers);
     }
 }

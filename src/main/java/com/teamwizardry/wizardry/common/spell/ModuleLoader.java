@@ -128,12 +128,11 @@ public class ModuleLoader
         // Attributes
         Map<String, Map<String, Integer>> attributeMap = (Map<String, Map<String, Integer>>) yaml.get(ATTRIBUTES);
         Map<String, Range<Integer>> attributeRanges = new HashMap<>();
-        attributeMap.entrySet().stream()
-                .forEach(attribute -> {
-                    int min = attribute.getValue().getOrDefault(MIN, 0);
-                    int max = attribute.getValue().getOrDefault(MAX, Integer.MAX_VALUE);
-                    attributeRanges.put(attribute.getKey(), Range.between(min, max));
-                });
+        attributeMap.entrySet().forEach(attribute -> {
+            int min = attribute.getValue().getOrDefault(MIN, 0);
+            int max = attribute.getValue().getOrDefault(MAX, Integer.MAX_VALUE);
+            attributeRanges.put(attribute.getKey(), Range.between(min, max));
+        });
 
         if (pattern instanceof PatternEffect)
         {
