@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.PatternInit;
+import com.teamwizardry.wizardry.common.spell.ModifierLoader;
 import com.teamwizardry.wizardry.common.spell.ModuleLoader;
 
 import net.minecraft.resources.IReloadableResourceManager;
@@ -56,6 +57,7 @@ public class Wizardry
 	public void serverStartingEvent(FMLServerAboutToStartEvent event){
 		IReloadableResourceManager manager = event.getServer().getResourceManager();
 		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ModuleLoader.loadModules(manager));
+		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ModifierLoader.loadModifiers(manager));
 	}
 	
 	public void init(final FMLCommonSetupEvent event)
