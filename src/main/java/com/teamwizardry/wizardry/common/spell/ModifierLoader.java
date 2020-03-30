@@ -64,7 +64,8 @@ public class ModifierLoader extends YamlLoader
     public static void loadModifiers(IReloadableResourceManager resourceManager)
     {
         YamlLoader.loadYamls(resourceManager, folder,
-                map -> ModifierLoader.compileModifier(map, ForgeRegistries.ITEMS::getValue));
+                map -> ModifierLoader.compileModifier(map, ForgeRegistries.ITEMS::getValue))
+                  .forEach(ComponentRegistry::addModifier);
     }
     
     /**

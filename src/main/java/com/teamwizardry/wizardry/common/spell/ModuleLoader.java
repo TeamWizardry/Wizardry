@@ -85,7 +85,8 @@ public class ModuleLoader
         YamlLoader.loadYamls(resourceManager, folder,
                 map -> ModuleLoader.compileModule(map,
                                                   GameRegistry.findRegistry(Pattern.class)::getValue,
-                                                  ForgeRegistries.ITEMS::getValue));
+                                                  ForgeRegistries.ITEMS::getValue))
+                  .forEach(ComponentRegistry::addModule);
     }
     
     /**

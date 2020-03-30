@@ -23,12 +23,9 @@ import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 @Mod(Wizardry.MODID)
 public class Wizardry
 {
-
-
 	public static final String MODID = "wizardry";
 	private static final Logger LOGGER = LogManager.getLogger(MODID);
 	public Wizardry INSTANCE;
-
 	
 	public Wizardry()
 	{
@@ -36,9 +33,10 @@ public class Wizardry
 	    IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 	    eventBus.addListener(this::init);
 	    eventBus.addListener(this::registerRegistries);
+	    
 		MinecraftForge.EVENT_BUS.addListener(this::serverStartingEvent);
+		
 	    eventBus.addGenericListener(Pattern.class, this::registerPatterns);
-
 	}
 	
 	private void registerRegistries(RegistryEvent.NewRegistry event)
