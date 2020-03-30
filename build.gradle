@@ -33,6 +33,7 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
 
             mods {
                 wizardry {
@@ -83,6 +84,10 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        maven {
+            name "curios"
+            url "https://maven.theillusivec4.top/"
+        }
 	}
 }
 
@@ -93,6 +98,8 @@ dependencies {
     implementation 'com.github.thecodewarrior:Prism:-SNAPSHOT'
     
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
+    compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0")
 }
 
 test {
