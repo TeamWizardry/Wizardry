@@ -1,9 +1,21 @@
 modLoader="javafml"
-loaderVersion="[28,)"
+loaderVersion="[31,)"
+issueTrackerURL="https://github.com/TeamWizardry/Wizardry/issues"
+logoFile="wizardry_logo.png"
+
 [[mods]]
 modId="wizardry"
-version="${file.jarVersion}"
 displayName="Wizardry"
+version="${version}"
+authors="Team Wizardry"
+credits="Mirage, thecodewarrior, yrsegal, pau101, murapix, Mechwarrior99, InsomniaKitten"
 description='''
-Magic!
+Delve into the creation of magical spells and wizardry
 '''
+
+[[dependencies.wizardry]]
+    modId="forge"
+    mandatory=true
+    versionRange="[31.1.0,)"
+    ordering="AFTER"
+    side="BOTH"

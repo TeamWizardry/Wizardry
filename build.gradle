@@ -13,7 +13,7 @@ apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
 
-version = '0.1'
+version = mod_version
 group = 'com.teamwizardry.wizardry'
 archivesBaseName = 'wizardry'
 
@@ -100,6 +100,41 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
     compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0")
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+
+        // replace version
+        expand 'version': project.version
+    }
+
+    // copy everything else, thats not the mods.toml
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META-INF/mods.toml'
+    }
+}
+
+jar {
+    archiveName = "${mod_id}-${version}.${extension}"
+
+    manifest {
+        attributes([
+                "Specification-Title": "${mod_id}",
+                "Specification-Vendor": "${mod_authors}",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": "${mod_id}",
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"${mod_authors}",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 }
 
 test {
