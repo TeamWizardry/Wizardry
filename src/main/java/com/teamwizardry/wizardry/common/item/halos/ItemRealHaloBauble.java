@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
@@ -44,6 +45,12 @@ public class ItemRealHaloBauble extends ItemModBauble implements IHalo {
 	@Override
 	public BaubleType getBaubleType(@Nonnull ItemStack itemStack) {
 		return BaubleType.HEAD;
+	}
+
+	@NotNull
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		return EnumRarity.RARE;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -56,5 +57,11 @@ public class ItemCreativeHaloHead extends ItemModArmor implements IHalo {
 		if (!isInitialized)
 			return this;
 		return super.setMaxDamage(maxDamageIn);
+	}
+
+	@NotNull
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		return EnumRarity.EPIC;
 	}
 }

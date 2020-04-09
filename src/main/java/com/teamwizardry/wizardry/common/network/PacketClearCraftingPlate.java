@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.item.ItemStack;
@@ -39,6 +40,11 @@ public class PacketClearCraftingPlate extends PacketBase {
 		TileEntity entity = world.getTileEntity(pos);
 		if (entity instanceof TileCraftingPlate) {
 			TileCraftingPlate plate = (TileCraftingPlate) entity;
+
+			// DEBUG
+//			if (plate.renderHandler != null) {
+//				System.out.println("Map has size " + ((TileCraftingPlateRenderer) plate.renderHandler).hoveringStacks.size());
+//			}
 
 			for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
 				plate.realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);

@@ -11,11 +11,13 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class ItemUnicornDagger extends ItemModSword {
@@ -53,5 +55,11 @@ public class ItemUnicornDagger extends ItemModSword {
 			target.attackEntityFrom(DamageSource.causeIndirectMagicDamage(attacker, null), damage);
 			target.hurtResistantTime = 0;
 		}
+	}
+
+	@NotNull
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		return EnumRarity.UNCOMMON;
 	}
 }

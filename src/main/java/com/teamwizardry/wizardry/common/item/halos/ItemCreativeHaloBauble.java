@@ -12,6 +12,7 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -76,5 +77,11 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IHalo {
 	public void onUnequipped(ItemStack stack, EntityLivingBase player)
 	{
 		SpellModifierRegistry.removeModifier(player, CREATIVE_HALO_MODIFIER_LOC);
+	}
+
+	@NotNull
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		return EnumRarity.EPIC;
 	}
 }

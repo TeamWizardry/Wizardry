@@ -13,11 +13,13 @@ import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -83,5 +85,11 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 	public void onUnequipped(ItemStack stack, EntityLivingBase player)
 	{
 		SpellModifierRegistry.removeModifier(player, CAPE_MODIFIER_LOC);
+	}
+
+	@NotNull
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		return EnumRarity.UNCOMMON;
 	}
 }

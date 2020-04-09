@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -145,6 +147,21 @@ public class ItemSyringe extends ItemMod {
 			if (entity != null) {
 				tooltip.add(entity);
 			}
+		}
+	}
+
+	@NotNull
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		switch(stack.getItemDamage()) {
+			case 1:
+				return EnumRarity.UNCOMMON;
+
+			case 2:
+				return EnumRarity.RARE;
+
+			default:
+				return EnumRarity.COMMON;
 		}
 	}
 }

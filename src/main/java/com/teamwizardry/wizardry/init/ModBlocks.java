@@ -47,6 +47,8 @@ public class ModBlocks {
 	public static BlockWisdomWoodPigmentedPlanks WISDOM_WOOD_PIGMENTED_PLANKS;
 	public static BlockWisdomSapling WISDOM_SAPLING;
 
+	public static BlockUnderworldTeleporter UNDERWORLD_PORTAL;
+
 	public static BlockTorikkiGrass TORIKKI_GRASS;
 
 	public static void init() {
@@ -79,6 +81,8 @@ public class ModBlocks {
 		WISDOM_WOOD_FENCE_GATE = new BlockWisdomWoodFenceGate();
 		WISDOM_WOOD_PIGMENTED_PLANKS = new BlockWisdomWoodPigmentedPlanks();
 		WISDOM_SAPLING = new BlockWisdomSapling();
+
+		UNDERWORLD_PORTAL = new BlockUnderworldTeleporter();
 
 		TORIKKI_GRASS = new BlockTorikkiGrass();
 	}

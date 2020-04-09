@@ -11,5 +11,4 @@ public class ItemFairyWings extends ItemMod {
 		super("fairy_wings");
 		setMaxStackSize(16);
 	}
-
 }

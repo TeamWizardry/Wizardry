@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.item.ProxiedItemStackHandler;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -76,5 +77,11 @@ public class ItemPearlBelt extends ItemModBauble implements IPearlBelt {
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
 			return ConfigValues.pearlBeltInvSize;
 		}
+	}
+
+	@NotNull
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		return EnumRarity.UNCOMMON;
 	}
 }
