@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 public class Wizardry
 {
 	public static final String MODID = "wizardry";
-	private static final Logger LOGGER = LogManager.getLogger(MODID);
+	public static final Logger LOGGER = LogManager.getLogger(MODID);
 	public Wizardry INSTANCE;
 	public static IProxy proxy;
 	

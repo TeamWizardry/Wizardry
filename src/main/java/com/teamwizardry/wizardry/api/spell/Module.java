@@ -7,7 +7,7 @@ import org.apache.commons.lang3.Range;
 
 import net.minecraft.item.Item;
 
-public class Module
+public class Module implements ISpellComponent
 {
     // Identifying data - must be unique
     protected final Pattern pattern;
@@ -34,10 +34,10 @@ public class Module
     public Pattern getPattern()
     { return pattern; }
 
-    public String getName()
+    @Override public String getName()
     { return name; }
 
-    public Item getItem()
+    @Override public Item getItem()
     { return item; }
 
     public Map<String, Range<Integer>> getAttributeRanges()
