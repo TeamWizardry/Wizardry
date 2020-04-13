@@ -1,3 +1,4 @@
+
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
@@ -36,6 +37,7 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
+
 @RegisterModule(ID="effect_leech")
 public class ModuleEffectLeech implements IModuleEffect {
 

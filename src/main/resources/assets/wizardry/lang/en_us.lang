@@ -411,6 +411,7 @@ wizardry.table.load_desc=Load the last spell saved from the first codex found in
 wizardry.table.clear_desc=Remove all spell components on the paper.
 wizardry.table.save_desc=Store the recipe for the spell into the codexes in your inventory.
 wizardry.table.save_error=No codex found in your inventory! Place one in your inventory to save properly.
+wizardry.table.no_component_error=A component was in your table that was removed from the mod! The table has been (mostly) cleared to prevent crashes.
 
 wizardry.book.shift_scroll=Shift + Scroll to flip pages
 wizardry.book.open_recipe_tab=Open recipe tab for more details

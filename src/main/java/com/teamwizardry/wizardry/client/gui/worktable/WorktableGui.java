@@ -42,14 +42,15 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -545,30 +546,40 @@ public class WorktableGui extends GuiBase {
 				Set<CommonWorktableModule> commonModules = ((TileMagiciansWorktable) tile).getCommonModules();
 
 				for (CommonWorktableModule commonHead : commonModules) {
-					CommonWorktableModule commonModule = commonHead;
-					TableModule lastModule = new TableModule(this, commonHead.module, true, false);
-					lastModule.setPos(commonHead.pos);
+					if(commonHead != null) {  // ADDED HERE
+						CommonWorktableModule commonModule = commonHead;
+						TableModule lastModule = new TableModule(this, commonHead.module, true, false);
+						lastModule.setPos(commonHead.pos);
 
-					while (commonModule != null) {
+						while (commonModule != null) {
+							lastModule.radius = 10;
+							lastModule.textRadius = 0;
+							paper.add(lastModule);
+							DragMixin drag = new DragMixin(lastModule, vec2d -> vec2d);
+							drag.setDragOffset(new Vec2d(6, 6));
 
-						lastModule.radius = 10;
-						lastModule.textRadius = 0;
-						paper.add(lastModule);
-						DragMixin drag = new DragMixin(lastModule, vec2d -> vec2d);
-						drag.setDragOffset(new Vec2d(6, 6));
+							for (ModuleInstanceModifier modifier : commonModule.modifiers.keySet()) {
+								lastModule.setData(Integer.class, modifier.getNBTKey(), commonModule.modifiers.get(modifier));
+							}
 
-						for (ModuleInstanceModifier modifier : commonModule.modifiers.keySet()) {
-							lastModule.setData(Integer.class, modifier.getNBTKey(), commonModule.modifiers.get(modifier));
+							if (commonModule.linksTo != null) {
+								if(commonModule.linksTo.module != null) {
+									TableModule childModule = new TableModule(this, commonModule.linksTo.module, true, false);
+									childModule.setPos(commonModule.linksTo.pos);
+									lastModule.setLinksTo(childModule);
+									lastModule = childModule;
+								} else {
+									// If a module was removed from the mod, try and clear the table.
+									// This doesn't clear the whole table, but it's good enough.
+									((TileMagiciansWorktable) tile).setCommonModules(new NBTTagList());
+									syncToServer();
+									Minecraft.getMinecraft().player.sendMessage(new TextComponentString(TextFormatting.RED + "wizardry.table.no_component_error"));
+									return;
+								}
+							}
+
+							commonModule = commonModule.linksTo;
 						}
-
-						if (commonModule.linksTo != null) {
-							TableModule childModule = new TableModule(this, commonModule.linksTo.module, true, false);
-							childModule.setPos(commonModule.linksTo.pos);
-							lastModule.setLinksTo(childModule);
-							lastModule = childModule;
-						}
-
-						commonModule = commonModule.linksTo;
 					}
 				}
 			}
