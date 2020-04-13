@@ -24,4 +24,16 @@ public interface WizardryWorld extends ICapabilitySerializable<NBTTagCompound> {
 	HashMap<BlockPos, NemezTracker> getBlockNemezDrives();
 
 	HashMap<UUID, NemezTracker> getEntityNemezDrives();
+
+	int getBackupCount(UUID player);
+
+	void setBackupCount(UUID player, int count);
+
+	void incBackupCount(UUID player);
+
+	void decBackupCount(UUID player);
+
+	HashMap<UUID, Integer> getBackupMap();
+
+	void setBackupMap(HashMap<UUID, Integer> map);
 }

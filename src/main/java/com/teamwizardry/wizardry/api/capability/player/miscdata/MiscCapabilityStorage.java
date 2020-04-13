@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.capability.player.miscdata;
 
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
+import com.teamwizardry.wizardry.common.module.effects.ModuleEffectBackup;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;

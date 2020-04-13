@@ -53,6 +53,8 @@ public class ModuleEffectFrost implements IModuleEffect {
 
 	@ModuleOverride("shape_zone_run")
 	public boolean onRunZone(World world, SpellData data, SpellRing ring, @ContextRing SpellRing childRing) {
+		if(!world.isRemote) return false;
+
 		double aoe = ring.getAttributeValue(world, AttributeRegistry.AREA, data);
 		double range = ring.getAttributeValue(world, AttributeRegistry.RANGE, data);
 

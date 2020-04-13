@@ -38,7 +38,6 @@ public final class ManaManager {
 	@Nullable
 	private static IManaCapability getCap(@Nullable Entity entity) {
 		return entity != null ? ManaCapabilityProvider.getCap(entity) : null;
-
 	}
 
 	@Nullable

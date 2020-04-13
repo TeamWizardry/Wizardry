@@ -17,6 +17,8 @@ public class DefaultMiscCapability implements IMiscCapability {
 	@Nullable
 	private UUID selectedFairy = null;
 
+	private int spawnedBackup = 0;
+
 	@Override
 	public void setSelectedFairy(@Nullable UUID selectedFairy) {
 		this.selectedFairy = selectedFairy;

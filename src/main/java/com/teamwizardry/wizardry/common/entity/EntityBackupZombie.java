@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAIFollowPlayer;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAILivingAttack;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAITargetFiltered;
@@ -116,6 +117,10 @@ public class EntityBackupZombie extends EntityMob {
 		this.getDataManager().set(OWNER, Optional.of(owner));
 	}
 
+	public UUID getOwner() {
+		return this.getDataManager().get(OWNER).get();
+	}
+
 	@Override
 	public void notifyDataManagerChange(@Nonnull DataParameter<?> key) {
 		super.notifyDataManagerChange(key);
@@ -130,6 +135,7 @@ public class EntityBackupZombie extends EntityMob {
 
 		if (ticksExisted >= getDataManager().get(TIMER)) {
 			world.removeEntity(this);
+			WizardryWorldCapability.get(world).decBackupCount(getOwner());
 		}
 
 		UUID uuid = null;

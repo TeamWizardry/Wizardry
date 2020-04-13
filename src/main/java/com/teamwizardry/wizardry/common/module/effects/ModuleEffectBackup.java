@@ -1,12 +1,19 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.NBTConstants;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
+import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
+import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.world.WizardryWorld;
+import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -18,16 +25,28 @@ import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+
+import java.util.HashMap;
+import java.util.Queue;
+import java.util.UUID;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
 
@@ -35,8 +54,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
  * Created by Demoniaque.
  */
 @RegisterModule(ID="effect_backup")
+@Mod.EventBusSubscriber
 public class ModuleEffectBackup implements IModuleEffect {
-
 	@Override
 	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_time"};
@@ -44,7 +63,6 @@ public class ModuleEffectBackup implements IModuleEffect {
 
 	@Override
 	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-
 		Vec3d targetPos = spell.getTarget(world);
 		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getCaster(world);
@@ -59,12 +77,34 @@ public class ModuleEffectBackup implements IModuleEffect {
 			targetPos = new Vec3d(new BlockPos(targetPos).offset(facing)).add(0.5, 0.5, 0.5);
 		}
 
-		EntityBackupZombie zombie = new EntityBackupZombie(world, (EntityLivingBase) caster, (int) duration);
-		zombie.setPosition(targetPos.x, targetPos.y, targetPos.z);
-		zombie.forceSpawn = true;
-		world.spawnEntity(zombie);
+		UUID player = caster.getUniqueID();
+
+		WizardryWorld world1 = WizardryWorldCapability.get(world);
+
+		if(world1 == null) return true;
+
+		if(world1.getBackupCount(player) < ConfigValues.maxZombies) {
+			EntityBackupZombie zombie = new EntityBackupZombie(world, (EntityLivingBase) caster, (int) duration);
+			zombie.setPosition(targetPos.x, targetPos.y, targetPos.z);
+			zombie.forceSpawn = true;
+			world.spawnEntity(zombie);
+			world1.incBackupCount(player);
+		}
 
 		return true;
+	}
+
+	@SubscribeEvent
+	public static void onZombieDeath(LivingDeathEvent e) {
+		if(e.getEntity() instanceof EntityBackupZombie) {
+			if(((EntityBackupZombie)e.getEntity()).getOwner() != null) {
+				WizardryWorld world = WizardryWorldCapability.get(e.getEntity().world);
+
+				if(world != null) {
+					world.decBackupCount(((EntityBackupZombie)e.getEntity()).getOwner());
+				}
+			}
+		}
 	}
 
 	@Override

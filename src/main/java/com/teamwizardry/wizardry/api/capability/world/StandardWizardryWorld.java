@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.UUID;
 
 public class StandardWizardryWorld implements WizardryWorld {
-
 	private World world;
 	private SpellObjectManager spellObjectManager = new SpellObjectManager();
 	public HashMap<BlockPos, NemezTracker> blockNemezDrives = new HashMap<>();
 	public HashMap<UUID, NemezTracker> entityNemezDrives = new HashMap<>();
+	public HashMap<UUID, Integer> zombieBackupTracker = new HashMap<>();
 
 	public static StandardWizardryWorld create(World world) {
 		StandardWizardryWorld wizardryWorld = new StandardWizardryWorld();
@@ -83,6 +83,49 @@ public class StandardWizardryWorld implements WizardryWorld {
 	public HashMap<UUID, NemezTracker> getEntityNemezDrives() {
 		return entityNemezDrives;
 	}
+
+	@Override
+	public int getBackupCount(UUID player) {
+		if(!zombieBackupTracker.containsKey(player)) {
+			zombieBackupTracker.put(player, 0);
+		}
+
+		return zombieBackupTracker.get(player);
+	}
+
+	@Override
+	public void setBackupCount(UUID player, int count) {
+		zombieBackupTracker.put(player, count);
+	}
+
+	@Override
+	public void incBackupCount(UUID player) {
+		if(!zombieBackupTracker.containsKey(player)) {
+			zombieBackupTracker.put(player, 0);
+		}
+
+		zombieBackupTracker.put(player, getBackupCount(player)+1);
+	}
+
+	@Override
+	public void decBackupCount(UUID player) {
+		if(!zombieBackupTracker.containsKey(player)) {
+			zombieBackupTracker.put(player, 0);
+		}
+
+		zombieBackupTracker.put(player, Math.max(0, getBackupCount(player)-1));
+	}
+
+	@Override
+	public HashMap<UUID, Integer> getBackupMap() {
+		return zombieBackupTracker;
+	}
+
+	@Override
+	public void setBackupMap(HashMap<UUID, Integer> map) {
+		zombieBackupTracker = map;
+	}
+
 
 	@Override
 	public NBTTagCompound serializeNBT() {

@@ -60,6 +60,10 @@ public class ConfigValues {
 	@ConfigProperty(category = "entity", comment = "Defines the reach distance of fairies in terms of blocks")
 	public static double fairyReach = 3;
 
+	@ConfigDoubleRange(min = 0, max = 1000)
+	@ConfigProperty(category = "entity", comment = "The maximum number of zombies a player can have active at once via the reinforcements spell")
+	public static int maxZombies = 100;
+
 	@ConfigDoubleRange(min = 1, max = 2)
 	@ConfigProperty(category = "spells", comment = "The multiplier a spellData gets for a perfect or ancient quality output. [1,2]\n" +
 			"This will be multiplied by the quality value of the output, which is 1.0 for apex pearls and greater for ancient pearls.")
