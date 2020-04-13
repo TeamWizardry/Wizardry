@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:book"
+	},
+	"title": "wizardry.book.items_blocks.book.title",
+	"content": [
+		"wizardry.book.items_blocks.book.content0"
+	]
+}

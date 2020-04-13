@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:nacre_pearl"
+	},
+	"title": "wizardry.book.items_blocks.nacre_pearl.title",
+	"content": [
+		"wizardry.book.items_blocks.nacre_pearl.content0"
+	]
+}

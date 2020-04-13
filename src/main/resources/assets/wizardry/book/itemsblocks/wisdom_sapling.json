@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:wisdom_sapling"
+	},
+	"title": "wizardry.book.items_blocks.wisdom_sapling.title",
+	"content": [
+		"wizardry.book.items_blocks.wisdom_sapling.content0"
+	]
+}

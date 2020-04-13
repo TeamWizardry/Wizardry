@@ -8,9 +8,14 @@
   "content": [
     "wizardry.book.items_blocks.orbs.content0",
     "wizardry.book.items_blocks.orbs.content1",
+    "wizardry.book.items_blocks.orbs.content2",
     {
       "type": "recipe",
       "recipe": "wizardry:glass_orb"
+    },
+    {
+      "type": "recipe",
+      "recipe": "wizardry:levitation_orb"
     }
   ]
 }

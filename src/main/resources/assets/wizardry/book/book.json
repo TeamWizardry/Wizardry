@@ -21,10 +21,30 @@
       "icon": "wizardry:gui/book/icons/hot_spices",
       "description": "test",
       "entries": [
-        "wizardry:itemsblocks/crude_halo",
-        "wizardry:itemsblocks/devil_dust",
+        "wizardry:itemsblocks/wisdom_wood",
+        "wizardry:itemsblocks/magic_worktable",
+        "wizardry:itemsblocks/crafting_plate",
         "wizardry:itemsblocks/orbs",
-        "wizardry:itemsblocks/wisdom_wood"
+        "wizardry:itemsblocks/staff",
+        "wizardry:itemsblocks/cape",
+        "wizardry:itemsblocks/pearl_belt",
+        "wizardry:itemsblocks/crude_halo",
+        "wizardry:itemsblocks/real_halo",
+        "wizardry:itemsblocks/mana_battery",
+        "wizardry:itemsblocks/nacre_pearl",
+        "wizardry:itemsblocks/empty_syringe",
+        "wizardry:itemsblocks/super_mana_booster",
+        "wizardry:itemsblocks/devil_dust",
+        "wizardry:itemsblocks/fairy_dust",
+        "wizardry:itemsblocks/sky_dust",
+        "wizardry:itemsblocks/vortex_bomb",
+        "wizardry:itemsblocks/repulsion_bomb",
+        "wizardry:itemsblocks/fairy_wings",
+        "wizardry:itemsblocks/fairy_apple",
+        "wizardry:itemsblocks/unicorn_horn",
+        "wizardry:itemsblocks/unicorn_dagger",
+        "wizardry:itemsblocks/nacre_block",
+        "wizardry:itemsblocks/mana_magnet"
       ]
     },
     {
@@ -42,7 +62,8 @@
       "icon": "wizardry:gui/book/icons/magic_gate",
       "description": "test",
       "entries": [
-        "wizardry:dimensions/underworld"
+        "wizardry:dimensions/underworld",
+        "wizardry:dimensions/torikki"
       ]
     }
   ]

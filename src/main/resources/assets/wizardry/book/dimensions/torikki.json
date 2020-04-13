@@ -1,0 +1,11 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:torikki_grass"
+	},
+	"title": "wizardry.book.dimensions.torikki.title",
+	"description": "wizardry.book.torikki.underworld.desc",
+	"content": [
+		"wizardry.book.dimensions.torikki.content0"
+	]
+}

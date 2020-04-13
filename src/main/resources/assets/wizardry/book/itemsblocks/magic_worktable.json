@@ -1,0 +1,14 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:magicians_worktable"
+	},
+	"title": "wizardry.book.items_blocks.magicians_worktable.title",
+	"content": [
+		"wizardry.book.items_blocks.magicians_worktable.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:magicians_worktable"
+		}
+	]
+}

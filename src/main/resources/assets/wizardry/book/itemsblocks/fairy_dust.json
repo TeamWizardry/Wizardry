@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:fairy_dust"
+	},
+	"title": "wizardry.book.items_blocks.fairy_dust.title",
+	"content": [
+		"wizardry.book.items_blocks.fairy_dust.content0"
+	]
+}

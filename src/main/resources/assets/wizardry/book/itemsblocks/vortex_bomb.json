@@ -1,0 +1,15 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:bomb",
+		"data": 0
+	},
+	"title": "wizardry.book.items_blocks.vortex_bomb.title",
+	"content": [
+		"wizardry.book.items_blocks.vortex_bomb.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:vortex_bomb"
+		}
+	]
+}

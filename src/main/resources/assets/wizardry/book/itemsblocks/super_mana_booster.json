@@ -1,0 +1,15 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:syringe",
+		"data": 2
+	},
+	"title": "wizardry.book.items_blocks.super_mana_booster.title",
+	"content": [
+		"wizardry.book.items_blocks.super_mana_booster.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:syringe/fill_steroid_syringe"
+		}
+	]
+}

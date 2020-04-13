@@ -1,0 +1,18 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:nacre_block"
+	},
+	"title": "wizardry.book.items_blocks.nacre_block.title",
+	"content": [
+		"wizardry.book.items_blocks.nacre_block.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:nacre_block"
+		},
+		{
+			"type": "recipe",
+			"recipe": "wizardry:nacre_block_brick"
+		}
+	]
+}

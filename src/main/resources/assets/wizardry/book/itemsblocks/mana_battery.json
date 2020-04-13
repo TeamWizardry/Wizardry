@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:mana_battery"
+	},
+	"title": "wizardry.book.items_blocks.mana_battery.title",
+	"content": [
+		"wizardry.book.items_blocks.mana_battery.content0"
+	]
+}

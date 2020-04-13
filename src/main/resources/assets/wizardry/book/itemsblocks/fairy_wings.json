@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:fairy_wings"
+	},
+	"title": "wizardry.book.items_blocks.fairy_wings.title",
+	"content": [
+		"wizardry.book.items_blocks.fairy_wings.content0"
+	]
+}

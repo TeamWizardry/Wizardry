@@ -1,0 +1,14 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:crafting_plate"
+	},
+	"title": "wizardry.book.items_blocks.crafting_plate.title",
+	"content": [
+		"wizardry.book.items_blocks.crafting_plate.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:crafting_plate"
+		}
+	]
+}

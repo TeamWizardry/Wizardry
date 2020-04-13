@@ -1,0 +1,14 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:fairy_imbued_apple"
+	},
+	"title": "wizardry.book.items_blocks.fairy_imbued_apple.title",
+	"content": [
+		"wizardry.book.items_blocks.fairy_imbued_apple.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:fairy_apple"
+		}
+	]
+}

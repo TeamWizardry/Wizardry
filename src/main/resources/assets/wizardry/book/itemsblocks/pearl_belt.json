@@ -1,0 +1,14 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:pearl_belt"
+	},
+	"title": "wizardry.book.items_blocks.pearl_belt.title",
+	"content": [
+		"wizardry.book.items_blocks.pearl_belt.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:pearl_belt"
+		}
+	]
+}

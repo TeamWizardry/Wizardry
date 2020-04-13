@@ -1,14 +1,21 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "wizardry:jar_item",
-			"data": 1
-		},
-		{
-			"item": "minecraft:apple"
-		}
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"WDW",
+		"DAD",
+		"WDW"
 	],
+	"key": {
+		"A": {
+			"item": "minecraft:apple"
+		},
+		"D": {
+			"item": "wizardry:fairy_dust"
+		},
+		"W": {
+			"item": "wizardry:fairy_wings"
+		}
+	},
 	"result": {
 		"item": "wizardry:fairy_imbued_apple"
 	}

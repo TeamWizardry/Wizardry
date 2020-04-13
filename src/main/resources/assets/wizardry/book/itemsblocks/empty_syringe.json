@@ -1,0 +1,19 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:syringe",
+		"data": 0
+	},
+	"title": "wizardry.book.items_blocks.syringe.title",
+	"content": [
+		"wizardry.book.items_blocks.syringe.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:syringe/syringe"
+		},
+		{
+			"type": "recipe",
+			"recipe": "wizardry:syringe/fill_mana_syringe"
+		}
+	]
+}

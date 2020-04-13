@@ -17,6 +17,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
@@ -196,5 +197,11 @@ public class NacrePearlSpell extends ItemMod implements ISpellInfusable, IPotion
 			NBTHelper.setFloat(stack, NBTConstants.NBT.PURITY_OVERRIDE, 2f);
 			subItems.add(stack);
 		}
+	}
+
+	@NotNull
+	@Override
+	public EnumRarity getRarity(ItemStack stack) {
+		return EnumRarity.UNCOMMON;
 	}
 }

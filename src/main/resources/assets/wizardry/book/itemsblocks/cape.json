@@ -1,0 +1,14 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:cape"
+	},
+	"title": "wizardry.book.items_blocks.cape.title",
+	"content": [
+		"wizardry.book.items_blocks.cape.content0",
+		{
+			"type": "recipe",
+			"recipe": "wizardry:cape"
+		}
+	]
+}

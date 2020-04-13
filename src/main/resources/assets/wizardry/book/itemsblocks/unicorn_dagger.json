@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:unicorn_dagger"
+	},
+	"title": "wizardry.book.items_blocks.unicorn_dagger.title",
+	"content": [
+		"wizardry.book.items_blocks.unicorn_dagger.content0"
+	]
+}

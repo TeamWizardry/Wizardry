@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:mana_magnet"
+	},
+	"title": "wizardry.book.items_blocks.mana_magnet.title",
+	"content": [
+		"wizardry.book.items_blocks.mana_magnet.content0"
+	]
+}

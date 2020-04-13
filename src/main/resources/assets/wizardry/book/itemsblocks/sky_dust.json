@@ -1,0 +1,10 @@
+{
+	"type": "entry",
+	"icon": {
+		"item": "wizardry:sky_dust"
+	},
+	"title": "wizardry.book.items_blocks.sky_dust.title",
+	"content": [
+		"wizardry.book.items_blocks.sky_dust.content0"
+	]
+}
