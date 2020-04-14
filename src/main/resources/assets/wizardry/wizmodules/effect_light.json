@@ -4,8 +4,8 @@
 	"item": "minecraft:glowstone",
 	"primary_color": "00FFFF",
 	"secondary_color": "FF0000",
-	"mana": { "min": 100 },
-	"burnout": { "min": 100 },
+	"mana": { "min": 50 },
+	"burnout": { "min": 0 },
 	"tags": [ "light" ],
 	"hidden_tags": [ "normal" ]
 }

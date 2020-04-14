@@ -4,8 +4,8 @@
 	"item": "minecraft:golden_carrot",
 	"primary_color": "FFFFFF",
 	"secondary_color": "42D1D1",
-	"mana": { "min": 200 },
-	"burnout": { "min": 100 },
+	"mana": { "min": 180 },
+	"burnout": { "min": 150 },
 	"duration": { "min": 5, "max": 60 },
 	"tags": [  ],
 	"hidden_tags": [ "raziel" ]

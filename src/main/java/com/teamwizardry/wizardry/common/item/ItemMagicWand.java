@@ -2,7 +2,9 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IGlowingItem;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,9 +33,10 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (worldIn.isRemote) return EnumActionResult.SUCCESS;
 
-		EntityFairy entity = new EntityFairy(worldIn);
-		entity.setPosition(pos.getX(), pos.getY() + 1, pos.getZ());
-		worldIn.spawnEntity(entity);
+		ItemStack cape = new ItemStack(ModItems.CAPE);
+
+		NBTHelper.setInt(cape, "maxTick", 1000000);
+		player.inventory.addItemStackToInventory(cape);
 
 		return EnumActionResult.SUCCESS;
 	}

@@ -7,7 +7,7 @@
 	"potency": { "min": 1, "max": 64 },
 	"duration": { "min": 25, "max": 80 },
 	"mana": { "min": 100 },
-	"burnout": { "min": 100 },
+	"burnout": { "min": 200 },
 	"tags": [ "automation" ],
 	"hidden_tags": [ "normal" ]
 }
