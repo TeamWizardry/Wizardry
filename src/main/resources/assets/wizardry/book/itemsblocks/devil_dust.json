@@ -5,10 +5,6 @@
   },
   "title": "wizardry.book.items_blocks.devil_dust.title",
   "content": [
-    "wizardry.book.items_blocks.devil_dust.content0",
-    {
-      "type": "recipe",
-      "recipe": "wizardry:devil_dust"
-    }
+    "wizardry.book.items_blocks.devil_dust.content0"
   ]
 }
