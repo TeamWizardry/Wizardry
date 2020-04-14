@@ -61,7 +61,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 	public EntitySpellProjectile(World world, SpellRing spellRing, SpellData spellData, float dist, float speed, float gravity, boolean render) {
 		super(world);
-		setSize(0.5F, 0.5F);
+		setSize(2.0F, 2.0F);
 		isImmuneToFire = true;
 
 		setSpellData(spellData);
@@ -220,7 +220,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 			float speed = getSpeed();
 			// MOVE //
-			motionX += ((look.x * speed) - motionX);
+			 motionX += ((look.x * speed) - motionX);
 			motionY += ((look.y * speed) - motionY);
 			motionZ += ((look.z * speed) - motionZ);
 

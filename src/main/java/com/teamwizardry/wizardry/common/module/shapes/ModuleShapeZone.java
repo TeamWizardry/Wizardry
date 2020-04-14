@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Random;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -48,6 +49,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
 	private static final String ZONE_TICK = "zone_tick";
+
+	private static final Random randy = new Random();
 
 	/**
 	 * {@inheritDoc}
@@ -122,8 +125,14 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 			}
 
 			BlockPos target = new BlockPos(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
-			List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(target));
+			List<Entity> entities = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(min.x, min.y, min.z, max.x, max.y, max.z));
+
+			System.out.println(entities.size());
+
 			for (Entity entity : entities) {
+				if(potency == 0 && randy.nextInt(2) == 0) continue;
+				else if(randy.nextInt(((int)potency)+1) > 0) continue;
+
 				Vec3d vec = new Vec3d(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
 
 				SpellData copy = spell.copy();
@@ -133,7 +142,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 				copy.addData(ORIGIN, vec);
 
 				if (spellRing.getChildRing() != null)
-					spellRing.getChildRing().runSpellRing(world, spell, true);
+					spellRing.getChildRing().runSpellRing(world, copy, true);
 			}
 
 			Vec3d pos = new Vec3d(target).add(0.5, 0.5, 0.5);
