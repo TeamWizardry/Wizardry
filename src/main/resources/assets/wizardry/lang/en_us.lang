@@ -465,17 +465,17 @@ wizardry.book.steps.spell_creation.content5=This spell is very weak at it's base
 wizardry.book.steps.spell_creation.content6=Once you are satisfied with your spell, click the &oSave&r button on the top right. This will save your spell's recipe into &othis&r codex. You will see a new bookmark in this codex with the recipe of the spell you want to create. So be sure you have this codex on your person when you make a spell.
 wizardry.book.steps.spell_creation.content7=Now that you saved your spell, check the Spell Recipe bookmark in this book. You will see a list of items that you need to gather and throw into the crafting plate &o&lin order&r. Fill your Mana Battery up with mana, then throw your nacre pearl into the crafting plate. Finally, wait for your spell to craft for a minute. You will be greeted with an explosion of mana around the nacre pearl sitting at the center of the plate. You now have an spell-infused pearl at your disposal. Craft it with an empty staff to mount it to it, then you can use your staff to cast your spell! Congratulations, my friend. You are now a wizard. I fear for the poor animals in the wake of your first pyrokinetics.
 
-wizardry.book.items_blocks.book.title=&6Spellforger's Codex&r
-wizardry.book.items_blocks.book.content0=
+wizardry.book.items_blocks.book.title=Spellforger's Codex
+wizardry.book.items_blocks.book.content0=The Spellforger’s Codex is the sum of my teachings to you, although it is a paltry shadow of the Akashic Record all Wizardry descends from. Simply throwing a book into mana will infuse it with Wisdom, connecting it to the source of knowledge through the angel blood. This book holds all secrets you shall need for the art of Wizardry, and provides blank pages for you to record your spellcraft. These pages will also tell you the ingredients for your spells. Simply copy your spell into the book from the Magician’s Worktable to have the recipe displayed on the pages.
 
 wizardry.book.items_blocks.devil_dust.title=Devil Dust
 wizardry.book.items_blocks.devil_dust.content0=&oDevil dust is a purified form of the conductive Redstone dust, which, instead of conducting electricity, conducts magic.&r<br><br>It is made by throwing Redstone into fire. It will fizzle a bit then plop out the hellish dust.
 
 wizardry.book.items_blocks.fairy_dust.title=Fairy Dust
-wizardry.book.items_blocks.fairy_dust.content0=Upon killing a fairy from the underworld, it will usually leave behind some of its essence in the form of fairy dust. This magical dust is used as an ingredient in many different things, such as sky dust.
+wizardry.book.items_blocks.fairy_dust.content0=Upon killing a fairy, found in the underworld, it will often leave behind some of its essence, in the form of fairy dust. This potent dust is a key ingredient in many magical reagents, such as sky dust, due to the link it has to the concept the fairy was created from.
 
 wizardry.book.items_blocks.sky_dust.title=Sky Dust
-wizardry.book.items_blocks.sky_dust.content0=Devil dust represents adhesion, so naturally sky dust represents it's counterpart: repulsion. Sky dust is created by throwing fairy dust into fire, purifying the essence of the emptiness the fairies live in. Sky dust itself has negligible effects, however combined with other ingredients it can create some powerful tools.
+wizardry.book.items_blocks.sky_dust.content0=Devil dust represents adhesion, so naturally, sky dust represents the conceptual opposite: repulsion. Sky dust is created by throwing fairy dust into fire, burning away the magic and leaving only the aimless freedom the fairy represents. By itself, it has negligible effects. However, it is a very potent reagent for arcane purposes.
 
 wizardry.book.items_blocks.wisdom_sapling.title=Wisdom Sapling
 wizardry.book.items_blocks.wisdom_sapling.content0=Wisdom is a property of magic. It is the innate potential to use mana, the potential to be more than mundane. While you might lack Wisdom, it just so happens that trees soak mana up rather nicely. In the process, they gain Wisdom, and so a standard sapling can be made into a Wisdom Wood Sapling by soaking it in mana.
@@ -491,11 +491,14 @@ wizardry.book.items_blocks.crafting_plate.title=Crafting Plate
 wizardry.book.items_blocks.crafting_plate.content0=The crafting plate is the core of the crafting altar; it holds the ingredients needed to create your spell and infuses them into the nacre pearl using the mana provided. See step 4 of “The 5 Steps To Becoming A Wizard” for a full explanation on how the structure works.
 
 wizardry.book.items_blocks.mana_battery.title=Mana Battery
-wizardry.book.items_blocks.mana_battery.content0=The mana battery is a crystal capable of storing and generating mass amounts of mana. It is created by infusing a diamond with soul sand and devil dust, along with 9 source blocks of mana. This combination will create a crystal with the required capabilities, although the input and extraction of mana requires the use of a structure highlighted in step 4 of “The 5 Steps To Becoming A Wizard.”
+wizardry.book.items_blocks.mana_battery.content0=The mana battery is, self-explanatorily, a crystal capable of storing mass amounts of mana. It is created by infusing a diamond with soul sand via devil dust, along with consuming nine source blocks of mana. This combination will form a crystal with the required capabilities, although the input and extraction of mana requires the use of a structure highlighted in part four of “The 5 Steps To Becoming A Wizard.”
 
 wizardry.book.items_blocks.crude_halo.title=Crude Halo
 wizardry.book.items_blocks.crude_halo.content0=&oThe crude halo is a bad representation of divinity. While it's nowhere near as potent as the Grace of an angel, it... does the job of holding mana, if not bestowing it.&r
 wizardry.book.items_blocks.crude_halo.content1=If you like wearing baubles and trinkets, you can wear it on your head alongside your armor. Otherwise, it'll have to take the place of your helmet. It may not look as fancy as the real deal, but it'll do.
+
+wizardry.book.items_blocks.nacre_pearl.title=Nacre Pearl
+wizardry.book.items_blocks.nacre_pearl.content0=Nacre pearls are at the core of a wizard’s arsenal. The structure of these pearls accepts spells readily, and allows you to cast that spell by drawing mana through them. To be able to do so, craft a pearl together with a staff, or press the pearl-swapping key if you have a pearl belt equipped. For more info on Nacre pearls, see the third part of “The 5 Steps To Becoming A Wizard.”
 
 wizardry.book.items_blocks.pearl_belt.title=Pearl Belt
 wizardry.book.items_blocks.pearl_belt.content0=As you have diversified your spells, you have no doubt noticed the inconvenience associated with changing between them. Pulling out the old pearl and putting in the new one wastes valuable time, and carrying many staves around leaves you much less room to work with. There exists an item called the Pearl Belt, which allows you to store nacre pearls for quick and fluid swapping in and out of your staff.<br><br>To add pearls to the belt, simply use the belt, and its imbued magic will tell you the rest of the process. It is quite foolproof, so don't worry. Then, use your pearl-swapping key to swap pearls while holding the staff.
@@ -503,8 +506,12 @@ wizardry.book.items_blocks.pearl_belt.content0=As you have diversified your spel
 wizardry.book.items_blocks.orbs.title=Orbs
 wizardry.book.items_blocks.orbs.content0=Glass orbs are used to capture both nacre and mana, giving you from these powerful liquids the iridescent Nacre Pearls and the invaluable Mana Orbs.
 wizardry.book.items_blocks.orbs.content1=Mana orbs are made simply by throwing glass orbs into liquid mana.<br>Nacre pearls, on the other hand, require more precision. To get the best quality pearl, you can refer to the third step of becoming a Wizard: Nacre.
+wizardry.book.items_blocks.orbs.content2=Wizards who find themselves clumsily stumbling into mana pools on the ground will notice the strange inverse gravity granted to them for a few moments. There is a way to harness this into something useful, however. Putting a small amount of iron into an orb full of mana will filter the liquid, drawing from it the majority of its magical effects, and leaving an Orb of Levitation. The orb will quickly decay, so use it wisely.
 
-wizardry.book.items_blocks.real_halo.title=True Halo
+wizardry.book.items_blocks.staff.title=Staff
+wizardry.book.items_blocks.staff.content0=A nacre pearl is the lens that shapes mana into your spell, but the staff is the conduit that channels the mana through the pearl. Infused with the Wisdom of the wood it’s made out of, the staff allows you to push mana through the pearl, something a Wisdomless being cannot do without assistance from a tool.
+
+wizardry.book.items_blocks.real_halo.title=Real Halo
 wizardry.book.items_blocks.real_halo.content0=The crude halo allows a taste of power, but mere gold cannot compare to divinity. While true halos can only be acquired by slaying the current wielder, there is a way to make something very very similar. Throw a Nether Star, a bottle of Dragon's Breath, a shard of Prismarine, some Fairy Dust, some Devil Dust, and a unicorn horn into 25 source blocks of mana, and wait.
 wizardry.book.items_blocks.real_halo.content1=The reaction between such powerful reagents will create something that is as close to a real halo as you can get. This halo can hold several times the mana of the Crude Halo and provides passive regen, meaning no more need for mana boosters. Be careful, though, while this halo may be close to a true halo, it is still somewhat physical; its power makes it a prime target for theft by malicious wizards.
 
@@ -518,16 +525,22 @@ wizardry.book.items_blocks.super_mana_booster.title=ManaBuilder Serum Premium Pl
 wizardry.book.items_blocks.super_mana_booster.content0=What in the Name gave you the idea to create such a disgusting product? You are mixing things that shouldn’t be mixed! I can’t even imagine why you would want to inject this unholy concoction into your veins...
 
 wizardry.book.items_blocks.vortex_bomb.title=Vortex Bomb
-wizardry.book.items_blocks.vortex_bomb.content0=Devil dust may represent adhesion, but it’s effects are negligible on it’s own. One of the easiest ways to add some bang to it is to add just that - gunpowder. Just mix the two and wrap them up in something like paper, and you will make a vortex bomb. You have an explosive that will create a brief but powerful gravity well. Be warned, the range is very large so it is not advised to use this near things you care about.
+wizardry.book.items_blocks.vortex_bomb.content0=Devil dust may bring adhesion, but its effects are negligible in its raw form. One of the easiest ways to make effects manifest in dust express themselves is to add gunpowder. Just mix the two and wrap them up in something akin to paper, and you will have a vortex bomb, an explosive that will create a brief, but powerful gravity well. Be warned, the range is very large, so it is not advised to use this near anything you wish to continue existing.
 
 wizardry.book.items_blocks.repulsion_bomb.title=Repulsion Bomb
-wizardry.book.items_blocks.repulsion_bomb.content0=Naturally, the process used in the vortex bomb applies to sky dust as well. Unlike conventional explosives which do still push you away, this repulsion bomb does not damage anything directly since the sky dust converts the energy from the gunpowder explosion into extra repulsion force. The range and power, like the vortex bomb, are quite large so base usage is not recommended.
+wizardry.book.items_blocks.repulsion_bomb.content0=Naturally, the process used in the vortex bomb applies to sky dust as well. Unlike conventional explosives, which do still push you away, this repulsion bomb does not damage anything directly. The surge of power from the gunpowder is converted into a surge of repulsive force, bringing extra force to the shock wave. The range and power, like the vortex bomb, are quite large, so home use is not recommended.
 
 wizardry.book.items_blocks.fairy_wings.title=Fairy Wings
-wizardry.book.items_blocks.fairy_wings.content0=Sometimes when you desecrate an innocent fairy it doesn’t completely dissolve into dust, leaving behind an intact pair of its wings. Now before you go on thinking you can fly with these things - because it's *always* the first thing I'm asked - these wings are the size of an apple. These wings do however contain more of the fairy's energy than the dust, and are used as an ingredient.
+wizardry.book.items_blocks.fairy_wings.content0=Sometimes, when you break a fairy, it won't fully dissipate, leaving behind an intact pair of wings. Now, before you go thinking you can fly with these things - because that's always the first thing they try - these wings are miniscule, and aren't even capable of truly lifting the fairy, let alone a human. These wings do, however, contain more of the fairy's energy than the dust, and can be used as an ingredient.
 
 wizardry.book.items_blocks.unicorn_horn.title=Unicorn Horn
-wizardry.book.items_blocks.unicorn_horn.content0=Unicorns have notable battle prowess, mostly due to their sharp horns. While they are often thought of as having magical healing properties, in reality they are fancy sharp sticks unless properly used. Unicorn horns are components for both spells and physical weapons, making them highly fabled.
+wizardry.book.items_blocks.unicorn_horn.content0=Unicorns have notable battle prowess, owing this to their sharp horns. While they are often thought of as having magical healing properties, it is much easier to use them to take life than to give it. Unicorn horns are components for both spells and physical weapons, making them highly valuable.
+
+wizardry.book.items_blocks.unicorn_dagger.title=Unicorn Dagger
+wizardry.book.items_blocks.unicorn_dagger.content0=A unicorn's horn is a powerful healing tool, but to harness that healing power requires incredible knowledge of magic and medicine. Instead, it is much easier to use that power to harm instead of heal. By binding the severed horn with a quartz coating and a golden hilt, and using devil dust to effect the process, the horn becomes a dagger capable of striking with the arcane potency the unicorn once possessed.
+
+wizardry.book.items_blocks.fairy_imbued_apple.title=Fairy Imbued Apple
+wizardry.book.items_blocks.fairy_imbued_apple.content0=It is possible to use alterations of other kinds of magic on our own. The magic which allows Golden Apples is far removed from our arts, but we can apply our own works on that power. By using fairy dust and wings, you can create an apple with the ability to empower you, but instead of the healing gold provides, the apple gives you the freedom and aimlessness of the wispy creatures slaughtered to create it.
 
 wizardry.book.items_blocks.nacre_block.title=Nacre Blocks
 wizardry.book.items_blocks.nacre_block.content0=Nacre has decorative uses as well. When fashioned into a solid cube, it looks quite pretty in addition to being structurally stable enough to not collapse in on itself. It is also solid enough to be fashioned into bricks. These blocks are purely decorative however, and serve no special purpose.

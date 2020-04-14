@@ -21,6 +21,7 @@
       "icon": "wizardry:gui/book/icons/hot_spices",
       "description": "test",
       "entries": [
+        "wizardry:itemsblocks/book",
         "wizardry:itemsblocks/wisdom_wood",
         "wizardry:itemsblocks/magic_worktable",
         "wizardry:itemsblocks/crafting_plate",
