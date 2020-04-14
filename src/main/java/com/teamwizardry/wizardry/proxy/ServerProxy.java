@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.proxy;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 
@@ -13,4 +14,9 @@ public class ServerProxy implements IProxy {
 	public void setItemStackHandHandler(Hand hand, ItemStack stack) {
 		//NOOP
 	}
+
+    @Override
+    public void spawnParticle(Entity entity) {
+        //NOOP
+    }
 }

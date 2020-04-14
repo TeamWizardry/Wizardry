@@ -28,9 +28,6 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
@@ -45,9 +42,6 @@ minecraft {
         server {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
@@ -60,9 +54,6 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -80,6 +71,7 @@ minecraft {
 
 allprojects {
 	repositories {
+        mavenLocal()
 		maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
@@ -88,6 +80,8 @@ allprojects {
             name "curios"
             url "https://maven.theillusivec4.top/"
         }
+        maven { url = "https://minecraft.curseforge.com/api/maven/" }
+        maven { url = 'http://repo.spongepowered.org/maven' }
 	}
 }
 
@@ -96,7 +90,8 @@ dependencies {
 
     implementation 'org.yaml:snakeyaml:1.21'
     implementation 'com.github.thecodewarrior:Prism:-SNAPSHOT'
-    
+    implementation 'com.teamwizardry.librarianlib:particles:0.0.1'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
     compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0")
