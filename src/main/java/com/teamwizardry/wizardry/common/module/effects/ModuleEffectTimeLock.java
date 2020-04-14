@@ -33,6 +33,7 @@ import java.util.UUID;
 /**
  * Created by Demoniaque.
  */
+/*
 @RegisterModule(ID = "effect_time_lock")
 public class ModuleEffectTimeLock implements IModuleEffect, IDelayedModule {
 
@@ -98,3 +99,4 @@ public class ModuleEffectTimeLock implements IModuleEffect, IDelayedModule {
 		LibParticles.EFFECT_BURN(world, position, color);
 	}
 }
+*/

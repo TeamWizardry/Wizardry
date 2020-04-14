@@ -20,7 +20,7 @@ public class ModPotions {
 	public static PotionSuffocate SUFFOCATE;
 	public static PotionGrace GRACE;
 	public static PotionBouncing BOUNCING;
-	public static PotionTimeLock TIME_LOCK;
+	// public static PotionTimeLock TIME_LOCK;
 
 	public static void init() {
 		NULLIFY_GRAVITY = new PotionNullGrav();
@@ -34,7 +34,7 @@ public class ModPotions {
 		ZACH_CORRUPTION = new PotionZachCorruption();
 		SUFFOCATE = new PotionSuffocate();
 		BOUNCING = new PotionBouncing();
-		TIME_LOCK = new PotionTimeLock();
+//		TIME_LOCK = new PotionTimeLock();
 		MinecraftForge.EVENT_BUS.register(GRACE = new PotionGrace());
 	}
 }

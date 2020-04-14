@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.potion;
 
 import com.teamwizardry.wizardry.common.core.WizardryNemezManager;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
-import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeLock;
+// import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeLock;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -20,6 +20,7 @@ import java.util.UUID;
 /**
  * Created by Demoniaque.
  */
+/*
 @Mod.EventBusSubscriber
 public class PotionTimeLock extends PotionBase {
 
@@ -73,3 +74,4 @@ public class PotionTimeLock extends PotionBase {
 		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}
 }
+*/
