@@ -12,13 +12,13 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 public class CommandWizardry extends CommandTreeBase {
-
 	public CommandWizardry() {
 		addSubcommand(new CommandListModules());
 		addSubcommand(new CommandGenStaff());
 		addSubcommand(new CommandGenPearl());
+		addSubcommand(new CommandGenCape());
 		addSubcommand(new CommandDebug());
-		addSubcommand(new CommandTeleportTorikki());
+//		addSubcommand(new CommandTeleportTorikki());
 		addSubcommand(new CommandTeleportUnderworld());
 		addSubcommand(new CommandTreeHelp(this));
 	}

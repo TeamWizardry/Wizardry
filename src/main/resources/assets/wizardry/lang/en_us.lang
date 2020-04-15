@@ -370,6 +370,8 @@ wizardry.command.genstaff.usage=/wizardry genstaff
 
 wizardry.command.genpearl.usage=/wizardry genpearl
 
+wizardry.command.genmaxcape.usage=/wizardry genmaxcape
+
 wizardry.command.tptorikki.usage=/wizardry tptorikki
 
 wizardry.command.tpunderworld.usage=/wizardry tpunderworld

@@ -20,7 +20,6 @@ import org.apache.logging.log4j.Logger;
  */
 @Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, dependencies = Wizardry.DEPENDENCIES)
 public class Wizardry {
-
     public static final String MODID = "wizardry";
     public static final String MODNAME = "Wizardry";
     public static final String VERSION = "GRADLE:VERSION";
