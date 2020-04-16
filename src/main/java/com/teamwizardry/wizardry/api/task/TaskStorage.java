@@ -10,6 +10,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
+/**
+ * A class holding data in TaskController. Data is shared and accessible to all tasks in the TaskController.
+ */
 public class TaskStorage implements INBTSerializable<CompoundNBT> {
 
 	/**

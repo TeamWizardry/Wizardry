@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -14,12 +15,12 @@ import java.util.UUID;
 /**
  * TASKS MUST ALWAYS IMPLEMENT AN EMPTY CONSTRUCTOR FOR REGISTRATION AND SERIALIZATION
  */
-public abstract class Task implements INBTSerializable<CompoundNBT> {
+public abstract class Task extends ForgeRegistryEntry<Task> implements INBTSerializable<CompoundNBT> {
 
 	@Nullable
-	protected static <R extends Entity & IRobot> Entity getChainedRobot(R robotEntity) {
+	protected static <R extends Entity & IRobot> Entity getChainedRobot(R robotEntity, TaskController controller) {
 
-		UUID attachedUUID = robotEntity.getTaskStorage().chainedTo;
+		UUID attachedUUID = controller.getStorage().chainedTo;
 		if (attachedUUID == null) return null;
 
 		ServerWorld world = (ServerWorld) robotEntity.world;

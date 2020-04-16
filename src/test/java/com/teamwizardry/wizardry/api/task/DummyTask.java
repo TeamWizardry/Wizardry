@@ -1,10 +1,6 @@
-package com.teamwizardry.wizardry.api.task.defaulttasks;
+package com.teamwizardry.wizardry.api.task;
 
-import com.teamwizardry.wizardry.api.ResourceConsts;
 import com.teamwizardry.wizardry.api.StringConsts;
-import com.teamwizardry.wizardry.api.task.IRobot;
-import com.teamwizardry.wizardry.api.task.Task;
-import com.teamwizardry.wizardry.api.task.TaskController;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -14,37 +10,35 @@ import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
 
-public class TaskMove extends Task {
+import static com.teamwizardry.wizardry.api.task.TaskTests.DUMMY_TASK_LOC;
 
+public class DummyTask extends Task {
+
+	// TEST DATA. NOT RELEVANT.
 	private BlockPos targetBlock;
 	private Direction direction;
 
-	public TaskMove() {
+	public DummyTask() {
 	}
 
-	public TaskMove(BlockPos targetBlock, Direction direction) {
+	public DummyTask(BlockPos targetBlock, Direction direction) {
 		this.targetBlock = targetBlock;
 		this.direction = direction;
 	}
 
 	@Override
 	public ResourceLocation getResourceLocation() {
-		return ResourceConsts.TASK_MOVE;
+		return DUMMY_TASK_LOC;
 	}
 
 	@Override
 	public <R extends Entity & IRobot> void onStart(R robotEntity, TaskController controller) {
-
+		controller.getStorage().storageNBT.putString("test_key", "test_value");
 	}
 
 	@Override
 	public <R extends Entity & IRobot> void onTick(R robotEntity, TaskController controller) {
 
-		// TODO
-
-		if (robotEntity.getPosition().equals(targetBlock)) {
-			controller.next(robotEntity);
-		}
 	}
 
 	@Override

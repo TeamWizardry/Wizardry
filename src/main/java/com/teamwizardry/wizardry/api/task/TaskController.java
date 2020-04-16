@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.task;
 
 import com.teamwizardry.wizardry.api.StringConsts;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
@@ -28,7 +29,13 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 
 	private final Queue<Task> activeQueue = new LinkedList<>();
 
+	private TaskStorage storage = new TaskStorage();
+
 	public TaskController() {
+	}
+
+	public TaskStorage getStorage() {
+		return storage;
 	}
 
 	@Nonnull
@@ -39,6 +46,8 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 	}
 
 	public <R extends Entity & IRobot> void tick(R entity) {
+		if (entity instanceof LivingEntity && !entity.isAlive()) return;
+
 		Task peek = activeQueue.peek();
 		if (peek == null) return;
 
@@ -56,6 +65,8 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 	}
 
 	public <R extends Entity & IRobot> void next(R entity) {
+		if (entity instanceof LivingEntity && !entity.isAlive()) return;
+
 		Task poll = activeQueue.poll();
 		if (poll == null) {
 			if (referenceQueue.isEmpty()) return;
@@ -104,6 +115,8 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 		}
 
 		nbt.put(StringConsts.QUEUE, listNBT);
+
+		nbt.put(StringConsts.TASK_STORAGE, storage.serializeNBT());
 		return nbt;
 	}
 
@@ -123,9 +136,14 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 
 					Task freshTask = TaskRegistry.supplyTask(resourceLocation);
 					freshTask.deserializeNBT(data);
-					referenceQueue.add(freshTask);
+					this.referenceQueue.add(freshTask);
 				}
 			}
+		}
+
+		if (nbt.contains(StringConsts.TASK_STORAGE)) {
+			this.storage = new TaskStorage();
+			this.storage.deserializeNBT(nbt.getCompound(StringConsts.TASK_STORAGE));
 		}
 	}
 }

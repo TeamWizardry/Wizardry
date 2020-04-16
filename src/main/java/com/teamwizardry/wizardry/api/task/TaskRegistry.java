@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.api.task;
 
 import com.teamwizardry.wizardry.api.ResourceConsts;
-import com.teamwizardry.wizardry.api.task.defaulttasks.TaskIdle;
-import com.teamwizardry.wizardry.api.task.defaulttasks.TaskMove;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -18,8 +16,7 @@ public class TaskRegistry {
 	private static final HashMap<ResourceLocation, Supplier<Task>> tasks = new HashMap<>();
 
 	static {
-		registerTask(TaskIdle::new);
-		registerTask(TaskMove::new);
+		registerTask(TaskWait::new);
 	}
 
 	private TaskRegistry() {
