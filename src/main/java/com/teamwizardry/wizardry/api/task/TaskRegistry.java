@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.task;
 
 import com.teamwizardry.wizardry.api.ResourceConsts;
 import com.teamwizardry.wizardry.api.task.defaulttasks.TaskIdle;
+import com.teamwizardry.wizardry.api.task.defaulttasks.TaskMove;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -17,26 +18,26 @@ public class TaskRegistry {
 	private static final HashMap<ResourceLocation, Supplier<Task>> tasks = new HashMap<>();
 
 	static {
-		registerTask(new TaskIdle(), TaskIdle::new);
+		registerTask(TaskIdle::new);
+		registerTask(TaskMove::new);
 	}
 
 	private TaskRegistry() {
 	}
 
 	/**
-	 * You first pass the task, then a supplier of that exact same task. This is to prevent user error and we always
-	 * have the same resourcelocation without you needing to write it again outside the Task itself.
+	 * Registering your task enables us to serialize and deserialize it. Your task will NOT save if you don't register it!
 	 *
-	 * @param task     Contains a resourcelocation containing the mod id as a prefix, and an identifier string for your task.
-	 * @param supplier Contains a supplier for the same task so we can generate a fresh one and deserialize it later so it persists.
+	 * @param supplier Contains a supplier for the task so we can generate a fresh one and deserialize it later for persistence.
 	 * @return True if registration succeeded, false if a task with the same resource location is already registered.
 	 */
-	public static boolean registerTask(@Nonnull Task task, Supplier<Task> supplier) {
-		if (tasks.containsKey(task.getResourceLocation())) {
+	public static boolean registerTask(@Nonnull Supplier<Task> supplier) {
+		Task referenceTask = supplier.get();
+		if (tasks.containsKey(referenceTask.getResourceLocation())) {
 			return false;
 		}
 
-		tasks.put(task.getResourceLocation(), supplier);
+		tasks.put(referenceTask.getResourceLocation(), supplier);
 		return true;
 	}
 
