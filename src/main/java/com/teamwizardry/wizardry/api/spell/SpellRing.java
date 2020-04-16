@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.player.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.player.mana.ManaCapabilityProvider;
 import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
@@ -256,7 +257,16 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	//TODO: orb holders
 	public boolean taxCaster(@Nonnull World world, SpellData data, double multiplier, boolean failSound) {
-		IManaCapability cap = data.getData(SpellData.DefaultKeys.CAPABILITY);
+		if(data.getData(SpellData.DefaultKeys.CASTER) == null) return true;
+
+		Entity caster = world.getEntityByID(data.getData(SpellData.DefaultKeys.CASTER));
+
+		if(caster == null) {
+			Wizardry.LOGGER.warn("Caster was null!");
+			return true;
+		}
+
+		IManaCapability cap = ManaCapabilityProvider.getCap(caster);
 		if (cap == null) return false;
 
 		double manaDrain = getManaDrain(data) * multiplier;

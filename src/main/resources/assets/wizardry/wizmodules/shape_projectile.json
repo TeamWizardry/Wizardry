@@ -5,7 +5,7 @@
 	"mana": { "min": 30 },
 	"burnout": { "min": 20 },
 	"cooldown": { "min": 20 },
-	"range": { "min": 10, "max": 60 },
+	"range": { "min": 15, "max": 60 },
 	"speed": { "min": 1, "max": 20 },
 	"tags": [ "projectile" ],
 	"hidden_tags": [ "normal" ]

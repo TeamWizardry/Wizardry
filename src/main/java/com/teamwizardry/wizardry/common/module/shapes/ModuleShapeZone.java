@@ -119,6 +119,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
 		if (zoneTick == 0) {
 			if (!spellRing.taxCaster(world, spell, true)) {
+				Wizardry.LOGGER.warn("Can't charge.");
 				info.setDouble(ZONE_TICK, zoneTick);
 				spell.addData(COMPOUND, info);
 				return false;
@@ -132,6 +133,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 			for (Entity entity : entities) {
 				if(potency == 0 && randy.nextInt(2) == 0) continue;
 				else if(randy.nextInt(((int)potency)+1) > 0) continue;
+				if(spell.getCaster(world) == null) continue;
 
 				Vec3d vec = new Vec3d(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
 

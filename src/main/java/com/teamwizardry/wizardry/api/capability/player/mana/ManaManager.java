@@ -346,7 +346,7 @@ public final class ManaManager {
 		@Override
 		public void close() {
 			if (somethingChanged && cap != null && entity != null && !entity.world.isRemote) {
-				cap.dataChanged(entity);
+					cap.dataChanged(entity);
 			}
 		}
 	}
