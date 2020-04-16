@@ -1,22 +1,25 @@
 package com.teamwizardry.wizardry.api.task;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public abstract class Task {
+/**
+ * TASKS MUST ALWAYS IMPLEMENT AN EMPTY CONSTRUCTOR FOR REGISTRATION AND SERIALIZATION
+ */
+public abstract class Task implements INBTSerializable<CompoundNBT> {
 
 	@Nullable
-	protected static Entity getChainedRobot(Entity robotEntity) {
-		if (!(robotEntity instanceof IRobot)) return null;
+	protected static <R extends Entity & IRobot> Entity getChainedRobot(R robotEntity) {
 
-		IRobot robot = (IRobot) robotEntity;
-
-		UUID attachedUUID = robot.getTaskStorage().chainedTo;
+		UUID attachedUUID = robotEntity.getTaskStorage().chainedTo;
 		if (attachedUUID == null) return null;
 
 		ServerWorld world = (ServerWorld) robotEntity.world;
@@ -25,24 +28,29 @@ public abstract class Task {
 	}
 
 	/**
+	 * Contains the mod id as a prefix, and an identifier string for your task.
+	 */
+	public abstract ResourceLocation getResourceLocation();
+
+	/**
 	 * When the robot accepts the task, this runs
 	 */
-	public abstract void onStart(Entity robotEntity);
+	public abstract <R extends Entity & IRobot> void onStart(R robotEntity, TaskController controller);
 
 	/**
 	 * Will tick every tick the robot entity ticks with this task.
 	 */
-	public abstract void onTick(Entity robotEntity);
+	public abstract <R extends Entity & IRobot> void onTick(R robotEntity, TaskController controller);
 
 	/**
 	 * Will run when the robot accepts a different task.
 	 */
-	public abstract void onEnd(Entity robotEntity);
+	public abstract <R extends Entity & IRobot> void onEnd(R robotEntity, TaskController controller);
 
 	/**
 	 * Can be called at any time by anything. Usually by the fairy chained to this one, or a timer of some sort.
 	 */
-	public abstract void onTrigger(Entity robot);
+	public abstract <R extends Entity & IRobot> void onTrigger(R robot, TaskController controller);
 
 	/**
 	 * You may add additional processing to the robot whenever it is reconfigured with a bell.
@@ -51,6 +59,6 @@ public abstract class Task {
 	 * @param targetBlock The target block configured to. Can be null (target entity instead).
 	 * @param lookVec     The target look vector.
 	 */
-	public abstract void onConfigure(Entity robotEntity, @Nullable BlockPos targetBlock, @Nullable Entity targetEntity, Vec3d lookVec);
+	public abstract <R extends Entity & IRobot> void onConfigure(R robotEntity, @Nullable BlockPos targetBlock, @Nullable Entity targetEntity, Vec3d lookVec, TaskController controller);
 
 }

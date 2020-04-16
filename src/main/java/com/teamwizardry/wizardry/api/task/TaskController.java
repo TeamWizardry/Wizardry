@@ -1,28 +1,32 @@
 package com.teamwizardry.wizardry.api.task;
 
+import com.teamwizardry.wizardry.api.StringConsts;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * This controls the current active task that an entity has currently.
  * Make a new instance of this in your entity class. Every entity that needs a task controller will get its own instance.
  * Use this controller to change and control the task an entity must follow.
+ * <p>
+ * Will hold a queue of all tasks that need to be done.
+ * <p>
  * Be sure to save the controller in the entity's nbt.
  */
 public class TaskController implements INBTSerializable<CompoundNBT> {
 
-	private static final String TASK_LOCATION = "task_location";
+	private final Queue<Task> referenceQueue = new LinkedList<>();
 
-	@Nonnull
-	private ResourceLocation taskLocation = TaskRegistry.IDLE_TASK;
-
-	@Nonnull
-	private Task task = TaskRegistry.getTask(TaskRegistry.IDLE_TASK);
+	private final Queue<Task> activeQueue = new LinkedList<>();
 
 	public TaskController() {
 	}
@@ -34,44 +38,94 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 		return controller;
 	}
 
-	public void tick(Entity entity) {
-		task.onTick(entity);
+	public <R extends Entity & IRobot> void tick(R entity) {
+		Task peek = activeQueue.peek();
+		if (peek == null) return;
+
+		peek.onTick(entity, this);
 	}
 
-	@Nonnull
-	public Task getTask() {
-		return task;
+	public void setTaskQueue(Task... tasks) {
+		referenceQueue.clear();
+		referenceQueue.addAll(Arrays.asList(tasks));
 	}
 
-	/**
-	 * Changes the current task. Will end the last one and start the new one.
-	 *
-	 * @param entity   The entity is nullable for serialization. When deserialization happens, we don't want it to trigger onStart and onEnd again.
-	 * @param location The new task's resource location. Must be a valid task location that's registered in TaskRegistry
-	 */
-	public void setCurrentTask(@Nullable Entity entity, @Nonnull ResourceLocation location) {
-		task.onEnd(entity);
-		taskLocation = location;
-		task = TaskRegistry.getTask(location);
-		task.onStart(entity);
+	public void resetQueue() {
+		activeQueue.clear();
+		activeQueue.addAll(referenceQueue);
 	}
 
-	public void setTaskToIdle(Entity entity) {
-		task.onEnd(entity);
-		taskLocation = TaskRegistry.IDLE_TASK;
-		task = TaskRegistry.getTask(TaskRegistry.IDLE_TASK);
+	public <R extends Entity & IRobot> void next(R entity) {
+		Task poll = activeQueue.poll();
+		if (poll == null) {
+			if (referenceQueue.isEmpty()) return;
+
+			resetQueue();
+
+			Task peek = activeQueue.peek();
+			if (peek == null) return;
+			peek.onStart(entity, this);
+
+			return;
+		}
+		poll.onEnd(entity, this);
+
+		Task nextTask = activeQueue.peek();
+		if (nextTask == null) {
+			if (referenceQueue.isEmpty()) return;
+
+			resetQueue();
+
+			Task peek = activeQueue.peek();
+			if (peek == null) return;
+			peek.onStart(entity, this);
+
+			return;
+		}
+		nextTask.onStart(entity, this);
 	}
 
 	@Override
 	public CompoundNBT serializeNBT() {
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.putString(TASK_LOCATION, taskLocation.toString());
+
+		Queue<Task> queueCopy = new LinkedList<>(referenceQueue);
+
+		ListNBT listNBT = new ListNBT();
+		while (!queueCopy.isEmpty()) {
+			Task task = queueCopy.poll();
+			if (task == null) continue;
+
+			CompoundNBT taskNBT = new CompoundNBT();
+			taskNBT.putString(StringConsts.RESOURCE_LOCATION, task.getResourceLocation().toString());
+			taskNBT.put(StringConsts.DATA, task.serializeNBT());
+
+			listNBT.add(taskNBT);
+		}
+
+		nbt.put(StringConsts.QUEUE, listNBT);
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
-		if (nbt.contains(TASK_LOCATION))
-			setCurrentTask(null, new ResourceLocation(nbt.getString(TASK_LOCATION)));
+
+		if (nbt.contains(StringConsts.QUEUE)) {
+			ListNBT listNBT = nbt.getList(StringConsts.QUEUE, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+			for (INBT inbt : listNBT) {
+				if (!(inbt instanceof CompoundNBT)) continue;
+
+				CompoundNBT taskNBT = (CompoundNBT) inbt;
+
+				if (taskNBT.contains(StringConsts.RESOURCE_LOCATION) && taskNBT.contains(StringConsts.DATA)) {
+					ResourceLocation resourceLocation = new ResourceLocation(taskNBT.getString(StringConsts.RESOURCE_LOCATION));
+					CompoundNBT data = taskNBT.getCompound(StringConsts.DATA);
+
+					Task freshTask = TaskRegistry.supplyTask(resourceLocation);
+					freshTask.deserializeNBT(data);
+					referenceQueue.add(freshTask);
+				}
+			}
+		}
 	}
 }

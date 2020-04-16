@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.task;
 
+import com.teamwizardry.wizardry.api.StringConsts;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -11,8 +12,6 @@ import java.util.UUID;
 
 public class TaskStorage implements INBTSerializable<CompoundNBT> {
 
-	private static final String CHAINED_TO = "chained_to";
-
 	/**
 	 * The robot that this one is attached to.
 	 * The robot that will control this one.
@@ -20,6 +19,11 @@ public class TaskStorage implements INBTSerializable<CompoundNBT> {
 	 */
 	@Nullable
 	public UUID chainedTo;
+
+	/**
+	 * Save and retrieve all the data you want. It will be properly saved and stored.
+	 */
+	public CompoundNBT storageNBT = new CompoundNBT();
 
 	@Nonnull
 	public static TaskStorage deserializeFromEntity(Entity entity, DataParameter<CompoundNBT> dataParameter) {
@@ -42,14 +46,21 @@ public class TaskStorage implements INBTSerializable<CompoundNBT> {
 		CompoundNBT nbt = new CompoundNBT();
 
 		if (chainedTo != null)
-			nbt.putString(CHAINED_TO, chainedTo.toString());
+			nbt.putString(StringConsts.CHAINED_TO, chainedTo.toString());
+
+		if (storageNBT != null)
+			nbt.put(StringConsts.STORAGE_NBT, storageNBT);
 		return null;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
-		if (nbt.contains(CHAINED_TO)) {
-			chainedTo = UUID.fromString(nbt.getString(CHAINED_TO));
+		if (nbt.contains(StringConsts.CHAINED_TO)) {
+			chainedTo = UUID.fromString(nbt.getString(StringConsts.CHAINED_TO));
+		}
+
+		if (nbt.contains(StringConsts.STORAGE_NBT)) {
+			storageNBT = nbt.getCompound(StringConsts.STORAGE_NBT);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.entity;
 
+import com.teamwizardry.wizardry.api.StringConsts;
 import com.teamwizardry.wizardry.api.utils.ColorUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -13,10 +14,6 @@ import javax.annotation.Nullable;
 import java.awt.*;
 
 public class FairyData implements INBTSerializable<CompoundNBT>, ICapabilityProvider {
-
-	private static final String FAIRY_STATE = "fairy_state";
-	private static final String SECONDARY_COLOR = "secondary_color";
-	private static final String PRIMARY_COLOR = "primary_color";
 
 	public FairyState fairyState = FairyState.DEPRESSED;
 	public Color primaryColor = ColorUtils.generateRandomColor();
@@ -38,18 +35,19 @@ public class FairyData implements INBTSerializable<CompoundNBT>, ICapabilityProv
 	@Override
 	public CompoundNBT serializeNBT() {
 		CompoundNBT nbt = new CompoundNBT();
-		nbt.putString(FAIRY_STATE, fairyState.nbt);
+		nbt.putString(StringConsts.FAIRY_STATE, fairyState.nbt);
 		return null;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundNBT nbt) {
-		if (nbt.contains(FAIRY_STATE)) fairyState = FairyState.fromNbt(nbt.getString(FAIRY_STATE));
+		if (nbt.contains(StringConsts.FAIRY_STATE))
+			fairyState = FairyState.fromNbt(nbt.getString(StringConsts.FAIRY_STATE));
 
-		if (nbt.contains(PRIMARY_COLOR))
-			primaryColor = new Color(nbt.getInt(PRIMARY_COLOR));
+		if (nbt.contains(StringConsts.PRIMARY_COLOR))
+			primaryColor = new Color(nbt.getInt(StringConsts.PRIMARY_COLOR));
 
-		if (nbt.contains(SECONDARY_COLOR))
-			secondaryColor = new Color(nbt.getInt(SECONDARY_COLOR));
+		if (nbt.contains(StringConsts.SECONDARY_COLOR))
+			secondaryColor = new Color(nbt.getInt(StringConsts.SECONDARY_COLOR));
 	}
 }
