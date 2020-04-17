@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -61,11 +62,15 @@ public class ModuleEffectThrive implements IModuleEffect {
 		}
 
 		if (targetPos != null) {
-			if (world.getBlockState(targetPos).getBlock() instanceof IGrowable) {
+			BlockPos otherTargetPos = spell.getTargetPos().add(0, 1, 0); // beam missed crops and targets farmland
+
+			if (world.getBlockState(targetPos).getBlock() instanceof IGrowable || world.getBlockState(otherTargetPos).getBlock() instanceof IGrowable) {
 				if (!spellRing.taxCaster(world, spell, true)) return false;
-				if (!(caster instanceof EntityPlayerMP) || BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster))
+				if (!(caster instanceof EntityPlayerMP) || BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)) {
 					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, targetPos);
-			} else if (world.getBlockState(targetPos).getBlock() instanceof IPlantable) {
+					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, otherTargetPos);
+				}
+			} else if (world.getBlockState(targetPos).getBlock() instanceof IPlantable || world.getBlockState(otherTargetPos).getBlock() instanceof IPlantable) {
 				IBlockState state = world.getBlockState(targetPos);
 				Block block = state.getBlock();
 				if (!spellRing.taxCaster(world, spell, true)) return false;
@@ -78,8 +83,22 @@ public class ModuleEffectThrive implements IModuleEffect {
 					world.immediateBlockTick(targetPos, state, RandUtil.random);
 					world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 				}
+
+				state = world.getBlockState(otherTargetPos);
+				block = state.getBlock();
+
+				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(otherTargetPos, (EntityPlayerMP) caster))) {
+					while (world.getBlockState(otherTargetPos.up()).getBlock() == block) {
+						otherTargetPos = otherTargetPos.up();
+						state = world.getBlockState(otherTargetPos);
+						block = state.getBlock();
+					}
+					world.immediateBlockTick(otherTargetPos, state, RandUtil.random);
+					world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
+				}
 			}
 		}
+
 		return true;
 	}
 
