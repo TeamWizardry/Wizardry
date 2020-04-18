@@ -63,6 +63,8 @@ public class ModuleEffectBackup implements IModuleEffect {
 
 	@Override
 	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if(world.isRemote) return true;
+
 		Vec3d targetPos = spell.getTarget(world);
 		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getCaster(world);

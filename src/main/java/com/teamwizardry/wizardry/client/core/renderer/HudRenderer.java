@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.sprite.ISprite;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
@@ -71,15 +72,16 @@ public class HudRenderer {
 				int visualManaLength = 0;
 				if (mana > 0)
 					visualManaLength = (int) (((mana * 100) / maxMana) % 101);
-				fullManaBar.pinnedWrapper(true, true, true, false).draw(ClientTickHandler.getTicks(), right, top, visualManaLength, 5);
+				fullManaBar.draw(ClientTickHandler.getTicks(), right, top, visualManaLength, 5);
 
 				GlStateManager.color(1.0F, 1.0F, 1.0F);
+
 				int visualBurnoutLength = 0;
 				if (burnout > 0)
 					visualBurnoutLength = (int) (((burnout * 100) / maxBurnout) % 101);
-				fullBurnoutBar.pinnedWrapper(true, true, true, false).draw(ClientTickHandler.getTicks(), right, top + 6, visualBurnoutLength, 5);
-				GlStateManager.popMatrix();
+				fullBurnoutBar.draw(ClientTickHandler.getTicks(), right, top + 6, visualBurnoutLength, 5);
 
+				GlStateManager.popMatrix();
 			}
 		}
 	}

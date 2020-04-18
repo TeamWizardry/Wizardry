@@ -1,5 +1,11 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -8,12 +14,16 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
+import com.teamwizardry.wizardry.common.network.PacketThriveBlock;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,11 +31,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +81,14 @@ public class ModuleEffectThrive implements IModuleEffect {
 				if (!(caster instanceof EntityPlayerMP) || BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)) {
 					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, targetPos);
 					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, otherTargetPos);
+
+					PacketThriveBlock ptb = new PacketThriveBlock(targetPos);
+					PacketHandler.NETWORK.sendToAllAround(ptb, new NetworkRegistry.TargetPoint(world.provider.getDimension(), targetPos.getX(), targetPos.getY(), targetPos.getZ(), 100));
+
+					if (!world.isRemote) {
+						world.playEvent(2005, targetPos, 0);
+						world.playEvent(2005, otherTargetPos, 0);
+					}
 				}
 			} else if (world.getBlockState(targetPos).getBlock() instanceof IPlantable || world.getBlockState(otherTargetPos).getBlock() instanceof IPlantable) {
 				IBlockState state = world.getBlockState(targetPos);
@@ -106,6 +126,9 @@ public class ModuleEffectThrive implements IModuleEffect {
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d position = spell.getTarget(world);
+
+		ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, new BlockPos(position));
+		ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, new BlockPos(position.add(0,1,0)));
 
 		if (position == null) return;
 		LibParticles.EFFECT_REGENERATE(world, position, instance.getPrimaryColor());

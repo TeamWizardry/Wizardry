@@ -41,6 +41,8 @@ public class ModuleShapeTouch implements IModuleShape {
 
 	@Override
 	public boolean run(@NotNull World world, ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Wizardry.LOGGER.warn("TOUCH: " + world.isRemote);
+
 		Vec3d look = spell.getData(LOOK);
 
 		Entity caster = spell.getCaster(world);

@@ -4,9 +4,15 @@
 		"textureHeight":256,
 		"sprites": {
 			"mana_empty":[0, 0, 101, 5],
-			"mana_full":[0, 5, 101, 5],
-			"burnout_empty":[0, 10, 101, 5],
-			"burnout_full":[0, 15, 101, 5]
+			"mana_full": {
+				"pos": [0, 5, 101, 5],
+				"pinEdges": [true, true, false, true]
+			},
+			"burnout_empty": [0, 10, 101, 5],
+			"burnout_full": {
+				"pos": [0, 15, 101, 5],
+				"pinEdges": [true, true, false, true]
+			}
 		}
 	}
 }

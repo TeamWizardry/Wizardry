@@ -356,6 +356,7 @@ public class TableModule extends GuiComponent {
 		BufferBuilder vb = tessellator.getBuffer();
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		Vec2d lastPoint = null;
+
 		for (int i = 0; i < list.size() - 1; i++) {
 			Vec2d point = list.get(i);
 			if (lastPoint == null) {
@@ -378,8 +379,8 @@ public class TableModule extends GuiComponent {
 			float g = lerp(primary.getGreen(), secondary.getGreen(), wire) / 255f;
 			float b = lerp(primary.getBlue(), secondary.getBlue(), wire) / 255f;
 
-			Vec2d normal = point.sub(lastPoint).normalize();
-			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf()).mul((1.0f - 2.0f * Math.abs(dist - 0.5f) + 0.3f));
+			Vec2d normal = point.sub(lastPoint);
+			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf()).mul(1.0f - 2.0f * Math.abs(dist - 0.5f) + 0.3f);
 			Vec2d point1 = lastPoint.sub(normal.mul(0.5)).add(perp);
 			Vec2d point2 = point.add(normal.mul(0.5)).add(perp);
 			Vec2d point3 = point.add(normal.mul(0.5)).sub(perp);
@@ -392,6 +393,7 @@ public class TableModule extends GuiComponent {
 
 			lastPoint = point;
 		}
+
 		tessellator.draw();
 
 		GlStateManager.translate(0, 0, 10);
