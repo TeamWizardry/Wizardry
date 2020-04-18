@@ -42,17 +42,17 @@ repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
     maven { url = "http://maven.bluexin.be/repository/snapshots/" }
-	maven { url = "http://dvs1.progwml6.com/files/maven" }
-	maven { url = "http://tehnut.info/maven" }
-	maven { url = "http://maven.tterrag.com/" }
+    maven { url = "http://dvs1.progwml6.com/files/maven" }
+    maven { url = "http://tehnut.info/maven" }
+    maven { url = "http://maven.tterrag.com/" }
     maven { url = "http://maven.thiakil.com" }
 }
 
 dependencies {
-	compile ("com.teamwizardry.librarianlib:librarianlib-1.12.2:feature-neogui-4.20-SNAPSHOT") {changing = true}
-	deobfCompile "mezz.jei:jei_1.12.2:$jei_version:api"
-	runtime "mezz.jei:jei_1.12.2:$jei_version"
-	runtime "team.chisel.ctm:CTM:$ctm_version"
+    compile("com.teamwizardry.librarianlib:librarianlib-1.12.2:feature-neogui-4.20-SNAPSHOT") { changing = true }
+    deobfCompile "mezz.jei:jei_1.12.2:$jei_version:api"
+    runtime "mezz.jei:jei_1.12.2:$jei_version"
+    runtime "team.chisel.ctm:CTM:$ctm_version"
     deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
 
     // https://mvnrepository.com/artifact/ai.api/libai
@@ -75,7 +75,7 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info', 'pack.mcmeta'
-        expand  'mod_version': project.version,
+        expand 'mod_version': project.version,
                 'mc_version': project.minecraft.version
     }
 

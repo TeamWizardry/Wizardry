@@ -412,7 +412,7 @@ public class TableModule extends GuiComponent {
 			case SHAPE:
 				return Color.CYAN;
 			case EFFECT:
-				return Color.ORANGE;
+				return Color.PINK;
 			case MODIFIER:
 				return Color.GREEN;
 			default:
