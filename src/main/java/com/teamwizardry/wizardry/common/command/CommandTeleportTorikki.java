@@ -32,7 +32,7 @@ public class CommandTeleportTorikki extends CommandBase {
 		if (entity instanceof EntityPlayerMP) {
 			EntityPlayer player = ((EntityPlayer) entity);
 			fallResetter.add(player.getUniqueID());
-			TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0, 65, 0);
+//			TeleportUtil.teleportToDimension(player, Wizardry.torikki.getId(), 0, 65, 0);
 		} else notifyCommandListener(sender, this, "wizardry.command.notplayer");
 	}
 }

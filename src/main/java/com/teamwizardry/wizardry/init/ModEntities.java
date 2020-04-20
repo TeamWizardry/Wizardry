@@ -49,12 +49,12 @@ public class ModEntities {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "halo_infusion_item"), EntityHaloInfusionItem.class, "halo_infusion_item", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_blight"), EntitySpiritBlight.class, "spirit_blight");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_wight"), EntitySpiritWight.class, "spirit_wight");
-		registerEntity(new ResourceLocation(Wizardry.MODID, "angel_zachriel"), EntityZachriel.class, "angel_zachriel");
+//		registerEntity(new ResourceLocation(Wizardry.MODID, "angel_zachriel"), EntityZachriel.class, "angel_zachriel");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "lightning_projectile"), EntityLightningProjectile.class, "lightning_projectile", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
-		registerEntity(new ResourceLocation(Wizardry.MODID, "zachriel_corruption"), EntityCorruptionProjectile.class, "zachriel_corruption", 64, 1, false);
+//		registerEntity(new ResourceLocation(Wizardry.MODID, "zachriel_corruption"), EntityCorruptionProjectile.class, "zachriel_corruption", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "summon_zombie"), EntityBackupZombie.class, "summon_zombie");
 	}
@@ -72,13 +72,13 @@ public class ModEntities {
 	// TODO: ModelEvent?
 	@SideOnly(Side.CLIENT)
 	public static void initModels() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityZachriel.class, manager -> new RenderZachriel(manager, new ModelZachriel()));
+//		RenderingRegistry.registerEntityRenderingHandler(EntityZachriel.class, manager -> new RenderZachriel(manager, new ModelZachriel()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritBlight.class, manager -> new RenderSpiritBlight(manager, new ModelSpiritBlight()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderSpiritWight(manager, new ModelSpiritWight()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
-		RenderingRegistry.registerEntityRenderingHandler(EntityCorruptionProjectile.class, RenderZachrielCorruption::new);
+//		RenderingRegistry.registerEntityRenderingHandler(EntityCorruptionProjectile.class, RenderZachrielCorruption::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityLightningProjectile.class, RenderSpellProjectile::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityHaloInfusionItem.class, RenderHaloInfusionItem::new);

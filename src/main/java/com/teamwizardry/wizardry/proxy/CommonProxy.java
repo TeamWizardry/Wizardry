@@ -82,9 +82,9 @@ public class CommonProxy {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", ConfigValues.underworldID, WorldProviderUnderWorld.class, false);
-		Wizardry.torikki = DimensionType.register("torikki", "_dim", ConfigValues.torikkiID, WorldProviderTorikki.class, false);
+//		Wizardry.torikki = DimensionType.register("torikki", "_dim", ConfigValues.torikkiID, WorldProviderTorikki.class, false);
 		DimensionManager.registerDimension(ConfigValues.underworldID, Wizardry.underWorld);
-		DimensionManager.registerDimension(ConfigValues.torikkiID, Wizardry.torikki);
+//		DimensionManager.registerDimension(ConfigValues.torikkiID, Wizardry.torikki);
 
 		MinecraftForge.EVENT_BUS.register(ArenaManager.INSTANCE);
 		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());
@@ -93,8 +93,8 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new ModuleEffectTimeSlow());
 		MinecraftForge.EVENT_BUS.register(new ModuleEffectLeap());
 		MinecraftForge.EVENT_BUS.register(ModBiomes.BIOME_UNDERWORLD);
-		MinecraftForge.EVENT_BUS.register(ModBiomes.BIOME_TORIKKI);
-		MinecraftForge.EVENT_BUS.register(ModBiomes.BIOME_TORIKKISEA);
+//		MinecraftForge.EVENT_BUS.register(ModBiomes.BIOME_TORIKKI);
+//		MinecraftForge.EVENT_BUS.register(ModBiomes.BIOME_TORIKKISEA);
 		MinecraftForge.EVENT_BUS.register(this);
 
 		WizardryWorldCapability.init();
