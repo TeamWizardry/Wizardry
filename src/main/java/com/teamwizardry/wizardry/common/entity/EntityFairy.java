@@ -582,7 +582,7 @@ public class EntityFairy extends EntityTameable implements EntityFlying {
 		// TODO color
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
 		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);
-		NBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, dataFairy.primaryColor.getRGB());
+		// NBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, dataFairy.primaryColor.getRGB());
 		entityDropItem(fairyDust, RandUtil.nextFloat());
 		entityDropItem(fairyWings, RandUtil.nextFloat());
 	}
