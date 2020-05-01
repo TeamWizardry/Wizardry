@@ -18,10 +18,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.ModuleShape;
-
 @TestInstance(Lifecycle.PER_CLASS)
 public class ModuleTest
 {

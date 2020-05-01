@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
@@ -40,13 +38,13 @@ public class ModuleLoaderTest
     public void initTest()
     {
         testPatterns.put(shapeLoc, new PatternShape() {
-            @Override public void run() {}
+            @Override public void run(Function<BlockPos, Boolean> shouldAffectBlock, Function<Entity, Boolean> shouldAffectEntity) {}
             @Override public void affectEntity(Entity entity) {}
             @Override public void affectBlock(BlockPos pos) {}
         });
         
         testPatterns.put(effectLoc, new PatternEffect() {
-            @Override public void run() {}
+            @Override public void run(Function<BlockPos, Boolean> shouldAffectBlock, Function<Entity, Boolean> shouldAffectEntity) {}
             @Override public void affectEntity(Entity entity) {}
             @Override public void affectBlock(BlockPos pos) {}
         });

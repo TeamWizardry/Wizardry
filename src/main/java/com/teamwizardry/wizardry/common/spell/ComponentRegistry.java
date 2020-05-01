@@ -9,8 +9,6 @@ import java.util.Set;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
-import com.teamwizardry.wizardry.api.spell.Modifier;
-import com.teamwizardry.wizardry.api.spell.Module;
 
 import net.minecraft.item.Item;
 

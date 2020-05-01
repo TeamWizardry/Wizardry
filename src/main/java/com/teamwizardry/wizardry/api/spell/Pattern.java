@@ -10,15 +10,10 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  * Stores the methods that run the actual spell effects.
  * Attached to Modules created using the {@code modid:name} pair the pattern was
  * registered under
- * 
- * @see Module
  */
 public abstract class Pattern extends ForgeRegistryEntry<Pattern>
 {
-    protected Function<Entity, Boolean> shouldAffectEntity = EntityTarget.ALWAYS;
-    protected Function<BlockPos, Boolean> shouldAffectBlock = BlockTarget.ALWAYS;
-
-    public abstract void run();
+    public abstract void run(Function<BlockPos, Boolean> shouldAffectBlock, Function<Entity, Boolean> shouldAffectEntity);
 
     public abstract void affectEntity(Entity entity);
 

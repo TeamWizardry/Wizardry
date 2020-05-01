@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Joiner;
-import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 
 import net.minecraft.item.Item;

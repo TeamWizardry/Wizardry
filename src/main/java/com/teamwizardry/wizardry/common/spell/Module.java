@@ -1,9 +1,12 @@
-package com.teamwizardry.wizardry.api.spell;
+package com.teamwizardry.wizardry.common.spell;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.Range;
+
+import com.teamwizardry.wizardry.api.spell.ISpellComponent;
+import com.teamwizardry.wizardry.api.spell.Pattern;
 
 import net.minecraft.item.Item;
 

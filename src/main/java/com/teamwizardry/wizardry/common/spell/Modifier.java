@@ -1,9 +1,12 @@
-package com.teamwizardry.wizardry.api.spell;
+package com.teamwizardry.wizardry.common.spell;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.teamwizardry.wizardry.api.spell.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.ISpellComponent;
 
 import net.minecraft.item.Item;
 

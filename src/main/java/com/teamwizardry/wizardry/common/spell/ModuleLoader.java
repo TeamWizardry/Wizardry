@@ -10,11 +10,9 @@ import java.util.function.Function;
 import org.apache.commons.lang3.Range;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
+import com.teamwizardry.wizardry.api.spell.PatternShape;
 
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -141,9 +139,9 @@ public class ModuleLoader
             Map<String, Integer> colorMap = (Map<String, Integer>) yaml.get(COLOR);
             Color primary = new Color(colorMap.get(PRIMARY));
             Color secondary = new Color(colorMap.get(SECONDARY));
-            return new ModuleEffect(pattern, name, item, primary, secondary, attributeRanges, tags, hiddenTags);
+            return new ModuleEffect((PatternEffect) pattern, name, item, primary, secondary, attributeRanges, tags, hiddenTags);
         }
         // Only pattern types are Shapes and Effects, so if not an Effect...
-        return new ModuleShape(pattern, name, item, attributeRanges, tags, hiddenTags);
+        return new ModuleShape((PatternShape) pattern, name, item, attributeRanges, tags, hiddenTags);
     }
 }

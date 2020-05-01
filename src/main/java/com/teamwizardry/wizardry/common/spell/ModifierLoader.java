@@ -9,8 +9,6 @@ import java.util.function.Function;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.AttributeModifier;
-import com.teamwizardry.wizardry.api.spell.Modifier;
-import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;

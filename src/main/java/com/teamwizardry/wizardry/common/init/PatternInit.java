@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.common.init;
 
+import java.util.function.Function;
+
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
@@ -28,7 +30,7 @@ public class PatternInit
      */
     private static class TempPatternShape extends PatternShape
     {
-        @Override public void run() {}
+        @Override public void run(Function<BlockPos, Boolean> shouldAffectBlock, Function<Entity, Boolean> shouldAffectEntity) {}
         @Override public void affectEntity(Entity entity) {}
         @Override public void affectBlock(BlockPos pos){}
     }
