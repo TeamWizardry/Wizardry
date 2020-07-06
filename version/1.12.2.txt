@@ -1,16 +1,16 @@
 0.11.0
 Super Epic Spicy Gamer Update
 
-+ Codex now has entries for all items and blocks
-+ Fairy apple is craftable and gives buffs
-~ Balanced spell costs
-~ Made projectile hitbox larger, and increased base range
-~ Reinforcements spell now has a configurable cap of 100 summons per player
-* Fixed the zone spell so it actually works
-* Fixed spell crafting frame drops
-* Fixed workbench crash
-* Fixed many graphical bugs
-* Fixed zone, arc, and beam not charging the caster properly
-* Fixed compatibility issues and spell crashes
-- Temporarily removed Time Lock
-- Removed Torikki
+Codex now has entries for all items and blocks
+Fairy apple is craftable and gives buffs
+Balanced spell costs
+Made projectile hitbox larger, and increased base range
+Reinforcements spell now has a configurable cap of 100 summons per player
+Fixed the zone spell so it actually works
+Fixed spell crafting frame drops
+Fixed workbench crash
+Fixed many graphical bugs
+Fixed zone, arc, and beam not charging the caster properly
+Fixed compatibility issues and spell crashes
+Temporarily removed Time Lock
+Removed Torikki
