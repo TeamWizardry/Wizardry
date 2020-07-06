@@ -42,13 +42,16 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
 	}
 
 	@Override
+	public boolean runOnStart(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return spellRing.taxCaster(world, spell, true);
+	}
+
+	@Override
 	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d position = spell.getTarget(world);
 		BlockPos pos = spell.getTargetPos();
 
 		if (position == null || pos == null) return true;
-
-		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		double potency = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell);
 

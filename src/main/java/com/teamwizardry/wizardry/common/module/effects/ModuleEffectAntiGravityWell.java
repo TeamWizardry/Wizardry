@@ -46,6 +46,11 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 	}
 
 	@Override
+	public boolean runOnStart(@Nonnull World world, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return spellRing.taxCaster(world, spell, true);
+	}
+
+	@Override
 	public boolean run(@NotNull World world, ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d position = spell.getTarget(world);
 
@@ -58,7 +63,6 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
 			if (dist > area) continue;
-			if (!spellRing.taxCaster(world, spell, false)) return false;
 
 			final double upperMag = spellRing.getAttributeValue(world, AttributeRegistry.POTENCY, spell) / 50.0;
 			final double scale = 1.5;
