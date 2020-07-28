@@ -1,23 +1,29 @@
 package com.teamwizardry.wizardry.common.spell;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
+import com.teamwizardry.wizardry.api.spell.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.BlockTarget;
 import com.teamwizardry.wizardry.api.spell.EntityTarget;
-import com.teamwizardry.wizardry.api.spell.Pattern;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 
 public abstract class SpellChain
 {
-    protected Pattern pattern;
+    protected Module module;
     protected Function<Entity, Boolean> shouldAffectEntity = EntityTarget.ALWAYS;
     protected Function<BlockPos, Boolean> shouldAffectBlock = BlockTarget.ALWAYS;
+    protected Map<String, Double> attributes;
     
-    public SpellChain(Pattern pattern)
+    public SpellChain(Module module, Map<String, List<AttributeModifier>> modifiers)
     {
-        this.pattern = pattern;
+        this.module = module;
+        this.attributes = new HashMap<>();
+        // TODO: Calculate attributes
     }
     
     public SpellChain setShouldAffectEntity(Function<Entity, Boolean> shouldAffectEntity)
@@ -34,6 +40,9 @@ public abstract class SpellChain
     
     public void run()
     {
-        pattern.run(shouldAffectBlock, shouldAffectEntity);
+        // TODO: Apply equipment and potion modifiers
+        
+        
+        module.getPattern().run(shouldAffectBlock, shouldAffectEntity);
     }
 }

@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry;
 
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.PatternInit;
-import com.teamwizardry.wizardry.common.spell.ModifierLoader;
-import com.teamwizardry.wizardry.common.spell.ModuleLoader;
+import com.teamwizardry.wizardry.common.spell.loading.ModifierLoader;
+import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import com.teamwizardry.wizardry.proxy.IProxy;
 import com.teamwizardry.wizardry.proxy.ServerProxy;

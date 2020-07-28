@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.loading;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -10,6 +10,9 @@ import java.util.function.Function;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.Pattern;
+import com.teamwizardry.wizardry.common.spell.ComponentRegistry;
+import com.teamwizardry.wizardry.common.spell.Modifier;
+import com.teamwizardry.wizardry.common.spell.Module;
 
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.item.Item;

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.loading;
 
 import java.awt.Color;
 import java.io.InputStream;
@@ -13,6 +13,10 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
+import com.teamwizardry.wizardry.common.spell.ComponentRegistry;
+import com.teamwizardry.wizardry.common.spell.Module;
+import com.teamwizardry.wizardry.common.spell.ModuleEffect;
+import com.teamwizardry.wizardry.common.spell.ModuleShape;
 
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -52,7 +56,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  * beginning with -, while <code>{}</code> may be used to inline other values,
  * but ultimately the structure of the yaml must be as written.
  */
-public class ModuleLoader
+public class ModuleLoader extends YamlLoader
 {
     private static final String MODULE = "module";
     private static final String NAME = "name";

@@ -1,11 +1,14 @@
 package com.teamwizardry.wizardry.common.spell;
 
-import com.teamwizardry.wizardry.api.spell.Pattern;
+import java.util.List;
+import java.util.Map;
+
+import com.teamwizardry.wizardry.api.spell.AttributeModifier;
 
 public class EffectChain extends SpellChain
 {
-    public EffectChain(Pattern pattern)
+    public EffectChain(ModuleEffect effect, Map<String, List<AttributeModifier>> modifiers)
     {
-        super(pattern);
+        super(effect, modifiers);
     }
 }

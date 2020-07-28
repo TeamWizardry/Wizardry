@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.loading;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +20,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Joiner;
 import com.teamwizardry.wizardry.api.spell.Pattern;
+import com.teamwizardry.wizardry.common.spell.Module;
 
 import net.minecraft.item.Item;
 import net.minecraft.resources.FallbackResourceManager;
