@@ -14,7 +14,7 @@ tile.wizardry:nacre_block_brick.name=Nacre Bricks
 tile.wizardry:mana_magnet.name=Mana Magnet
 tile.wizardry:torikki_grass.name=Torikki Grass
 tile.wizardry:unicorn_trail.name=Unicorn Trail
-tile.wizardry:light.name=Light
+tile.light.name=Light
 tile.wizardry:wisdom_sapling.name=Wisdom Sapling
 
 entity.fairy.name=Fairy
