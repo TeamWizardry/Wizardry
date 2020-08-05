@@ -84,6 +84,8 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/teamwizardry/teamwizardry' }
+        maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
         maven {
             name "curios"
             url "https://maven.theillusivec4.top/"
@@ -95,7 +97,8 @@ dependencies {
     minecraft group: 'net.minecraftforge', name: 'forge', version: "${mc_version}-${forge_version}"
 
     implementation 'org.yaml:snakeyaml:1.21'
-    implementation 'com.github.thecodewarrior:Prism:-SNAPSHOT'
+    //implementation 'com.teamwizardry.librarianlib:librarianlib-prism:5.0.0a2'
+    implementation 'com.teamwizardry.librarianlib:librarianlib-prism:1.15-SNAPSHOT'
     
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
     compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0:api")
