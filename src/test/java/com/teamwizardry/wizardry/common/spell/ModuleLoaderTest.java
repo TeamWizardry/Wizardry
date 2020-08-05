@@ -74,7 +74,6 @@ public class ModuleLoaderTest
         assertEquals(testPatterns.get(shapeLoc), shape.getPattern());
         assertEquals("zero", shape.getName());
         assertNull(shape.getItem());
-        assertEquals(4, shape.getAttributeRanges().size());
         assertEquals(2, shape.getTags().size());
         assertEquals("test", shape.getTags().get(0));
         assertEquals("module", shape.getTags().get(1));

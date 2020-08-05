@@ -19,6 +19,7 @@ public class SpellCompiler
     private final LinkedList<ModuleShape> shapeChain = new LinkedList<>();
     private final Map<ModuleShape, LinkedList<ModuleEffect>> effectChains = new HashMap<>();
     private final Map<ModuleShape, ModuleShape> shapeOverrides = new HashMap<>();
+    private final Map<Module, String> moduleElements = new HashMap<>();
     private final Map<ISpellComponent, Map<Modifier, Integer>> componentModifiers = new HashMap<>();
     private final Map<Module, LinkedList<EntityTarget>> moduleEntityTargets = new HashMap<>();
     private final Map<Module, LinkedList<BlockTarget>> moduleBlockTargets = new HashMap<>();
@@ -41,6 +42,8 @@ public class SpellCompiler
                 handleShape((ModuleShape) component, count);
             else if (component instanceof ModuleEffect)
                 handleEffect((ModuleEffect) component, count);
+            else if (component instanceof Element)
+                handleElement((Element) component, count);
             else if (component instanceof Modifier)
                 handleModifier((Modifier) component, count);
             else if (component instanceof EntityTarget)
@@ -61,10 +64,10 @@ public class SpellCompiler
         if (shapeChain.isEmpty())
             return;
         ModuleShape lastShape = shapeChain.getLast();
-        if (effect.getPattern().overrides(lastShape.getPattern()))
+        if (lastShape.isOverriddenBy(effect))
         {
             if (!shapeOverrides.containsKey(lastShape)) // Only one override is allowed - all overrides afterwards are ignored
-                shapeOverrides.put(lastShape, (ModuleShape) effect.getPattern().getOverride(lastShape.getPattern()));
+                shapeOverrides.put(lastShape, lastShape.getOverride(effect));
         }
         else
         {
@@ -72,6 +75,17 @@ public class SpellCompiler
             for (int i = 0; i < count; i++)
                 effects.add(effect);
         }
+    }
+    
+    private void handleElement(Element element, int count)
+    {
+        if (shapeChain.isEmpty())
+            return;
+        Module lastComponent = shapeChain.getLast();
+        if (effectChains.containsKey(lastComponent)) // Elements shift the last Effect, otherwise shifting last Shape
+            lastComponent = effectChains.get(lastComponent).getLast();
+        
+        moduleElements.put(lastComponent, element.getName());
     }
     
     private void handleModifier(Modifier modifier, int count)
@@ -130,8 +144,13 @@ public class SpellCompiler
             
             Map<String, List<AttributeModifier>> modifiers = mergeModifiers(componentModifiers.getOrDefault(shape, Collections.<Modifier, Integer>emptyMap()));
             
+            String element = moduleElements.getOrDefault(shape, "");
+            
             if (shapeOverrides.containsKey(shape))
                 shape = shapeOverrides.get(shape);
+            
+            if (!element.isEmpty())
+                shape = (ModuleShape) shape.getElementalVariant(element);
             
             shapes.add(new ShapeChain(shape, modifiers).setEffects(effects.toArray(new EffectChain[effects.size()])));
         }

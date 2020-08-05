@@ -2,12 +2,9 @@ package com.teamwizardry.wizardry.common.spell.loading;
 
 import java.awt.Color;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.apache.commons.lang3.Range;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
@@ -64,9 +61,6 @@ public class ModuleLoader extends YamlLoader
     private static final String COLOR = "color";
     private static final String PRIMARY = "primary";
     private static final String SECONDARY = "secondary";
-    private static final String ATTRIBUTES = "attributes";
-    private static final String MIN = "min";
-    private static final String MAX = "max";
     private static final String TAGS = "tags";
     private static final String HIDDEN = "hiddenTags";
     
@@ -128,14 +122,6 @@ public class ModuleLoader extends YamlLoader
         Item item = itemSupplier.apply(new ResourceLocation((String) yaml.get(ITEM)));
         List<String> tags = (List<String>) yaml.get(TAGS);
         List<String> hiddenTags = (List<String>) yaml.get(HIDDEN);
-        // Attributes
-        Map<String, Map<String, Integer>> attributeMap = (Map<String, Map<String, Integer>>) yaml.get(ATTRIBUTES);
-        Map<String, Range<Integer>> attributeRanges = new HashMap<>();
-        attributeMap.entrySet().forEach(attribute -> {
-            int min = attribute.getValue().getOrDefault(MIN, 0);
-            int max = attribute.getValue().getOrDefault(MAX, Integer.MAX_VALUE);
-            attributeRanges.put(attribute.getKey(), Range.between(min, max));
-        });
 
         if (pattern instanceof PatternEffect)
         {
@@ -143,9 +129,9 @@ public class ModuleLoader extends YamlLoader
             Map<String, Integer> colorMap = (Map<String, Integer>) yaml.get(COLOR);
             Color primary = new Color(colorMap.get(PRIMARY));
             Color secondary = new Color(colorMap.get(SECONDARY));
-            return new ModuleEffect((PatternEffect) pattern, name, item, primary, secondary, attributeRanges, tags, hiddenTags);
+            return new ModuleEffect((PatternEffect) pattern, name, item, primary, secondary, tags, hiddenTags);
         }
         // Only pattern types are Shapes and Effects, so if not an Effect...
-        return new ModuleShape((PatternShape) pattern, name, item, attributeRanges, tags, hiddenTags);
+        return new ModuleShape((PatternShape) pattern, name, item, tags, hiddenTags);
     }
 }

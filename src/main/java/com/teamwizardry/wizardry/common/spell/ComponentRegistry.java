@@ -19,8 +19,8 @@ public class ComponentRegistry
     private static final Map<String, Module> modules = new HashMap<>();
     private static final Map<String, EntityTarget> entityTargets = new HashMap<>();
     private static final Map<String, BlockTarget> blockTargets = new HashMap<>();
+    private static final Map<String, Element> elements = new HashMap<>();
     private static final Set<Modifier> modifiers = new HashSet<>();
-    
     private static final Map<Module, List<Modifier>> relevantModifiers = new HashMap<>(); // This module uses all of the attributes in this modifier
     
     private static final Map<Item, ISpellComponent> spellComponents = new HashMap<>();
@@ -43,6 +43,19 @@ public class ComponentRegistry
         spellComponents.put(item, module);
     }
     
+    public static void addElement(Element element)
+    {
+        Item item = element.getItem();
+        if (spellComponents.containsKey(item))
+        {
+            logRegistrationError(element.getClass().getSimpleName(), element.getName(), item, spellComponents.get(item));
+            return;
+        }
+        
+        elements.put(element.getName(), element);
+        spellComponents.put(item, element);
+    }
+    
     public static void addModifier(Modifier modifier)
     {
         Item item = modifier.getItem();
@@ -54,12 +67,7 @@ public class ComponentRegistry
         
         modifiers.add(modifier);
         spellComponents.put(item, modifier);
-        Set<String> attributes = modifier.getAffectedAttributes();
-        
-        modules.values().stream().filter(module -> module.getAttributeRanges()
-                                                         .keySet()
-                                                         .containsAll(attributes))
-                                 .forEach(module -> relevantModifiers.computeIfAbsent(module, m -> new LinkedList<>())
+        modules.values().stream().forEach(module -> relevantModifiers.computeIfAbsent(module, m -> new LinkedList<>())
                                                                      .add(modifier));
     }
     

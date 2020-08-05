@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.api.spell.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.spell.ComponentRegistry;
 import com.teamwizardry.wizardry.common.spell.Modifier;
-import com.teamwizardry.wizardry.common.spell.Module;
 
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.item.Item;
@@ -21,7 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
- * Handles loading Modules from yaml resources. Relies heavily on a cohesive
+ * Handles loading Modifiers from yaml resources. Relies heavily on a cohesive
  * structure:
  * 
  * <pre>
@@ -58,7 +57,7 @@ public class ModifierLoader extends YamlLoader
     private ModifierLoader() {}
     
     /**
-     * Reads all .yaml files under {@code data/<domain>/wizardry/module/} and any subfolders
+     * Reads all .yaml files under {@code data/<domain>/wizardry/modifier/} and any subfolders
      * 
      * @see #loadModifiers(InputStream, Function, Function)
      */
@@ -73,12 +72,10 @@ public class ModifierLoader extends YamlLoader
      * Creates a {@link Modifier} list from an input stream, using the given
      * supplier functions for both a {@link Pattern} and an {@link Item}
      * 
-     * @param file            the input stream to read modules from
-     * @param patternSupplier the function used to convert a {@code modid:name}
-     *                        string into a {@code Pattern}
+     * @param file            the input stream to read modifiers from
      * @param itemSupplier    the function used to convert a {@code modid:name}
      *                        string into a {@code Item}
-     * @return the List of {@code Module} objects compiled from the input yaml
+     * @return the List of {@code Modifier} objects compiled from the input yaml
      *         stream
      */
     public static List<Modifier> loadModifiers(InputStream file, Function<ResourceLocation, Item> itemSupplier)
@@ -88,14 +85,12 @@ public class ModifierLoader extends YamlLoader
     }
 
     /**
-     * Helper method to compile the map from parsing a module yaml
+     * Helper method to compile the map from parsing a modifier yaml
      * 
      * @param yaml The parsed yaml
-     * @param patternSupplier the function used to convert a {@code modid:name}
-     *                        string into a {@code Pattern}
      * @param itemSupplier    the function used to convert a {@code modid:name}
      *                        string into a {@code Item}
-     * @return A {@link Module} constructed from the values in the yaml
+     * @return A {@link Modifier} constructed from the values in the yaml
      */
     @SuppressWarnings("unchecked")
     private static Modifier compileModifier(Map<String, Object> yaml, Function<ResourceLocation, Item> itemSupplier)

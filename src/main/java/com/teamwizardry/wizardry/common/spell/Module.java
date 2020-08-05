@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.common.spell;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.Range;
-
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 
@@ -18,18 +18,17 @@ public class Module implements ISpellComponent
     protected final Item item;
 
     // Variable data
-    protected final Map<String, Range<Integer>> attributeRanges;
+    private Map<String, Module> elementalVariants = new HashMap<>();
 
     // Modifier and Usage Metadata
     protected final List<String> tags;
     protected final List<String> hiddenTags;
 
-    public Module(Pattern pattern, String name, Item item, Map<String, Range<Integer>> attributeRanges, List<String> tags, List<String> hiddenTags)
+    public Module(Pattern pattern, String name, Item item, List<String> tags, List<String> hiddenTags)
     {
         this.pattern = pattern;
         this.name = name;
         this.item = item;
-        this.attributeRanges = attributeRanges;
         this.tags = tags;
         this.hiddenTags = hiddenTags;
     }
@@ -43,17 +42,40 @@ public class Module implements ISpellComponent
     @Override public Item getItem()
     { return item; }
 
-    public Map<String, Range<Integer>> getAttributeRanges()
-    { return attributeRanges; }
-
+    public Module getElementalVariant(String element)
+    { return elementalVariants.getOrDefault(element, this); }
+    
+    public Module addElementalVariant(String element, Module variant)
+    {
+        if (elementalVariants.containsKey(element))
+        {
+            Wizardry.LOGGER.warn("Module elemental variant registration failed for element " + element + ", already mapped to " + elementalVariants.get(element));
+            return this;
+        }
+        
+        // There's a better way to check if two objects are instances of the same subclass of Module, right?
+        Class<?> a = this.getClass();
+        Class<?> b = variant.getClass();
+        while (!a.isAssignableFrom(b))
+            a = a.getSuperclass();
+        if (Module.class.isAssignableFrom(a))
+        {
+            Wizardry.LOGGER.warn("Attempting illegal elemental variant registration, common superclass is " + a.getCanonicalName() + ", but must be a subclass of " + Module.class.getCanonicalName());
+            return this;
+        }
+        
+        elementalVariants.put(element, variant);
+        return this;
+    }
+    
     public List<String> getTags()
     { return tags; }
 
     public List<String> getHiddenTags()
     { return hiddenTags; }
-
+    
     public String toString()
     {
-        return pattern.getRegistryName() + ":" + name + " = [" + item + ", " + attributeRanges + ", " + tags + ", " + hiddenTags + "]";
+        return pattern.getRegistryName() + ":" + name + " = [" + item + ", " + tags + ", " + hiddenTags + "]";
     }
 }

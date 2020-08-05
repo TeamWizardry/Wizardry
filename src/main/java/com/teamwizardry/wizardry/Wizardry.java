@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry;
 
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.PatternInit;
+import com.teamwizardry.wizardry.common.spell.loading.ElementLoader;
 import com.teamwizardry.wizardry.common.spell.loading.ModifierLoader;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
@@ -60,6 +61,7 @@ public class Wizardry
 
 	public void serverStartingEvent(FMLServerAboutToStartEvent event){
 		IReloadableResourceManager manager = event.getServer().getResourceManager();
+        manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ElementLoader.loadElements(manager));
 		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ModuleLoader.loadModules(manager));
 		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ModifierLoader.loadModifiers(manager));
 	}
