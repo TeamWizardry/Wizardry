@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.wizardry.api.ResourceConsts;
 import com.teamwizardry.wizardry.api.StringConsts;
 import com.teamwizardry.wizardry.api.task.IRobot;
 import com.teamwizardry.wizardry.api.task.Task;
@@ -8,7 +7,6 @@ import com.teamwizardry.wizardry.api.task.TaskController;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -25,11 +23,6 @@ public class TaskMove extends Task {
 	public TaskMove(BlockPos targetBlock, Direction direction) {
 		this.targetBlock = targetBlock;
 		this.direction = direction;
-	}
-
-	@Override
-	public ResourceLocation getResourceLocation() {
-		return ResourceConsts.TASK_MOVE;
 	}
 
 	@Override

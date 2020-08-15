@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.api.task;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.server.ServerWorld;
@@ -29,11 +28,6 @@ public abstract class Task extends ForgeRegistryEntry<Task> implements INBTSeria
 	}
 
 	/**
-	 * Contains the mod id as a prefix, and an identifier string for your task.
-	 */
-	public abstract ResourceLocation getResourceLocation();
-
-	/**
 	 * When the robot accepts the task, this runs
 	 */
 	public abstract <R extends Entity & IRobot> void onStart(R robotEntity, TaskController controller);
@@ -49,7 +43,7 @@ public abstract class Task extends ForgeRegistryEntry<Task> implements INBTSeria
 	public abstract <R extends Entity & IRobot> void onEnd(R robotEntity, TaskController controller);
 
 	/**
-	 * Can be called at any time by anything. Usually by the fairy chained to this one, or a timer of some sort.
+	 * Can be called at any time by anything. Usually by the robot chained to this one, or a timer of some sort.
 	 */
 	public abstract <R extends Entity & IRobot> void onTrigger(R robot, TaskController controller);
 

@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.api.StringConsts;
 
 import javax.annotation.Nonnull;
 
+/// TODO move to common package. We're abstracting the fairy part of this system away and making it more general for reuse potential.
 public enum FairyState {
 
 	HAPPY(StringConsts.HAPPY), TRAPPED(StringConsts.TRAPPED), DEPRESSED(StringConsts.DEPRESSED), SLAVED(StringConsts.SLAVED);

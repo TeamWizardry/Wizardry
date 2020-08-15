@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
+/// TODO move to common package. We're abstracting the fairy part of this system away and making it more general for reuse potential.
 public class FairyData implements INBTSerializable<CompoundNBT>, ICapabilityProvider {
 
 	public FairyState fairyState = FairyState.DEPRESSED;

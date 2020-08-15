@@ -1,10 +1,8 @@
 package com.teamwizardry.wizardry.api.task;
 
-import com.teamwizardry.wizardry.api.ResourceConsts;
 import com.teamwizardry.wizardry.api.StringConsts;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -20,11 +18,6 @@ public class TaskWait extends Task {
 
 	public TaskWait(int seconds) {
 		this.seconds = seconds;
-	}
-
-	@Override
-	public ResourceLocation getResourceLocation() {
-		return ResourceConsts.TASK_IDLE;
 	}
 
 	@Override

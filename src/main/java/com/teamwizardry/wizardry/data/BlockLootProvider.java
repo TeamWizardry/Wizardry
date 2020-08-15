@@ -24,7 +24,7 @@ public class BlockLootProvider implements IDataProvider {
 	private final DataGenerator dataGenerator;
 	private final Map<Block, Function<Block, LootTable.Builder>> functionTable = new HashMap<>();
 
-	public BlockLootProvider(DataGenerator dataGenerator){
+	public BlockLootProvider(DataGenerator dataGenerator) {
 		this.dataGenerator = dataGenerator;
 	}
 
@@ -34,7 +34,7 @@ public class BlockLootProvider implements IDataProvider {
 		Map<ResourceLocation, LootTable.Builder> tables = new HashMap<>();
 
 		for (Block b : ForgeRegistries.BLOCKS) {
-			if(!Wizardry.MODID.equals(b.getRegistryName().getNamespace()))
+			if (!Wizardry.MODID.equals(b.getRegistryName().getNamespace()))
 				continue;
 			Function<Block, LootTable.Builder> func = functionTable.getOrDefault(b, BlockLootProvider::normalDrop);
 			tables.put(b.getRegistryName(), func.apply(b));

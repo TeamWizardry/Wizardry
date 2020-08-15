@@ -108,7 +108,8 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 			if (task == null) continue;
 
 			CompoundNBT taskNBT = new CompoundNBT();
-			taskNBT.putString(StringConsts.RESOURCE_LOCATION, task.getResourceLocation().toString());
+			//TODO learn how to get resourceloc from forgeregisteries
+			//taskNBT.putString(StringConsts.RESOURCE_LOCATION, ForgeRegistries.DATA_SERIALIZERS.getKey()task.getResourceLocation().toString());
 			taskNBT.put(StringConsts.DATA, task.serializeNBT());
 
 			listNBT.add(taskNBT);
@@ -134,9 +135,9 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 					ResourceLocation resourceLocation = new ResourceLocation(taskNBT.getString(StringConsts.RESOURCE_LOCATION));
 					CompoundNBT data = taskNBT.getCompound(StringConsts.DATA);
 
-					Task freshTask = TaskRegistry.supplyTask(resourceLocation);
-					freshTask.deserializeNBT(data);
-					this.referenceQueue.add(freshTask);
+					//Task freshTask = TaskRegistry.supplyTask(resourceLocation);
+					//freshTask.deserializeNBT(data);
+					//this.referenceQueue.add(freshTask);
 				}
 			}
 		}
