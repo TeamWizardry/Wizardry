@@ -100,12 +100,11 @@ dependencies {
     minecraft group: 'net.minecraftforge', name: 'forge', version: "${mc_version}-${forge_version}"
 
     implementation 'org.yaml:snakeyaml:1.21'
-    implementation 'com.teamwizardry.librarianlib:librarianlib-prism:1.15-SNAPSHOT'
-    implementation 'com.teamwizardry.librarianlib:librarianlib-facade:1.15-SNAPSHOT'
-    implementation 'com.teamwizardry.librarianlib:librarianlib-glitter:1.15-SNAPSHOT'
-    implementation 'com.teamwizardry.librarianlib:librarianlib-foundation:1.15-SNAPSHOT'
-    implementation 'com.teamwizardry.librarianlib:librarianlib-etcetera:1.15-SNAPSHOT'
-    implementation 'com.teamwizardry.librarianlib:librarianlib-mirage:1.15-SNAPSHOT'
+    implementation "com.teamwizardry.librarianlib:librarianlib-prism:$liblib_version"
+    implementation "com.teamwizardry.librarianlib:librarianlib-facade:$liblib_version"
+    implementation "com.teamwizardry.librarianlib:librarianlib-glitter:$liblib_version"
+    implementation "com.teamwizardry.librarianlib:librarianlib-foundation:$liblib_version"
+    implementation "com.teamwizardry.librarianlib:librarianlib-etcetera:$liblib_version"
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
     compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0:api")
