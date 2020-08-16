@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import java.util.List;
+import java.util.function.Function;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
-
-import java.util.function.Function;
 
 public class EntityTarget implements ITargetComponent<Entity> {
 	public static final Function<Entity, Boolean> ALWAYS = entity -> true;
@@ -11,11 +12,11 @@ public class EntityTarget implements ITargetComponent<Entity> {
 
 	private final Function<Entity, Boolean> targetFunction;
 	private final String name;
-	private final Item item;
+	private final List<Item> items;
 
-	private EntityTarget(String name, Item item, Function<Entity, Boolean> function) {
+	private EntityTarget(String name, List<Item> items, Function<Entity, Boolean> function) {
 		this.name = name;
-		this.item = item;
+		this.items = items;
 		this.targetFunction = function;
 	}
 
@@ -25,8 +26,8 @@ public class EntityTarget implements ITargetComponent<Entity> {
 	}
 
 	@Override
-	public Item getItem() {
-		return item;
+	public List<Item> getItems() {
+		return items;
 	}
 
 	public boolean apply(Entity entity) {

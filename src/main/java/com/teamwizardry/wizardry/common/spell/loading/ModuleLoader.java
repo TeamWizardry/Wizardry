@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
@@ -28,24 +29,17 @@ import net.minecraftforge.registries.ForgeRegistries;
  * <pre>
  * module: modid:pattern
  * name: moduleName
- * item: modid:item
+ * items:
+ * - modid:item
+ * - modid:item
+ * - modid:item
+ * ... (repeat for all items in recipe)
  * color:
  *   primary: integer (base 8, 10, or 16)
  *   secondary: integer (base 8, 10, or 16)
- * attributes:
- *   mana:
- *     min: integer (default 0)
- *     max: integer (default 2^32-1)
- *   burnout:
- *     ... (repeat for all relevant attributes)
- * tags:
- * - tagOne
- * - tagTwo
- * - ...
- * hiddenTags:
- * - hiddenTagOne
- * - hiddenTagTwo
- * - ...
+ * form: string (exclusive to Shapes)
+ * action: string (exclusive to Effects)
+ * element: string
  * </pre>
  * 
  * These individual tags must be in any order, but the nesting structure must be
@@ -57,12 +51,13 @@ public class ModuleLoader extends YamlLoader
 {
     private static final String MODULE = "module";
     private static final String NAME = "name";
-    private static final String ITEM = "item";
+    private static final String ITEMS = "items";
     private static final String COLOR = "color";
     private static final String PRIMARY = "primary";
     private static final String SECONDARY = "secondary";
-    private static final String TAGS = "tags";
-    private static final String HIDDEN = "hiddenTags";
+    private static final String FORM = "form";
+    private static final String ACTION = "action";
+    private static final String ELEMENT = "element";
     
     private static final String folder =  Wizardry.MODID + "/module";
     
@@ -119,9 +114,10 @@ public class ModuleLoader extends YamlLoader
         // Straightforward components
         Pattern pattern = patternSupplier.apply(new ResourceLocation((String) yaml.get(MODULE)));
         String name = (String) yaml.get(NAME);
-        Item item = itemSupplier.apply(new ResourceLocation((String) yaml.get(ITEM)));
-        List<String> tags = (List<String>) yaml.get(TAGS);
-        List<String> hiddenTags = (List<String>) yaml.get(HIDDEN);
+        List<Item> items = ((List<String>) yaml.get(ITEMS)).stream().map(ResourceLocation::new).map(itemSupplier::apply).collect(Collectors.toList());
+        String form = (String) yaml.get(FORM);
+        String action = (String) yaml.get(ACTION);
+        String element = (String) yaml.get(ELEMENT);
 
         if (pattern instanceof PatternEffect)
         {
@@ -129,9 +125,9 @@ public class ModuleLoader extends YamlLoader
             Map<String, Integer> colorMap = (Map<String, Integer>) yaml.get(COLOR);
             Color primary = new Color(colorMap.get(PRIMARY));
             Color secondary = new Color(colorMap.get(SECONDARY));
-            return new ModuleEffect((PatternEffect) pattern, name, item, primary, secondary, tags, hiddenTags);
+            return new ModuleEffect((PatternEffect) pattern, name, items, primary, secondary, action, element);
         }
         // Only pattern types are Shapes and Effects, so if not an Effect...
-        return new ModuleShape((PatternShape) pattern, name, item, tags, hiddenTags);
+        return new ModuleShape((PatternShape) pattern, name, items, form, element);
     }
 }

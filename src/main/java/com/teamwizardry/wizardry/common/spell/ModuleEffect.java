@@ -9,15 +9,19 @@ import net.minecraft.item.Item;
 
 public class ModuleEffect extends Module
 {
+    protected final String action;
     protected final Color primaryColor;
     protected final Color secondaryColor;
     
-    public ModuleEffect(PatternEffect pattern, String name, Item item, Color primary, Color secondary, List<String> tags, List<String> hiddenTags)
+    public ModuleEffect(PatternEffect pattern, String name, List<Item> items, Color primary, Color secondary, String action, String element)
     {
-        super(pattern, name, item, tags, hiddenTags);
+        super(pattern, name, items, element);
+        this.action = action;
         this.primaryColor = primary;
         this.secondaryColor = secondary;
     }
+    
+    public String getAction() { return action; }
     
     public Color getPrimaryColor() { return primaryColor; }
 

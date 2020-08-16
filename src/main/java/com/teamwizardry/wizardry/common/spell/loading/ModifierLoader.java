@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.AttributeModifier;
@@ -43,7 +44,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ModifierLoader extends YamlLoader
 {
     private static final String NAME = "name";
-    private static final String ITEM = "item";
+    private static final String ITEMS = "items";
     private static final String ATTRIBUTES = "attributes";
     private static final String ADDITION = "add";
     private static final String MULTIPLY_BASE = "baseMultiply";
@@ -96,7 +97,7 @@ public class ModifierLoader extends YamlLoader
     private static Modifier compileModifier(Map<String, Object> yaml, Function<ResourceLocation, Item> itemSupplier)
     {
         String name = (String) yaml.get(NAME);
-        Item item = itemSupplier.apply(new ResourceLocation((String) yaml.get(ITEM)));
+        List<Item> items = ((List<String>) yaml.get(ITEMS)).stream().map(ResourceLocation::new).map(itemSupplier::apply).collect(Collectors.toList());
         Map<String, Map<String, Double>> attributeMap = (Map<String, Map<String, Double>>) yaml.get(ATTRIBUTES);
         Map<String, List<AttributeModifier>> attributeModifiers = new HashMap<>();
         attributeMap.entrySet().forEach(attribute -> {
@@ -109,6 +110,6 @@ public class ModifierLoader extends YamlLoader
                     attribute.getValue().getOrDefault(MULTIPLY_TOTAL, 0.)));
         });
         
-        return new Modifier(name, item, attributeModifiers);
+        return new Modifier(name, items, attributeModifiers);
     }
 }

@@ -1,10 +1,11 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import java.util.List;
+import java.util.function.Function;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.function.Function;
 
 public class BlockTarget implements ITargetComponent<Block> {
     public static final Function<BlockPos, Boolean> ALWAYS = block -> true;
@@ -12,11 +13,11 @@ public class BlockTarget implements ITargetComponent<Block> {
 
     private final Function<Block, Boolean> targetFunction;
     private final String name;
-    private final Item item;
+    private final List<Item> items;
 
-    private BlockTarget(String name, Item item, Function<Block, Boolean> function) {
+    private BlockTarget(String name, List<Item> items, Function<Block, Boolean> function) {
         this.name = name;
-        this.item = item;
+        this.items = items;
         this.targetFunction = function;
     }
 
@@ -27,9 +28,9 @@ public class BlockTarget implements ITargetComponent<Block> {
     }
     
     @Override
-    public Item getItem()
+    public List<Item> getItems()
     {
-        return item;
+        return items;
     }
 
     public boolean apply(Block block)

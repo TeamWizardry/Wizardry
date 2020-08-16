@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.spell;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -73,11 +72,9 @@ public class ModuleLoaderTest
         ModuleShape shape = (ModuleShape) modules.get(0);
         assertEquals(testPatterns.get(shapeLoc), shape.getPattern());
         assertEquals("zero", shape.getName());
-        assertNull(shape.getItem());
-        assertEquals(2, shape.getTags().size());
-        assertEquals("test", shape.getTags().get(0));
-        assertEquals("module", shape.getTags().get(1));
-        assertEquals(0, shape.getHiddenTags().size());
+        assertEquals(0, shape.getItems().size());
+        assertEquals("test", shape.getForm());
+        assertEquals("module", shape.getElement());
     }
     
     @Test
@@ -87,13 +84,10 @@ public class ModuleLoaderTest
         ModuleEffect effect = (ModuleEffect) modules.get(1);
         assertEquals(testPatterns.get(effectLoc), effect.getPattern());
         assertEquals("one", effect.getName());
-        assertNull(effect.getItem());
+        assertEquals(0, effect.getItems().size());
         assertEquals(0xFF123456, effect.getPrimaryColor().getRGB());
         assertEquals(0xFFABCDEF, effect.getSecondaryColor().getRGB());
-        assertEquals(2, effect.getTags().size());
-        assertEquals("second", effect.getTags().get(0));
-        assertEquals("test", effect.getTags().get(1));
-        assertEquals(1, effect.getHiddenTags().size());
-        assertEquals("module", effect.getHiddenTags().get(0));
+        assertEquals("test", effect.getAction());
+        assertEquals("module", effect.getElement());    
     }
 }

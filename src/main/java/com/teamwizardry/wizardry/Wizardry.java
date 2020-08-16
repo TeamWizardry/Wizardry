@@ -1,13 +1,15 @@
 package com.teamwizardry.wizardry;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.PatternInit;
-import com.teamwizardry.wizardry.common.spell.loading.ElementLoader;
-import com.teamwizardry.wizardry.common.spell.loading.ModifierLoader;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import com.teamwizardry.wizardry.proxy.IProxy;
 import com.teamwizardry.wizardry.proxy.ServerProxy;
+
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,8 +22,6 @@ import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Mod(Wizardry.MODID)
 public class Wizardry
@@ -61,9 +61,7 @@ public class Wizardry
 
 	public void serverStartingEvent(FMLServerAboutToStartEvent event){
 		IReloadableResourceManager manager = event.getServer().getResourceManager();
-        manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ElementLoader.loadElements(manager));
 		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ModuleLoader.loadModules(manager));
-		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ModifierLoader.loadModifiers(manager));
 	}
 	
 	public void init(final FMLCommonSetupEvent event)

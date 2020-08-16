@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.awt.Color;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,8 +18,9 @@ public class ModuleTest
     private ModuleEffect effect;
     
     private String name = "test";
-    private List<String> tags = new LinkedList<>();
-    private List<String> hiddenTags = new LinkedList<>();
+    private String element = "null";
+    private String form = "shape";
+    private String action = "effect";
     
     private Color primary = new Color(0x123456);
     private Color secondary = new Color(0xABCDEF);
@@ -29,12 +28,9 @@ public class ModuleTest
     @BeforeAll
     public void initTest()
     {
-        tags.add("test");
-        hiddenTags.add("temp");
-        
-        module = new Module(null, name, null, tags, hiddenTags);
-        shape = new ModuleShape(null, name, null, tags, hiddenTags);
-        effect = new ModuleEffect(null, name, null, primary, secondary, tags, hiddenTags);
+        module = new Module(null, name, null, element);
+        shape = new ModuleShape(null, name, null, form, element);
+        effect = new ModuleEffect(null, name, null, primary, secondary, action, element);
     }
     
     @Test
@@ -56,25 +52,29 @@ public class ModuleTest
     @Test
     public void testGetItem()
     {
-        assertNull(module.getItem());
-        assertNull(shape.getItem());
+        assertNull(module.getItems());
+        assertNull(shape.getItems());
         assertNull(effect.getPattern());
     }
     
     @Test
-    public void testGetTags()
+    public void testGetElement()
     {
-        assertEquals(tags, module.getTags());
-        assertEquals(tags, shape.getTags());
-        assertEquals(tags, effect.getTags());
+        assertEquals(element, module.getElement());
+        assertEquals(element, shape.getElement());
+        assertEquals(element, effect.getElement());
     }
     
     @Test
-    public void testGetHiddenTags()
+    public void testGetForm()
     {
-        assertEquals(hiddenTags, module.getHiddenTags());
-        assertEquals(hiddenTags, shape.getHiddenTags());
-        assertEquals(hiddenTags, effect.getHiddenTags());
+        assertEquals(form, shape.getForm());
+    }
+    
+    @Test
+    public void testGetAction()
+    {
+        assertEquals(action, effect.getAction());
     }
     
     @Test

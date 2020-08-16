@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.spell;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.teamwizardry.wizardry.api.spell.PatternShape;
 
@@ -10,16 +8,15 @@ import net.minecraft.item.Item;
 
 public class ModuleShape extends Module
 {
-    private Map<ModuleEffect, ModuleShape> overrides = new HashMap<>();
+    protected final String form;
     
-    public ModuleShape(PatternShape pattern, String name, Item item, List<String> tags, List<String> hiddenTags)
+    public ModuleShape(PatternShape pattern, String name, List<Item> items, String form, String element)
     {
-        super(pattern, name, item, tags, hiddenTags);
+        super(pattern, name, items, element);
+        this.form = form;
     }
     
     @Override public PatternShape getPattern() { return (PatternShape) pattern; }
     
-    public boolean isOverriddenBy(ModuleEffect effect) { return overrides.containsKey(effect); }
-    
-    public ModuleShape getOverride(ModuleEffect effect) { return overrides.get(effect); }
+    public String getForm() { return form; }
 }

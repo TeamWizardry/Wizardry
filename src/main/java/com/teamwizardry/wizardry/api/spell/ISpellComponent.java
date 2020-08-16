@@ -1,9 +1,11 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import java.util.List;
+
 import net.minecraft.item.Item;
 
-public interface ISpellComponent {
+public interface ISpellComponent
+{
 	String getName();
-
-	Item getItem();
+	List<Item> getItems();
 }
