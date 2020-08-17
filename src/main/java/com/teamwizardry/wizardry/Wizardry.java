@@ -1,15 +1,11 @@
 package com.teamwizardry.wizardry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.PatternInit;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import com.teamwizardry.wizardry.proxy.IProxy;
 import com.teamwizardry.wizardry.proxy.ServerProxy;
-
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,28 +18,28 @@ import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(Wizardry.MODID)
-public class Wizardry
-{
+public class Wizardry {
 	public static final String MODID = "wizardry";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 	public Wizardry INSTANCE;
-	public static IProxy proxy;
-	
-	public Wizardry()
-	{
-		INSTANCE = this;
-		proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
-	    IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-	    eventBus.addListener(this::init);
-	    eventBus.addListener(this::registerRegistries);
-	    
-		MinecraftForge.EVENT_BUS.addListener(this::serverStartingEvent);
-		
-	    eventBus.addGenericListener(Pattern.class, this::registerPatterns);
+	public static IProxy PROXY;
 
-	    proxy.registerHandlers();
+	public Wizardry() {
+		INSTANCE = this;
+		PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		eventBus.addListener(this::init);
+		eventBus.addListener(this::registerRegistries);
+
+		MinecraftForge.EVENT_BUS.addListener(this::serverStartingEvent);
+
+		eventBus.addGenericListener(Pattern.class, this::registerPatterns);
+
+		PROXY.registerHandlers();
 	}
 	
 	private void registerRegistries(RegistryEvent.NewRegistry event)

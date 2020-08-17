@@ -19,6 +19,11 @@ archivesBaseName = 'wizardry'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
+configurations.all {
+    // Check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 minecraft {
     mappings channel: mcp_mappings_channel , version: mcp_version
     
