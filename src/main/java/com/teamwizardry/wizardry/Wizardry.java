@@ -1,5 +1,8 @@
 package com.teamwizardry.wizardry;
 
+import com.teamwizardry.wizardry.api.capability.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.mana.ManaCapabilityImpl;
+import com.teamwizardry.wizardry.api.capability.mana.ManaStorage;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.PatternInit;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
@@ -9,6 +12,7 @@ import com.teamwizardry.wizardry.proxy.ServerProxy;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -55,9 +59,12 @@ public class Wizardry {
 	    PatternInit.init(event.getRegistry());
 	}
 
-	public void serverStartingEvent(FMLServerAboutToStartEvent event){
+	public void serverStartingEvent(FMLServerAboutToStartEvent event) {
 		IReloadableResourceManager manager = event.getServer().getResourceManager();
 		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ModuleLoader.loadModules(manager));
+
+		CapabilityManager.INSTANCE.register(IManaCapability.class, new ManaStorage(), () -> new ManaCapabilityImpl(0, 1000, 1000, 1000));
+
 	}
 	
 	public void init(final FMLCommonSetupEvent event)

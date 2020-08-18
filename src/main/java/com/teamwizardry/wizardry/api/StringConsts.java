@@ -2,6 +2,12 @@ package com.teamwizardry.wizardry.api;
 
 public class StringConsts {
 
+	// api.capability.mana
+	public static final String MANA = "mana";
+	public static final String MAX_MANA = "max_mana";
+	public static final String BURNOUT = "burnout";
+	public static final String MAX_BURNOUT = "max_burnout";
+
 	// api.task
 	public static final String QUEUE = "queue";
 	public static final String RESOURCE_LOCATION = "resource_location";
