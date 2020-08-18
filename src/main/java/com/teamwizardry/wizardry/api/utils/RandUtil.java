@@ -1,10 +1,16 @@
 package com.teamwizardry.wizardry.api.utils;
 
+import net.minecraft.util.math.Vec3d;
+
 import java.util.Random;
 
 public class RandUtil {
 
 	public static Random random = new Random();
+
+	public static Vec3d nextVec3d(double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
+		return new Vec3d(nextDouble(minX, maxX), nextDouble(minY, maxY), nextDouble(minZ, maxZ));
+	}
 
 	public static double nextDouble(double min, double max) {
 		return (random.nextDouble() * (max - min)) + min;

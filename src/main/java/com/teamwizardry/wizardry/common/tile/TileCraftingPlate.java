@@ -1,14 +1,15 @@
 package com.teamwizardry.wizardry.common.tile;
 
+import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.utils.MathUtils;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
+import com.teamwizardry.wizardry.client.lib.LibTheme;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
-
-import java.awt.*;
 
 public class TileCraftingPlate extends TileEntity implements ITickableTileEntity {
 
@@ -19,17 +20,24 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
 	@Override
 	public void tick() {
 
-		if (world.isRemote && world.getGameTime() % 3 == 0)
-			Wizardry.PROXY.spawnParticle(
-					new GlitterBox.GlitterBoxFactory()
-							.setOrigin(new Vec3d(getPos()).add(0, 1, 0))
-							.setTarget(new Vec3d(RandUtil.nextDouble(-1, 1), RandUtil.nextDouble(0, 1), RandUtil.nextDouble(-1, 1)))
-							.setGravity(0.1f)
-							.setBounce(0.5f)
-							.setDrag(0.05f)
-							.setFriction(0.15f)
-							.setInitialColor(Color.CYAN)
-							.setInitialSize(0.3f)
-							.createGlitterBox(200));
+		if (world.isRemote && world.getGameTime() % 2 == 0) {
+
+			Vec3d target = new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
+					RandUtil.nextDouble(0, 0.05),
+					RandUtil.nextDouble(-0.01, 0.01));
+			for (int i = 0; i < 5; i++) {
+				Vec2d randDot = MathUtils.genRandomDotInCircle(0.1f);
+				Vec3d origin = new Vec3d(getPos()).add(0.5 + randDot.getX(), 0.7 + RandUtil.nextDouble(0, 0.3), 0.5 + randDot.getY());
+				Wizardry.PROXY.spawnParticle(
+						new GlitterBox.GlitterBoxFactory()
+								.setOrigin(origin)
+								.setTarget(target)
+								.setDrag(RandUtil.nextFloat(0.03f, 0.05f))
+								.setGoalColor(LibTheme.accentColor)
+								.setInitialSize(RandUtil.nextFloat(0.1f, 0.2f))
+								.setGoalSize(0)
+								.createGlitterBox(RandUtil.nextInt(5, 30)));
+			}
+		}
 	}
 }

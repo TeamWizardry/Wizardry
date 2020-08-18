@@ -26,6 +26,7 @@ public class ClientProxy implements IProxy {
 		if (glitter == null) {
 			glitter = new Glitter();
 		}
+		glitter.reload();
 		glitter.spawn(box);
 	}
 }

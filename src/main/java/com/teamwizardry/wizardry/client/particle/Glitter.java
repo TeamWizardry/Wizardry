@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.client.particle;
 
 import com.teamwizardry.librarianlib.core.rendering.BlendMode;
 import com.teamwizardry.librarianlib.glitter.ParticleSystem;
-import com.teamwizardry.librarianlib.glitter.bindings.ConstantBinding;
 import com.teamwizardry.librarianlib.glitter.bindings.EaseBinding;
 import com.teamwizardry.librarianlib.glitter.bindings.StoredBinding;
 import com.teamwizardry.librarianlib.glitter.modules.BasicPhysicsUpdateModule;
@@ -22,37 +21,40 @@ public class Glitter extends ParticleSystem {
 		StoredBinding goalColor = bind(4);
 		StoredBinding initialSize = bind(1);
 		StoredBinding goalSize = bind(1);
+		StoredBinding initialAlpha = bind(1);
+		StoredBinding middleAlpha = bind(1);
+		StoredBinding goalAlpha = bind(1);
 		StoredBinding gravity = bind(1);
 		StoredBinding friction = bind(1);
 		StoredBinding drag = bind(1);
 		StoredBinding bounce = bind(1);
 
-		getUpdateModules().add(new BasicPhysicsUpdateModule(origin,
-				previousPos,
-				target,
+		getUpdateModules().add(new BasicPhysicsUpdateModule(
+				origin, previousPos, target,
 				true,
-				gravity,
-				bounce,
-				friction,
-				drag));
+				gravity, bounce, friction, drag
+		));
 
 		getRenderModules().add(new SpriteRenderModule(SpriteRenderModule.simpleRenderType(
-				new ResourceLocation(Wizardry.MODID, "textures/particles/sparkle.png"), BlendMode.getADDITIVE()),
+				new ResourceLocation(Wizardry.MODID, "textures/particles/sparkle_blurred.png"), BlendMode.getADDITIVE(), false, true),
 				origin,
 				previousPos,
-				new ConstantBinding(0, 1, 0, 1),
-				new EaseBinding(getLifetime(), getAge(), null, null, Easing.linear, 1, initialSize, goalSize)
+				new EaseBinding(getLifetime(), getAge(), null, null, Easing.linear, 4, initialColor, goalColor),
+				new EaseBinding(getLifetime(), getAge(), null, null, Easing.linear, 1, initialSize, goalSize),
+				null,
+				new EaseBinding(getLifetime(), getAge(), null, null, Easing.easeOutCubic, 1, initialAlpha, goalAlpha)
 		));
 	}
 
 	public void spawn(GlitterBox box) {
 		addParticle(box.lifetime,
-				box.origin.x, box.origin.y, box.origin.z,
-				box.origin.x, box.origin.y, box.origin.z,
-				box.target.x, box.target.y, box.target.z,
+				box.originX, box.originY, box.originZ,
+				box.originX, box.originY, box.originZ,
+				box.targetX, box.targetY, box.targetZ,
 				box.initialColor.getRed() / 255.0, box.initialColor.getGreen() / 255.0, box.initialColor.getBlue() / 255.0, 1,
 				box.goalColor.getRed() / 255.0, box.goalColor.getGreen() / 255.0, box.goalColor.getBlue() / 255.0, 1,
 				box.initialSize, box.goalSize,
+				box.initialAlpha, box.middleAlpha, box.goalAlpha,
 				box.gravity,
 				box.friction,
 				box.drag,

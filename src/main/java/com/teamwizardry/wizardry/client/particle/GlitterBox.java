@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.particle;
 
-import com.teamwizardry.librarianlib.math.Easing;
+import com.teamwizardry.wizardry.client.lib.LibTheme;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
@@ -9,34 +9,39 @@ public class GlitterBox {
 
 	public final int lifetime;
 
-	public final Vec3d origin;
-	public final Vec3d target;
-	public final Easing translationEasing;
+	public final float originX, originY, originZ;
+	public final float targetX, targetY, targetZ;
 
 	public final Color initialColor;
 	public final Color goalColor;
-	public final Easing colorEasing;
 
 	public final float initialSize;
 	public final float goalSize;
-	public final Easing sizeEasing;
+
+	public final float initialAlpha;
+	public final float middleAlpha;
+	public final float goalAlpha;
 
 	public final float gravity;
 	public final float drag;
 	public final float friction;
 	public final float bounce;
 
-	private GlitterBox(int lifetime, Vec3d origin, Vec3d target, Easing translationEasing, Color initialColor, Color goalColor, Easing colorEasing, float initialSize, float goalSize, Easing sizeEasing, float gravity, float drag, float friction, float bounce) {
+	public GlitterBox(int lifetime, float originX, float originY, float originZ, float targetX, float targetY, float targetZ, Color initialColor, Color goalColor, float initialSize, float goalSize, float initialAlpha, float middleAlpha, float goalAlpha, float gravity, float drag, float friction, float bounce) {
 		this.lifetime = lifetime;
-		this.origin = origin;
-		this.target = target;
-		this.translationEasing = translationEasing;
+		this.originX = originX;
+		this.originY = originY;
+		this.originZ = originZ;
+		this.targetX = targetX;
+		this.targetY = targetY;
+		this.targetZ = targetZ;
 		this.initialColor = initialColor;
 		this.goalColor = goalColor;
-		this.colorEasing = colorEasing;
 		this.initialSize = initialSize;
 		this.goalSize = goalSize;
-		this.sizeEasing = sizeEasing;
+		this.initialAlpha = initialAlpha;
+		this.middleAlpha = middleAlpha;
+		this.goalAlpha = goalAlpha;
 		this.gravity = gravity;
 		this.drag = drag;
 		this.friction = friction;
@@ -44,33 +49,65 @@ public class GlitterBox {
 	}
 
 	public static class GlitterBoxFactory {
-		private Vec3d origin = Vec3d.ZERO;
-		private Vec3d target = Vec3d.ZERO;
-		private Easing translationEasing = Easing.easeOutQuart;
-		private Color initialColor = Color.CYAN;
-		private Color goalColor = Color.CYAN;
-		private Easing colorEasing = Easing.linear;
+		private float originX = 0, originY = 0, originZ = 0;
+		private float targetX = 0, targetY = 0, targetZ = 0;
+		private Color initialColor = LibTheme.accentColor;
+		private Color goalColor = LibTheme.accentColor;
 		private float initialSize = 30;
 		private float goalSize = -1;
-		private Easing sizeEasing = Easing.easeOutQuart;
 		private float gravity = 0;
 		private float drag = 0;
 		private float friction = 0;
 		private float bounce = 0;
+		private float initialAlpha = 1;
+		private float middleAlpha = 1;
+		private float goalAlpha = 1;
+
+		public GlitterBoxFactory setGoalAlpha(float goalAlpha) {
+			this.goalAlpha = goalAlpha;
+			return this;
+		}
+
+		public GlitterBoxFactory setMiddleAlpha(float middleAlpha) {
+			this.middleAlpha = middleAlpha;
+			return this;
+		}
+
+		public GlitterBoxFactory setInitialAlpha(float initialAlpha) {
+			this.initialAlpha = initialAlpha;
+			return this;
+
+		}
 
 		public GlitterBoxFactory setOrigin(Vec3d origin) {
-			this.origin = origin;
+			return setOrigin(origin.x, origin.y, origin.z);
+		}
+
+		public GlitterBoxFactory setOrigin(float x, float y, float z) {
+			this.originX = x;
+			this.originY = y;
+			this.originZ = z;
 			return this;
+		}
+
+		public GlitterBoxFactory setOrigin(double x, double y, double z) {
+			return setOrigin((float) x, (float) y, (float) z);
+
 		}
 
 		public GlitterBoxFactory setTarget(Vec3d target) {
-			this.target = target;
+			return setTarget(target.x, target.y, target.z);
+		}
+
+		public GlitterBoxFactory setTarget(float x, float y, float z) {
+			this.targetX = x;
+			this.targetY = y;
+			this.targetZ = z;
 			return this;
 		}
 
-		public GlitterBoxFactory setTranslationEasing(Easing translationEasing) {
-			this.translationEasing = translationEasing;
-			return this;
+		public GlitterBoxFactory setTarget(double x, double y, double z) {
+			return setTarget((float) x, (float) y, (float) z);
 		}
 
 		public GlitterBoxFactory setInitialColor(Color initialColor) {
@@ -83,11 +120,6 @@ public class GlitterBox {
 			return this;
 		}
 
-		public GlitterBoxFactory setColorEasing(Easing colorEasing) {
-			this.colorEasing = colorEasing;
-			return this;
-		}
-
 		public GlitterBoxFactory setInitialSize(float initialSize) {
 			this.initialSize = initialSize;
 			return this;
@@ -95,11 +127,6 @@ public class GlitterBox {
 
 		public GlitterBoxFactory setGoalSize(float goalSize) {
 			this.goalSize = goalSize;
-			return this;
-		}
-
-		public GlitterBoxFactory setSizeEasing(Easing sizeEasing) {
-			this.sizeEasing = sizeEasing;
 			return this;
 		}
 
@@ -125,10 +152,11 @@ public class GlitterBox {
 
 		public GlitterBox createGlitterBox(int lifetime) {
 			return new GlitterBox(lifetime,
-					origin, target == null ? origin : target, translationEasing,
-					initialColor, goalColor == null ? initialColor : goalColor, colorEasing,
-					initialSize, goalSize == -1 ? initialSize : goalSize, sizeEasing,
-					gravity,
+					originX, originY, originZ,
+					targetX, targetY, targetZ,
+					initialColor, goalColor == null ? initialColor : goalColor,
+					initialSize, goalSize == -1 ? initialSize : goalSize,
+					initialAlpha, middleAlpha, goalAlpha, gravity,
 					drag,
 					friction,
 					bounce);
