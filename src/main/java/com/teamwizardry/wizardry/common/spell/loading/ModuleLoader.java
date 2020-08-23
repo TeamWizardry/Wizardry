@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.spell.loading;
 
 import java.awt.Color;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -34,6 +35,10 @@ import net.minecraftforge.registries.ForgeRegistries;
  * - modid:item
  * - modid:item
  * ... (repeat for all items in recipe)
+ * modifiers:
+ *   modifier: double
+ *   modifier: double
+ * ... (repeat for all modifiers with non-default costs)
  * color:
  *   primary: integer (base 8, 10, or 16)
  *   secondary: integer (base 8, 10, or 16)
@@ -58,6 +63,7 @@ public class ModuleLoader extends YamlLoader
     private static final String FORM = "form";
     private static final String ACTION = "action";
     private static final String ELEMENT = "element";
+    private static final String MODIFIERS = "modifiers";
     
     private static final String folder =  Wizardry.MODID + "/module";
     
@@ -118,6 +124,7 @@ public class ModuleLoader extends YamlLoader
         String form = (String) yaml.get(FORM);
         String action = (String) yaml.get(ACTION);
         String element = (String) yaml.get(ELEMENT);
+        Map<String, Double> modifierCosts = (Map<String, Double>) yaml.getOrDefault(MODIFIERS, new HashMap<>());
 
         if (pattern instanceof PatternEffect)
         {
@@ -125,9 +132,9 @@ public class ModuleLoader extends YamlLoader
             Map<String, Integer> colorMap = (Map<String, Integer>) yaml.get(COLOR);
             Color primary = new Color(colorMap.get(PRIMARY));
             Color secondary = new Color(colorMap.get(SECONDARY));
-            return new ModuleEffect((PatternEffect) pattern, name, items, primary, secondary, action, element);
+            return new ModuleEffect((PatternEffect) pattern, name, items, primary, secondary, action, element, modifierCosts);
         }
         // Only pattern types are Shapes and Effects, so if not an Effect...
-        return new ModuleShape((PatternShape) pattern, name, items, form, element);
+        return new ModuleShape((PatternShape) pattern, name, items, form, element, modifierCosts);
     }
 }

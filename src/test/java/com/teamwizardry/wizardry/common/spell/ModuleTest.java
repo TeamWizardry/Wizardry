@@ -28,9 +28,9 @@ public class ModuleTest
     @BeforeAll
     public void initTest()
     {
-        module = new Module(null, name, null, element);
-        shape = new ModuleShape(null, name, null, form, element);
-        effect = new ModuleEffect(null, name, null, primary, secondary, action, element);
+        module = new Module(null, name, null, element, null);
+        shape = new ModuleShape(null, name, null, form, element, null);
+        effect = new ModuleEffect(null, name, null, primary, secondary, action, element, null);
     }
     
     @Test

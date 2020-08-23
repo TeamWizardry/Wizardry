@@ -19,10 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Joiner;
-import com.teamwizardry.wizardry.api.spell.Pattern;
-import com.teamwizardry.wizardry.common.spell.Module;
 
-import net.minecraft.item.Item;
 import net.minecraft.resources.FallbackResourceManager;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourcePack;
@@ -51,7 +48,7 @@ public class YamlLoader
     protected YamlLoader() {}
     
     /**
-     * Reads all .yaml files under {@code data/<domain>/wizardry/module/} and any subfolders
+     * Reads all .yaml files under the given folder and in any subfolders
      * 
      * @see #loadModifiers(InputStream, Function, Function)
      */
@@ -95,16 +92,11 @@ public class YamlLoader
     }
     
     /**
-     * Creates a {@link Module} list from an input stream, using the given
-     * supplier functions for both a {@link Pattern} and an {@link Item}
+     * Creates a list from an input stream, using the given compliation function
      * 
      * @param file            the input stream to read modules from
-     * @param patternSupplier the function used to convert a {@code modid:name}
-     *                        string into a {@code Pattern}
-     * @param itemSupplier    the function used to convert a {@code modid:name}
-     *                        string into a {@code Item}
-     * @return the List of {@code Module} objects compiled from the input yaml
-     *         stream
+     * @param compiler        the function that takes the parsed yaml and produces an object
+     * @return the List of objects compiled from the input yaml stream
      */
     @SuppressWarnings("unchecked")
     protected static <T> List<T> loadYamls(InputStream file, Function<Map<String, Object>, T> compiler)

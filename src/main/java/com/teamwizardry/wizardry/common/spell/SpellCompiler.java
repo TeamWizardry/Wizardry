@@ -1,50 +1,100 @@
 package com.teamwizardry.wizardry.common.spell;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
+import com.teamwizardry.wizardry.configs.ServerConfigs;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class SpellCompiler
 {
-    private final LinkedList<ModuleShape> shapeChain = new LinkedList<>();
-    private final Map<ModuleShape, LinkedList<ModuleEffect>> effectChains = new HashMap<>();
-    private final Map<ISpellComponent, Map<Modifier, Integer>> componentModifiers = new HashMap<>();
+    private ShapeChain firstShape;
+    private ShapeChain currentShape;
+    private EffectChain currentEffect;
+    
+    private int modifierCount = 0;
     
     public ShapeChain compileSpell(List<ItemStack> items)
     {
-        processItems(items);
-        ShapeChain spell = compile();
-        clear();
+        List<ISpellComponent> components = processItems(items);
+        ShapeChain spell = compile(components);
         return spell;
     }
     
-    private void processItems(List<ItemStack> items)
+    private List<ISpellComponent> processItems(List<ItemStack> items)
     {
-    }
-    
-    private ShapeChain compile()
-    {
-        // TODO: Handle target merging
-        mergeTargets();
+        List<ISpellComponent> components = new LinkedList<>();
         
-        return null;
+        LinkedList<Item> flattened = items.stream()
+                                          .flatMap(stack -> IntStream.range(0, stack.getCount())
+                                                                     .mapToObj(n -> stack.getItem()))
+                                                                     .collect(Collectors.toCollection(LinkedList::new));
+        while (!flattened.isEmpty())
+        {
+            ISpellComponent component = ComponentRegistry.getComponentForItems(flattened);
+            if (component == null)
+                flattened.remove();
+            else for (int i = 0; i < component.getItems().size(); i++)
+                flattened.remove();
+            components.add(component);
+        }
+        
+        return components;
     }
     
-    private void mergeTargets()
+    private ShapeChain compile(List<ISpellComponent> components)
     {
-        // TODO: fill in
+        for (ISpellComponent component : components)
+        {
+            if (component instanceof ModuleShape)
+                handleShape((ModuleShape)component);
+            else if (component instanceof ModuleEffect)
+                handleEffect((ModuleEffect)component);
+            else if (component instanceof Modifier)
+                handleModifier((Modifier)component);
+        }
+        
+        return firstShape;
     }
     
-    private void clear()
+    private void handleShape(ModuleShape shape)
     {
-        this.effectChains.clear();
-        this.componentModifiers.clear();
-        this.shapeChain.clear();
+        ShapeChain next = new ShapeChain(shape);
+        if (firstShape == null)
+        {
+            firstShape = currentShape = next;
+        }
+        else
+        {
+            currentShape.setNext(next);
+            currentShape = next;
+        }
+        modifierCount = 0;
+    }
+    
+    private void handleEffect(ModuleEffect effect)
+    {
+        if (firstShape == null) // Spells have to start with shapes!
+            return;
+        currentEffect = new EffectChain(effect);
+        currentShape.addEffect(currentEffect);
+        modifierCount = 0;
+    }
+    
+    private void handleModifier(Modifier modifier)
+    {
+        if (modifierCount++ > ServerConfigs.maxModifiers)
+            return;
+        if (firstShape == null) // Spells have to start with shapes!
+            return;
+        if (currentEffect == null)
+            currentShape.addModifier(modifier);
+        else currentEffect.addModifier(modifier);
     }
     
     private SpellCompiler() {}

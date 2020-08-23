@@ -2,5 +2,5 @@ package com.teamwizardry.wizardry.configs;
 
 public class ServerConfigs
 {
-    public final int maxModifiers = 5;
+    public static final int maxModifiers = 5;
 }

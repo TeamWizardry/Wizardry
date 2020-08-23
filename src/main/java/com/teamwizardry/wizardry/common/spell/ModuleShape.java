@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.spell;
 
 import java.util.List;
+import java.util.Map;
 
 import com.teamwizardry.wizardry.api.spell.PatternShape;
 
@@ -10,9 +11,9 @@ public class ModuleShape extends Module
 {
     protected final String form;
     
-    public ModuleShape(PatternShape pattern, String name, List<Item> items, String form, String element)
+    public ModuleShape(PatternShape pattern, String name, List<Item> items, String form, String element, Map<String, Double> modifierCosts)
     {
-        super(pattern, name, items, element);
+        super(pattern, name, items, element, modifierCosts);
         this.form = form;
     }
     

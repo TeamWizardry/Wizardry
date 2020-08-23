@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.spell;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import com.teamwizardry.wizardry.Wizardry;
@@ -31,9 +32,25 @@ public class ComponentRegistry
         tryRegister(modifier, modifiers);
     }
 
-    public static ISpellComponent getComponentForItem(List<Item> items)
+    public static ISpellComponent getComponentForItems(List<Item> items)
     {
-        return spellComponents.get(items);
+        for (List<Item> spells : spellComponents.keySet())
+            if (listStartsWith(items, spells))
+                return spellComponents.get(spells);
+        return null;
+    }
+    
+    private static boolean listStartsWith(List<Item> list, List<Item> other)
+    {
+        if (other.size() > list.size())
+            return false;
+        
+        ListIterator<Item> listIter = list.listIterator();
+        ListIterator<Item> otherIter = other.listIterator();
+        while (listIter.hasNext() && otherIter.hasNext())
+            if (!listIter.next().equals(otherIter.next()))
+                return false;
+        return true;
     }
     
     private static <Component extends ISpellComponent> boolean tryRegister(Component component, Map<String, ? super Component> map)

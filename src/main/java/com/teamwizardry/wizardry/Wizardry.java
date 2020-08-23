@@ -34,7 +34,7 @@ public class Wizardry {
 
 	public Wizardry() {
 		INSTANCE = this;
-		PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+		PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		eventBus.addListener(this::init);
 		eventBus.addListener(this::registerRegistries);
