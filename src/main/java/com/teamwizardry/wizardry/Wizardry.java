@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry;
 
+import com.teamwizardry.librarianlib.foundation.BaseMod;
 import com.teamwizardry.wizardry.api.capability.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.capability.mana.ManaCapabilityImpl;
 import com.teamwizardry.wizardry.api.capability.mana.ManaStorage;
@@ -26,37 +27,39 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(Wizardry.MODID)
-public class Wizardry {
+public class Wizardry extends BaseMod {
 	public static final String MODID = "wizardry";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
-	public Wizardry INSTANCE;
+
 	public static IProxy PROXY;
+	public static Wizardry INSTANCE;
 
 	public Wizardry() {
 		INSTANCE = this;
-		PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+		PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		eventBus.addListener(this::init);
 		eventBus.addListener(this::registerRegistries);
-
 		MinecraftForge.EVENT_BUS.addListener(this::serverStartingEvent);
-
 		eventBus.addGenericListener(Pattern.class, this::registerPatterns);
 
 		PROXY.registerHandlers();
 	}
-	
-	private void registerRegistries(RegistryEvent.NewRegistry event)
-	{
-	    new RegistryBuilder<Pattern>().setType(Pattern.class)
-	                                  .setName(new ResourceLocation(MODID, "pattern"))
-	                                  .disableSaving()
-	                                  .create();
+
+	public static ResourceLocation location(String path) {
+		return new ResourceLocation(MODID, path);
 	}
-	
-	private void registerPatterns(RegistryEvent.Register<Pattern> event)
-	{
-	    PatternInit.init(event.getRegistry());
+
+	private void registerRegistries(RegistryEvent.NewRegistry event) {
+		new RegistryBuilder<Pattern>().setType(Pattern.class)
+				.setName(new ResourceLocation(MODID, "pattern"))
+				.disableSaving()
+				.create();
+	}
+
+	private void registerPatterns(RegistryEvent.Register<Pattern> event) {
+		PatternInit.init(event.getRegistry());
 	}
 
 	public void serverStartingEvent(FMLServerAboutToStartEvent event) {
@@ -64,15 +67,9 @@ public class Wizardry {
 		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> ModuleLoader.loadModules(manager));
 
 		CapabilityManager.INSTANCE.register(IManaCapability.class, new ManaStorage(), () -> new ManaCapabilityImpl(0, 1000, 1000, 1000));
-
 	}
-	
-	public void init(final FMLCommonSetupEvent event)
-	{
+
+	public void init(final FMLCommonSetupEvent event) {
 		LOGGER.info("Initializing!");
-	}
-
-	public static ResourceLocation location(String path) {
-		return new ResourceLocation(MODID, path);
 	}
 }

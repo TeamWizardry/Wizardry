@@ -30,8 +30,7 @@ public class BlockInit {
 	public static void registerItems(RegistryEvent.Register<Item> event) {
 		IForgeRegistry<Item> r = event.getRegistry();
 
-		r.register(new BlockItem(CRAFTING_PLATE, new Item.Properties().group(ModItemGroup.INSTANCE)).setRegistryName(CRAFTING_PLATE.getRegistryName()));
-
+		r.register(new BlockItem(CRAFTING_PLATE, ItemInit.defaultBuilder()).setRegistryName(CRAFTING_PLATE.getRegistryName()));
 	}
 
 	@SubscribeEvent
