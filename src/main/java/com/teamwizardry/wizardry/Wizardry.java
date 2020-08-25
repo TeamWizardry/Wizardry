@@ -5,6 +5,8 @@ import com.teamwizardry.wizardry.api.capability.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.capability.mana.ManaCapabilityImpl;
 import com.teamwizardry.wizardry.api.capability.mana.ManaStorage;
 import com.teamwizardry.wizardry.api.spell.Pattern;
+import com.teamwizardry.wizardry.common.init.ModBlocks;
+import com.teamwizardry.wizardry.common.init.ModItems;
 import com.teamwizardry.wizardry.common.init.PatternInit;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
@@ -36,13 +38,20 @@ public class Wizardry extends BaseMod {
 
 	public Wizardry() {
 		INSTANCE = this;
-		PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+		PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		eventBus.addListener(this::init);
 		eventBus.addListener(this::registerRegistries);
 		MinecraftForge.EVENT_BUS.addListener(this::serverStartingEvent);
 		eventBus.addGenericListener(Pattern.class, this::registerPatterns);
+
+		// Initialize Items
+		ModItems.initializeItemGroup();
+		ModItems.initializeItems(getRegistrationManager());
+
+		// Initialize Blocks
+		ModBlocks.registerBlocks(getRegistrationManager());
 
 		PROXY.registerHandlers();
 	}

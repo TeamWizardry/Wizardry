@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.init;
 
+import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.lib.LibBlockNames;
@@ -15,9 +16,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class BlockInit {
-
+public class ModBlocks {
 	public static final Block CRAFTING_PLATE = new BlockCraftingPlate(Block.Properties.create(Material.WOOD));
+
+	public static void registerBlocks(RegistrationManager reggie) {
+
+	}
 
 	@SubscribeEvent
 	public static void registerBlock(RegistryEvent.Register<Block> event) {
@@ -30,7 +34,7 @@ public class BlockInit {
 	public static void registerItems(RegistryEvent.Register<Item> event) {
 		IForgeRegistry<Item> r = event.getRegistry();
 
-		r.register(new BlockItem(CRAFTING_PLATE, ItemInit.defaultBuilder()).setRegistryName(CRAFTING_PLATE.getRegistryName()));
+		r.register(new BlockItem(CRAFTING_PLATE, ModItems.defaultBuilder()).setRegistryName(CRAFTING_PLATE.getRegistryName()));
 	}
 
 	@SubscribeEvent
