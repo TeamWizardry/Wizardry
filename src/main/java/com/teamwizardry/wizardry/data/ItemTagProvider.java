@@ -12,7 +12,7 @@ public class ItemTagProvider extends ForgeItemTagsProvider {
 
 	@Override
 	public void registerTags() {
-		getBuilder(Tags.Items.RODS_WOODEN).add(ModItems.wisdomStick);
+		getBuilder(Tags.Items.RODS_WOODEN).add(ModItems.wisdomStick.get());
 	}
 
 	@Override

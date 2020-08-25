@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.common.init;
 
+import com.teamwizardry.librarianlib.foundation.registration.BlockSpec;
+import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
 import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
@@ -17,31 +19,17 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModBlocks {
-	public static final Block CRAFTING_PLATE = new BlockCraftingPlate(Block.Properties.create(Material.WOOD));
+	public static final LazyBlock craftingPlate = new LazyBlock();
 
 	public static void registerBlocks(RegistrationManager reggie) {
-
-	}
-
-	@SubscribeEvent
-	public static void registerBlock(RegistryEvent.Register<Block> event) {
-		IForgeRegistry<Block> r = event.getRegistry();
-
-		r.register(CRAFTING_PLATE.setRegistryName(Wizardry.MODID, LibBlockNames.CRAFTING_PLATE));
-	}
-
-	@SubscribeEvent
-	public static void registerItems(RegistryEvent.Register<Item> event) {
-		IForgeRegistry<Item> r = event.getRegistry();
-
-		r.register(new BlockItem(CRAFTING_PLATE, ModItems.defaultBuilder()).setRegistryName(CRAFTING_PLATE.getRegistryName()));
+		craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE).block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));
 	}
 
 	@SubscribeEvent
 	public static void registerTile(RegistryEvent.Register<TileEntityType<?>> event) {
 		IForgeRegistry<TileEntityType<?>> r = event.getRegistry();
 
-		TileEntityType<?> type = TileEntityType.Builder.create(TileCraftingPlate::new, CRAFTING_PLATE).build(null);
+		TileEntityType<?> type = TileEntityType.Builder.create(TileCraftingPlate::new, craftingPlate.get()).build(null);
 
 		r.register(type.setRegistryName(Wizardry.MODID, LibBlockNames.CRAFTING_PLATE));
 	}

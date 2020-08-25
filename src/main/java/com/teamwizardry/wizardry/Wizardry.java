@@ -47,8 +47,8 @@ public class Wizardry extends BaseMod {
 		eventBus.addGenericListener(Pattern.class, this::registerPatterns);
 
 		// Initialize Items
-		ModItems.initializeItemGroup();
 		ModItems.initializeItems(getRegistrationManager());
+		ModItems.initializeItemGroup();
 
 		// Initialize Blocks
 		ModBlocks.registerBlocks(getRegistrationManager());
