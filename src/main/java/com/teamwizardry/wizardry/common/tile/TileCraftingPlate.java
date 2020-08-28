@@ -20,7 +20,7 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
 	@Override
 	public void tick() {
 
-		if (world.isRemote && world.getGameTime() % 2 == 0) {
+		if (world != null && world.isRemote && world.getGameTime() % 3 == 0) {
 
 			Vec3d target = new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
 					RandUtil.nextDouble(0, 0.05),

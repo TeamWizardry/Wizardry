@@ -1,15 +1,15 @@
 {
-  "__comment": "Copyright © InsomniaKitten 2017",
+  "credit": "Made with Blockbench",
   "textures": {
-    "particle": "wizardry:blocks/crafting_plate/side",
     "up": "wizardry:blocks/crafting_plate/up",
     "down": "wizardry:blocks/crafting_plate/down",
+    "particle": "wizardry:blocks/crafting_plate/side",
     "side": "wizardry:blocks/crafting_plate/side",
     "plate": "wizardry:blocks/crafting_plate/plate"
   },
   "elements": [
     {
-      "__comment": "foot_nw",
+      "name": "foot_nw",
       "from": [
         1,
         0,
@@ -21,26 +21,16 @@
         5
       ],
       "faces": {
-        "down": {
-          "uv": [
-            1,
-            11,
-            5,
-            15
-          ],
-          "texture": "#down",
-          "cullface": "down"
-        },
-        "up": {
-          "uv": [
-            1,
-            1,
-            5,
-            5
-          ],
-          "texture": "#down"
-        },
         "north": {
+          "uv": [
+            11,
+            14,
+            15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
           "uv": [
             11,
             14,
@@ -67,19 +57,29 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "up": {
           "uv": [
-            11,
-            14,
-            15,
-            16
+            1,
+            1,
+            5,
+            5
           ],
-          "texture": "#side"
+          "texture": "#down"
+        },
+        "down": {
+          "uv": [
+            1,
+            11,
+            5,
+            15
+          ],
+          "texture": "#down",
+          "cullface": "down"
         }
       }
     },
     {
-      "__comment": "foot_ne",
+      "name": "foot_ne",
       "from": [
         11,
         0,
@@ -91,30 +91,20 @@
         5
       ],
       "faces": {
-        "down": {
-          "uv": [
-            11,
-            11,
-            15,
-            15
-          ],
-          "texture": "#down",
-          "cullface": "down"
-        },
-        "up": {
-          "uv": [
-            11,
-            1,
-            15,
-            5
-          ],
-          "texture": "#down"
-        },
         "north": {
           "uv": [
             1,
             14,
             5,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            11,
+            14,
+            15,
             16
           ],
           "texture": "#side"
@@ -137,19 +127,29 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "up": {
           "uv": [
             11,
-            14,
+            1,
             15,
-            16
+            5
           ],
-          "texture": "#side"
+          "texture": "#down"
+        },
+        "down": {
+          "uv": [
+            11,
+            11,
+            15,
+            15
+          ],
+          "texture": "#down",
+          "cullface": "down"
         }
       }
     },
     {
-      "__comment": "foot_sw",
+      "name": "foot_sw",
       "from": [
         1,
         0,
@@ -161,30 +161,20 @@
         15
       ],
       "faces": {
-        "down": {
-          "uv": [
-            1,
-            1,
-            5,
-            5
-          ],
-          "texture": "#down",
-          "cullface": "down"
-        },
-        "up": {
-          "uv": [
-            1,
-            11,
-            5,
-            15
-          ],
-          "texture": "#down"
-        },
         "north": {
           "uv": [
             11,
             14,
             15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            1,
+            14,
+            5,
             16
           ],
           "texture": "#side"
@@ -207,19 +197,29 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "up": {
           "uv": [
             1,
-            14,
+            11,
             5,
-            16
+            15
           ],
-          "texture": "#side"
+          "texture": "#down"
+        },
+        "down": {
+          "uv": [
+            1,
+            1,
+            5,
+            5
+          ],
+          "texture": "#down",
+          "cullface": "down"
         }
       }
     },
     {
-      "__comment": "foot_se",
+      "name": "foot_se",
       "from": [
         11,
         0,
@@ -231,26 +231,16 @@
         15
       ],
       "faces": {
-        "down": {
-          "uv": [
-            11,
-            1,
-            15,
-            5
-          ],
-          "texture": "#down",
-          "cullface": "down"
-        },
-        "up": {
-          "uv": [
-            11,
-            11,
-            15,
-            15
-          ],
-          "texture": "#down"
-        },
         "north": {
+          "uv": [
+            1,
+            14,
+            5,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
           "uv": [
             1,
             14,
@@ -277,19 +267,29 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "up": {
           "uv": [
-            1,
-            14,
-            5,
-            16
+            11,
+            11,
+            15,
+            15
           ],
-          "texture": "#side"
+          "texture": "#down"
+        },
+        "down": {
+          "uv": [
+            11,
+            1,
+            15,
+            5
+          ],
+          "texture": "#down",
+          "cullface": "down"
         }
       }
     },
     {
-      "__comment": "ankle_nw",
+      "name": "ankle_nw",
       "from": [
         1.5,
         1.5,
@@ -310,6 +310,15 @@
           ],
           "texture": "#side"
         },
+        "east": {
+          "uv": [
+            11.5,
+            13.5,
+            14.5,
+            14.5
+          ],
+          "texture": "#side"
+        },
         "south": {
           "uv": [
             1.5,
@@ -327,20 +336,11 @@
             14.5
           ],
           "texture": "#side"
-        },
-        "east": {
-          "uv": [
-            11.5,
-            13.5,
-            14.5,
-            14.5
-          ],
-          "texture": "#side"
         }
       }
     },
     {
-      "__comment": "ankle_ne",
+      "name": "ankle_ne",
       "from": [
         11.5,
         1.5,
@@ -361,6 +361,15 @@
           ],
           "texture": "#side"
         },
+        "east": {
+          "uv": [
+            11.5,
+            13.5,
+            14.5,
+            14.5
+          ],
+          "texture": "#side"
+        },
         "south": {
           "uv": [
             11.5,
@@ -378,20 +387,11 @@
             14.5
           ],
           "texture": "#side"
-        },
-        "east": {
-          "uv": [
-            11.5,
-            13.5,
-            14.5,
-            14.5
-          ],
-          "texture": "#side"
         }
       }
     },
     {
-      "__comment": "ankle_sw",
+      "name": "ankle_sw",
       "from": [
         1.5,
         1.5,
@@ -412,6 +412,15 @@
           ],
           "texture": "#side"
         },
+        "east": {
+          "uv": [
+            1.5,
+            13.5,
+            4.5,
+            14.5
+          ],
+          "texture": "#side"
+        },
         "south": {
           "uv": [
             1.5,
@@ -429,20 +438,11 @@
             14.5
           ],
           "texture": "#side"
-        },
-        "east": {
-          "uv": [
-            1.5,
-            13.5,
-            4.5,
-            14.5
-          ],
-          "texture": "#side"
         }
       }
     },
     {
-      "__comment": "ankle_se",
+      "name": "ankle_se",
       "from": [
         11.5,
         1.5,
@@ -463,24 +463,6 @@
           ],
           "texture": "#side"
         },
-        "south": {
-          "uv": [
-            11.5,
-            13.5,
-            14.5,
-            14.5
-          ],
-          "texture": "#side"
-        },
-        "west": {
-          "uv": [
-            11.5,
-            13.5,
-            14.5,
-            14.5
-          ],
-          "texture": "#side"
-        },
         "east": {
           "uv": [
             1.5,
@@ -489,11 +471,29 @@
             14.5
           ],
           "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            11.5,
+            13.5,
+            14.5,
+            14.5
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            11.5,
+            13.5,
+            14.5,
+            14.5
+          ],
+          "texture": "#side"
         }
       }
     },
     {
-      "__comment": "leg_nw",
+      "name": "leg_nw",
       "from": [
         1,
         2.5,
@@ -505,16 +505,16 @@
         5
       ],
       "faces": {
-        "down": {
-          "uv": [
-            1,
-            11,
-            5,
-            15
-          ],
-          "texture": "#down"
-        },
         "north": {
+          "uv": [
+            11,
+            5.5,
+            15,
+            13.5
+          ],
+          "texture": "#side"
+        },
+        "east": {
           "uv": [
             11,
             5.5,
@@ -541,19 +541,19 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "down": {
           "uv": [
+            1,
             11,
-            5.5,
-            15,
-            13.5
+            5,
+            15
           ],
-          "texture": "#side"
+          "texture": "#down"
         }
       }
     },
     {
-      "__comment": "leg_ne",
+      "name": "leg_ne",
       "from": [
         11,
         2.5,
@@ -565,20 +565,20 @@
         5
       ],
       "faces": {
-        "down": {
-          "uv": [
-            11,
-            11,
-            15,
-            15
-          ],
-          "texture": "#down"
-        },
         "north": {
           "uv": [
             1,
             5.5,
             5,
+            13.5
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            11,
+            5.5,
+            15,
             13.5
           ],
           "texture": "#side"
@@ -601,19 +601,19 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "down": {
           "uv": [
             11,
-            5.5,
+            11,
             15,
-            13.5
+            15
           ],
-          "texture": "#side"
+          "texture": "#down"
         }
       }
     },
     {
-      "__comment": "leg_sw",
+      "name": "leg_sw",
       "from": [
         1,
         2.5,
@@ -625,20 +625,20 @@
         15
       ],
       "faces": {
-        "down": {
-          "uv": [
-            1,
-            1,
-            5,
-            5
-          ],
-          "texture": "#down"
-        },
         "north": {
           "uv": [
             11,
             5.5,
             15,
+            13.5
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            1,
+            5.5,
+            5,
             13.5
           ],
           "texture": "#side"
@@ -661,19 +661,19 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "down": {
           "uv": [
             1,
-            5.5,
+            1,
             5,
-            13.5
+            5
           ],
-          "texture": "#side"
+          "texture": "#down"
         }
       }
     },
     {
-      "__comment": "leg_se",
+      "name": "leg_se",
       "from": [
         11,
         2.5,
@@ -685,16 +685,16 @@
         15
       ],
       "faces": {
-        "down": {
-          "uv": [
-            11,
-            1,
-            15,
-            5
-          ],
-          "texture": "#down"
-        },
         "north": {
+          "uv": [
+            1,
+            5.5,
+            5,
+            13.5
+          ],
+          "texture": "#side"
+        },
+        "east": {
           "uv": [
             1,
             5.5,
@@ -721,19 +721,19 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "down": {
           "uv": [
+            11,
             1,
-            5.5,
-            5,
-            13.5
+            15,
+            5
           ],
-          "texture": "#side"
+          "texture": "#down"
         }
       }
     },
     {
-      "__comment": "surface",
+      "name": "surface",
       "from": [
         0,
         10,
@@ -745,24 +745,6 @@
         16
       ],
       "faces": {
-        "down": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#down"
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#up"
-        },
         "north": {
           "uv": [
             0,
@@ -772,6 +754,16 @@
           ],
           "texture": "#side",
           "cullface": "north"
+        },
+        "east": {
+          "uv": [
+            0,
+            3,
+            16,
+            6
+          ],
+          "texture": "#side",
+          "cullface": "east"
         },
         "south": {
           "uv": [
@@ -793,20 +785,28 @@
           "texture": "#side",
           "cullface": "west"
         },
-        "east": {
+        "up": {
           "uv": [
             0,
-            3,
+            0,
             16,
-            6
+            16
           ],
-          "texture": "#side",
-          "cullface": "east"
+          "texture": "#up"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#down"
         }
       }
     },
     {
-      "__comment": "plate_surface",
+      "name": "plate_surface",
       "from": [
         5,
         13,
@@ -818,16 +818,16 @@
         11
       ],
       "faces": {
-        "up": {
+        "north": {
           "uv": [
             5,
-            5,
+            2,
             11,
-            11
+            3
           ],
           "texture": "#plate"
         },
-        "north": {
+        "east": {
           "uv": [
             5,
             2,
@@ -854,19 +854,19 @@
           ],
           "texture": "#plate"
         },
-        "east": {
+        "up": {
           "uv": [
             5,
-            2,
+            5,
             11,
-            3
+            11
           ],
           "texture": "#plate"
         }
       }
     },
     {
-      "__comment": "plate_north",
+      "name": "plate_north",
       "from": [
         4,
         13.5,
@@ -874,31 +874,22 @@
       ],
       "to": [
         12,
-        15.5,
+        14.5,
         5
       ],
       "faces": {
-        "down": {
-          "uv": [
-            4,
-            11,
-            12,
-            12
-          ],
-          "texture": "#plate"
-        },
-        "up": {
-          "uv": [
-            4,
-            4,
-            12,
-            5
-          ],
-          "texture": "#plate"
-        },
         "north": {
           "uv": [
             4,
+            1,
+            12,
+            2
+          ],
+          "texture": "#plate"
+        },
+        "east": {
+          "uv": [
+            11,
             0.5,
             12,
             2.5
@@ -908,9 +899,9 @@
         "south": {
           "uv": [
             4,
-            0.5,
+            0,
             12,
-            2.5
+            1
           ],
           "texture": "#plate"
         },
@@ -923,19 +914,28 @@
           ],
           "texture": "#plate"
         },
-        "east": {
+        "up": {
           "uv": [
-            11,
-            0.5,
+            4,
+            4,
             12,
-            2.5
+            5
+          ],
+          "texture": "#plate"
+        },
+        "down": {
+          "uv": [
+            4,
+            11,
+            12,
+            12
           ],
           "texture": "#plate"
         }
       }
     },
     {
-      "__comment": "plate_south",
+      "name": "plate_south",
       "from": [
         4,
         13.5,
@@ -943,16 +943,43 @@
       ],
       "to": [
         12,
-        15.5,
+        14.5,
         12
       ],
       "faces": {
-        "down": {
+        "north": {
           "uv": [
             4,
-            4,
+            0,
             12,
-            5
+            1
+          ],
+          "texture": "#plate"
+        },
+        "east": {
+          "uv": [
+            4,
+            0.5,
+            5,
+            2.5
+          ],
+          "texture": "#plate"
+        },
+        "south": {
+          "uv": [
+            4,
+            1,
+            12,
+            2
+          ],
+          "texture": "#plate"
+        },
+        "west": {
+          "uv": [
+            11,
+            0.5,
+            12,
+            2.5
           ],
           "texture": "#plate"
         },
@@ -965,46 +992,19 @@
           ],
           "texture": "#plate"
         },
-        "north": {
+        "down": {
           "uv": [
             4,
-            0.5,
-            12,
-            2.5
-          ],
-          "texture": "#plate"
-        },
-        "south": {
-          "uv": [
             4,
-            0.5,
             12,
-            2.5
-          ],
-          "texture": "#plate"
-        },
-        "west": {
-          "uv": [
-            11,
-            0.5,
-            12,
-            2.5
-          ],
-          "texture": "#plate"
-        },
-        "east": {
-          "uv": [
-            4,
-            0.5,
-            5,
-            2.5
+            5
           ],
           "texture": "#plate"
         }
       }
     },
     {
-      "__comment": "plate_west",
+      "name": "plate_west",
       "from": [
         4,
         13.5,
@@ -1012,16 +1012,25 @@
       ],
       "to": [
         5,
-        15.5,
+        14.5,
         11
       ],
       "faces": {
-        "down": {
+        "east": {
           "uv": [
-            4,
             5,
+            0,
+            11,
+            1
+          ],
+          "texture": "#plate"
+        },
+        "west": {
+          "uv": [
             5,
-            11
+            1,
+            11,
+            2
           ],
           "texture": "#plate"
         },
@@ -1034,28 +1043,19 @@
           ],
           "texture": "#plate"
         },
-        "west": {
+        "down": {
           "uv": [
+            4,
             5,
-            0.5,
-            11,
-            2.5
-          ],
-          "texture": "#plate"
-        },
-        "east": {
-          "uv": [
             5,
-            0.5,
-            11,
-            2.5
+            11
           ],
           "texture": "#plate"
         }
       }
     },
     {
-      "__comment": "plate_east",
+      "name": "plate_east",
       "from": [
         11,
         13.5,
@@ -1063,79 +1063,61 @@
       ],
       "to": [
         12,
-        15.5,
+        14.5,
         11
       ],
       "faces": {
-        "down": {
+        "east": {
           "uv": [
-            11,
             5,
-            12,
-            11
-          ],
-          "texture": "#plate"
-        },
-        "up": {
-          "uv": [
+            1,
             11,
-            5,
-            12,
-            11
+            2
           ],
           "texture": "#plate"
         },
         "west": {
           "uv": [
             5,
-            0.5,
+            0,
             11,
-            2.5
+            1
           ],
           "texture": "#plate"
         },
-        "east": {
+        "up": {
           "uv": [
-            5,
-            0.5,
             11,
-            2.5
+            5,
+            12,
+            11
+          ],
+          "texture": "#plate"
+        },
+        "down": {
+          "uv": [
+            11,
+            5,
+            12,
+            11
           ],
           "texture": "#plate"
         }
       }
     },
     {
-      "__comment": "beam_mid",
+      "name": "beam_south",
       "from": [
         4,
         3,
-        7
+        12
       ],
       "to": [
         12,
         5,
-        9
+        14
       ],
       "faces": {
-        "down": {
-          "uv": [
-            4,
-            11,
-            12,
-            13
-          ],
-          "texture": "#side"
-        },
-        "up": {
-          "uv": [
-            4,
-            11,
-            12,
-            13
-          ],
-          "texture": "#side"
-        },
         "north": {
           "uv": [
             4,
@@ -1153,11 +1135,80 @@
             13
           ],
           "texture": "#side"
+        },
+        "up": {
+          "uv": [
+            4,
+            11,
+            12,
+            13
+          ],
+          "texture": "#side"
+        },
+        "down": {
+          "uv": [
+            4,
+            11,
+            12,
+            13
+          ],
+          "texture": "#side"
         }
       }
     },
     {
-      "__comment": "beam_west",
+      "name": "beam_north",
+      "from": [
+        4,
+        3,
+        2
+      ],
+      "to": [
+        12,
+        5,
+        4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            11,
+            12,
+            13
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            4,
+            11,
+            12,
+            13
+          ],
+          "texture": "#side"
+        },
+        "up": {
+          "uv": [
+            4,
+            11,
+            12,
+            13
+          ],
+          "texture": "#side"
+        },
+        "down": {
+          "uv": [
+            4,
+            11,
+            12,
+            13
+          ],
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "name": "beam_west",
       "from": [
         2,
         3,
@@ -1169,21 +1220,12 @@
         11
       ],
       "faces": {
-        "down": {
+        "east": {
           "uv": [
             5,
-            6,
-            7,
-            12
-          ],
-          "texture": "#side"
-        },
-        "up": {
-          "uv": [
-            5,
-            6,
-            7,
-            12
+            11,
+            11,
+            13
           ],
           "texture": "#side"
         },
@@ -1196,19 +1238,28 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "up": {
           "uv": [
             5,
-            11,
-            11,
-            13
+            6,
+            7,
+            12
+          ],
+          "texture": "#side"
+        },
+        "down": {
+          "uv": [
+            5,
+            6,
+            7,
+            12
           ],
           "texture": "#side"
         }
       }
     },
     {
-      "__comment": "beam_east",
+      "name": "beam_east",
       "from": [
         12,
         3,
@@ -1220,21 +1271,12 @@
         11
       ],
       "faces": {
-        "down": {
+        "east": {
           "uv": [
-            9,
-            6,
+            5,
             11,
-            12
-          ],
-          "texture": "#side"
-        },
-        "up": {
-          "uv": [
-            9,
-            6,
             11,
-            12
+            13
           ],
           "texture": "#side"
         },
@@ -1247,12 +1289,21 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "up": {
           "uv": [
-            5,
+            9,
+            6,
             11,
+            12
+          ],
+          "texture": "#side"
+        },
+        "down": {
+          "uv": [
+            9,
+            6,
             11,
-            13
+            12
           ],
           "texture": "#side"
         }
@@ -1318,6 +1369,18 @@
         0.4
       ]
     },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
     "gui": {
       "rotation": [
         30,
@@ -1340,18 +1403,6 @@
         0.5,
         0.5,
         0.5
-      ]
-    },
-    "ground": {
-      "translation": [
-        0,
-        3,
-        0
-      ],
-      "scale": [
-        0.25,
-        0.25,
-        0.25
       ]
     },
     "fixed": {

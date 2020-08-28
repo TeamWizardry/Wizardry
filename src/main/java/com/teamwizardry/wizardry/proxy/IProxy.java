@@ -11,4 +11,6 @@ public interface IProxy {
 	void setItemStackHandHandler(Hand hand, ItemStack stack);
 
 	void spawnParticle(GlitterBox box);
+
+	void openWorktableGui();
 }

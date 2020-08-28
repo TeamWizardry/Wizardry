@@ -1,14 +1,14 @@
 {
-  "__comment": "Copyright © InsomniaKitten 2017",
+  "credit": "Made with Blockbench",
   "textures": {
-    "particle": "wizardry:blocks/jar/side",
     "cap": "wizardry:blocks/jar/cap",
+    "particle": "wizardry:blocks/jar/side",
     "side": "wizardry:blocks/jar/side",
     "lid": "wizardry:blocks/jar/lid"
   },
   "elements": [
     {
-      "__comment": "lid",
+      "name": "lid",
       "from": [
         5.5,
         9.5,
@@ -20,25 +20,16 @@
         10.5
       ],
       "faces": {
-        "down": {
-          "uv": [
-            5,
-            5,
-            11,
-            11
-          ],
-          "texture": "#lid"
-        },
-        "up": {
-          "uv": [
-            5,
-            5,
-            11,
-            11
-          ],
-          "texture": "#lid"
-        },
         "north": {
+          "uv": [
+            5,
+            3,
+            11,
+            5
+          ],
+          "texture": "#lid"
+        },
+        "east": {
           "uv": [
             5,
             3,
@@ -65,22 +56,31 @@
           ],
           "texture": "#lid"
         },
-        "east": {
+        "up": {
           "uv": [
             5,
-            3,
+            5,
             11,
-            5
+            11
+          ],
+          "texture": "#lid"
+        },
+        "down": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
           ],
           "texture": "#lid"
         }
       }
     },
     {
-      "__comment": "outer",
+      "name": "outer",
       "from": [
         4,
-        0,
+        0.75,
         4
       ],
       "to": [
@@ -89,6 +89,51 @@
         12
       ],
       "faces": {
+        "north": {
+          "uv": [
+            4,
+            6,
+            12,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            4,
+            6,
+            12,
+            16
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            4,
+            6,
+            12,
+            16
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            4,
+            6,
+            12,
+            16
+          ],
+          "texture": "#side"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#cap"
+        },
         "down": {
           "uv": [
             4,
@@ -98,59 +143,14 @@
           ],
           "texture": "#cap",
           "cullface": "down"
-        },
-        "up": {
-          "uv": [
-            4,
-            4,
-            12,
-            12
-          ],
-          "texture": "#cap"
-        },
-        "north": {
-          "uv": [
-            4,
-            6,
-            12,
-            16
-          ],
-          "texture": "#side"
-        },
-        "south": {
-          "uv": [
-            4,
-            6,
-            12,
-            16
-          ],
-          "texture": "#side"
-        },
-        "west": {
-          "uv": [
-            4,
-            6,
-            12,
-            16
-          ],
-          "texture": "#side"
-        },
-        "east": {
-          "uv": [
-            4,
-            6,
-            12,
-            16
-          ],
-          "texture": "#side"
         }
       }
     },
     {
-      "__comment": "inner",
+      "name": "inner",
       "from": [
         5,
-        1,
+        0,
         5
       ],
       "to": [
@@ -159,25 +159,16 @@
         11
       ],
       "faces": {
-        "down": {
-          "uv": [
-            5,
-            5,
-            11,
-            11
-          ],
-          "texture": "#cap"
-        },
-        "up": {
-          "uv": [
-            5,
-            5,
-            11,
-            11
-          ],
-          "texture": "#cap"
-        },
         "north": {
+          "uv": [
+            5,
+            5,
+            11,
+            15
+          ],
+          "texture": "#side"
+        },
+        "east": {
           "uv": [
             5,
             5,
@@ -204,14 +195,23 @@
           ],
           "texture": "#side"
         },
-        "east": {
+        "up": {
           "uv": [
             5,
             5,
             11,
-            15
+            11
           ],
-          "texture": "#side"
+          "texture": "#cap"
+        },
+        "down": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#cap"
         }
       }
     }
@@ -275,6 +275,18 @@
         0.4
       ]
     },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
     "gui": {
       "rotation": [
         30,
@@ -297,18 +309,6 @@
         0.5,
         0.5,
         0.5
-      ]
-    },
-    "ground": {
-      "translation": [
-        0,
-        3,
-        0
-      ],
-      "scale": [
-        0.25,
-        0.25,
-        0.25
       ]
     },
     "fixed": {

@@ -7,15 +7,10 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.ItemStaff;
 import com.teamwizardry.wizardry.common.lib.LibItemNames;
-import net.minecraft.item.EnchantedGoldenAppleItem;
 import net.minecraft.item.Food;
-import net.minecraft.item.Item;
 import net.minecraft.item.Rarity;
-import net.minecraft.potion.*;
-import org.lwjgl.system.CallbackI;
-import org.spongepowered.api.effect.potion.PotionEffect;
-
-import java.util.function.Supplier;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 
 public class ModItems {
 	public static final LazyItem wisdomStick = new LazyItem();
@@ -41,9 +36,7 @@ public class ModItems {
 						.saturation(10)
 						.effect(() -> new EffectInstance(Effects.REGENERATION, 20 * 15), 1f)
 						.effect(() -> new EffectInstance(Effects.JUMP_BOOST, 20 * 60 * 2, 1), 1f)
-						.effect(() -> new EffectInstance(Effects.GLOWING, 20*30), 1f)
-						.effect(() -> new EffectInstance(Effects.SPEED, 20 * 60 * 2, 1), 1f)
-						.effect(() -> new EffectInstance(Effects.NIGHT_VISION, 20 * 60 * 2), 1f)
+						.effect(() -> new EffectInstance(Effects.GLOWING, 20 * 30), 1f)
 						.build())));
 
 		staff.from(reggie.add(new ItemSpec(LibItemNames.STAFF).maxStackSize(1).rarity(Rarity.UNCOMMON).item(itemSpec -> new ItemStaff(itemSpec.getItemProperties()))));

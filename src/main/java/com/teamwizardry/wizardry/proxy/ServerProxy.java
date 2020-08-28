@@ -18,4 +18,8 @@ public class ServerProxy implements IProxy {
 	@Override
 	public void spawnParticle(GlitterBox box) {
 	}
+
+	@Override
+	public void openWorktableGui() {
+	}
 }

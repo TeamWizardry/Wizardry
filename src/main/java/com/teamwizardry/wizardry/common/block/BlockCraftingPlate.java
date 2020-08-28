@@ -1,10 +1,9 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.wizardry.client.gui.WorktableGUI;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -25,8 +24,8 @@ public class BlockCraftingPlate extends Block {
 	@Override
 	public @NotNull ActionResultType onBlockActivated(@NotNull BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, @NotNull PlayerEntity player, @NotNull Hand handIn, @NotNull BlockRayTraceResult hit) {
 
-		Minecraft.getInstance().displayGuiScreen(new WorktableGUI());
-
+		if (worldIn.isRemote)
+			Wizardry.PROXY.openWorktableGui();
 		return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
 	}
 
