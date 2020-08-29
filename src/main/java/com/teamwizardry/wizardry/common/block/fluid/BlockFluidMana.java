@@ -1,5 +1,14 @@
 package com.teamwizardry.wizardry.common.block.fluid;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.librarianlib.features.base.fluid.BlockModFluid;
 import com.teamwizardry.librarianlib.features.base.fluid.ModFluid;
 import com.teamwizardry.librarianlib.features.forgeevents.EntityUpdateEvent;
@@ -9,9 +18,10 @@ import com.teamwizardry.wizardry.api.item.IPotionEffectExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
-import com.teamwizardry.wizardry.crafting.mana.FluidRecipeLoader;
+import com.teamwizardry.wizardry.crafting.mana.FluidRecipeBuilder;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import com.teamwizardry.wizardry.init.ModPotions;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.Block;
@@ -35,14 +45,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class BlockFluidMana extends BlockModFluid {
 
@@ -129,7 +131,7 @@ public class BlockFluidMana extends BlockModFluid {
 		run(world, pos, state.getBlock(), entityIn,
 				entity -> entity instanceof EntityItem && ManaRecipes.RECIPES.keySet().stream().anyMatch(item -> item.apply(((EntityItem) entity).getItem())),
 				entity -> {
-					List<Map.Entry<Ingredient, FluidRecipeLoader.FluidCrafter>> allEntries = ManaRecipes.RECIPES.entries().stream().filter(entry ->
+					List<Map.Entry<Ingredient, FluidRecipeBuilder.FluidCrafter>> allEntries = ManaRecipes.RECIPES.entries().stream().filter(entry ->
 							entry.getValue().getFluid().getBlock() == state.getBlock() &&
 									entry.getKey().apply(((EntityItem) entity).getItem())).collect(Collectors.toList());
 					allEntries.forEach(crafter -> FluidTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), crafter.getValue().build()));

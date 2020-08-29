@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.client.jei.fluid;
 import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.client.jei.WizardryJEIPlugin;
-import com.teamwizardry.wizardry.crafting.mana.FluidRecipeLoader;
+import com.teamwizardry.wizardry.crafting.mana.FluidRecipeBuilder;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -28,9 +28,9 @@ import static com.teamwizardry.wizardry.client.jei.WizardryJEIPlugin.manaCategor
 @SideOnly(Side.CLIENT)
 public class FluidRecipeJEI implements IRecipeWrapper {
 
-	private final FluidRecipeLoader.FluidCrafter builder;
+	private final FluidRecipeBuilder.FluidCrafter builder;
 
-	public FluidRecipeJEI(FluidRecipeLoader.FluidCrafter builder) {
+	public FluidRecipeJEI(FluidRecipeBuilder.FluidCrafter builder) {
 		this.builder = builder;
 	}
 

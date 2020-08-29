@@ -29,8 +29,8 @@ import java.util.Map;
 public class ManaRecipes {
 	public static final ManaRecipes INSTANCE = new ManaRecipes();
 
-	public static final HashMap<String, FluidRecipeLoader.FluidCrafter> RECIPE_REGISTRY = new HashMap<>();
-	public static final HashMultimap<Ingredient, FluidRecipeLoader.FluidCrafter> RECIPES = HashMultimap.create();
+	public static final HashMap<String, FluidRecipeBuilder.FluidCrafter> RECIPE_REGISTRY = new HashMap<>();
+	public static final HashMultimap<Ingredient, FluidRecipeBuilder.FluidCrafter> RECIPES = HashMultimap.create();
 
 	public static final String EXPLODABLE = "explodable";
 
