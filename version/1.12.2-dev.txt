@@ -1,33 +1,19 @@
-0.10.8
-WIP depressed fairy items and mobilization
-Fairies save their colors properly now
-New cape textures
-New sounds added (will be used later)
-Disarm spell is now Extract spell and zuccs your enemies' inventories dry
-Fix burnout (hasn't been being added for a while now)
-Cape no longer reduces burnout
-Shifting now lets you descend blocks while phasing
-Leech buffed (might get nerfed later)
-Fix desyncing of blocks with Break spell (pau101)
-Burnout drains twice as fast as mana gen speed (might be changed later)
+0.11.1
+Fix fluid recipes ignoring multiples of an input
 
-0.10.7
-WIP unicorn AI
-Improved fairy AI
-Sped up spirit wight speed + buffed them
-WIP fairy jarring
-Fix crash with clients when logging on
-Redo mana network logic
-Mana battery structure has been changed and regenerates mana now
-Changed Disarm to Extract and now pulls items from chests as well
-Fixed bug where disarmed items are instantly picked up
-Made vanish more reliable and takes advantage of vanilla invisibility as well
-Fix crash with pearl UI
+0.11.0
+Super Epic Spicy Gamer Update
 
-0.10.6
-Fixed crashes on servers
-Removed wizardry reset command
-Fix crash for render visualizations
-Fixed crash with empty syringes
-Reduced zoom lag effect
-Tiny telekinesis buff
+Codex now has entries for all items and blocks
+Fairy apple is craftable and gives buffs
+Balanced spell costs
+Made projectile hitbox larger, and increased base range
+Reinforcements spell now has a configurable cap of 100 summons per player
+Fixed the zone spell so it actually works
+Fixed spell crafting frame drops
+Fixed workbench crash
+Fixed many graphical bugs
+Fixed zone, arc, and beam not charging the caster properly
+Fixed compatibility issues and spell crashes
+Temporarily removed Time Lock
+Removed Torikki
