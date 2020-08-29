@@ -39,6 +39,12 @@ public class SpellUtils {
 		if (to.getItem() instanceof INacreProduct && from.getItem() instanceof INacreProduct) {
 			NBTHelper.setFloat(to, NBTConstants.NBT.RAND, NBTHelper.getFloat(from, NBTConstants.NBT.RAND, -1));
 		}
+		
+		if (from.hasDisplayName())
+		{
+		    to.setStackDisplayName(from.getDisplayName());
+		    from.clearCustomName();
+		}
 
 		infuseSpell(to, spell);
 	}
