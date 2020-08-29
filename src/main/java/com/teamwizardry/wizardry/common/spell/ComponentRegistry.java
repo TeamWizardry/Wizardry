@@ -7,15 +7,20 @@ import java.util.Map;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
+import com.teamwizardry.wizardry.configs.ServerConfigs;
 
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ComponentRegistry
 {
     private static final Map<String, Module> modules = new HashMap<>();
     private static final Map<String, Modifier> modifiers = new HashMap<>();
-    
     private static final Map<List<Item>, ISpellComponent> spellComponents = new HashMap<>();
+    
+    private static TargetComponent entityTarget;
+    private static TargetComponent blockTarget;
     
     /**
      * Unconstructible
@@ -66,4 +71,21 @@ public class ComponentRegistry
         spellComponents.put(component.getItems(), component);
         return true;
     }
+    
+    public static void loadTargets()
+    {
+        if (entityTarget != null)
+            spellComponents.remove(entityTarget.getItems());
+        if (blockTarget != null)
+            spellComponents.remove(blockTarget.getItems());
+        
+        entityTarget = new TargetComponent("entityTarget", ForgeRegistries.ITEMS.getValue(new ResourceLocation(ServerConfigs.entityTargetItem)));
+        blockTarget = new TargetComponent("blockTarget", ForgeRegistries.ITEMS.getValue(new ResourceLocation(ServerConfigs.blockTargetItem)));
+        
+        spellComponents.put(entityTarget.getItems(), entityTarget);
+        spellComponents.put(blockTarget.getItems(), blockTarget);
+    }
+    
+    public static TargetComponent getEntityTarget() { return entityTarget; }
+    public static TargetComponent getBlockTarget() { return blockTarget; }
 }

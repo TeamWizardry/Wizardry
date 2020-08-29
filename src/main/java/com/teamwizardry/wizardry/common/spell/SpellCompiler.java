@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
+import com.teamwizardry.wizardry.api.spell.TargetType;
 import com.teamwizardry.wizardry.configs.ServerConfigs;
 
 import net.minecraft.item.Item;
@@ -57,6 +58,8 @@ public class SpellCompiler
                 handleEffect((ModuleEffect)component);
             else if (component instanceof Modifier)
                 handleModifier((Modifier)component);
+            else if (component instanceof TargetComponent)
+                handleTarget((TargetComponent)component);
         }
         
         return firstShape;
@@ -95,6 +98,20 @@ public class SpellCompiler
         if (currentEffect == null)
             currentShape.addModifier(modifier);
         else currentEffect.addModifier(modifier);
+    }
+    
+    private void handleTarget(TargetComponent target)
+    {
+        if (firstShape == null) // Spells have to start with shapes!
+            return;
+        TargetType targetType = TargetType.ALL;
+        if (target == ComponentRegistry.getEntityTarget())
+            targetType = TargetType.ENTITY;
+        else if (target == ComponentRegistry.getBlockTarget())
+            targetType = TargetType.BLOCK;
+        if (currentEffect == null)
+            currentShape.setTarget(targetType);
+        else currentEffect.setTarget(targetType);
     }
     
     private SpellCompiler() {}

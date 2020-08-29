@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,11 +18,14 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
+import com.teamwizardry.wizardry.api.spell.TargetType;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class ModuleLoaderTest
@@ -38,13 +40,13 @@ public class ModuleLoaderTest
     public void initTest()
     {
         testPatterns.put(shapeLoc, new PatternShape() {
-            @Override public void run(Function<BlockPos, Boolean> shouldAffectBlock, Function<Entity, Boolean> shouldAffectEntity) {}
+            @Override public void run(World world, CompoundNBT castData, TargetType targetType) {}
             @Override public void affectEntity(Entity entity) {}
             @Override public void affectBlock(BlockPos pos) {}
         });
         
         testPatterns.put(effectLoc, new PatternEffect() {
-            @Override public void run(Function<BlockPos, Boolean> shouldAffectBlock, Function<Entity, Boolean> shouldAffectEntity) {}
+            @Override public void run(World world, CompoundNBT castData, TargetType targetType) {}
             @Override public void affectEntity(Entity entity) {}
             @Override public void affectBlock(BlockPos pos) {}
         });

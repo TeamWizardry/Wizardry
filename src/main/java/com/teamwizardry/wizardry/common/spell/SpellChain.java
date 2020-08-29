@@ -2,50 +2,41 @@ package com.teamwizardry.wizardry.common.spell;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
-import com.teamwizardry.wizardry.api.spell.BlockTarget;
-import com.teamwizardry.wizardry.api.spell.EntityTarget;
+import com.teamwizardry.wizardry.api.spell.TargetType;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
 
 public abstract class SpellChain
 {
     protected Module module;
-    protected Function<Entity, Boolean> shouldAffectEntity = EntityTarget.ALWAYS;
-    protected Function<BlockPos, Boolean> shouldAffectBlock = BlockTarget.ALWAYS;
+    protected TargetType targetType = TargetType.ALL;
     protected Map<String, Integer> modifiers;
+    protected double manaMultiplier;
     
     public SpellChain(Module module)
     {
         this.module = module;
         this.modifiers = new HashMap<>();
-        // TODO: Calculate attributes
     }
     
     public SpellChain addModifier(Modifier modifier)
     {
-        modifier.getAffectedAttributes().forEach(attribute -> modifiers.merge(attribute, 1, (a,b) -> a + b));
+        modifier.getAttributeModifiers().entrySet().forEach(entry -> {
+            String attribute = entry.getKey();
+            int count = entry.getValue();
+            modifiers.merge(attribute, count, (a,b) -> a+b);
+            manaMultiplier *= Math.pow(module.getCostPerModifier(attribute), count);
+        });
         return this;
     }
     
-    public SpellChain setShouldAffectEntity(Function<Entity, Boolean> shouldAffectEntity)
-    {
-        this.shouldAffectEntity = shouldAffectEntity;
-        return this;
-    }
-    
-    public SpellChain setShouldAffectBlock(Function<BlockPos, Boolean> shouldAffectBlock)
-    {
-        this.shouldAffectBlock = shouldAffectBlock;
-        return this;
-    }
+    public SpellChain setTarget(TargetType target) { this.targetType = target; return this; }
     
     public void run()
     {
         // TODO: Apply equipment and potion modifiers
         
-        module.getPattern().run(shouldAffectBlock, shouldAffectEntity);
+        module.getPattern().run(null, new CompoundNBT(), targetType);
     }
 }

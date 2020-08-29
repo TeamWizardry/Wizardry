@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.spell.loading;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -92,7 +91,7 @@ public class ModifierLoader extends YamlLoader
     {
         String name = (String) yaml.get(NAME);
         List<Item> items = ((List<String>) yaml.get(ITEMS)).stream().map(ResourceLocation::new).map(itemSupplier::apply).collect(Collectors.toList());
-        Set<String> attributes = ((List<String>) yaml.get(ATTRIBUTES)).stream().collect(Collectors.toSet());
-        return new Modifier(name, items, attributes);
+        Map<String, Integer> attributeModifiers = (Map<String, Integer>) yaml.get(ATTRIBUTES);
+        return new Modifier(name, items, attributeModifiers);
     }
 }
