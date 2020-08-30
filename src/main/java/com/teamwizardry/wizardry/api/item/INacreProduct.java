@@ -78,7 +78,7 @@ public interface INacreProduct extends IItemColor {
 	@Override
 	default int getColor(ItemStack stack, int tintIndex) {
 		if (tintIndex != 0) return 0xFFFFFF;
-		float rand = WNBT.getFloat(stack, COLOR, -1);
+		float rand = WNBT.getFloat(stack, RAND, -1);
 		float hue = 0;
 		if (Minecraft.getInstance().world != null) {
 			hue = rand < 0 ? (Minecraft.getInstance().world.getGameTime() / 140f) % 140f : rand;

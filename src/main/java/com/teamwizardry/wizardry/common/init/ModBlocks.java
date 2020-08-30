@@ -9,10 +9,12 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.lib.LibBlockNames;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.item.BlockItem;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.FoliageColors;
 import net.minecraft.world.biome.BiomeColors;
@@ -71,6 +73,15 @@ public class ModBlocks {
 						lightReader != null && pos != null
 								? BiomeColors.getFoliageColor(lightReader, pos)
 								: FoliageColors.getDefault(),
+				wisdomLeaves.get());
+	}
+
+	@SubscribeEvent
+	public static void registerItemBlockColors(ColorHandlerEvent.Item event) {
+		event.getItemColors().register((stack, color) -> {
+					BlockState blockstate = ((BlockItem) stack.getItem()).getBlock().getDefaultState();
+					return event.getBlockColors().getColor(blockstate, null, null, color);
+				},
 				wisdomLeaves.get());
 	}
 }

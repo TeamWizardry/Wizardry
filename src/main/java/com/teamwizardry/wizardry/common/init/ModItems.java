@@ -7,11 +7,16 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.ItemStaff;
 import com.teamwizardry.wizardry.common.lib.LibItemNames;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Food;
 import net.minecraft.item.Rarity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModItems {
 	public static final LazyItem wisdomStick = new LazyItem();
 	public static final LazyItem staff = new LazyItem();
@@ -45,5 +50,10 @@ public class ModItems {
 
 	public static void initializeItemGroup() {
 		Wizardry.INSTANCE.getRegistrationManager().setItemGroupIcon(staff);
+	}
+
+	@SubscribeEvent
+	public static void registerItemBlockColors(ColorHandlerEvent.Item event) {
+		event.getItemColors().register((IItemColor) nacrePearl.get(), nacrePearl.get());
 	}
 }
