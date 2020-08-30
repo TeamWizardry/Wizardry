@@ -1,6 +1,6 @@
 {
   "parent": "block/wall_gate_open",
   "textures": {
-    "texture": "wizardry:blocks/wisdom_wood_planks"
+    "texture": "wizardry:block/wisdom_wood_planks"
   }
 }

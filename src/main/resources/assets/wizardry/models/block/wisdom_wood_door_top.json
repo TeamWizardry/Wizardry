@@ -1,7 +1,7 @@
 {
   "parent": "block/door_top",
   "textures": {
-    "bottom": "wizardry:blocks/wisdom_wood_door_bottom",
-    "top": "wizardry:blocks/wisdom_wood_door_top"
+    "bottom": "wizardry:block/wisdom_wood_door_bottom",
+    "top": "wizardry:block/wisdom_wood_door_top"
   }
 }

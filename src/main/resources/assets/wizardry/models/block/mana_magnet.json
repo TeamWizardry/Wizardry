@@ -1,10 +1,10 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "particle": "wizardry:blocks/mana_magnet_up",
-    "up": "wizardry:blocks/mana_magnet_up",
-    "down": "wizardry:blocks/mana_magnet_down",
-    "side": "wizardry:blocks/mana_magnet_side"
+    "particle": "wizardry:block/mana_magnet_up",
+    "up": "wizardry:block/mana_magnet_up",
+    "down": "wizardry:block/mana_magnet_down",
+    "side": "wizardry:block/mana_magnet_side"
   },
   "elements": [
     {

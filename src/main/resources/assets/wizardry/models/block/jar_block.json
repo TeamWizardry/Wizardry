@@ -1,10 +1,10 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "cap": "wizardry:blocks/jar/cap",
-    "particle": "wizardry:blocks/jar/side",
-    "side": "wizardry:blocks/jar/side",
-    "lid": "wizardry:blocks/jar/lid"
+    "cap": "wizardry:block/jar/cap",
+    "particle": "wizardry:block/jar/side",
+    "side": "wizardry:block/jar/side",
+    "lid": "wizardry:block/jar/lid"
   },
   "elements": [
     {

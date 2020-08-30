@@ -1,14 +1,14 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "top": "wizardry:blocks/research_table/left_top",
-    "particle": "wizardry:blocks/research_table/left_top_engraved",
-    "top_engraved": "wizardry:blocks/research_table/left_top_engraved",
-    "side": "wizardry:blocks/research_table/side",
-    "side_engraved": "wizardry:blocks/research_table/side_engraved",
-    "shelves": "wizardry:blocks/research_table/shelves",
-    "books": "wizardry:blocks/research_table/books",
-    "scrolls": "wizardry:blocks/research_table/scrolls"
+    "top": "wizardry:block/research_table/left_top",
+    "particle": "wizardry:block/research_table/left_top_engraved",
+    "top_engraved": "wizardry:block/research_table/left_top_engraved",
+    "side": "wizardry:block/research_table/side",
+    "side_engraved": "wizardry:block/research_table/side_engraved",
+    "shelves": "wizardry:block/research_table/shelves",
+    "books": "wizardry:block/research_table/books",
+    "scrolls": "wizardry:block/research_table/scrolls"
   },
   "elements": [
     {

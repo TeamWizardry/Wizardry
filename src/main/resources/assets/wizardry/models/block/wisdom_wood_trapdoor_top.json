@@ -1,6 +1,6 @@
 {
   "parent": "block/trapdoor_top",
   "textures": {
-    "texture": "wizardry:blocks/wisdom_wood_trapdoor"
+    "texture": "wizardry:block/wisdom_wood_trapdoor"
   }
 }

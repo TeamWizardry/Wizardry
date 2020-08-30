@@ -1,18 +1,58 @@
 {
 	"textures": {
-		"0": "wizardry:items/unicorn_dagger_handle",
-		"1": "wizardry:items/unicorn_dagger_blade",
-		"particle": "wizardry:items/unicorn_dagger_handle"
+		"0": "wizardry:item/unicorn_dagger_handle",
+		"1": "wizardry:item/unicorn_dagger_blade",
+		"particle": "wizardry:item/unicorn_dagger_handle"
 	},
-	"elements": [ 	 
+	"elements": [
 		{
-			"from": [ 6.25, 5, 7.75 ],
-			"to": [ 7.25, 5.5, 8.25 ],
+			"from": [
+				6.25,
+				5,
+				7.75
+			],
+			"to": [
+				7.25,
+				5.5,
+				8.25
+			],
 			"faces": {
-				"down": { "uv": [ 0, 2, 4, 4 ], "texture": "#0" },
-				"up": { "uv": [ 0, 2, 4, 4 ], "texture": "#0" },
-				"north": { "uv": [ 0, 2, 4, 4 ], "texture": "#0" },
-				"south": { "uv": [ 0, 2, 4, 4 ], "texture": "#0" }
+				"down": {
+					"uv": [
+						0,
+						2,
+						4,
+						4
+					],
+					"texture": "#0"
+				},
+				"up": {
+					"uv": [
+						0,
+						2,
+						4,
+						4
+					],
+					"texture": "#0"
+				},
+				"north": {
+					"uv": [
+						0,
+						2,
+						4,
+						4
+					],
+					"texture": "#0"
+				},
+				"south": {
+					"uv": [
+						0,
+						2,
+						4,
+						4
+					],
+					"texture": "#0"
+				}
 			}
 		},
 		{

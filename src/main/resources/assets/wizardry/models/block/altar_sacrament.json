@@ -1,20 +1,72 @@
 {
 	"credit": "Made with Blockbench, by Daniel Astral (@TrisAstral)",
 	"textures": {
-		"0": "wizardry:blocks/alter_sacrament_0",
-		"1": "wizardry:blocks/alter_sacrament_1",
-		"particle": "wizardry:blocks/alter_sacrament_0"
+		"0": "wizardry:block/alter_sacrament_0",
+		"1": "wizardry:block/alter_sacrament_1",
+		"particle": "wizardry:block/alter_sacrament_0"
 	},
 	"elements": [
 		{
-			"from": [3, 0, 3],
-			"to": [13, 4, 13],
+			"from": [
+				3,
+				0,
+				3
+			],
+			"to": [
+				13,
+				4,
+				13
+			],
 			"faces": {
-				"north": {"uv": [11.016, 0.016, 14.984, 9.984], "rotation": 90, "texture": "#0"},
-				"east": {"uv": [11.016, 0.016, 14.984, 9.984], "rotation": 90, "texture": "#0"},
-				"south": {"uv": [11.016, 0.016, 14.984, 9.984], "rotation": 90, "texture": "#0"},
-				"west": {"uv": [11.016, 0.016, 14.984, 9.984], "rotation": 90, "texture": "#0"},
-				"up": {"uv": [0.016, 0.016, 9.984, 9.984], "texture": "#0"},
+				"north": {
+					"uv": [
+						11.016,
+						0.016,
+						14.984,
+						9.984
+					],
+					"rotation": 90,
+					"texture": "#0"
+				},
+				"east": {
+					"uv": [
+						11.016,
+						0.016,
+						14.984,
+						9.984
+					],
+					"rotation": 90,
+					"texture": "#0"
+				},
+				"south": {
+					"uv": [
+						11.016,
+						0.016,
+						14.984,
+						9.984
+					],
+					"rotation": 90,
+					"texture": "#0"
+				},
+				"west": {
+					"uv": [
+						11.016,
+						0.016,
+						14.984,
+						9.984
+					],
+					"rotation": 90,
+					"texture": "#0"
+				},
+				"up": {
+					"uv": [
+						0.016,
+						0.016,
+						9.984,
+						9.984
+					],
+					"texture": "#0"
+				},
 				"down": {"uv": [0.016, 0.016, 9.984, 9.984], "texture": "#1", "cullface": "down"}
 			}
 		},

@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wizardry:items/wisdom_stick"
+    "layer0": "wizardry:item/wisdom_stick"
   }
 }

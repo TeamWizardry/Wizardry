@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wizardry:items/ring_pearl",
-    "layer1": "wizardry:items/ring_for_pearl"
+    "layer0": "wizardry:item/ring_pearl",
+    "layer1": "wizardry:item/ring_for_pearl"
   }
 }

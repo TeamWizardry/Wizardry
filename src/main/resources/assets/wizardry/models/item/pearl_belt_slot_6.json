@@ -1,12 +1,12 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wizardry:items/pearl_belt",
-    "layer1": "wizardry:items/pearl_belt_slot_1",
-    "layer2": "wizardry:items/pearl_belt_slot_2",
-    "layer3": "wizardry:items/pearl_belt_slot_3",
-    "layer4": "wizardry:items/pearl_belt_slot_4",
-    "layer5": "wizardry:items/pearl_belt_slot_5",
-    "layer6": "wizardry:items/pearl_belt_slot_6"
+    "layer0": "wizardry:item/pearl_belt",
+    "layer1": "wizardry:item/pearl_belt_slot_1",
+    "layer2": "wizardry:item/pearl_belt_slot_2",
+    "layer3": "wizardry:item/pearl_belt_slot_3",
+    "layer4": "wizardry:item/pearl_belt_slot_4",
+    "layer5": "wizardry:item/pearl_belt_slot_5",
+    "layer6": "wizardry:item/pearl_belt_slot_6"
   }
 }

@@ -1,20 +1,68 @@
 {
 	"credit": "Made with Blockbench, by Daniel Astral (@TrisAstral)",
 	"textures": {
-		"2": "wizardry:blocks/alter_confession_0",
-		"3": "wizardry:blocks/alter_confession_1",
-		"particle": "wizardry:blocks/alter_confession_0"
+		"2": "wizardry:block/alter_confession_0",
+		"3": "wizardry:block/alter_confession_1",
+		"particle": "wizardry:block/alter_confession_0"
 	},
 	"elements": [
 		{
-			"from": [3, 0, 3],
-			"to": [13, 3, 13],
+			"from": [
+				3,
+				0,
+				3
+			],
+			"to": [
+				13,
+				3,
+				13
+			],
 			"faces": {
-				"north": {"uv": [0.016, 11.016, 9.984, 13.984], "texture": "#3"},
-				"east": {"uv": [0.016, 11.016, 9.984, 13.984], "texture": "#3"},
-				"south": {"uv": [0.016, 11.016, 9.984, 13.984], "texture": "#3"},
-				"west": {"uv": [0.016, 11.016, 9.984, 13.984], "texture": "#3"},
-				"up": {"uv": [11.016, 0.016, 12.984, 9.984], "texture": "#3"},
+				"north": {
+					"uv": [
+						0.016,
+						11.016,
+						9.984,
+						13.984
+					],
+					"texture": "#3"
+				},
+				"east": {
+					"uv": [
+						0.016,
+						11.016,
+						9.984,
+						13.984
+					],
+					"texture": "#3"
+				},
+				"south": {
+					"uv": [
+						0.016,
+						11.016,
+						9.984,
+						13.984
+					],
+					"texture": "#3"
+				},
+				"west": {
+					"uv": [
+						0.016,
+						11.016,
+						9.984,
+						13.984
+					],
+					"texture": "#3"
+				},
+				"up": {
+					"uv": [
+						11.016,
+						0.016,
+						12.984,
+						9.984
+					],
+					"texture": "#3"
+				},
 				"down": {"uv": [0.016, 0.016, 9.984, 9.984], "texture": "#3", "cullface": "down"}
 			}
 		},

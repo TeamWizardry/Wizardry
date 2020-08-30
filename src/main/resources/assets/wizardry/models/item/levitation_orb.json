@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wizardry:items/glass_orb"
+    "layer0": "wizardry:item/glass_orb"
   },
   "overrides": [
     {

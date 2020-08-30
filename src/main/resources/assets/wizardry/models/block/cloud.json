@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "wizardry:blocks/cloud"
+    "all": "wizardry:block/cloud"
   }
 }

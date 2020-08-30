@@ -1,8 +1,8 @@
 {
   "__comment": "Designed by Demoniaque with Cubik Studio - https://cubik.studio",
   "textures": {
-    "particle": "wizardry:items/halo",
-    "texture": "wizardry:items/halo"
+    "particle": "wizardry:item/halo",
+    "texture": "wizardry:item/halo"
   },
   "elements": [
     {

@@ -1,11 +1,11 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "up": "wizardry:blocks/crafting_plate/up",
-    "down": "wizardry:blocks/crafting_plate/down",
-    "particle": "wizardry:blocks/crafting_plate/side",
-    "side": "wizardry:blocks/crafting_plate/side",
-    "plate": "wizardry:blocks/crafting_plate/plate"
+	  "up": "wizardry:block/crafting_plate/up",
+	  "plate": "wizardry:block/crafting_plate/plate",
+	  "particle": "wizardry:block/crafting_plate/side",
+	  "side": "wizardry:block/crafting_plate/side",
+	  "down": "wizardry:block/crafting_plate/down"
   },
   "elements": [
     {
@@ -1395,15 +1395,15 @@
     },
     "head": {
       "translation": [
-        0,
-        12,
-        0
-      ],
+		  0,
+		  4.25,
+		  0
+	  ],
       "scale": [
-        0.5,
-        0.5,
-        0.5
-      ]
+		  1.4,
+		  1.4,
+		  1.4
+	  ]
     },
     "fixed": {
       "scale": [

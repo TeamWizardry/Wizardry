@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wizardry:items/sky_dust"
+    "layer0": "wizardry:item/sky_dust"
   }
 }

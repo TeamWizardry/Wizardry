@@ -1,6 +1,6 @@
 {
   "textures": {
-    "particle": "wizardry:blocks/pearl_holder_detail"
+    "particle": "wizardry:block/pearl_holder_detail"
   },
   "elements": [
     {

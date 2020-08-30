@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer": "wizardry:items/pearl_belt"
+    "layer": "wizardry:item/pearl_belt"
   },
   "overrides": [
     {

@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "wizardry:items/magic_wand",
-    "layer1": "wizardry:items/magic_wand_overlay"
+    "layer0": "wizardry:item/magic_wand",
+    "layer1": "wizardry:item/magic_wand_overlay"
   }
 }

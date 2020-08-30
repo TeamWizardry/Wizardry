@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wizardry:items/fairy_imbued_apple"
+    "layer0": "wizardry:item/fairy_imbued_apple"
   }
 }

@@ -1,16 +1,16 @@
 {
   "textures": {
-    "particle": "wizardry:blocks/research_table/side_engraved",
-    "left_top": "wizardry:blocks/research_table/left_top",
-    "right_top": "wizardry:blocks/research_table/right_top",
-    "left_top_engraved": "wizardry:blocks/research_table/left_top_engraved",
-    "right_top_engraved": "wizardry:blocks/research_table/right_top_engraved",
-    "side": "wizardry:blocks/research_table/side",
-    "side_engraved": "wizardry:blocks/research_table/side_engraved",
-    "shelves": "wizardry:blocks/research_table/shelves",
-    "books": "wizardry:blocks/research_table/books",
-    "scrolls": "wizardry:blocks/research_table/scrolls",
-    "legs": "wizardry:blocks/research_table/legs"
+    "particle": "wizardry:block/research_table/side_engraved",
+    "left_top": "wizardry:block/research_table/left_top",
+    "right_top": "wizardry:block/research_table/right_top",
+    "left_top_engraved": "wizardry:block/research_table/left_top_engraved",
+    "right_top_engraved": "wizardry:block/research_table/right_top_engraved",
+    "side": "wizardry:block/research_table/side",
+    "side_engraved": "wizardry:block/research_table/side_engraved",
+    "shelves": "wizardry:block/research_table/shelves",
+    "books": "wizardry:block/research_table/books",
+    "scrolls": "wizardry:block/research_table/scrolls",
+    "legs": "wizardry:block/research_table/legs"
   },
   "elements": [
     {

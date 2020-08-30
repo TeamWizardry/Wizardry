@@ -1,5 +1,5 @@
 {
   "textures": {
-    "particle": "wizardry:blocks/mana_crystal"
+    "particle": "wizardry:block/mana_crystal"
   }
 }

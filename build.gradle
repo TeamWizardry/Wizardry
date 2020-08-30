@@ -88,15 +88,20 @@ minecraft {
 
 allprojects {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
         maven { url 'https://dl.bintray.com/teamwizardry/teamwizardry' }
         maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
-        maven { url = "https://minecraft.curseforge.com/api/maven/" }
-        maven { url = 'http://repo.spongepowered.org/maven' }
-        maven { url = "http://maven.shadowfacts.net/" }
+        maven { url 'https://minecraft.curseforge.com/api/maven/' }
+        maven { url 'http://repo.spongepowered.org/maven' }
+        maven { url 'http://maven.shadowfacts.net/' }
+        maven {
+            // for JEI
+            name "progwml6"
+            url "http://dvs1.progwml6.com/files/maven"
+        }
         maven {
             name "curios"
             url "https://maven.theillusivec4.top/"
@@ -116,22 +121,22 @@ dependencies {
     implementation "com.teamwizardry.librarianlib:librarianlib-etcetera:$liblib_version"
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
+
     compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0")
 
     compile 'org.spongepowered:spongeapi:7.0.0'
     compile 'org.spongepowered:mixin:0.7.5-SNAPSHOT'
+
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 }
 
 sourceSets.main {
 
     ext.refMap = "META-INF/core.mixins.json"
 
-    resources {
-        srcDir 'src/generated/resources'
-    }
 }
-
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {

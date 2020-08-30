@@ -1,6 +1,6 @@
 {
   "parent": "block/leaves",
   "textures": {
-    "all": "wizardry:blocks/wisdom_leaves"
+    "all": "wizardry:block/wisdom_leaves"
   }
 }

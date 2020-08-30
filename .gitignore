@@ -16,6 +16,7 @@ out
 # gradle
 build
 .gradle
+src/generated
 
 # other
 eclipse

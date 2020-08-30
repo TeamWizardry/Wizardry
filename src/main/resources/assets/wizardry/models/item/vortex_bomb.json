@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wizardry:items/vortex_bomb"
+    "layer0": "wizardry:item/vortex_bomb"
   }
 }

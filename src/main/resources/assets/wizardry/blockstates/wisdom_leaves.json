@@ -1,7 +1,7 @@
 {
   "variants": {
-    "normal": {
-      "model": "wizardry:wisdom_leaves"
+    "": {
+      "model": "wizardry:block/wisdom_leaves"
     }
   }
 }

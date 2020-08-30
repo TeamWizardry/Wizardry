@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "wizardry:blocks/rainbow_overlay"
+    "all": "wizardry:block/rainbow_overlay"
   }
 }

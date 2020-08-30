@@ -1,21 +1,19 @@
 package com.teamwizardry.wizardry.common.init;
 
 import com.teamwizardry.librarianlib.foundation.block.BaseLogBlock;
+import com.teamwizardry.librarianlib.foundation.block.BaseSimpleBlock;
 import com.teamwizardry.librarianlib.foundation.registration.BlockSpec;
-import com.teamwizardry.librarianlib.foundation.registration.DefaultProperties;
 import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
 import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
-import com.teamwizardry.wizardry.common.block.BlockWisdomLeaves;
 import com.teamwizardry.wizardry.common.lib.LibBlockNames;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
-import net.minecraft.block.*;
+import net.minecraft.block.LeavesBlock;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,14 +31,25 @@ public class ModBlocks {
 		// Basic Blocks
 
 		// Wisdom Wood
-		wisdomLog.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LOG).withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
-		wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_PLANKS).withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
-		wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_GILDED_PLANKS).withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
-		wisdomLeaves.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LEAVES).block(blockSpec -> new BlockWisdomLeaves(Block.Properties.create(Material.LEAVES)))));
+		wisdomLog.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LOG)
+				.block(blockSpec -> new BaseLogBlock(MaterialColor.BROWN, blockSpec.getBlockProperties()))
+				.withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
+		wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_PLANKS)
+				.block(blockSpec -> new BaseSimpleBlock(blockSpec.getBlockProperties()))
+				.withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
+		wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_GILDED_PLANKS)
+				.block(blockSpec -> new BaseSimpleBlock(blockSpec.getBlockProperties()))
+				.withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
+		wisdomLeaves.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LEAVES)
+				.material(Material.LEAVES)
+				.hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT).notSolid()
+				.block(blockSpec -> new LeavesBlock(blockSpec.getBlockProperties()))
+		));
 
 
 		// Tile Entities
-		craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE).block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));
+		craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
+				.block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));
 	}
 
 	@SubscribeEvent

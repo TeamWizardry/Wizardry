@@ -1,10 +1,10 @@
 {
   "__comment": "Copyright © InsomniaKitten 2017",
   "textures": {
-    "particle": "wizardry:blocks/jar/side",
-    "cap": "wizardry:blocks/jar/cap",
-    "side": "wizardry:blocks/jar/side",
-    "lid": "wizardry:blocks/jar/lid"
+    "particle": "wizardry:block/jar/side",
+    "cap": "wizardry:block/jar/cap",
+    "side": "wizardry:block/jar/side",
+    "lid": "wizardry:block/jar/lid"
   },
   "elements": [
     {

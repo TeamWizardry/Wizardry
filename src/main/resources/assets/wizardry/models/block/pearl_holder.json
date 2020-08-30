@@ -1,11 +1,11 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "up": "wizardry:blocks/pearl_holder/up",
-    "down": "wizardry:blocks/pearl_holder/down",
-    "particle": "wizardry:blocks/pearl_holder/side",
-    "side": "wizardry:blocks/pearl_holder/side",
-    "arms": "wizardry:blocks/pearl_holder/arms"
+    "up": "wizardry:block/pearl_holder/up",
+    "down": "wizardry:block/pearl_holder/down",
+    "particle": "wizardry:block/pearl_holder/side",
+    "side": "wizardry:block/pearl_holder/side",
+    "arms": "wizardry:block/pearl_holder/arms"
   },
   "elements": [
     {
