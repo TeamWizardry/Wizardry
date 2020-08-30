@@ -14,6 +14,9 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.FoliageColors;
+import net.minecraft.world.biome.BiomeColors;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -49,6 +52,7 @@ public class ModBlocks {
 
 		// Tile Entities
 		craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
+				.material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
 				.block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));
 	}
 
@@ -59,5 +63,14 @@ public class ModBlocks {
 		TileEntityType<?> type = TileEntityType.Builder.create(TileCraftingPlate::new, craftingPlate.get()).build(null);
 
 		r.register(type.setRegistryName(Wizardry.MODID, LibBlockNames.CRAFTING_PLATE));
+	}
+
+	@SubscribeEvent
+	public static void registerBlockColors(ColorHandlerEvent.Block event) {
+		event.getBlockColors().register((blockState, lightReader, pos, color) ->
+						lightReader != null && pos != null
+								? BiomeColors.getFoliageColor(lightReader, pos)
+								: FoliageColors.getDefault(),
+				wisdomLeaves.get());
 	}
 }
