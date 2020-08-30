@@ -1,6 +1,7 @@
 0.11.1
 Fix fluid recipes ignoring multiples of an input
 Custom pearl names are transferred to the staff and back
+Projectiles no longer hit their caster
 
 0.11.0
 Super Epic Spicy Gamer Update
