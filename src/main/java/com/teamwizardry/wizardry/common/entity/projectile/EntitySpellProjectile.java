@@ -216,28 +216,26 @@ public class EntitySpellProjectile extends EntityMod {
 			return;
 		}
 
-		if (!collided) {
-
-			float speed = getSpeed();
-			// MOVE //
-			 motionX += ((look.x * speed) - motionX);
-			motionY += ((look.y * speed) - motionY);
-			motionZ += ((look.z * speed) - motionZ);
-
-			// GRAVITY
-			//if (getDistanceSq(origin.x, origin.y, origin.z) > 4)
-			//motionY -= gravity;
-
-			move(MoverType.SELF, motionX, motionY, motionZ);
-		} else {
-
-			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 5)
-					.setEntityFilter(input -> input != this)
-					.trace();
-			spellData.processTrace(result, getPositionVector());
-			goBoom(spellRing, spellData);
-			return;
+		if (collided) {
+		    RayTraceResult result = new RayTrace(world, look, getPositionVector(), 5)
+                    .setEntityFilter(input -> input != this && !input.isEntityEqual(spellData.getCaster(world)))
+                    .trace();
+            spellData.processTrace(result, getPositionVector());
+            goBoom(spellRing, spellData);
+            return;
 		}
+
+		float speed = getSpeed();
+		// MOVE //
+		motionX += ((look.x * speed) - motionX);
+		motionY += ((look.y * speed) - motionY);
+		motionZ += ((look.z * speed) - motionZ);
+
+		// GRAVITY
+		//if (getDistanceSq(origin.x, origin.y, origin.z) > 4)
+		//motionY -= gravity;
+
+		move(MoverType.SELF, motionX, motionY, motionZ);
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox());
 		if (!entities.isEmpty()) {
@@ -251,7 +249,7 @@ public class EntitySpellProjectile extends EntityMod {
 			}
 
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1)
-					.setEntityFilter(input -> input != this)
+					.setEntityFilter(input -> input != this && !input.isEntityEqual(spellData.getCaster(world)))
 					.trace();
 			spellData.processTrace(result, getPositionVector());
 
