@@ -28,9 +28,12 @@ public class CooldownHandler {
 		if (resetMain) {
 			playerHandler.invoke(Minecraft.getMinecraft().player, 1000);
 			Wizardry.PROXY.setItemStackHandHandler(EnumHand.MAIN_HAND, Minecraft.getMinecraft().player.getHeldItemMainhand());
+			resetMain = false;
 		}
-		if (resetOff)
+		if (resetOff) {
 			Wizardry.PROXY.setItemStackHandHandler(EnumHand.OFF_HAND, Minecraft.getMinecraft().player.getHeldItemOffhand());
+			resetOff = false;
+		}
 	}
 
 	public static void setResetOff(boolean resetOff) {
