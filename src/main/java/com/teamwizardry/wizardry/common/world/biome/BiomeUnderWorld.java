@@ -86,7 +86,7 @@ public class BiomeUnderWorld extends Biome
 		{
 			int tries = 0;
 			EntityUnicorn unicorn = new EntityUnicorn(event.player.world);
-			do
+			findSpawnLoc: do
 			{
 				Vec3d offset = new Vec3d(RandUtil.nextDouble(30, 64), 0, 0).rotateYaw(RandUtil.nextFloat((float) Math.PI * 2));
 				MutableBlockPos pos = new BlockPos.MutableBlockPos(event.player.getPosition().add(offset.x, offset.y, offset.z));
@@ -100,7 +100,7 @@ public class BiomeUnderWorld extends Biome
 					{
 						unicorn.setPosition(pos.getX(), pos.getY() + 1, pos.getZ());
 						event.player.world.spawnEntity(unicorn);
-						break;
+						break findSpawnLoc;
 					}
 					pos.setY(pos.getY() - 1);
 				}
