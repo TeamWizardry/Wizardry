@@ -12,10 +12,10 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
-import com.teamwizardry.wizardry.common.spell.ComponentRegistry;
-import com.teamwizardry.wizardry.common.spell.Module;
 import com.teamwizardry.wizardry.common.spell.ModuleEffect;
 import com.teamwizardry.wizardry.common.spell.ModuleShape;
+import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
+import com.teamwizardry.wizardry.common.spell.component.Module;
 
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -35,10 +35,18 @@ import net.minecraftforge.registries.ForgeRegistries;
  * - modid:item
  * - modid:item
  * ... (repeat for all items in recipe)
+ * mana: double
+ * burnout: double
  * modifiers:
- *   modifier: double
- *   modifier: double
- * ... (repeat for all modifiers with non-default costs)
+ *   modifier:
+ *      cost: double (default 1.05)
+ *      values: (default [1])
+ *      - double
+ *      - double
+ *      - double
+ *      - double
+ *      - double
+ *  ... (repeat for all relevant modifiers)
  * color:
  *   primary: integer (base 8, 10, or 16)
  *   secondary: integer (base 8, 10, or 16)
@@ -57,6 +65,8 @@ public class ModuleLoader extends YamlLoader
     private static final String MODULE = "module";
     private static final String NAME = "name";
     private static final String ITEMS = "items";
+    private static final String MANA = "mana";
+    private static final String BURNOUT = "burnout";
     private static final String COLOR = "color";
     private static final String PRIMARY = "primary";
     private static final String SECONDARY = "secondary";
@@ -64,6 +74,8 @@ public class ModuleLoader extends YamlLoader
     private static final String ACTION = "action";
     private static final String ELEMENT = "element";
     private static final String MODIFIERS = "modifiers";
+    private static final String COST = "cost";
+    private static final String VALUES = "values";
     
     private static final String folder =  Wizardry.MODID + "/module";
     
@@ -121,10 +133,24 @@ public class ModuleLoader extends YamlLoader
         Pattern pattern = patternSupplier.apply(new ResourceLocation((String) yaml.get(MODULE)));
         String name = (String) yaml.get(NAME);
         List<Item> items = ((List<String>) yaml.get(ITEMS)).stream().map(ResourceLocation::new).map(itemSupplier::apply).collect(Collectors.toList());
+        double mana = (double) yaml.get(MANA);
+        double burnout = (double) yaml.get(BURNOUT);
         String form = (String) yaml.get(FORM);
         String action = (String) yaml.get(ACTION);
         String element = (String) yaml.get(ELEMENT);
-        Map<String, Double> modifierCosts = (Map<String, Double>) yaml.getOrDefault(MODIFIERS, new HashMap<>());
+        
+        // Parse modifier values
+        Map<String, Double> modifierCosts = new HashMap<>();
+        Map<String, List<Double>> attributeValues = new HashMap<>();
+        Map<String, Map<String, Object>> modifierMap = (Map<String, Map<String, Object>>) yaml.get(MODIFIERS);
+        for (String attribute : modifierMap.keySet())
+        {
+            Map<String, Object> modifierValues = modifierMap.get(attribute);
+            double cost = (double) modifierValues.get(COST);
+            List<Double> values = (List<Double>) modifierValues.get(VALUES);
+            modifierCosts.put(attribute, cost);
+            modifierValues.put(attribute, values);
+        }
 
         if (pattern instanceof PatternEffect)
         {
@@ -132,9 +158,9 @@ public class ModuleLoader extends YamlLoader
             Map<String, Integer> colorMap = (Map<String, Integer>) yaml.get(COLOR);
             Color primary = new Color(colorMap.get(PRIMARY));
             Color secondary = new Color(colorMap.get(SECONDARY));
-            return new ModuleEffect((PatternEffect) pattern, name, items, primary, secondary, action, element, modifierCosts);
+            return new ModuleEffect((PatternEffect) pattern, name, items, mana, burnout, primary, secondary, action, element, modifierCosts, attributeValues);
         }
         // Only pattern types are Shapes and Effects, so if not an Effect...
-        return new ModuleShape((PatternShape) pattern, name, items, form, element, modifierCosts);
+        return new ModuleShape((PatternShape) pattern, name, items, mana, burnout, form, element, modifierCosts, attributeValues);
     }
 }

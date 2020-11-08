@@ -11,7 +11,7 @@ import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.ModBlocks;
 import com.teamwizardry.wizardry.common.init.ModItems;
 import com.teamwizardry.wizardry.common.init.PatternInit;
-import com.teamwizardry.wizardry.common.spell.ComponentRegistry;
+import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
 import com.teamwizardry.wizardry.common.spell.loading.ModifierLoader;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.component;
 
 import java.util.Arrays;
 import java.util.List;

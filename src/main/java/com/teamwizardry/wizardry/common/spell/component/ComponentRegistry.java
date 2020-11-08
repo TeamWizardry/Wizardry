@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,12 +60,15 @@ public class ComponentRegistry
     
     private static <Component extends ISpellComponent> boolean tryRegister(Component component, Map<String, ? super Component> map)
     {
-        List<Item> item = component.getItems();
-        if (spellComponents.containsKey(item))
+        List<Item> items = component.getItems();
+        for (List<Item> keys : spellComponents.keySet())
         {
-            Wizardry.LOGGER.warn("Spell component registration failed for {} {}, Item {} already linked to {}",
-                    component.getClass().getSimpleName(), component.getName(), item, spellComponents.get(item));
-            return false;
+            if (listStartsWith(keys, items))
+            {
+                Wizardry.LOGGER.warn("Spell component registration failed for {} {}, recipe hidden by {}",
+                        component.getClass().getSimpleName(), component.getName(), spellComponents.get(keys).getName());
+                return false;
+            }
         }
         map.put(component.getName(), component);
         spellComponents.put(component.getItems(), component);

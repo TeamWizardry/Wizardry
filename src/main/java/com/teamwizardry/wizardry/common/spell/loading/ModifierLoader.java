@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
-import com.teamwizardry.wizardry.common.spell.ComponentRegistry;
-import com.teamwizardry.wizardry.common.spell.Modifier;
+import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
+import com.teamwizardry.wizardry.common.spell.component.Modifier;
 
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -22,14 +22,10 @@ import net.minecraftforge.registries.ForgeRegistries;
  * 
  * <pre>
  * name: modifierName
- * item: modid:item
- * attributes:
- *   mana:
- *     add: double (default 0)
- *     baseMultiply: double (default 0)
- *     multiply: double (default 1)
- *   burnout:
- *      ... (repeat for all relevant attributes)
+ * items:
+ * - modid:item
+ * - modid:item
+ * - ...
  * </pre>
  * 
  * These individual tags must be in any order, but the nesting structure must be
@@ -41,7 +37,6 @@ public class ModifierLoader extends YamlLoader
 {
     private static final String NAME = "name";
     private static final String ITEMS = "items";
-    private static final String ATTRIBUTES = "attributes";
     
     private static final String folder =  Wizardry.MODID + "/modifier";
     
@@ -91,7 +86,6 @@ public class ModifierLoader extends YamlLoader
     {
         String name = (String) yaml.get(NAME);
         List<Item> items = ((List<String>) yaml.get(ITEMS)).stream().map(ResourceLocation::new).map(itemSupplier::apply).collect(Collectors.toList());
-        Map<String, Integer> attributeModifiers = (Map<String, Integer>) yaml.get(ATTRIBUTES);
-        return new Modifier(name, items, attributeModifiers);
+        return new Modifier(name, items);
     }
 }

@@ -19,6 +19,7 @@ import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
 import com.teamwizardry.wizardry.api.spell.TargetType;
+import com.teamwizardry.wizardry.common.spell.component.Module;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 
 import net.minecraft.entity.Entity;

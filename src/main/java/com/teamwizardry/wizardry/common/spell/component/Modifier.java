@@ -1,7 +1,6 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.component;
 
 import java.util.List;
-import java.util.Map;
 
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
 
@@ -11,21 +10,19 @@ public class Modifier implements ISpellComponent
 {
     private String name;
     private List<Item> items;
-    private Map<String, Integer> attributeModifiers;
     
-    public Modifier(String name, List<Item> items, Map<String, Integer> attributeModifiers)
+    public Modifier(String name, List<Item> items)
     {
         this.name = name;
         this.items = items;
-        this.attributeModifiers = attributeModifiers;
     }
     
     @Override public String getName() { return name; }
     
     @Override public List<Item> getItems() { return items; }
     
-    public Map<String, Integer> getAttributeModifiers()
+    public String getAttribute()
     {
-        return attributeModifiers;
+        return name;
     }
 }

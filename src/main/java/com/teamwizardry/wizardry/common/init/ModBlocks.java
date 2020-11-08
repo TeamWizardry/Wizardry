@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.init;
 
 import com.teamwizardry.librarianlib.foundation.block.BaseLogBlock;
-import com.teamwizardry.librarianlib.foundation.block.BaseSimpleBlock;
 import com.teamwizardry.librarianlib.foundation.registration.BlockSpec;
 import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
 import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
@@ -9,6 +8,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.lib.LibBlockNames;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.SoundType;
@@ -40,10 +41,10 @@ public class ModBlocks {
 				.block(blockSpec -> new BaseLogBlock(MaterialColor.BROWN, blockSpec.getBlockProperties()))
 				.withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
 		wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_PLANKS)
-				.block(blockSpec -> new BaseSimpleBlock(blockSpec.getBlockProperties()))
+				.block(blockSpec -> new Block(blockSpec.getBlockProperties()))
 				.withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
 		wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_GILDED_PLANKS)
-				.block(blockSpec -> new BaseSimpleBlock(blockSpec.getBlockProperties()))
+				.block(blockSpec -> new Block(blockSpec.getBlockProperties()))
 				.withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
 		wisdomLeaves.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LEAVES)
 				.material(Material.LEAVES)

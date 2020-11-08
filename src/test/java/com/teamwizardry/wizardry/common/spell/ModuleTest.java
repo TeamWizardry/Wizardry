@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+import com.teamwizardry.wizardry.common.spell.component.Module;
+
 @TestInstance(Lifecycle.PER_CLASS)
 public class ModuleTest
 {
@@ -28,9 +30,9 @@ public class ModuleTest
     @BeforeAll
     public void initTest()
     {
-        module = new Module(null, name, null, element, null);
-        shape = new ModuleShape(null, name, null, form, element, null);
-        effect = new ModuleEffect(null, name, null, primary, secondary, action, element, null);
+        module = new Module(null, name, null, 10, 10, element, null, null);
+        shape = new ModuleShape(null, name, null, 10, 10, form, element, null, null);
+        effect = new ModuleEffect(null, name, null, 10, 10, primary, secondary, action, element, null, null);
     }
     
     @Test

@@ -1,6 +1,9 @@
 module: wizardry:self
 name: self
-item: minecraft:diamond
+items:
+- minecraft:diamond
+modifiers:
+  
 attributes:
   mana:
     min: 30
