@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
+import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.TargetType;
 import com.teamwizardry.wizardry.common.spell.EffectInstance;
 import com.teamwizardry.wizardry.common.spell.ModuleEffect;
@@ -33,7 +34,7 @@ public abstract class SpellChain
     
     public SpellChain setTarget(TargetType target) { this.targetType = target; return this; }
     
-    public Instance toInstance()
+    public Instance toInstance(Interactor caster)
     {
         // TODO: Get modifications from Caster (Halo, potions, autocaster tiers, etc.)
         
@@ -41,9 +42,9 @@ public abstract class SpellChain
         modifiers.forEach((attribute, count) -> attributeValues.put(attribute, module.getAttributeValue(attribute, count)));
         
         if (module instanceof ModuleShape)
-            return new ShapeInstance(module.getPattern(), targetType, attributeValues, module.getBaseManaCost() * manaMultiplier, module.getBaseBurnoutCost() * manaMultiplier);
+            return new ShapeInstance(module.getPattern(), targetType, attributeValues, module.getBaseManaCost() * manaMultiplier, module.getBaseBurnoutCost() * manaMultiplier, caster);
         else if (module instanceof ModuleEffect)
-            return new EffectInstance(module.getPattern(), targetType, attributeValues, module.getBaseManaCost() * manaMultiplier, module.getBaseBurnoutCost() * manaMultiplier);
+            return new EffectInstance(module.getPattern(), targetType, attributeValues, module.getBaseManaCost() * manaMultiplier, module.getBaseBurnoutCost() * manaMultiplier, caster);
         throw new InconceivableException("How? There are only two module types, you shouldn't ever be constructing the root");
     }
 }

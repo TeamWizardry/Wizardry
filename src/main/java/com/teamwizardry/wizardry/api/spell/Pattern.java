@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
+import java.util.Map;
+
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -21,8 +22,8 @@ public abstract class Pattern extends ForgeRegistryEntry<Pattern>
     protected static final String POS = "pos";
     protected static final String DIR = "dir";
     
-    public abstract void run(World world, CompoundNBT castData, TargetType targetType);
-    public abstract void affectEntity(Entity entity);
+    public abstract void run(World world, Interactor caster, Interactor source, Interactor target, Map<String, Double> attributeValues, double manaCost, double burnoutCost);
+    public abstract void affectEntity(World world, LivingEntity entity);
 
-    public abstract void affectBlock(BlockPos pos);
+    public abstract void affectBlock(World world, BlockPos pos);
 }

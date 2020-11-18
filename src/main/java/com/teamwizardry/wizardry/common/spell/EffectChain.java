@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.spell;
 
+import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.common.spell.component.SpellChain;
 
 public class EffectChain extends SpellChain
@@ -10,8 +11,8 @@ public class EffectChain extends SpellChain
     }
     
     @Override
-    public EffectInstance toInstance()
+    public EffectInstance toInstance(Interactor caster)
     {
-        return (EffectInstance) super.toInstance();
+        return (EffectInstance) super.toInstance(caster);
     }
 }
