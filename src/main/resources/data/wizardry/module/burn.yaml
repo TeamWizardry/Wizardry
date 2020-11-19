@@ -1,11 +1,11 @@
-module: wizardry:ray
-name: touch
+module: wizardry:burn
+name: burn
 items:
-- minecraft:beef
+- minecraft:porkchop
 mana: 30
 burnout: 20
 modifiers:
-  range:
+  duration:
   - 3
   - 4
   - 5
@@ -20,7 +20,7 @@ modifiers:
   - 20
   - 18
 color:
-  primary: 16777215
-  secondary: 16777215
+  primary: 16711680
+  secondary: 16744448
 form: ray
 element: fire

@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
@@ -23,9 +23,7 @@ import com.teamwizardry.wizardry.api.spell.PatternShape;
 import com.teamwizardry.wizardry.common.spell.component.Module;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -41,15 +39,15 @@ public class ModuleLoaderTest
     public void initTest()
     {
         testPatterns.put(shapeLoc, new PatternShape() {
-            @Override public void run(World world, Interactor caster, Interactor source, Interactor target, Map<String, Double> attributeValues, double manaCost, double burnoutCost) {}
-            @Override public void affectEntity(Entity entity) {}
-            @Override public void affectBlock(BlockPos pos) {}
+            @Override public void run(World world, Instance instance, Interactor target) {}
+            @Override public void affectEntity(World world, Interactor entity, Instance instance) {}
+            @Override public void affectBlock(World world, Interactor entity, Instance instance) {}
         });
         
         testPatterns.put(effectLoc, new PatternEffect() {
-            @Override public void run(World world, Interactor caster, Interactor source, Interactor target, Map<String, Double> attributeValues, double manaCost, double burnoutCost) {}
-            @Override public void affectEntity(Entity entity) {}
-            @Override public void affectBlock(BlockPos pos) {}
+            @Override public void run(World world, Instance instance, Interactor target) {}
+            @Override public void affectEntity(World world, Interactor entity, Instance instance) {}
+            @Override public void affectBlock(World world, Interactor entity, Instance instance) {}
         });
         
         try

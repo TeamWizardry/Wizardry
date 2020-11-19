@@ -4,12 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
+import com.teamwizardry.wizardry.api.spell.EffectInstance;
+import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
+import com.teamwizardry.wizardry.api.spell.ShapeInstance;
 import com.teamwizardry.wizardry.api.spell.TargetType;
-import com.teamwizardry.wizardry.common.spell.EffectInstance;
 import com.teamwizardry.wizardry.common.spell.ModuleEffect;
 import com.teamwizardry.wizardry.common.spell.ModuleShape;
-import com.teamwizardry.wizardry.common.spell.ShapeInstance;
 
 public abstract class SpellChain
 {

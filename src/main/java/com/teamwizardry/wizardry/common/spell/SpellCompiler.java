@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.spell;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,11 @@ public class SpellCompiler
     private EffectChain currentEffect;
     
     private int modifierCount = 0;
+    
+    public ShapeChain compileSpell(ItemStack... items)
+    {
+        return this.compileSpell(Arrays.asList(items));
+    }
     
     public ShapeChain compileSpell(List<ItemStack> items)
     {

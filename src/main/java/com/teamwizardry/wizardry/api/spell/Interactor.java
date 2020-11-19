@@ -7,6 +7,7 @@ import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +16,7 @@ import net.minecraft.world.World;
 
 public class Interactor
 {
-    protected enum InteractorType
+    public enum InteractorType
     {
         ENTITY,
         BLOCK
@@ -66,6 +67,20 @@ public class Interactor
     public LivingEntity getEntity() { return entity; }
     
     public BlockPos getBlockPos() { return block; }
+    
+    public Direction getDir() { return this.dir; }
+    
+    public InteractorType getType() { return this.type; }
+    
+    public boolean consumeCost(World world, double mana, double burnout)
+    {
+        switch (this.type)
+        {
+            case BLOCK: return world.getTileEntity(block) != null; // TODO: Consume mana from tile entity
+            case ENTITY: return this.entity instanceof PlayerEntity; // TODO: Consume mana from living entity
+        }
+        throw new InconceivableException("No other hittable types");
+    }
     
     public CompoundNBT toNBT()
     {

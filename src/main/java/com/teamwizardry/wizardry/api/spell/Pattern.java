@@ -1,9 +1,5 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import java.util.Map;
-
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -14,16 +10,21 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  */
 public abstract class Pattern extends ForgeRegistryEntry<Pattern>
 {
-    // NBT Tag Keys
-    protected static final String CASTER = "caster";
-    protected static final String SOURCE = "source";
-    // If caster or source is an entity, data will contain a UUID
-    // If caster or source is a block, data will be a compound tag with POS and DIR tags
-    protected static final String POS = "pos";
-    protected static final String DIR = "dir";
+    public void run(World world, Instance instance, Interactor target)
+    {
+        if (instance == null) return;
+        if (instance.getCaster() == null || target == null)
+            return;
+        
+        instance.getCaster().consumeCost(world, instance.getManaCost(), instance.getBurnoutCost());
+        switch (target.getType())
+        {
+            case BLOCK: affectBlock(world, target, instance); return;
+            case ENTITY: affectEntity(world, target, instance); return;
+        }
+    }
     
-    public abstract void run(World world, Interactor caster, Interactor source, Interactor target, Map<String, Double> attributeValues, double manaCost, double burnoutCost);
-    public abstract void affectEntity(World world, LivingEntity entity);
+    public abstract void affectEntity(World world, Interactor entity, Instance instance);
 
-    public abstract void affectBlock(World world, BlockPos pos);
+    public abstract void affectBlock(World world, Interactor block, Instance instance);
 }

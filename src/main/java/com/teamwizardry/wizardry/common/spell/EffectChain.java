@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.spell;
 
+import com.teamwizardry.wizardry.api.spell.EffectInstance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.common.spell.component.SpellChain;
 
