@@ -32,14 +32,14 @@ public class LayerPickPatternType extends GuiLayer {
 		TextLayer shapeText = new TextLayer(shapesLayer.getWidthi() / 2, shapesLayer.getHeighti() / 2 - 10, "Pick a Shape");
 		shapeText.setScale(1.5);
 		shapeText.setAnchor(new Vec2d(0.5, 0.5));
-		shapeText.fitToText();
+		shapeText.fitToText(TextLayer.FitType.BOTH);
 		shapesLayer.add(shapeText);
 
 		TextLayer shapeSubtitleText = new TextLayer(shapesLayer.getWidthi() / 2, shapesLayer.getHeighti() / 2 + 10, "Shapes control how the spell is cast");
 		shapeSubtitleText.setAnchor(new Vec2d(0.5, 0.5));
-		shapeSubtitleText.fitToText();
+		shapeSubtitleText.fitToText(TextLayer.FitType.BOTH);
 		shapeSubtitleText.setColor(Color.DARK_GRAY);
-		shapeSubtitleText.setWrap(true);
+		//shapeSubtitleText.setWrap(true);
 		shapeSubtitleText.setSize(new Vec2d(shapesLayer.getWidth() / 1.5, shapeSubtitleText.getHeight()));
 		shapesLayer.add(shapeSubtitleText);
 
@@ -54,14 +54,14 @@ public class LayerPickPatternType extends GuiLayer {
 		TextLayer elementText = new TextLayer(actionsLayer.getWidthi() / 2, actionsLayer.getHeighti() / 2 - 10, "Pick an Action");
 		elementText.setScale(1.5);
 		elementText.setAnchor(new Vec2d(0.5, 0.5));
-		elementText.fitToText();
+		elementText.fitToText(TextLayer.FitType.BOTH);
 		actionsLayer.add(elementText);
 
 		TextLayer actionsSubtitleText = new TextLayer(actionsLayer.getWidthi() / 2, actionsLayer.getHeighti() / 2 + 10, "Actions control what the spell does");
 		actionsSubtitleText.setAnchor(new Vec2d(0.5, 0.5));
-		actionsSubtitleText.fitToText();
+		actionsSubtitleText.fitToText(TextLayer.FitType.BOTH);
 		actionsSubtitleText.setColor(Color.DARK_GRAY);
-		actionsSubtitleText.setWrap(true);
+		//actionsSubtitleText.setWrap(true);
 		actionsSubtitleText.setSize(new Vec2d(actionsLayer.getWidth() / 1.5, actionsSubtitleText.getHeight()));
 		actionsLayer.add(actionsSubtitleText);
 

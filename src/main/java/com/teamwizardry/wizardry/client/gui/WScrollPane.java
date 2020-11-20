@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.client.gui;
 import com.teamwizardry.librarianlib.facade.layer.GuiLayer;
 import com.teamwizardry.librarianlib.facade.layer.GuiLayerEvents;
 import com.teamwizardry.librarianlib.facade.layers.SpriteLayer;
-import com.teamwizardry.librarianlib.facade.pastry.PastryTexture;
 import com.teamwizardry.librarianlib.facade.pastry.components.ScrollPane;
 import com.teamwizardry.librarianlib.math.Rect2d;
 import com.teamwizardry.librarianlib.math.Vec2d;
@@ -18,7 +17,7 @@ public class WScrollPane extends GuiLayer {
 	private final ScrollPane scrollPane = new ScrollPane();
 	private final SpriteLayer horizontalBackground = new SpriteLayer(SPRITE_BUTTON_PRESSED);
 	private final SpriteLayer horizontalHandleBackground = new SpriteLayer(SPRITE_SCROLL_BUTTON);
-	private final SpriteLayer horizontalHandleDashes = new SpriteLayer(PastryTexture.INSTANCE.getScrollbarHandleHorizontalDashes());
+	private final SpriteLayer horizontalHandleDashes = new SpriteLayer(SPRITE_SCROLL_BUTTON);
 
 	public WScrollPane(int x, int y, int width, int height) {
 		super(x, y, width, height);

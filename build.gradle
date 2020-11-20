@@ -31,6 +31,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
+            arg "--mixin.config=" + archivesBaseName + ".mixins.json"
+
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'REGISTRIES'
 
@@ -47,6 +49,8 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+
+            arg "--mixin.config=" + archivesBaseName + ".mixins.json"
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'REGISTRIES'
@@ -111,14 +115,14 @@ dependencies {
 
     implementation 'org.yaml:snakeyaml:1.21'
     [
-    	"com.teamwizardry.librarianlib:librarianlib-prism:$liblib_version",
-    	"com.teamwizardry.librarianlib:librarianlib-facade:$liblib_version",
-    	"com.teamwizardry.librarianlib:librarianlib-glitter:$liblib_version",
-    	"com.teamwizardry.librarianlib:librarianlib-foundation:$liblib_version",
-    	"com.teamwizardry.librarianlib:librarianlib-etcetera:$liblib_version"
+            "com.teamwizardry.librarianlib:librarianlib-prism:$liblib_version",
+            "com.teamwizardry.librarianlib:librarianlib-facade:$liblib_version",
+            "com.teamwizardry.librarianlib:librarianlib-glitter:$liblib_version",
+            "com.teamwizardry.librarianlib:librarianlib-foundation:$liblib_version",
+            "com.teamwizardry.librarianlib:librarianlib-etcetera:$liblib_version"
     ].each {
-    	implementation(it) { exclude group: 'kottle', module: 'Kottle' }
-   	}
+        implementation(it) { exclude group: 'kottle', module: 'Kottle' }
+    }
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
 
@@ -132,10 +136,8 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 }
 
-sourceSets.main {
-
-    ext.refMap = "META-INF/core.mixins.json"
-
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
 }
 
 processResources {
@@ -157,6 +159,7 @@ jar {
 
     manifest {
         attributes([
+                "MixinConfigs"            : "${mod_id}.mixins.json",
                 "Specification-Title"     : "${mod_id}",
                 "Specification-Vendor"    : "${mod_authors}",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
