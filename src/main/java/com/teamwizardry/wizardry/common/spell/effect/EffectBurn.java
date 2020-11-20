@@ -8,7 +8,10 @@ import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
+import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -29,8 +32,17 @@ public class EffectBurn extends PatternEffect
         if (block.getType() != BLOCK)
             return;
         
-        BlockPos pos = block.getBlockPos().offset(block.getDir().getOpposite());
-        if (world.isAirBlock(pos))
-            world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+        BlockPos pos = block.getBlockPos();
+        BlockPos off = pos.offset(block.getDir().getOpposite());
+        if (FlintAndSteelItem.canSetFire(world.getBlockState(pos), world, pos))
+        {
+            BlockState posFire = ((FireBlock)Blocks.FIRE).getStateForPlacement(world, pos);
+            world.setBlockState(pos, posFire);
+        }
+        else if (FlintAndSteelItem.canSetFire(world.getBlockState(off), world, off))
+        {
+            BlockState offFire = ((FireBlock)Blocks.FIRE).getStateForPlacement(world, off);
+            world.setBlockState(off, offFire);
+        }
     }
 }

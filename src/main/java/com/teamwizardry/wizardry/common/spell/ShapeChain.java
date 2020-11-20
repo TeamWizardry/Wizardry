@@ -25,7 +25,8 @@ public class ShapeChain extends SpellChain
     public ShapeInstance toInstance(Interactor caster)
     {
         ShapeInstance instance = (ShapeInstance) super.toInstance(caster);
-        instance.setNext(next.toInstance(caster));
+        if (next != null)
+            instance.setNext(next.toInstance(caster));
         effects.stream().map(effect -> effect.toInstance(caster)).forEach(instance::addEffect);
         return instance;
     }

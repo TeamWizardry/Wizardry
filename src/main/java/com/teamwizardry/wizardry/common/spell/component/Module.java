@@ -1,8 +1,10 @@
 package com.teamwizardry.wizardry.common.spell.component;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
 import com.teamwizardry.wizardry.api.spell.Pattern;
@@ -57,6 +59,23 @@ public class Module implements ISpellComponent
         if (count < 0) count = 0;
         if (count >= values.size()) count = values.size()-1;
         return values.get(count);
+    }
+    
+    /**
+     * All attributes used by this module (or that at least have a non-default value) 
+     */
+    public List<String> getAllAttributes()
+    {
+        return new LinkedList<>(attributeValues.keySet());
+    }
+    
+    /**
+     * All attributes that will use modifiers. Attributes with just a single value are
+     * non-default, but unmodifiable, and as such should not be available for having modifiers
+     */
+    public List<String> getAttributes()
+    {
+        return attributeValues.keySet().stream().filter(attribute -> attributeValues.get(attribute).size() > 1).collect(Collectors.toList());
     }
 
     public String toString() { return pattern.getRegistryName() + ":" + name + " = [" + items + ", " + element + "]"; }

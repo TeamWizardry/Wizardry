@@ -6,19 +6,21 @@ mana: 30
 burnout: 20
 modifiers:
   duration:
-  - 3
-  - 4
-  - 5
-  - 6
-  - 7
-  - 8
+    values:
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
   recovery:
-  - 30
-  - 27
-  - 24
-  - 22
-  - 20
-  - 18
+    values:
+    - 30
+    - 27
+    - 24
+    - 22
+    - 20
+    - 18
 color:
   primary: 16711680
   secondary: 16744448

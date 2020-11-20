@@ -22,7 +22,7 @@ public class ShapeRay extends PatternShape
     public void run(World world, Instance instance, Interactor target)
     {
         Vec3d start = target.getPos();
-        Vec3d end = target.getPos().add(target.getLook().scale(instance.getAttributeValue(RANGE)));
+        Vec3d end = start.add(target.getLook().scale(instance.getAttributeValue(RANGE)));
         Raycaster ray = new Raycaster();
         Entity sourceEntity = target.getEntity();
         ray.cast(world, BlockMode.VISUAL, FluidMode.ANY, entity -> entity instanceof LivingEntity && !entity.isEntityEqual(sourceEntity), start.x, start.y, start.z, end.x, end.y, end.z);

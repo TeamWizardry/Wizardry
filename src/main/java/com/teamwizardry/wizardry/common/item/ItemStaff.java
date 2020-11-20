@@ -31,6 +31,6 @@ public class ItemStaff extends Item implements INacreProduct.INacreDecayProduct 
 	                 .toInstance(caster)
 	                 .run(entity.getEntityWorld(), caster);
 	    
-	    return super.onEntitySwing(stack, entity);
+	    return true;
 	}
 }

@@ -133,8 +133,8 @@ public class ModuleLoader extends YamlLoader
         Pattern pattern = patternSupplier.apply(new ResourceLocation((String) yaml.get(MODULE)));
         String name = (String) yaml.get(NAME);
         List<Item> items = ((List<String>) yaml.get(ITEMS)).stream().map(ResourceLocation::new).map(itemSupplier::apply).collect(Collectors.toList());
-        double mana = (double) yaml.get(MANA);
-        double burnout = (double) yaml.get(BURNOUT);
+        double mana = ((Number) yaml.get(MANA)).doubleValue();
+        double burnout = ((Number) yaml.get(BURNOUT)).doubleValue();
         String form = (String) yaml.get(FORM);
         String action = (String) yaml.get(ACTION);
         String element = (String) yaml.get(ELEMENT);
@@ -146,10 +146,13 @@ public class ModuleLoader extends YamlLoader
         for (String attribute : modifierMap.keySet())
         {
             Map<String, Object> modifierValues = modifierMap.get(attribute);
-            double cost = (double) modifierValues.get(COST);
-            List<Double> values = (List<Double>) modifierValues.get(VALUES);
-            modifierCosts.put(attribute, cost);
-            modifierValues.put(attribute, values);
+            if (modifierValues.containsKey(COST))
+            {
+                double cost = (double) modifierValues.get(COST);
+                modifierCosts.put(attribute, cost);
+            }
+            List<Double> values = ((List<Number>) modifierValues.get(VALUES)).stream().map(Number::doubleValue).collect(Collectors.toList());
+            attributeValues.put(attribute, values);
         }
 
         if (pattern instanceof PatternEffect)

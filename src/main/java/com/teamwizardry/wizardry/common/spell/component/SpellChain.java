@@ -40,6 +40,9 @@ public abstract class SpellChain
         // TODO: Get modifications from Caster (Halo, potions, autocaster tiers, etc.)
         
         Map<String, Double> attributeValues = new HashMap<>();
+        // Set the value for all unmodified values
+        module.getAllAttributes().forEach(attribute -> attributeValues.put(attribute, module.getAttributeValue(attribute, 0)));
+        // Then set the modified ones with their proper totals
         modifiers.forEach((attribute, count) -> attributeValues.put(attribute, module.getAttributeValue(attribute, count)));
         
         if (module instanceof ModuleShape)

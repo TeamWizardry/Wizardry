@@ -58,7 +58,7 @@ public class Interactor
     {
         switch (type)
         {
-            case ENTITY: return entity.getLookVec().add(0, entity.getEyeHeight(entity.getPose()), 0);
+            case ENTITY: return entity.getLookVec();
             case BLOCK: return new Vec3d(dir.getDirectionVec());
         }
         throw new InconceivableException("No other hittable types");

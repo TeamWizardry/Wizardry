@@ -11,7 +11,8 @@ public abstract class PatternShape extends Pattern
         {
             ShapeInstance shape = (ShapeInstance) instance;
             shape.effects.forEach(effect -> effect.run(world, entity));
-            shape.nextShape.run(world, entity);
+            if (shape.nextShape != null)
+                shape.nextShape.run(world, entity);
         }
     }
     
@@ -22,7 +23,8 @@ public abstract class PatternShape extends Pattern
         {
             ShapeInstance shape = (ShapeInstance) instance;
             shape.effects.forEach(effect -> effect.run(world, block));
-            shape.nextShape.run(world, block);
+            if (shape.nextShape != null)
+                shape.nextShape.run(world, block);
         }
     }
 }
