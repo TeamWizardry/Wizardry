@@ -9,10 +9,7 @@ import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FireBlock;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FlintAndSteelItem;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -60,21 +57,17 @@ public class EffectBurn extends PatternEffect {
                                     .add(RandUtil.nextDouble(-0.15, 0.15),
                                             RandUtil.nextDouble(-0.15, 0.15),
                                             RandUtil.nextDouble(-0.15, 0.15)))
-                            .setTarget(RandUtil.nextDouble(-0.25, 0.25),
-                                    RandUtil.nextDouble(-0.25, 0.25),
-                                    RandUtil.nextDouble(-0.25, 0.25))
-                            .setDrag(RandUtil.nextFloat(0.03f, 0.05f))
-                            .setGravity(RandUtil.nextFloat(-0.01f, -0.03f))
+                            .setTarget(RandUtil.nextDouble(-0.5, 0.5),
+                                    RandUtil.nextDouble(-0.5, 0.5),
+                                    RandUtil.nextDouble(-0.5, 0.5))
+                            .setDrag(RandUtil.nextFloat(0.2f, 0.3f))
+                            .setGravity(RandUtil.nextFloat(-0.005f, -0.015f))
                             .setInitialColor(RandUtil.nextBoolean() ? Color.ORANGE : Color.RED)
                             .setGoalColor(RandUtil.nextBoolean() ? Color.ORANGE : Color.RED)
                             .setInitialSize(RandUtil.nextFloat(0.1f, 0.3f))
                             .setGoalSize(0)
-                            .createGlitterBox(RandUtil.nextInt(5, 20)));
-        world.playSound((PlayerEntity) instance.getCaster().getEntity(),
-                target.getBlockPos().getX(),
-                target.getBlockPos().getY(),
-                target.getBlockPos().getZ(),
-                SoundEvents.BLOCK_BAMBOO_BREAK, SoundCategory.BLOCKS, 1, 1);
+                            .setInitialAlpha(RandUtil.nextFloat(0.5f, 1))
+                            .createGlitterBox(RandUtil.nextInt(5, 25)));
 
         super.runClient(world, instance, target);
     }

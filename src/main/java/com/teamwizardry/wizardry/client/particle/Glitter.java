@@ -36,13 +36,16 @@ public class Glitter extends ParticleSystem {
 		));
 
 		getRenderModules().add(new SpriteRenderModule(SpriteRenderModule.simpleRenderType(
-				new ResourceLocation(Wizardry.MODID, "textures/particles/sparkle_blurred.png"), BlendMode.getADDITIVE(), false, true),
+				new ResourceLocation(Wizardry.MODID, "textures/particles/sparkle_blurred.png"),
+				BlendMode.getADDITIVE(),
+				false,
+				true),
 				origin,
 				previousPos,
 				new EaseBinding(getLifetime(), getAge(), null, null, Easing.linear, 4, initialColor, goalColor),
 				new EaseBinding(getLifetime(), getAge(), null, null, Easing.linear, 1, initialSize, goalSize),
 				null,
-				new EaseBinding(getLifetime(), getAge(), null, null, Easing.easeOutCubic, 1, initialAlpha, goalAlpha)
+				new EaseBinding(getLifetime(), getAge(), null, null, Easing.linear, 1, initialAlpha, goalAlpha)
 		));
 	}
 

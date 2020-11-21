@@ -90,7 +90,7 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
             }
         }
 
-        if (world != null && world.isRemote && world.getGameTime() % 2 == 0) {
+        if (world != null && world.isRemote && world.getGameTime() % 10 == 0) {
 
             Vec3d target = new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
                     RandUtil.nextDouble(0, 0.05),
@@ -108,7 +108,7 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
                                 .setGoalColor(LibTheme.accentColor)
                                 .setInitialSize(RandUtil.nextFloat(0.1f, 0.2f))
                                 .setGoalSize(0)
-                                .createGlitterBox(20));
+                                .createGlitterBox(40));
             }
         }
     }
