@@ -27,12 +27,13 @@ public class ItemStaff extends Item implements INacreProduct.INacreDecayProduct 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
 
-		Interactor caster = new Interactor(player);
-		SpellCompiler.get()
-				.compileSpell(new ItemStack(Items.BEEF), new ItemStack(Items.PORKCHOP))
-				.toInstance(caster)
-				.run(world, caster);
-
+		if (!world.isRemote) {
+			Interactor caster = new Interactor(player);
+			SpellCompiler.get()
+					.compileSpell(new ItemStack(Items.BEEF), new ItemStack(Items.PORKCHOP))
+					.toInstance(caster)
+					.run(world, caster);
+		}
 		player.setActiveHand(hand);
 
 		return super.onItemRightClick(world, player, hand);

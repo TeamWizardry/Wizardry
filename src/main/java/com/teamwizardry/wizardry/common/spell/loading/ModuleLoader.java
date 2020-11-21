@@ -1,13 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.loading;
 
-import java.awt.Color;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
@@ -16,17 +8,23 @@ import com.teamwizardry.wizardry.common.spell.ModuleEffect;
 import com.teamwizardry.wizardry.common.spell.ModuleShape;
 import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
 import com.teamwizardry.wizardry.common.spell.component.Module;
-
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 /**
  * Handles loading Modules from yaml resources. Relies heavily on a cohesive
  * structure:
- * 
+ *
  * <pre>
  * module: modid:pattern
  * name: moduleName
@@ -47,9 +45,6 @@ import net.minecraftforge.registries.ForgeRegistries;
  *      - double
  *      - double
  *  ... (repeat for all relevant modifiers)
- * color:
- *   primary: integer (base 8, 10, or 16)
- *   secondary: integer (base 8, 10, or 16)
  * form: string (exclusive to Shapes)
  * action: string (exclusive to Effects)
  * element: string
@@ -68,8 +63,6 @@ public class ModuleLoader extends YamlLoader
     private static final String MANA = "mana";
     private static final String BURNOUT = "burnout";
     private static final String COLOR = "color";
-    private static final String PRIMARY = "primary";
-    private static final String SECONDARY = "secondary";
     private static final String FORM = "form";
     private static final String ACTION = "action";
     private static final String ELEMENT = "element";
@@ -157,11 +150,7 @@ public class ModuleLoader extends YamlLoader
 
         if (pattern instanceof PatternEffect)
         {
-            // Colors
-            Map<String, Integer> colorMap = (Map<String, Integer>) yaml.get(COLOR);
-            Color primary = new Color(colorMap.get(PRIMARY));
-            Color secondary = new Color(colorMap.get(SECONDARY));
-            return new ModuleEffect((PatternEffect) pattern, name, items, mana, burnout, primary, secondary, action, element, modifierCosts, attributeValues);
+            return new ModuleEffect((PatternEffect) pattern, name, items, mana, burnout, action, element, modifierCosts, attributeValues);
         }
         // Only pattern types are Shapes and Effects, so if not an Effect...
         return new ModuleShape((PatternShape) pattern, name, items, mana, burnout, form, element, modifierCosts, attributeValues);

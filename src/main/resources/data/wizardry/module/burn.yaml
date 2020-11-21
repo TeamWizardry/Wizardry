@@ -21,8 +21,5 @@ modifiers:
     - 22
     - 20
     - 18
-color:
-  primary: 16711680
-  secondary: 16744448
 form: ray
 element: fire
