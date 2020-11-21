@@ -4,10 +4,11 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
-import com.teamwizardry.wizardry.common.spell.ModuleEffect;
-import com.teamwizardry.wizardry.common.spell.ModuleShape;
 import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
 import com.teamwizardry.wizardry.common.spell.component.Module;
+import com.teamwizardry.wizardry.common.spell.component.ModuleEffect;
+import com.teamwizardry.wizardry.common.spell.component.ModuleShape;
+
 import net.minecraft.item.Item;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -62,7 +63,6 @@ public class ModuleLoader extends YamlLoader
     private static final String ITEMS = "items";
     private static final String MANA = "mana";
     private static final String BURNOUT = "burnout";
-    private static final String COLOR = "color";
     private static final String FORM = "form";
     private static final String ACTION = "action";
     private static final String ELEMENT = "element";

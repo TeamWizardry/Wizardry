@@ -8,11 +8,13 @@ import net.minecraft.util.ResourceLocation;
 
 public class ModTags {
 
-	private static Tag<Item> tag(String name) {
+	@SuppressWarnings("unused")
+    private static Tag<Item> tag(String name) {
 		return new ItemTags.Wrapper(new ResourceLocation(Wizardry.MODID, name));
 	}
 
-	private static Tag<Item> forgeTag(String name) {
+	@SuppressWarnings("unused")
+    private static Tag<Item> forgeTag(String name) {
 		return new ItemTags.Wrapper(new ResourceLocation("forge", name));
 	}
 }

@@ -1,11 +1,10 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.component;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.ShapeInstance;
-import com.teamwizardry.wizardry.common.spell.component.SpellChain;
 
 public class ShapeChain extends SpellChain
 {

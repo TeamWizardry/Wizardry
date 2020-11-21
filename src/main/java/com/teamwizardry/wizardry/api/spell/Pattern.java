@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import java.awt.Color;
+
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -12,6 +14,8 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  * registered under
  */
 public abstract class Pattern extends ForgeRegistryEntry<Pattern> {
+    protected final Color[] colors = new Color[] {Color.WHITE, Color.WHITE, Color.WHITE};
+    
     public void run(World world, Instance instance, Interactor target) {
         if (instance == null) return;
         if (instance.getCaster() == null || target == null)
@@ -38,4 +42,6 @@ public abstract class Pattern extends ForgeRegistryEntry<Pattern> {
     public abstract void affectEntity(World world, Interactor entity, Instance instance);
 
     public abstract void affectBlock(World world, Interactor block, Instance instance);
+    
+    public Color[] getColors() { return colors; }
 }

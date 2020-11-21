@@ -48,6 +48,7 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull ActionResultType onBlockActivated(@NotNull BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, @NotNull PlayerEntity player, @NotNull Hand handIn, @NotNull BlockRayTraceResult hit) {
 
 
@@ -97,6 +98,7 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
             TileEntity tileentity = worldIn.getTileEntity(pos);
@@ -118,6 +120,7 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (stateIn.get(WATERLOGGED)) {
             worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
@@ -139,6 +142,7 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public IFluidState getFluidState(BlockState state) {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }

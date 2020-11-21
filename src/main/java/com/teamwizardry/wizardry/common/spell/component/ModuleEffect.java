@@ -1,7 +1,7 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.component;
 
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
-import com.teamwizardry.wizardry.common.spell.component.Module;
+
 import net.minecraft.item.Item;
 
 import java.util.List;

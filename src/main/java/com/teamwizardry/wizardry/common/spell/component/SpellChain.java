@@ -9,8 +9,6 @@ import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.ShapeInstance;
 import com.teamwizardry.wizardry.api.spell.TargetType;
-import com.teamwizardry.wizardry.common.spell.ModuleEffect;
-import com.teamwizardry.wizardry.common.spell.ModuleShape;
 
 public abstract class SpellChain
 {

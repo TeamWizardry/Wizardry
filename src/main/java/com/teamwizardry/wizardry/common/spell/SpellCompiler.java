@@ -9,7 +9,11 @@ import java.util.stream.IntStream;
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
 import com.teamwizardry.wizardry.api.spell.TargetType;
 import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
+import com.teamwizardry.wizardry.common.spell.component.EffectChain;
 import com.teamwizardry.wizardry.common.spell.component.Modifier;
+import com.teamwizardry.wizardry.common.spell.component.ModuleEffect;
+import com.teamwizardry.wizardry.common.spell.component.ModuleShape;
+import com.teamwizardry.wizardry.common.spell.component.ShapeChain;
 import com.teamwizardry.wizardry.common.spell.component.TargetComponent;
 import com.teamwizardry.wizardry.configs.ServerConfigs;
 

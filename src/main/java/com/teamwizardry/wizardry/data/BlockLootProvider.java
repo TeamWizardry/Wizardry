@@ -51,11 +51,13 @@ public class BlockLootProvider implements IDataProvider {
 		return root.resolve("data/" + id.getNamespace() + "/loot_tables/blocks/" + id.getPath() + ".json");
 	}
 
-	private static LootTable.Builder empty(Block b) {
+	@SuppressWarnings("unused")
+    private static LootTable.Builder empty(Block b) {
 		return LootTable.builder();
 	}
 
-	private static LootTable.Builder nbtDrop(Block b, String... tags) {
+	@SuppressWarnings("unused")
+    private static LootTable.Builder nbtDrop(Block b, String... tags) {
 		LootEntry.Builder<?> entry = ItemLootEntry.builder(b);
 		CopyNbt.Builder func = CopyNbt.builder(CopyNbt.Source.BLOCK_ENTITY);
 		for (String tag : tags) {

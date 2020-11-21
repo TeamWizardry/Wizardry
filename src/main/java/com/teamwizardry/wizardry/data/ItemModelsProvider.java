@@ -11,7 +11,8 @@ public class ItemModelsProvider extends net.minecraftforge.client.model.generato
 		super(generator, Wizardry.MODID, existingFileHelper);
 	}
 
-	private void pointToBlock(Item item) {
+	@SuppressWarnings("unused")
+    private void pointToBlock(Item item) {
 		String name = item.getRegistryName().getPath();
 		getBuilder(name).parent(new ModelFile.UncheckedModelFile(Wizardry.location("block/" + name)));
 	}

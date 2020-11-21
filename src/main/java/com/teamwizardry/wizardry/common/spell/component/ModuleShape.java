@@ -1,10 +1,9 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell.component;
 
 import java.util.List;
 import java.util.Map;
 
 import com.teamwizardry.wizardry.api.spell.PatternShape;
-import com.teamwizardry.wizardry.common.spell.component.Module;
 
 import net.minecraft.item.Item;
 

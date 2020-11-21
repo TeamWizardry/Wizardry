@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.common.spell;
 
 import com.teamwizardry.wizardry.common.spell.component.Module;
+import com.teamwizardry.wizardry.common.spell.component.ModuleEffect;
+import com.teamwizardry.wizardry.common.spell.component.ModuleShape;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
