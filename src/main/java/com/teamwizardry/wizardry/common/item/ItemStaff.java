@@ -26,6 +26,7 @@ public class ItemStaff extends Item implements INacreProduct.INacreDecayProduct 
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+		ItemStack itemstack = player.getHeldItem(hand);
 
 		if (!world.isRemote) {
 			Interactor caster = new Interactor(player);
@@ -34,8 +35,7 @@ public class ItemStaff extends Item implements INacreProduct.INacreDecayProduct 
 					.toInstance(caster)
 					.run(world, caster);
 		}
-		player.setActiveHand(hand);
 
-		return super.onItemRightClick(world, player, hand);
+		return ActionResult.resultSuccess(itemstack);
 	}
 }
