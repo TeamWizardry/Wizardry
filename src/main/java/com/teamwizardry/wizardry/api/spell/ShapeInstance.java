@@ -8,4 +8,5 @@ public class ShapeInstance extends Instance
     {
         super(pattern, targetType, attributeValues, manaCost, burnoutCost, caster);
     }
+
 }

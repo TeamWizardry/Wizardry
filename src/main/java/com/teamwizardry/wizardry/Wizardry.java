@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import com.teamwizardry.librarianlib.courier.CourierChannel;
 import com.teamwizardry.librarianlib.foundation.BaseMod;
 import com.teamwizardry.wizardry.api.capability.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.capability.mana.ManaCapabilityImpl;
@@ -11,13 +9,13 @@ import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.ModBlocks;
 import com.teamwizardry.wizardry.common.init.ModItems;
 import com.teamwizardry.wizardry.common.init.PatternInit;
+import com.teamwizardry.wizardry.common.network.CRenderSpellPacket;
 import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
 import com.teamwizardry.wizardry.common.spell.loading.ModifierLoader;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import com.teamwizardry.wizardry.proxy.IProxy;
 import com.teamwizardry.wizardry.proxy.ServerProxy;
-
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -31,6 +29,8 @@ import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(Wizardry.MODID)
 public class Wizardry extends BaseMod {
@@ -39,6 +39,9 @@ public class Wizardry extends BaseMod {
 
 	public static IProxy PROXY;
 	public static Wizardry INSTANCE;
+	public static final CourierChannel NETWORK = new CourierChannel(
+			new ResourceLocation(Wizardry.MODID, "network"), "0"
+	);
 
 	public Wizardry() {
 		INSTANCE = this;
@@ -56,6 +59,9 @@ public class Wizardry extends BaseMod {
 
 		// Initialize Blocks
 		ModBlocks.registerBlocks(getRegistrationManager());
+
+		// Register packets
+		NETWORK.registerCourierPacket(CRenderSpellPacket.class);
 
 		PROXY.registerHandlers();
 	}

@@ -6,11 +6,12 @@ import net.minecraft.util.Hand;
 
 public interface IProxy {
 
-	void registerHandlers();
 
-	void setItemStackHandHandler(Hand hand, ItemStack stack);
+    void registerHandlers();
 
-	void spawnParticle(GlitterBox box);
+    void setItemStackHandHandler(Hand hand, ItemStack stack);
 
-	void openWorktableGui();
+    void spawnParticle(GlitterBox box);
+
+    void openWorktableGui();
 }
