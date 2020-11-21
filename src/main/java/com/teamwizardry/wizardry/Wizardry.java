@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import org.apache.logging.log4j.LogManager;
@@ -61,7 +62,7 @@ public class Wizardry extends BaseMod {
 		ModBlocks.registerBlocks(getRegistrationManager());
 
 		// Register packets
-		NETWORK.registerCourierPacket(CRenderSpellPacket.class);
+		NETWORK.register(new CRenderSpellPacket(), NetworkDirection.PLAY_TO_CLIENT);
 
 		PROXY.registerHandlers();
 	}

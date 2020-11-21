@@ -35,6 +35,7 @@ public class StringConsts {
 
     // api.spell
     public static final String PATTERN = "pattern";
+    public static final String PATTERN_TYPE = "pattern_type";
     public static final String TARGET_TYPE = "target_type";
     public static final String ATTRIBUTE_VALUES = "attribute_values";
     public static final String MANA_COST = "mana_cost";

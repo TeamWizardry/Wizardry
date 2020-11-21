@@ -110,15 +110,6 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
                                 .setGoalSize(0)
                                 .createGlitterBox(20));
             }
-
-            Wizardry.PROXY.spawnParticle(
-                    new GlitterBox.GlitterBoxFactory()
-                            .setOrigin(Vec3d.ZERO)
-                            .setTarget(Vec3d.ZERO)
-                            .setGoalColor(LibTheme.accentColor)
-                            .setInitialSize(3f)
-                            .setGoalSize(3f)
-                            .createGlitterBox(40));
         }
     }
 

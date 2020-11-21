@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.network.CRenderSpellPacket;
 import net.minecraft.nbt.CompoundNBT;
@@ -14,7 +15,7 @@ import java.util.*;
 
 import static com.teamwizardry.wizardry.api.StringConsts.*;
 
-public class Instance {
+public abstract class Instance {
     protected Pattern pattern;
     protected TargetType targetType;
     protected Map<String, Double> attributeValues;
@@ -41,56 +42,6 @@ public class Instance {
         this.effects = new LinkedList<>();
     }
 
-    public static Instance fromNBT(World world, CompoundNBT nbt) {
-        Pattern pattern = null;
-        TargetType targetType = null;
-        Map<String, Double> attributeValues = null;
-        double manaCost = 0;
-        double burnoutCost = 0;
-
-        ShapeInstance nextShape = null;
-        List<EffectInstance> effects = null;
-
-        Interactor caster = null;
-        CompoundNBT extraData = null;
-
-        if (nbt.contains(PATTERN))
-            pattern = GameRegistry.findRegistry(Pattern.class).getValue(new ResourceLocation(nbt.getString(PATTERN)));
-        if (nbt.contains(TARGET_TYPE))
-            targetType = TargetType.valueOf(nbt.getString(TARGET_TYPE));
-        if (nbt.contains(ATTRIBUTE_VALUES)) {
-            CompoundNBT nbtAttributeValues = nbt.getCompound(ATTRIBUTE_VALUES);
-            attributeValues = new HashMap<>();
-            for (String key : nbtAttributeValues.keySet()) {
-                attributeValues.put(key, nbtAttributeValues.getDouble(key));
-            }
-        }
-        if (nbt.contains(MANA_COST))
-            manaCost = nbt.getDouble(MANA_COST);
-        if (nbt.contains(BURNOUT_COST))
-            burnoutCost = nbt.getDouble(BURNOUT_COST);
-        if (nbt.contains(NEXT_SHAPE))
-            nextShape = (ShapeInstance) fromNBT(world, nbt.getCompound(NEXT_SHAPE));
-        if (nbt.contains(EFFECTS)) {
-            CompoundNBT nbtEffects = nbt.getCompound(EFFECTS);
-            effects = new ArrayList<>();
-            for (int i = 0; i < nbtEffects.size(); i++) {
-                effects.add((EffectInstance) fromNBT(world, nbtEffects.getCompound(i + "")));
-            }
-        }
-        if (nbt.contains(CASTER))
-            caster = Interactor.fromNBT(world, nbt.getCompound(CASTER));
-
-        if (nbt.contains(EXTRA_DATA))
-            extraData = nbt.getCompound(EXTRA_DATA);
-
-        Instance instance = new Instance(pattern, targetType, attributeValues, manaCost, burnoutCost, caster);
-        instance.nextShape = nextShape;
-        instance.effects = effects;
-        instance.extraData = extraData;
-        return instance;
-    }
-
     public Instance setNext(ShapeInstance next) {
         this.nextShape = next;
         return this;
@@ -101,15 +52,75 @@ public class Instance {
         return this;
     }
 
-    public void run(World world, Interactor target) {
-        this.pattern.run(world, this, target);
+    public static Instance fromNBT(World world, CompoundNBT nbt) {
+        Pattern pattern = null;
+        TargetType targetType = null;
+        Map<String, Double> attributeValues = null;
+        double manaCost = 0;
+        double burnoutCost = 0;
 
-        Wizardry.NETWORK.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(target.getPos().x,
-                        target.getPos().y,
-                        target.getPos().z,
-                        256,
-                        world.getDimension().getType())),
-                new CRenderSpellPacket(toNBT(), target.toNBT()));
+        ShapeInstance nextShape = null;
+        List<EffectInstance> effects = null;
+
+        Interactor caster;
+        CompoundNBT extraData = null;
+
+        if (nbt.contains(PATTERN))
+            pattern = GameRegistry.findRegistry(Pattern.class).getValue(new ResourceLocation(nbt.getString(PATTERN)));
+        else throw new InconceivableException("Pattern must always be specified.");
+
+        if (nbt.contains(TARGET_TYPE))
+            targetType = TargetType.valueOf(nbt.getString(TARGET_TYPE));
+        else throw new InconceivableException("TargetType enum must always be specified.");
+
+        if (nbt.contains(ATTRIBUTE_VALUES)) {
+            CompoundNBT nbtAttributeValues = nbt.getCompound(ATTRIBUTE_VALUES);
+            attributeValues = new HashMap<>();
+            for (String key : nbtAttributeValues.keySet()) {
+                attributeValues.put(key, nbtAttributeValues.getDouble(key));
+            }
+        }
+
+        if (nbt.contains(MANA_COST))
+            manaCost = nbt.getDouble(MANA_COST);
+
+        if (nbt.contains(BURNOUT_COST))
+            burnoutCost = nbt.getDouble(BURNOUT_COST);
+
+        if (nbt.contains(NEXT_SHAPE))
+            nextShape = (ShapeInstance) fromNBT(world, nbt.getCompound(NEXT_SHAPE));
+
+        if (nbt.contains(EFFECTS)) {
+            CompoundNBT nbtEffects = nbt.getCompound(EFFECTS);
+            effects = new ArrayList<>();
+            for (int i = 0; i < nbtEffects.size(); i++) {
+                effects.add((EffectInstance) fromNBT(world, nbtEffects.getCompound(i + "")));
+            }
+        }
+        if (nbt.contains(CASTER)) {
+            caster = Interactor.fromNBT(world, nbt.getCompound(CASTER));
+        } else {
+            throw new InconceivableException("Caster Interactor must always be specified.");
+        }
+
+        if (nbt.contains(EXTRA_DATA))
+            extraData = nbt.getCompound(EXTRA_DATA);
+
+        Instance instance;
+        if (extraData != null && extraData.contains(PATTERN_TYPE)) {
+            String patternType = extraData.getString(PATTERN_TYPE);
+            if (patternType.equals("shape")) {
+                instance = new ShapeInstance(pattern, targetType, attributeValues, manaCost, burnoutCost, caster);
+            } else {
+                instance = new EffectInstance(pattern, targetType, attributeValues, manaCost, burnoutCost, caster);
+            }
+            instance.nextShape = nextShape;
+            instance.effects = effects;
+            instance.extraData = extraData;
+        } else {
+            throw new InconceivableException("Pattern type must always be specified.");
+        }
+        return instance;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -143,6 +154,17 @@ public class Instance {
 
     public Interactor getCaster() {
         return this.caster;
+    }
+
+    public void run(World world, Interactor target) {
+        this.pattern.run(world, this, target);
+
+        Wizardry.NETWORK.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(target.getPos().x,
+                        target.getPos().y,
+                        target.getPos().z,
+                        256,
+                        world.getDimension().getType())),
+                new CRenderSpellPacket.Packet(toNBT(), target.toNBT()));
     }
 
     public CompoundNBT toNBT() {
@@ -180,6 +202,6 @@ public class Instance {
 
         if (extraData != null)
             nbt.put(EXTRA_DATA, extraData);
-        return null;
+        return nbt;
     }
 }

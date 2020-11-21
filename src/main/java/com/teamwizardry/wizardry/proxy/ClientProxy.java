@@ -9,30 +9,27 @@ import net.minecraft.util.Hand;
 
 public class ClientProxy implements IProxy {
 
-	private Glitter glitter;
+    private final Glitter glitter = new Glitter();
 
-	@Override
-	public void registerHandlers() {
-		//NOOP
-	}
+    @Override
+    public void registerHandlers() {
+        glitter.addToGame();
+    }
 
-	@Override
-	public void setItemStackHandHandler(Hand hand, ItemStack stack) {
+    @Override
+    public void setItemStackHandHandler(Hand hand, ItemStack stack) {
 		/*if (hand == Hand.MAIN_HAND)
 			itemStackMainHandHandler.invoke(Minecraft.getInstance().getItemRenderer(), stack);
 		else itemStackOffHandHandler.invoke(Minecraft.getInstance().getItemRenderer(), stack);*/
-	}
+    }
 
-	@Override
-	public void spawnParticle(GlitterBox box) {
-		if (glitter == null) {
-			glitter = new Glitter();
-		}
-		glitter.spawn(box);
-	}
+    @Override
+    public void spawnParticle(GlitterBox box) {
+        glitter.spawn(box);
+    }
 
-	@Override
-	public void openWorktableGui() {
-		Minecraft.getInstance().displayGuiScreen(new WorktableGUI());
-	}
+    @Override
+    public void openWorktableGui() {
+        Minecraft.getInstance().displayGuiScreen(new WorktableGUI());
+    }
 }
