@@ -21,5 +21,5 @@ modifiers:
     - 22
     - 20
     - 18
-form: ray
+action: damage
 element: fire

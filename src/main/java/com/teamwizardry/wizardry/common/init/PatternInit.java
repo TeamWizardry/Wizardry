@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.spell.effect.EffectBurn;
 import com.teamwizardry.wizardry.common.spell.shape.ShapeRay;
+import com.teamwizardry.wizardry.common.spell.shape.ShapeZone;
 
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -13,6 +14,10 @@ public class PatternInit
     {
         // Shapes
         registry.registerAll(new ShapeRay().setRegistryName(Wizardry.MODID, "ray"),
-                             new EffectBurn().setRegistryName(Wizardry.MODID, "burn"));
+                             new ShapeZone().setRegistryName(Wizardry.MODID, "zone")
+                             );
+        
+        // Effects
+        registry.registerAll(new EffectBurn().setRegistryName(Wizardry.MODID, "burn"));
     }
 }
