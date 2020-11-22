@@ -11,6 +11,7 @@ public class GlitterBox {
 
 	public final float originX, originY, originZ;
 	public final float targetX, targetY, targetZ;
+	public final boolean physics;
 
 	public final Color initialColor;
 	public final Color goalColor;
@@ -27,7 +28,10 @@ public class GlitterBox {
 	public final float friction;
 	public final float bounce;
 
-	public GlitterBox(int lifetime, float originX, float originY, float originZ, float targetX, float targetY, float targetZ, Color initialColor, Color goalColor, float initialSize, float goalSize, float initialAlpha, float middleAlpha, float goalAlpha, float gravity, float drag, float friction, float bounce) {
+	public GlitterBox(int lifetime, float originX, float originY, float originZ, float targetX, float targetY,
+					  float targetZ, boolean physics, Color initialColor, Color goalColor, float initialSize,
+					  float goalSize, float initialAlpha, float middleAlpha, float goalAlpha, float gravity, float drag,
+					  float friction, float bounce) {
 		this.lifetime = lifetime;
 		this.originX = originX;
 		this.originY = originY;
@@ -35,6 +39,7 @@ public class GlitterBox {
 		this.targetX = targetX;
 		this.targetY = targetY;
 		this.targetZ = targetZ;
+		this.physics = physics;
 		this.initialColor = initialColor;
 		this.goalColor = goalColor;
 		this.initialSize = initialSize;
@@ -51,6 +56,7 @@ public class GlitterBox {
 	public static class GlitterBoxFactory {
 		private float originX = 0, originY = 0, originZ = 0;
 		private float targetX = 0, targetY = 0, targetZ = 0;
+		private boolean physics = true;
 		private Color initialColor = LibTheme.accentColor;
 		private Color goalColor = LibTheme.accentColor;
 		private float initialSize = 30;
@@ -110,6 +116,11 @@ public class GlitterBox {
 			return setTarget((float) x, (float) y, (float) z);
 		}
 
+		public GlitterBoxFactory setIsPhysics(boolean isPhysics) {
+			this.physics = isPhysics;
+			return this;
+		}
+
 		public GlitterBoxFactory setInitialColor(Color initialColor) {
 			this.initialColor = initialColor;
 			return this;
@@ -154,7 +165,7 @@ public class GlitterBox {
 			return new GlitterBox(lifetime,
 					originX, originY, originZ,
 					targetX, targetY, targetZ,
-					initialColor, goalColor == null ? initialColor : goalColor,
+					physics, initialColor, goalColor == null ? initialColor : goalColor,
 					initialSize, goalSize == -1 ? initialSize : goalSize,
 					initialAlpha, middleAlpha, goalAlpha, gravity,
 					drag,

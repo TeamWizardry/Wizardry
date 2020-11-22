@@ -1,10 +1,6 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.BLOCK;
-import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.ENTITY;
-
 import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,29 +9,31 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class Interactor
-{
-    public enum InteractorType
-    {
+import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.BLOCK;
+import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.ENTITY;
+
+public class Interactor {
+    public enum InteractorType {
         ENTITY,
         BLOCK
     }
-    
-    private InteractorType type;
-    
-    private LivingEntity entity;
-    private BlockPos block;
-    private Direction dir;
-    
-    public Interactor(BlockPos pos, Direction dir)
-    {
+
+    private final InteractorType type;
+
+    private final LivingEntity entity;
+    private final BlockPos block;
+    private final Direction dir;
+
+    public Interactor(BlockPos pos, Direction dir) {
         this.type = BLOCK;
         this.block = pos;
         this.dir = dir;
         this.entity = null;
     }
-    
+
     public Interactor(LivingEntity entity)
     {
         this.type = ENTITY;
@@ -43,23 +41,41 @@ public class Interactor
         this.block = null;
         this.dir = null;
     }
-    
-    public Vec3d getPos()
-    {
-        switch (type)
-        {
-            case ENTITY: return entity.getPositionVector().add(0, entity.getEyeHeight(entity.getPose()), 0);
-            case BLOCK: return new Vec3d(block).add(0.5, 0.5, 0.5);
+
+    public Vec3d getPos() {
+        switch (type) {
+            case ENTITY:
+                return entity.getPositionVector().add(0, entity.getEyeHeight(entity.getPose()), 0);
+            case BLOCK:
+                return new Vec3d(block).add(0.5, 0.5, 0.5);
         }
         throw new InconceivableException("No other hittable types");
     }
-    
-    public Vec3d getLook()
-    {
-        switch (type)
-        {
-            case ENTITY: return entity.getLookVec();
-            case BLOCK: return new Vec3d(dir.getDirectionVec());
+
+    /**
+     * This is marked as client only because if the caster is a player, we want the origin to be
+     * their physical hand.
+     * Never use this outside of rendering purposes only.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public Vec3d getClientPos() {
+        Vec3d pos = getPos();
+        if (type == ENTITY && entity instanceof PlayerEntity) {
+            if (pos == null) return null;
+            float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - entity.rotationYaw));
+            float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - entity.rotationYaw));
+            return new Vec3d(offX, 0, offZ).add(pos);
+        }
+
+        return pos;
+    }
+
+    public Vec3d getLook() {
+        switch (type) {
+            case ENTITY:
+                return entity.getLookVec();
+            case BLOCK:
+                return new Vec3d(dir.getDirectionVec());
         }
         throw new InconceivableException("No other hittable types");
     }

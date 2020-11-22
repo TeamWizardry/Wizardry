@@ -1,17 +1,15 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.network.CRenderSpellPacket;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
 
-import java.awt.Color;
+import java.awt.*;
+import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,11 +52,6 @@ public abstract class Instance {
         return this;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void runClient(World world, Interactor target) {
-        this.pattern.runClient(world, this, target);
-    }
-
     public Pattern getPattern() {
         return this.pattern;
     }
@@ -87,68 +80,18 @@ public abstract class Instance {
         return this.caster;
     }
 
-    public void run(World world, Interactor target) {
-        this.pattern.run(world, this, target);
-
-        Wizardry.NETWORK.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(target.getPos().x,
-                        target.getPos().y,
-                        target.getPos().z,
-                        256,
-                        world.getDimension().getType())),
-                new CRenderSpellPacket.Packet(toNBT(), target.toNBT()));
-    }
-    
-    public List<Color[]> getEffectColors()
-    {
-        return this.effects.stream().map(EffectInstance::getPattern).map(Pattern::getColors).collect(Collectors.toList());
-    }
-
-    public CompoundNBT toNBT() {
-        CompoundNBT nbt = new CompoundNBT();
-
-        if (pattern != null)
-            nbt.putString(PATTERN, pattern.getRegistryName().toString());
-
-        if (targetType != null)
-            nbt.putString(TARGET_TYPE, targetType.toString());
-
-        if (attributeValues != null) {
-            CompoundNBT nbtAttributeValues = new CompoundNBT();
-            attributeValues.forEach((attribute, value) -> nbtAttributeValues.putDouble(attribute, value));
-            nbt.put(ATTRIBUTE_VALUES, nbtAttributeValues);
-        }
-
-        nbt.putDouble(MANA_COST, manaCost);
-        nbt.putDouble(BURNOUT_COST, burnoutCost);
-
-        if (nextShape != null)
-            nbt.put(NEXT_SHAPE, nextShape.toNBT());
-
-        if (!effects.isEmpty()) {
-            CompoundNBT nbtEffects = new CompoundNBT();
-            for (EffectInstance instance : effects)
-                nbtEffects.put(effects.indexOf(instance) + "", instance.toNBT());
-            nbt.put(EFFECTS, nbtEffects);
-        }
-        
-        nbt.put(CASTER, caster.toNBT());
-        nbt.put(EXTRA_DATA, extraData);
-        
-        return nbt;
-    }
-    
     public static Instance fromNBT(World world, CompoundNBT nbt) {
-        Pattern pattern = null;
-        TargetType targetType = null;
+        Pattern pattern;
+        TargetType targetType;
         Map<String, Double> attributeValues = null;
         double manaCost = 0;
         double burnoutCost = 0;
 
         ShapeInstance nextShape = null;
-        List<EffectInstance> effects = null;
+        List<EffectInstance> effects = new LinkedList<>();
 
         Interactor caster;
-        CompoundNBT extraData = null;
+        CompoundNBT extraData = new CompoundNBT();
 
         if (nbt.contains(PATTERN))
             pattern = GameRegistry.findRegistry(Pattern.class).getValue(new ResourceLocation(nbt.getString(PATTERN)));
@@ -198,9 +141,66 @@ public abstract class Instance {
             instance.nextShape = nextShape;
             instance.effects = effects;
             instance.extraData = extraData;
-        }
-        else throw new InconceivableException("Pattern type must always be specified.");
-        
+        } else throw new InconceivableException("Pattern type must always be specified.");
+
         return instance;
+    }
+
+    public CompoundNBT getExtraData() {
+        return extraData;
+    }
+
+    public void run(World world, Interactor target) {
+        this.pattern.run(world, this, target);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void runClient(World world, Interactor target) {
+        this.pattern.runClient(world, this, target);
+    }
+
+    public List<Color[]> getEffectColors() {
+
+        List<Color[]> colors = this.effects.stream()
+                .map(EffectInstance::getPattern)
+                .map(Pattern::getColors).collect(Collectors.toList());
+        if (nextShape != null) {
+            colors.addAll(nextShape.getEffectColors());
+        }
+        return colors;
+    }
+
+    public CompoundNBT toNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+
+        if (pattern != null)
+            nbt.putString(PATTERN, pattern.getRegistryName().toString());
+
+        if (targetType != null)
+            nbt.putString(TARGET_TYPE, targetType.toString());
+
+        if (attributeValues != null) {
+            CompoundNBT nbtAttributeValues = new CompoundNBT();
+            attributeValues.forEach(nbtAttributeValues::putDouble);
+            nbt.put(ATTRIBUTE_VALUES, nbtAttributeValues);
+        }
+
+        nbt.putDouble(MANA_COST, manaCost);
+        nbt.putDouble(BURNOUT_COST, burnoutCost);
+
+        if (nextShape != null)
+            nbt.put(NEXT_SHAPE, nextShape.toNBT());
+
+        if (!effects.isEmpty()) {
+            CompoundNBT nbtEffects = new CompoundNBT();
+            for (EffectInstance instance : effects)
+                nbtEffects.put(effects.indexOf(instance) + "", instance.toNBT());
+            nbt.put(EFFECTS, nbtEffects);
+        }
+
+        nbt.put(CASTER, caster.toNBT());
+        nbt.put(EXTRA_DATA, extraData);
+
+        return nbt;
     }
 }

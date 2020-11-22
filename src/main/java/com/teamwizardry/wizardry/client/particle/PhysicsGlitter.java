@@ -10,7 +10,7 @@ import com.teamwizardry.librarianlib.math.Easing;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;
 
-public class Glitter extends ParticleSystem {
+public class PhysicsGlitter extends ParticleSystem {
 
 	@Override
 	public void configure() {

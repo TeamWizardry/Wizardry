@@ -1,19 +1,22 @@
 package com.teamwizardry.wizardry.proxy;
 
 import com.teamwizardry.wizardry.client.gui.WorktableGUI;
-import com.teamwizardry.wizardry.client.particle.Glitter;
-import com.teamwizardry.wizardry.client.particle.GlitterBox;
+import com.teamwizardry.wizardry.client.particle.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 
 public class ClientProxy implements IProxy {
 
-    private final Glitter glitter = new Glitter();
+    private final PhysicsGlitter physicsGlitter = new PhysicsGlitter();
+    private final PredeterminedGlitter predeterminedGlitter = new PredeterminedGlitter();
+    private final KeyFramedGlitter keyFramedGlitter = new KeyFramedGlitter();
 
     @Override
     public void registerHandlers() {
-        glitter.addToGame();
+        physicsGlitter.addToGame();
+        predeterminedGlitter.addToGame();
+        keyFramedGlitter.addToGame();
     }
 
     @Override
@@ -25,7 +28,16 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void spawnParticle(GlitterBox box) {
-        glitter.spawn(box);
+        if (box.physics) {
+            physicsGlitter.spawn(box);
+        } else {
+            predeterminedGlitter.spawn(box);
+        }
+    }
+
+    @Override
+    public void spawnKeyedParticle(KeyFramedGlitterBox box) {
+        keyFramedGlitter.spawn(box);
     }
 
     @Override
