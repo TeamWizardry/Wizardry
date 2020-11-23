@@ -137,8 +137,6 @@ public class ShapeZone extends PatternShape {
                                     .pos(point)
                                     .pos(point, Easing.easeOutQuart)
                                     .pos(to)
-                                    .pos(to)
-                                    .pos(to)
                                     .color(colors[0])
                                     .color(colors[1])
                                     .size(0, Easing.easeOutQuart)
