@@ -12,6 +12,7 @@ import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.particle.KeyFramedGlitterBox;
 import com.teamwizardry.wizardry.common.core.Sequence;
 import com.teamwizardry.wizardry.common.core.SequenceEventLoop;
+import com.teamwizardry.wizardry.common.init.ModSounds;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -24,10 +25,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.teamwizardry.wizardry.api.spell.Attributes.INTENSITY;
 import static com.teamwizardry.wizardry.api.spell.Attributes.RANGE;
@@ -44,67 +43,73 @@ public class ShapeZone extends PatternShape {
         final CompoundNBT pointsTag = new CompoundNBT();
         final List<Interactor> interactors = new ArrayList<>();
 
-        SequenceEventLoop.createSequence(new Sequence(world, 20)
+        // Run on entities
+        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class,
+                region,
+                entity -> entity.getPositionVec().squareDistanceTo(center) <= rangeSq);
+        double numEntityProcs = entities.size() * procFraction;
+        while (entities.size() > numEntityProcs)
+            entities.remove((int) (Math.random() * entities.size()));
+        for (LivingEntity entity : entities) {
+
+            Interactor interactor = new Interactor(entity);
+            Vec3d point = interactor.getPos();
+            interactors.add(interactor);
+            CompoundNBT pointNBT = new CompoundNBT();
+            pointNBT.putDouble("x", point.x);
+            pointNBT.putDouble("y", point.y);
+            pointNBT.putDouble("z", point.z);
+            pointsTag.put(UUID.randomUUID().toString(), pointNBT);
+        }
+
+        // Run on blocks
+        List<BlockPos> blocks = new LinkedList<>();
+        for (int x = (int) Math.floor(region.minX); x < Math.ceil(region.maxX); x++)
+            for (int y = (int) Math.floor(region.minY); y < Math.ceil(region.maxY); y++)
+                for (int z = (int) Math.floor(region.minZ); z < Math.ceil(region.maxZ); z++)
+                    if (center.squareDistanceTo(x, y, z) <= rangeSq)
+                        blocks.add(new BlockPos(x, y, z));
+        double numBlockProcs = blocks.size() * procFraction;
+        while (blocks.size() > numBlockProcs)
+            blocks.remove((int) (Math.random() * blocks.size()));
+        for (BlockPos pos : blocks) {
+            Vec3d direction = new Vec3d(pos.getX() + 0.5 - center.x,
+                    pos.getY() + 0.5 - center.y,
+                    pos.getZ() + 0.5 - center.z);
+
+            Interactor interactor = new Interactor(pos,
+                    Direction.getFacingFromVector(direction.x, direction.y, direction.z));
+            Vec3d point = interactor.getPos();
+            interactors.add(interactor);
+            CompoundNBT pointNBT = new CompoundNBT();
+            pointNBT.putDouble("x", point.x);
+            pointNBT.putDouble("y", point.y);
+            pointNBT.putDouble("z", point.z);
+            pointsTag.put(UUID.randomUUID().toString(), pointNBT);
+        }
+
+        instance.getExtraData().putBoolean("exploded", false);
+        sendRenderPacket(world, instance, target);
+        ModSounds.playSound(world, instance.getCaster(), target, ModSounds.HIGH_PITCHED_SOLO_BLEEP, 0.5f, 2f);
+
+        SequenceEventLoop.createSequence(new Sequence(world, 10)
                 .event(0f, (seq) -> {
-                    // Run on entities
-                    List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class,
-                            region,
-                            entity -> entity.getPositionVec().squareDistanceTo(center) <= rangeSq);
-                    double numEntityProcs = entities.size() * procFraction;
-                    while (entities.size() > numEntityProcs)
-                        entities.remove((int) (Math.random() * entities.size()));
-                    for (LivingEntity entity : entities) {
-
-                        Interactor interactor = new Interactor(entity);
-                        Vec3d point = interactor.getPos();
-                        interactors.add(interactor);
-                        CompoundNBT pointNBT = new CompoundNBT();
-                        pointNBT.putDouble("x", point.x);
-                        pointNBT.putDouble("y", point.y);
-                        pointNBT.putDouble("z", point.z);
-                        pointsTag.put(UUID.randomUUID().toString(), pointNBT);
-                    }
-
-                    // Run on blocks
-                    List<BlockPos> blocks = new LinkedList<>();
-                    for (int x = (int) Math.floor(region.minX); x < Math.ceil(region.maxX); x++)
-                        for (int y = (int) Math.floor(region.minY); y < Math.ceil(region.maxY); y++)
-                            for (int z = (int) Math.floor(region.minZ); z < Math.ceil(region.maxZ); z++)
-                                if (center.squareDistanceTo(x, y, z) <= rangeSq)
-                                    blocks.add(new BlockPos(x, y, z));
-                    double numBlockProcs = blocks.size() * procFraction;
-                    while (blocks.size() > numBlockProcs)
-                        blocks.remove((int) (Math.random() * blocks.size()));
-                    for (BlockPos pos : blocks) {
-                        Vec3d direction = new Vec3d(pos.getX() + 0.5 - center.x,
-                                pos.getY() + 0.5 - center.y,
-                                pos.getZ() + 0.5 - center.z);
-
-                        Interactor interactor = new Interactor(pos,
-                                Direction.getFacingFromVector(direction.x, direction.y, direction.z));
-                        Vec3d point = interactor.getPos();
-                        interactors.add(interactor);
-                        CompoundNBT pointNBT = new CompoundNBT();
-                        pointNBT.putDouble("x", point.x);
-                        pointNBT.putDouble("y", point.y);
-                        pointNBT.putDouble("z", point.z);
-                        pointsTag.put(UUID.randomUUID().toString(), pointNBT);
-                    }
-
-                    instance.getExtraData().putBoolean("exploded", false);
-                    sendRenderPacket(world, instance, target);
-
-                }).event(0.5f, (seq) -> {
-
                     instance.getExtraData().put("points", pointsTag);
                     instance.getExtraData().putBoolean("exploded", true);
                     sendRenderPacket(world, instance, target);
-
                 }).event(1f, (seq) -> {
-                    for (Interactor interactor : interactors) {
-                        if (interactor.getPos().squareDistanceTo(center) <= range * range)
-                            super.run(world, instance, interactor);
+                    Sequence sequence = new Sequence(world, interactors.size());
+                    Collections.shuffle(interactors);
+                    for (int i = 0, interactorsSize = interactors.size(); i < interactorsSize; i++) {
+                        Interactor interactor = interactors.get(i);
+                        if (interactor.getPos().squareDistanceTo(center) <= range * range) {
+                            sequence.event((i / (float) interactorsSize),
+                                    (seq1) -> super.run(world, instance, interactor));
+                        }
                     }
+
+                    SequenceEventLoop.createSequence(sequence);
+
                 }));
 
     }

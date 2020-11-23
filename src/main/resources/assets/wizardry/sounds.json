@@ -1,5 +1,6 @@
 {
 	"zoom": {
+		"category": "block",
 		"sounds": [
 			"wizardry:zoom_1",
 			"wizardry:zoom_2",

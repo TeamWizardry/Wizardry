@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
+import com.teamwizardry.wizardry.common.init.ModSounds;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FireBlock;
@@ -29,6 +30,7 @@ public class EffectBurn extends PatternEffect {
             return;
 
         entity.getEntity().setFire((int) instance.getAttributeValue(DURATION));
+        ModSounds.playSound(world, instance.getCaster(), entity, ModSounds.FIRE, 0.1f);
     }
 
     @Override
@@ -45,6 +47,7 @@ public class EffectBurn extends PatternEffect {
             BlockState offFire = ((FireBlock) Blocks.FIRE).getStateForPlacement(world, off);
             world.setBlockState(off, offFire);
         }
+        ModSounds.playSound(world, instance.getCaster(), block, ModSounds.FIRE, 0.1f);
     }
 
     private static final Color[] colors = new Color[]{Color.RED, Color.ORANGE, Color.DARK_GRAY};

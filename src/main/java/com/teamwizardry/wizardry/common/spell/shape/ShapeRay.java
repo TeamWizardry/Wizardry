@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.spell.PatternShape;
 import com.teamwizardry.wizardry.api.utils.ColorUtils;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
+import com.teamwizardry.wizardry.common.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
@@ -55,6 +56,7 @@ public class ShapeRay extends PatternShape {
                 break;
         }
 
+        ModSounds.playSound(world, instance.getCaster(), target, ModSounds.SUBTLE_MAGIC_BOOK_GLINT);
         super.run(world, instance, newTarget);
     }
 

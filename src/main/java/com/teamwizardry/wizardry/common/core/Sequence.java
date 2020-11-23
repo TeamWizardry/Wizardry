@@ -2,15 +2,15 @@ package com.teamwizardry.wizardry.common.core;
 
 import net.minecraft.world.World;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class Sequence {
 
     private final long initTime;
     private final int lifetime;
-    private final Map<Float, Consumer<Sequence>> keyframes = new HashMap<>();
+    private final List<Key> keyframes = new ArrayList<>();
 
     public boolean expired = false;
 
@@ -20,7 +20,7 @@ public class Sequence {
     }
 
     public Sequence event(float time, Consumer<Sequence> func) {
-        keyframes.put(time, func);
+        keyframes.add(new Key(time, func));
         return this;
     }
 
@@ -33,9 +33,25 @@ public class Sequence {
             expired = true;
             return;
         }
-        float t = diff / (float) lifetime;
-        if (keyframes.containsKey(t)) {
-            keyframes.get(t).accept(this);
+
+        float fraction = diff / (float) lifetime;
+        for (Key key : keyframes) {
+            if (key.expired) continue;
+            if (key.time <= fraction) {
+                key.func.accept(this);
+                key.expired = true;
+            }
         }
+    }
+}
+
+class Key {
+    public final float time;
+    public final Consumer<Sequence> func;
+    public boolean expired;
+
+    Key(float time, Consumer<Sequence> func) {
+        this.time = time;
+        this.func = func;
     }
 }
