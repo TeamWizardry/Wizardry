@@ -40,14 +40,16 @@ class KeyFrameBinding extends AbstractTimeBinding {
     public void load(@NotNull double[] particle) {
         super.load(particle);
         frameValues.load(particle);
+        frameCount.load(particle);
+        easings.load(particle);
 
-        double time = getTime() * frameCount.getContents()[0];
+        double time = getTime() * Math.max(0, frameCount.getContents()[0] - 1);
         int index = (int) time;
         for (int i = 0; i < bindingSize; i++) {
             double first = frameValues.getContents()[index * bindingSize + i];
             double second = frameValues.getContents()[(index + 1) * bindingSize + i];
             float t = KeyFramedGlitter.easingArray.get((int) easings.getContents()[index]).ease((float) (time - index));
-            double result = t * first + (1 - t) * second;
+            double result = t * second + (1 - t) * first;
             contents[i] = result;
         }
     }

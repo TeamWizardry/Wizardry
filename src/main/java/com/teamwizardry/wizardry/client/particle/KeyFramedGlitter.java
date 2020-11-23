@@ -56,20 +56,20 @@ public class KeyFramedGlitter extends ParticleSystem {
         StoredBinding pos = bind(3);
         StoredBinding previousPos = bind(3);
         StoredBinding posFrameCount = bind(1);
-        StoredBinding posFrames = bind(3 * 5);
-        StoredBinding posEasings = bind(5);
+        StoredBinding posFrames = bind(3 * 5 + 3);
+        StoredBinding posEasings = bind(5 + 1);
 
         StoredBinding colorFrameCount = bind(1);
-        StoredBinding colorFrames = bind(4 * 5);
-        StoredBinding colorEasings = bind(5);
+        StoredBinding colorFrames = bind(4 * 5 + 4);
+        StoredBinding colorEasings = bind(5 + 1);
 
         StoredBinding sizeFrameCount = bind(1);
-        StoredBinding sizeFrames = bind(5);
-        StoredBinding sizeEasings = bind(5);
+        StoredBinding sizeFrames = bind(5 + 1);
+        StoredBinding sizeEasings = bind(5 + 1);
 
         StoredBinding alphaFrameCount = bind(1);
-        StoredBinding alphaFrames = bind(5);
-        StoredBinding alphaEasings = bind(5);
+        StoredBinding alphaFrames = bind(5 + 1);
+        StoredBinding alphaEasings = bind(5 + 1);
 
         getUpdateModules().add(new SetValueUpdateModule(previousPos, pos));
 
@@ -102,19 +102,32 @@ public class KeyFramedGlitter extends ParticleSystem {
         params.add(box.pos[2]);
         params.add((double) box.posFrameCount);
         for (double v : box.pos) params.add(v);
+        params.add(0.0);
+        params.add(0.0);
+        params.add(0.0);
         for (double v : box.posEasings) params.add(v);
+        params.add(0.0);
 
         params.add((double) box.colorFrameCount);
         for (double v : box.color) params.add(v);
+        params.add(0.0);
+        params.add(0.0);
+        params.add(0.0);
+        params.add(0.0);
         for (double v : box.colorEasings) params.add(v);
+        params.add(0.0);
 
         params.add((double) box.sizeFrameCount);
         for (double v : box.size) params.add(v);
+        params.add(0.0);
         for (double v : box.sizeEasings) params.add(v);
+        params.add(0.0);
 
         params.add((double) box.alphaFrameCount);
         for (double v : box.alpha) params.add(v);
+        params.add(0.0);
         for (double v : box.alphaEasings) params.add(v);
+        params.add(0.0);
 
         // double[] result = new double[box.pos.length + box.posEasings.length + 1 + box.color.length +
         //         box.colorEasings.length + 1 + box.size.length + box.sizeEasings.length + 1 + box.alpha.length +

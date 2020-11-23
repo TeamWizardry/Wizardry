@@ -9,7 +9,6 @@ import com.teamwizardry.wizardry.api.spell.PatternShape;
 import com.teamwizardry.wizardry.api.utils.ColorUtils;
 import com.teamwizardry.wizardry.api.utils.MathUtils;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
-import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import com.teamwizardry.wizardry.client.particle.KeyFramedGlitterBox;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -104,24 +103,24 @@ public class ShapeZone extends PatternShape {
         double range = instance.getAttributeValue(RANGE);
         Color[] colors = ColorUtils.mergeColorSets(instance.getEffectColors());
 
-        Vec3d v1 = instance.getCaster().getClientPos();
-        Vec3d v2 = target.getPos();
-
         for (int i = 0; i < 60; i++) {
             double a = i / 60.0;
-            Vec2d dot = MathUtils.genCirclePerimeterDot((float) range, (float) (360f * a * Math.PI / 180.0f));
+            Vec2d dot = MathUtils.genCirclePerimeterDot((float) range,
+                    (float) (360f * RandUtil.nextFloat(-10, 10) * a * Math.PI / 180.0f));
             Vec3d circleDotPos = target.getPos().add(dot.getX(), 0, dot.getY());
-            Wizardry.PROXY.spawnParticle(
-                    new GlitterBox.GlitterBoxFactory()
-                            .setOrigin(target.getPos())
-                            .setTarget(circleDotPos)
-                            .setIsPhysics(false)
-                            //.setGravity(RandUtil.nextFloat(-0.001f, -0.003f))
-                            .setInitialColor(colors[0])
-                            .setGoalColor(colors[1])
-                            .setInitialSize(RandUtil.nextFloat(0.05f, 0.2f))
-                            .setGoalSize(0)
-                            .createGlitterBox(RandUtil.nextInt(10, 20)));
+            Wizardry.PROXY.spawnKeyedParticle(
+                    new KeyFramedGlitterBox(RandUtil.nextInt(10, 15))
+                            .pos(target.getPos(), Easing.easeOutQuart)
+                            .pos(circleDotPos)
+                            .pos(circleDotPos)
+                            .color(colors[0])
+                            .color(colors[1])
+                            .size(0, Easing.easeOutQuart)
+                            .size(RandUtil.nextDouble(0.1, 0.2), Easing.easeOutQuart)
+                            .size(0)
+                            .alpha(1)
+                            .alpha(1)
+            );
         }
 
         final CompoundNBT nbt = instance.getExtraData();
@@ -130,18 +129,24 @@ public class ShapeZone extends PatternShape {
             for (String pointKey : points.keySet()) {
                 CompoundNBT pointTag = points.getCompound(pointKey);
                 Vec3d point = new Vec3d(pointTag.getDouble("x"), pointTag.getDouble("y"), pointTag.getDouble("z"));
+                double yDist = Math.abs(target.getPos().y - point.getY());
                 for (int i = 0; i < 5; i++) {
-                    Vec3d to = point.add(0, RandUtil.nextInt(-4, 4), 0);
+                    Vec3d to = point.add(0, RandUtil.nextDouble(-yDist, yDist), 0);
                     Wizardry.PROXY.spawnKeyedParticle(
                             new KeyFramedGlitterBox(20)
-                                    .pos(Easing.easeOutQuart, point)
-                                    .pos(Easing.linear, to)
-                                    .color(Easing.linear, colors[0])
-                                    .color(Easing.linear, colors[1])
-                                    .size(Easing.linear, 1)
-                                    .size(Easing.linear, 1)
-                                    .alpha(Easing.linear, 1)
-                                    .alpha(Easing.linear, 1)
+                                    .pos(point)
+                                    .pos(point, Easing.easeOutQuart)
+                                    .pos(to)
+                                    .pos(to)
+                                    .pos(to)
+                                    .color(colors[0])
+                                    .color(colors[1])
+                                    .size(0, Easing.easeOutQuart)
+                                    .size(0.3, Easing.linear)
+                                    .size(0.1, Easing.linear)
+                                    .size(0)
+                                    .alpha(1)
+                                    .alpha(1)
                     );
                 }
             }

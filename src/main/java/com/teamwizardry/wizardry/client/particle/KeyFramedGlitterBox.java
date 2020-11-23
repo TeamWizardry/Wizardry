@@ -29,8 +29,12 @@ public class KeyFramedGlitterBox {
         this.lifetime = lifetime;
     }
 
-    public KeyFramedGlitterBox pos(Easing easing, double x, double y, double z) {
-        posEasings[posFrameCount] = KeyFramedGlitter.easingArray.indexOf(easing);
+    public KeyFramedGlitterBox pos(double x, double y, double z) {
+        return pos(x, y, z, null);
+    }
+
+    public KeyFramedGlitterBox pos(double x, double y, double z, Easing easing) {
+        posEasings[posFrameCount] = easing == null ? 0 : KeyFramedGlitter.easingArray.indexOf(easing);
         pos[posFrameCount * 3] = x;
         pos[posFrameCount * 3 + 1] = y;
         pos[posFrameCount * 3 + 2] = z;
@@ -38,8 +42,12 @@ public class KeyFramedGlitterBox {
         return this;
     }
 
-    public KeyFramedGlitterBox pos(Easing easing, Vec3d vec) {
-        posEasings[posFrameCount] = KeyFramedGlitter.easingArray.indexOf(easing);
+    public KeyFramedGlitterBox pos(Vec3d vec) {
+        return pos(vec, null);
+    }
+
+    public KeyFramedGlitterBox pos(Vec3d vec, Easing easing) {
+        posEasings[posFrameCount] = easing == null ? 0 : KeyFramedGlitter.easingArray.indexOf(easing);
         pos[posFrameCount * 3] = vec.x;
         pos[posFrameCount * 3 + 1] = vec.y;
         pos[posFrameCount * 3 + 2] = vec.z;
@@ -47,8 +55,12 @@ public class KeyFramedGlitterBox {
         return this;
     }
 
-    public KeyFramedGlitterBox color(Easing easing, double r, double g, double b) {
-        colorEasings[colorFrameCount] = KeyFramedGlitter.easingArray.indexOf(easing);
+    public KeyFramedGlitterBox color(double r, double g, double b) {
+        return color(r, g, b, null);
+    }
+
+    public KeyFramedGlitterBox color(double r, double g, double b, Easing easing) {
+        colorEasings[colorFrameCount] = easing == null ? 0 : KeyFramedGlitter.easingArray.indexOf(easing);
         color[colorFrameCount * 4] = r;
         color[colorFrameCount * 4 + 1] = g;
         color[colorFrameCount * 4 + 2] = b;
@@ -57,26 +69,37 @@ public class KeyFramedGlitterBox {
         return this;
     }
 
-    public KeyFramedGlitterBox color(Easing easing, Color value) {
-        colorEasings[colorFrameCount] = KeyFramedGlitter.easingArray.indexOf(easing);
-        color[colorFrameCount * 3] = value.getRed() / 255.0;
-        color[colorFrameCount * 3 + 1] = value.getGreen() / 255.0;
-        color[colorFrameCount * 3 + 2] = value.getBlue() / 255.0;
+    public KeyFramedGlitterBox color(Color value) {
+        return color(value, null);
+    }
+
+    public KeyFramedGlitterBox color(Color value, Easing easing) {
+        colorEasings[colorFrameCount] = easing == null ? 0 : KeyFramedGlitter.easingArray.indexOf(easing);
+        color[colorFrameCount * 4] = value.getRed() / 255.0;
+        color[colorFrameCount * 4 + 1] = value.getGreen() / 255.0;
+        color[colorFrameCount * 4 + 2] = value.getBlue() / 255.0;
         color[colorFrameCount * 4 + 3] = 1;
         colorFrameCount++;
         return this;
     }
 
+    public KeyFramedGlitterBox size(double value) {
+        return size(value, null);
+    }
 
-    public KeyFramedGlitterBox size(Easing easing, double value) {
-        sizeEasings[sizeFrameCount] = KeyFramedGlitter.easingArray.indexOf(easing);
+    public KeyFramedGlitterBox size(double value, Easing easing) {
+        sizeEasings[sizeFrameCount] = easing == null ? 0 : KeyFramedGlitter.easingArray.indexOf(easing);
         size[sizeFrameCount] = value;
         sizeFrameCount++;
         return this;
     }
 
-    public KeyFramedGlitterBox alpha(Easing easing, double value) {
-        alphaEasings[alphaFrameCount] = KeyFramedGlitter.easingArray.indexOf(easing);
+    public KeyFramedGlitterBox alpha(double value) {
+        return alpha(value, null);
+    }
+
+    public KeyFramedGlitterBox alpha(double value, Easing easing) {
+        alphaEasings[alphaFrameCount] = easing == null ? 0 : KeyFramedGlitter.easingArray.indexOf(easing);
         alpha[alphaFrameCount] = value;
         alphaFrameCount++;
         return this;
