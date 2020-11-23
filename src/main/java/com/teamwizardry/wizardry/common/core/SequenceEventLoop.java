@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber()
+@Mod.EventBusSubscriber
 public class SequenceEventLoop {
     private static final List<Sequence> sequenceList = new ArrayList<>();
 
