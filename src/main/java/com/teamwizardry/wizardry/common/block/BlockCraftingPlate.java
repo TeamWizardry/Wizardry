@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.block.*;
@@ -9,7 +10,6 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -52,6 +52,9 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
     public @NotNull ActionResultType onBlockActivated(@NotNull BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, @NotNull PlayerEntity player, @NotNull Hand handIn, @NotNull BlockRayTraceResult hit) {
 
 
+        if (worldIn.isRemote)
+            Wizardry.PROXY.openWorktableGui();
+        /*
         if (!worldIn.isRemote) {
             if (handIn == Hand.MAIN_HAND) {
                 ItemStack heldItem = player.getHeldItemMainhand();
@@ -67,12 +70,8 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
             }
             return ActionResultType.SUCCESS;
 
-        } else {
-
-            //	if (worldIn.isRemote)
-            //		Wizardry.PROXY.openWorktableGui();
         }
-
+*/
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
