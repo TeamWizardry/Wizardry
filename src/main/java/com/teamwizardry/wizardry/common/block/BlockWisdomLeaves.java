@@ -11,6 +11,4 @@ public class BlockWisdomLeaves extends LeavesBlock {
 	public BlockWisdomLeaves(Properties properties) {
 		super(properties);
 	}
-
-
 }

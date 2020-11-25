@@ -6,9 +6,11 @@ import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
 import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
+import com.teamwizardry.wizardry.common.block.BlockMagicWorktable;
+import com.teamwizardry.wizardry.common.block.BlockWisdomSapling;
 import com.teamwizardry.wizardry.common.lib.LibBlockNames;
+import com.teamwizardry.wizardry.common.structure.WisdomTree;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
@@ -28,10 +30,14 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModBlocks {
 	public static final LazyBlock craftingPlate = new LazyBlock();
+	public static final LazyBlock magiciansWorktable = new LazyBlock();
 	public static final LazyBlock wisdomLog = new LazyBlock();
 	public static final LazyBlock wisdomPlanks = new LazyBlock();
 	public static final LazyBlock wisdomGildedPlanks = new LazyBlock();
 	public static final LazyBlock wisdomLeaves = new LazyBlock();
+	public static final LazyBlock wisdomDoor = new LazyBlock();
+	public static final LazyBlock wisdomFence = new LazyBlock();
+	public static final LazyBlock wisdomSapling = new LazyBlock();
 
 	public static void registerBlocks(RegistrationManager reggie) {
 		// Basic Blocks
@@ -49,14 +55,18 @@ public class ModBlocks {
 		wisdomLeaves.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LEAVES)
 				.material(Material.LEAVES)
 				.hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT).notSolid()
-				.block(blockSpec -> new LeavesBlock(blockSpec.getBlockProperties()))
-		));
-
+				.block(blockSpec -> new LeavesBlock(blockSpec.getBlockProperties()))));
+		wisdomSapling.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_SAPLING)
+				.material(Material.PLANTS)
+				.block(blockSpec -> new BlockWisdomSapling(new WisdomTree(), blockSpec.getBlockProperties()))));
 
 		// Tile Entities
 		craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
 				.material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
 				.block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));
+		magiciansWorktable.from(reggie.add(new BlockSpec(LibBlockNames.MAGICIANS_WORKTABLE)
+				.material(Material.WOOD)
+				.block(blockSpec -> new BlockMagicWorktable(blockSpec.getBlockProperties()))));
 	}
 
 	@SubscribeEvent
