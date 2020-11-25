@@ -8,6 +8,8 @@ import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.librarianlib.mosaic.Sprite;
 import ll.dev.thecodewarrior.bitfont.typesetting.TextLayoutManager;
 
+import java.awt.*;
+
 import static com.teamwizardry.wizardry.client.gui.WorktableGUI.*;
 
 @SuppressWarnings("SuspiciousNameCombination")
@@ -20,6 +22,7 @@ public class WButton extends GuiLayer {
         add(buttonBG);
 
         TextLayer textLayer = new TextLayer(getWidthi() / 2, getHeighti() / 2, getWidthi(), getHeighti(), text);
+        textLayer.setColor(Color.WHITE);
         textLayer.setAnchor(new Vec2d(0.5, 0.5));
         textLayer.fitToText(TextLayer.FitType.BOTH);
         textLayer.setTextAlignment(TextLayoutManager.Alignment.CENTER);

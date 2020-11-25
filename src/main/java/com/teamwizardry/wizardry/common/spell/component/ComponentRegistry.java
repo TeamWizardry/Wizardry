@@ -91,4 +91,7 @@ public class ComponentRegistry
     
     public static TargetComponent getEntityTarget() { return entityTarget; }
     public static TargetComponent getBlockTarget() { return blockTarget; }
+    public static Map<String, Module> getModules() {
+        return modules;
+    }
 }

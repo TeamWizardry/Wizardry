@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.spell.component;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
@@ -55,7 +52,7 @@ public class Module implements ISpellComponent
     
     public double getAttributeValue(String attribute, int count)
     {
-        List<Double> values = attributeValues.getOrDefault(attribute, Arrays.asList(1d));
+        List<Double> values = attributeValues.getOrDefault(attribute, Collections.singletonList(1d));
         if (count < 0) count = 0;
         if (count >= values.size()) count = values.size()-1;
         return values.get(count);
@@ -76,6 +73,10 @@ public class Module implements ISpellComponent
     public List<String> getAttributes()
     {
         return attributeValues.keySet().stream().filter(attribute -> attributeValues.get(attribute).size() > 1).collect(Collectors.toList());
+    }
+
+    public Map<String, List<Double>> getAttributeValues() {
+        return attributeValues;
     }
 
     public String toString() { return pattern.getRegistryName() + ":" + name + " = [" + items + ", " + element + "]"; }
