@@ -29,14 +29,25 @@ public abstract class Pattern extends ForgeRegistryEntry<Pattern> {
         if (instance.getCaster() == null || target == null)
             return;
 
-        instance.getCaster().consumeCost(world, instance.getManaCost(), instance.getBurnoutCost());
         switch (target.getType()) {
             case BLOCK: {
-                affectBlock(world, target, instance);
+                switch (instance.getTargetType()) {
+                    case ALL:
+                    case BLOCK:
+                        if (instance.getCaster().consumeCost(world, instance.getManaCost(), instance.getBurnoutCost()))
+                            affectBlock(world, target, instance);
+                    default:
+                }
                 break;
             }
             case ENTITY: {
-                affectEntity(world, target, instance);
+                switch (instance.getTargetType()) {
+                    case ALL:
+                    case ENTITY:
+                        if (instance.getCaster().consumeCost(world, instance.getManaCost(), instance.getBurnoutCost()))
+                            affectEntity(world, target, instance);
+                    default:
+                }
                 break;
             }
         }
