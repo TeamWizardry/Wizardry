@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.block.*;
@@ -10,6 +9,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -49,12 +49,10 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
 
     @Override
     @SuppressWarnings("deprecation")
-    public @NotNull ActionResultType onBlockActivated(@NotNull BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, @NotNull PlayerEntity player, @NotNull Hand handIn, @NotNull BlockRayTraceResult hit) {
+    public @NotNull ActionResultType onBlockActivated(@NotNull BlockState state, @NotNull World worldIn,
+                                                      @NotNull BlockPos pos, @NotNull PlayerEntity player,
+                                                      @NotNull Hand handIn, @NotNull BlockRayTraceResult hit) {
 
-
-        if (worldIn.isRemote)
-            Wizardry.PROXY.openWorktableGui();
-        /*
         if (!worldIn.isRemote) {
             if (handIn == Hand.MAIN_HAND) {
                 ItemStack heldItem = player.getHeldItemMainhand();
@@ -71,7 +69,7 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
             return ActionResultType.SUCCESS;
 
         }
-*/
+
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
@@ -120,7 +118,8 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
 
     @Override
     @SuppressWarnings("deprecation")
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+                                          BlockPos currentPos, BlockPos facingPos) {
         if (stateIn.get(WATERLOGGED)) {
             worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
         }
@@ -133,7 +132,8 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
         if (!state.get(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
 
             worldIn.setBlockState(pos, state.with(WATERLOGGED, Boolean.TRUE), 3);
-            worldIn.getPendingFluidTicks().scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
+            worldIn.getPendingFluidTicks()
+                    .scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
             return true;
         } else {
             return false;

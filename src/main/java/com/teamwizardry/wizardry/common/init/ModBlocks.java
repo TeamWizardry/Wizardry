@@ -65,7 +65,7 @@ public class ModBlocks {
 				.material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
 				.block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));
 		magiciansWorktable.from(reggie.add(new BlockSpec(LibBlockNames.MAGICIANS_WORKTABLE)
-				.material(Material.WOOD)
+				.material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
 				.block(blockSpec -> new BlockMagicWorktable(blockSpec.getBlockProperties()))));
 	}
 

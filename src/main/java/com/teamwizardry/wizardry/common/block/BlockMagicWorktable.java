@@ -8,13 +8,15 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathType;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -22,11 +24,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,138 +35,143 @@ import org.jetbrains.annotations.Nullable;
  * Created by Carbon
  * Copyright (c) Carbon 2020
  */
-public class BlockMagicWorktable extends HorizontalBlock {
-	public static final EnumProperty<WorktablePart> PART = LibBlockStateProperties.WORKTABLE_PART;
+public class BlockMagicWorktable extends HorizontalBlock implements IWaterLoggable {
+    public static final EnumProperty<WorktablePart> PART = LibBlockStateProperties.WORKTABLE_PART;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	private static final VoxelShape boundsN = Block.makeCuboidShape(0, 0, 0, 32, 16, -16);
-	private static final VoxelShape boundsS = Block.makeCuboidShape(0, 0, 0, -32, 16, 16);
-	private static final VoxelShape boundsE = Block.makeCuboidShape(0, 0, 0, 16, 16, 32);
-	private static final VoxelShape boundsW = Block.makeCuboidShape(0, 0, 0, -16, 16, -32);
+    public enum WorktablePart implements IStringSerializable {
+        LEFT("left"),
+        RIGHT("right");
 
-	public enum WorktablePart implements IStringSerializable {
-		LEFT("left"),
-		RIGHT("right");
+        private final String name;
 
-		private final String name;
+        WorktablePart(String name) {
+            this.name = name;
+        }
 
-		WorktablePart(String name) {
-			this.name = name;
-		}
+        @Override
+        public String toString() {
+            return this.name;
+        }
 
-		@Override
-		public String toString() {
-			return this.name;
-		}
+        @Override
+        public @NotNull String getName() {
+            return this.name;
+        }
+    }
 
-		@Override
-		public @NotNull String getName() {
-			return this.name;
-		}
-	}
+    public BlockMagicWorktable(Properties properties) {
+        super(properties);
+        this.setDefaultState(this.stateContainer.getBaseState()
+                .with(PART, WorktablePart.LEFT)
+                .with(HORIZONTAL_FACING, Direction.NORTH)
+                .with(WATERLOGGED, Boolean.FALSE));
+    }
 
-	public BlockMagicWorktable(Properties properties) {
-		super(properties);
-		this.setDefaultState(this.stateContainer.getBaseState().with(PART, WorktablePart.LEFT));
-	}
+    private static Direction getDirectionToOther(WorktablePart part, Direction facing) {
+        return part == WorktablePart.LEFT ? facing : facing.getOpposite();
+    }
 
-	private Direction getDirectionFacing(IBlockReader reader, BlockPos pos) {
-		BlockState state = reader.getBlockState(pos);
-		return state.getBlock() instanceof HorizontalBlock ? state.get(HORIZONTAL_FACING) : null;
-	}
+    @Override
+    @SuppressWarnings("deprecation")
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+                                          BlockPos currentPos, BlockPos facingPos) {
+        if (stateIn.get(WATERLOGGED)) {
+            worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+        }
+        if (facing == getDirectionToOther(stateIn.get(PART), stateIn.get(HORIZONTAL_FACING))) {
+            return facingState.getBlock() == this && facingState.get(PART) != stateIn.get(PART) ?
+                    stateIn :
+                    Blocks.AIR.getDefaultState();
+        } else {
+            return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        }
+    }
 
-	private VoxelShape getBounds(IBlockReader worldIn, BlockPos pos) {
-		Direction dir = getDirectionFacing(worldIn, pos);
+    @Override
+    public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state,
+                             @javax.annotation.Nullable TileEntity te, ItemStack stack) {
+        super.harvestBlock(worldIn, player, pos, Blocks.AIR.getDefaultState(), te, stack);
+    }
 
-		if(dir == null) return null;
-		else {
-			switch (dir) {
-				case NORTH:
-					return boundsN;
+    @Nullable
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        IWorld iworld = context.getWorld();
+        Direction direction = context.getPlacementHorizontalFacing().rotateY();
+        BlockPos blockpos = context.getPos();
+        BlockPos blockpos1 = blockpos.offset(direction);
+        boolean flag = iworld.getFluidState(blockpos).getFluid() == Fluids.WATER;
+        return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ?
+                this.getDefaultState()
+                        .with(HORIZONTAL_FACING, direction)
+                        .with(WATERLOGGED, flag) :
+                null;
+    }
 
-				case SOUTH:
-					return boundsS;
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(HORIZONTAL_FACING, PART, WATERLOGGED);
+    }
 
-				case EAST:
-					return boundsE;
+    @Override
+    public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, IFluidState fluidStateIn) {
+        if (!state.get(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
 
-				case WEST:
-					return boundsW;
+            worldIn.setBlockState(pos, state.with(WATERLOGGED, Boolean.TRUE), 3);
+            worldIn.getPendingFluidTicks()
+                    .scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-				default:
-					return null;  // should never get here!
-			}
-		}
-	}
+    @Override
+    @SuppressWarnings("deprecation")
+    public IFluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+    }
 
-	private static Direction getDirectionToOther(WorktablePart part, Direction facing) {
-		return part == WorktablePart.LEFT ? facing : facing.getOpposite();
-	}
+    @Override
+    public PushReaction getPushReaction(BlockState state) {
+        return PushReaction.IGNORE;  // Don't want dupes
+    }
 
-	@Override
-	@SuppressWarnings("deprecation")
-	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-		if (facing == getDirectionToOther(stateIn.get(PART), stateIn.get(HORIZONTAL_FACING))) {
-			return facingState.getBlock() == this && facingState.get(PART) != stateIn.get(PART) ? stateIn : Blocks.AIR.getDefaultState();
-		} else {
-			return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-		}
-	}
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state,
+                                @javax.annotation.Nullable LivingEntity placer, ItemStack stack) {
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
-	@Override
-	public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @javax.annotation.Nullable TileEntity te, ItemStack stack) {
-		super.harvestBlock(worldIn, player, pos, Blocks.AIR.getDefaultState(), te, stack);
-	}
+        if (!worldIn.isRemote) {
+            BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING));
+            worldIn.setBlockState(blockpos, state.with(PART, WorktablePart.RIGHT), 3);
+            worldIn.notifyNeighbors(pos, Blocks.AIR);
+            state.updateNeighbors(worldIn, pos, 3);
+        }
+    }
 
-	@Nullable
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		Direction direction = context.getPlacementHorizontalFacing().rotateY();
-		BlockPos blockpos = context.getPos();
-		BlockPos blockpos1 = blockpos.offset(direction);
-		return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ? this.getDefaultState().with(HORIZONTAL_FACING, direction) : null;
-	}
+    @Override
+    @SuppressWarnings("deprecation")
+    public @NotNull ActionResultType onBlockActivated(@NotNull BlockState state, @NotNull World worldIn,
+                                                      @NotNull BlockPos pos, @NotNull PlayerEntity player,
+                                                      @NotNull Hand handIn, @NotNull BlockRayTraceResult hit) {
+        if (worldIn.isRemote) Wizardry.PROXY.openWorktableGui();
+        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+    }
 
-	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-		builder.add(HORIZONTAL_FACING, PART);
-	}
+    @Nullable
+    @Override
+    public TileMagicWorktable createTileEntity(BlockState state, IBlockReader world) {
+        return LibTileEntityType.MAGICIANS_WORKTABLE.create();
+    }
 
-	@Override
-	public PushReaction getPushReaction(BlockState state) {
-		return PushReaction.IGNORE;  // Don't want dupes
-	}
 
-	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @javax.annotation.Nullable LivingEntity placer, ItemStack stack) {
-		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
 
-		if (!worldIn.isRemote) {
-			BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING));
-			worldIn.setBlockState(blockpos, state.with(PART, WorktablePart.RIGHT), 3);
-			worldIn.notifyNeighbors(pos, Blocks.AIR);
-			state.updateNeighbors(worldIn, pos, 3);
-		}
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public @NotNull ActionResultType onBlockActivated(@NotNull BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, @NotNull PlayerEntity player, @NotNull Hand handIn, @NotNull BlockRayTraceResult hit) {
-		if (worldIn.isRemote) Wizardry.PROXY.openWorktableGui();
-		return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
-	}
-
-	@Nullable
-	@Override
-	public TileMagicWorktable createTileEntity(BlockState state, IBlockReader world) {
-		return LibTileEntityType.MAGICIANS_WORKTABLE.create();
-	}
-
-	@Override
-	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-		return false;
-	}
-
-	@Override
-	public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
-		return false;
-	}
+    @Override
+    public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+        return false;
+    }
 }

@@ -1,34 +1,12 @@
 {
-	"forge_marker": 1,
-	"defaults": {
-		"model": "wizardry:magicians_worktable"
-	},
-	"variants": {
-		"inventory": {
-			"model": "wizardry:magicians_worktable"
-		},
-		"is_left_side": {
-			"true": {
-				"model": "wizardry:research_table_left"
-			},
-			"false": {
-				"model": "wizardry:research_table_right",
-				"uvlock": false
-			}
-		},
-		"facing": {
-			"south": {},
-			"north": {
-				"y": 180
-			},
-			"east": {
-				"y": 270
-			},
-			"west": {
-				"y": 90
-			},
-			"up": {},
-			"down": {}
-		}
-	}
+  "variants": {
+    "facing=south,part=left": {"model": "wizardry:block/research_table_left"  , "y": 90},
+    "facing=south,part=right": {"model": "wizardry:block/research_table_right", "y": 90},
+    "facing=west,part=left": {"model": "wizardry:block/research_table_left"   , "y": 180},
+    "facing=west,part=right": {"model": "wizardry:block/research_table_right" , "y": 180},
+    "facing=north,part=left": {"model": "wizardry:block/research_table_left"  , "y": 270},
+    "facing=north,part=right": {"model": "wizardry:block/research_table_right", "y": 270},
+    "facing=east,part=left": {"model": "wizardry:block/research_table_left"   , "y": 0},
+    "facing=east,part=right": {"model": "wizardry:block/research_table_right" , "y": 0}
+  }
 }
