@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.common.spell.component;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
@@ -80,4 +83,8 @@ public class Module implements ISpellComponent
     }
 
     public String toString() { return pattern.getRegistryName() + ":" + name + " = [" + items + ", " + element + "]"; }
+    
+    public String getTranslationKey() { return "wizardry.spell." + pattern.getRegistryName() + ":" + name; }
+    
+    public String getTranslationKey(String key) { return getTranslationKey() + "." + key; }
 }

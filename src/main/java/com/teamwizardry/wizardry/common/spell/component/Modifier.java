@@ -25,4 +25,6 @@ public class Modifier implements ISpellComponent
     {
         return name;
     }
+    
+    public String getTranslationKey() { return "wizardry.modifier." + name; }
 }
