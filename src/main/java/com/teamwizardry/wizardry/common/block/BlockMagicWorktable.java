@@ -137,8 +137,7 @@ public class BlockMagicWorktable extends HorizontalBlock implements IWaterLoggab
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state,
-                                @javax.annotation.Nullable LivingEntity placer, ItemStack stack) {
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
         if (!worldIn.isRemote) {

@@ -4,7 +4,7 @@
     "type": "CTM",
     "layer": "SOLID",
     "textures": [
-        "wizardry:blocks/wisdom_wood_pigmented_planks_ctm"
+        "wizardry:blocks/wisdom_wood_gilded_planks_ctm"
     ]
   }
 }
