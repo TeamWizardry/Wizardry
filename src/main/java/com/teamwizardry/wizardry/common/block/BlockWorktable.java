@@ -15,7 +15,9 @@ import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BedPart;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -34,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  * Created by Carbon
  * Copyright (c) Carbon 2020
  */
-public class BlockMagicWorktable extends HorizontalBlock implements IWaterLoggable {
+public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
     public static final EnumProperty<WorktablePart> PART = LibBlockStateProperties.WORKTABLE_PART;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -59,7 +61,7 @@ public class BlockMagicWorktable extends HorizontalBlock implements IWaterLoggab
         }
     }
 
-    public BlockMagicWorktable(Properties properties) {
+    public BlockWorktable(Properties properties) {
         super(properties);
         this.setDefaultState(this.stateContainer.getBaseState()
                 .with(PART, WorktablePart.LEFT)
@@ -91,6 +93,26 @@ public class BlockMagicWorktable extends HorizontalBlock implements IWaterLoggab
     public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state,
                              @javax.annotation.Nullable TileEntity te, ItemStack stack) {
         super.harvestBlock(worldIn, player, pos, Blocks.AIR.getDefaultState(), te, stack);
+    }
+
+    @Override
+    public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+        WorktablePart worktablePart = state.get(PART);
+        BlockPos blockpos = pos.offset(getDirectionToOther(worktablePart, state.get(HORIZONTAL_FACING)));
+        BlockState blockstate = worldIn.getBlockState(blockpos);
+        if (blockstate.getBlock() == this && blockstate.get(PART) != worktablePart) {
+            worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
+            worldIn.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
+            if (!worldIn.isRemote && !player.isCreative()) {
+                ItemStack itemstack = player.getHeldItemMainhand();
+                spawnDrops(state, worldIn, pos, null, player, itemstack);
+                spawnDrops(blockstate, worldIn, blockpos, null, player, itemstack);
+            }
+
+            player.addStat(Stats.BLOCK_MINED.get(this));
+        }
+
+        super.onBlockHarvested(worldIn, pos, state, player);
     }
 
     @Nullable
