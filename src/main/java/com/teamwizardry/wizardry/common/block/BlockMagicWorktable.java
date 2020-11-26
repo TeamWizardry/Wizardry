@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.lib.LibBlockStateProperties;
 import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
-import com.teamwizardry.wizardry.common.tile.TileMagicWorktable;
 import net.minecraft.block.*;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.LivingEntity;
@@ -158,13 +157,6 @@ public class BlockMagicWorktable extends HorizontalBlock implements IWaterLoggab
         if (worldIn.isRemote) Wizardry.PROXY.openWorktableGui();
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
-
-    @Nullable
-    @Override
-    public TileMagicWorktable createTileEntity(BlockState state, IBlockReader world) {
-        return LibTileEntityType.MAGICIANS_WORKTABLE.create();
-    }
-
 
     public BlockRenderType getRenderType(BlockState state) {
         return BlockRenderType.MODEL;
