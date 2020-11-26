@@ -6,8 +6,9 @@ import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
 import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
-import com.teamwizardry.wizardry.common.block.BlockMagicWorktable;
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling;
+import com.teamwizardry.wizardry.common.block.BlockWorktable;
+import com.teamwizardry.wizardry.common.block.fluid.mana.BlockMana;
 import com.teamwizardry.wizardry.common.lib.LibBlockNames;
 import com.teamwizardry.wizardry.common.structure.WisdomTree;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
@@ -39,6 +40,10 @@ public class ModBlocks {
     public static final LazyBlock wisdomFence = new LazyBlock();
     public static final LazyBlock wisdomSapling = new LazyBlock();
 
+    // Fluids
+    public static final LazyBlock liquidMana = new LazyBlock();
+
+
     public static void registerBlocks(RegistrationManager reggie) {
         // Basic Blocks
 
@@ -64,14 +69,24 @@ public class ModBlocks {
                 .sound(SoundType.PLANT)
                 .block(blockSpec -> new BlockWisdomSapling(new WisdomTree(), blockSpec.getBlockProperties()))));
 
+        // Fluids
+        liquidMana.from(reggie.add(new BlockSpec(LibBlockNames.MANA_FLUID)
+                .material(Material.WATER)
+                .doesNotBlockMovement()
+                .lightValue(5)
+                .hardnessAndResistance(100.0F)
+                .noDrops()
+                .block(blockSpec -> new BlockMana(() -> ModFluids.MANA_FLUID, blockSpec.getBlockProperties()))));
+
         // Tile Entities
         craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
                 .block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));
-        magiciansWorktable.from(reggie.add(new BlockSpec(LibBlockNames.MAGICIANS_WORKTABLE)
+        magiciansWorktable.from(reggie.add(new BlockSpec(LibBlockNames.WORKTABLE)
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
-                .block(blockSpec -> new BlockMagicWorktable(blockSpec.getBlockProperties()))));
+                .block(blockSpec -> new BlockWorktable(blockSpec.getBlockProperties()))));
     }
+
 
     @SubscribeEvent
     public static void registerTile(RegistryEvent.Register<TileEntityType<?>> event) {
@@ -99,4 +114,5 @@ public class ModBlocks {
                 },
                 wisdomLeaves.get());
     }
+
 }

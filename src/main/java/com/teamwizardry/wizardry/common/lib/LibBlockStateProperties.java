@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.lib;
 
-import com.teamwizardry.wizardry.common.block.BlockMagicWorktable;
+import com.teamwizardry.wizardry.common.block.BlockWorktable;
 import net.minecraft.state.EnumProperty;
 
 /**
@@ -9,5 +9,5 @@ import net.minecraft.state.EnumProperty;
  * Copyright (c) Carbon 2020
  */
 public class LibBlockStateProperties {
-	public static final EnumProperty<BlockMagicWorktable.WorktablePart> WORKTABLE_PART = EnumProperty.create("part", BlockMagicWorktable.WorktablePart.class);
+	public static final EnumProperty<BlockWorktable.WorktablePart> WORKTABLE_PART = EnumProperty.create("part", BlockWorktable.WorktablePart.class);
 }

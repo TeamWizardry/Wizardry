@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "wizardry.refmap.json",
   "mixins": [
+    "EntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

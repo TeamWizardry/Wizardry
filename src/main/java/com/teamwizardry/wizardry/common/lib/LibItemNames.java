@@ -9,4 +9,6 @@ public class LibItemNames {
 	public static final String SKY_DUST = "sky_dust";
 	public static final String FAIRY_WINGS = "fairy_wings";
 	public static final String FAIRY_APPLE = "fairy_imbued_apple";
+
+	public static final String MANA_BUCKET = "mana_bucket";
 }
