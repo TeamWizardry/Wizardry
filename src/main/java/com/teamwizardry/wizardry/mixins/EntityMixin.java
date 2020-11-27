@@ -75,7 +75,7 @@ public abstract class EntityMixin extends CapabilityProvider<Entity> {
                                 pos.setPos(x, y, z);
                                 IFluidState fluidState = this.world.getFluidState(pos);
                                 if (fluidState.isTagged(fluidTag)) {
-                                    this.setMotion(this.getMotion().add(0, 0.1, 0));
+                                    this.setMotion(this.getMotion().add(0, 0.075, 0));
                                     break primary;
                                 }
                             }

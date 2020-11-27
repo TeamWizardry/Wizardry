@@ -2,15 +2,42 @@ package com.teamwizardry.wizardry.proxy;
 
 import com.teamwizardry.wizardry.client.gui.WorktableGUI;
 import com.teamwizardry.wizardry.client.particle.*;
+import com.teamwizardry.wizardry.common.init.ModBlocks;
+import com.teamwizardry.wizardry.common.init.ModFluids;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ClientProxy implements IProxy {
 
     private final PhysicsGlitter physicsGlitter = new PhysicsGlitter();
     private final PredeterminedGlitter predeterminedGlitter = new PredeterminedGlitter();
     private final KeyFramedGlitter keyFramedGlitter = new KeyFramedGlitter();
+
+    @Override
+    public void clientSetup() {
+        setRenderLayer(ModBlocks.liquidMana.get(), RenderType.getTranslucent());
+
+        setRenderLayer(ModFluids.MANA_FLUID_FLOWING, RenderType.getTranslucent());
+        setRenderLayer(ModFluids.MANA_FLUID, RenderType.getTranslucent());
+    }
+
+    private static void setRenderLayer(Block block, RenderType... types) {
+        List<RenderType> typeList = Arrays.asList(types);
+        RenderTypeLookup.setRenderLayer(block, typeList::contains);
+    }
+
+    private static void setRenderLayer(Fluid fluid, RenderType... types) {
+        List<RenderType> typeList = Arrays.asList(types);
+        RenderTypeLookup.setRenderLayer(fluid, typeList::contains);
+    }
 
     @Override
     public void registerHandlers() {

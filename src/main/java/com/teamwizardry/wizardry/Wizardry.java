@@ -24,6 +24,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -91,6 +92,10 @@ public class Wizardry extends BaseMod {
 		});
 
 		CapabilityManager.INSTANCE.register(IManaCapability.class, new ManaStorage(), () -> new ManaCapabilityImpl(0, 1000, 1000, 1000));
+	}
+
+	public void clientSetup(FMLClientSetupEvent event) {
+		PROXY.clientSetup();
 	}
 
 	public void init(final FMLCommonSetupEvent event) {

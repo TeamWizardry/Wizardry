@@ -6,7 +6,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 
 public class ServerProxy implements IProxy {
-	@Override
+
+    @Override
+    public void clientSetup() {
+
+    }
+
+    @Override
 	public void registerHandlers() {
 		//NOOP
 	}

@@ -7,6 +7,7 @@ import net.minecraft.util.Hand;
 
 public interface IProxy {
 
+    void clientSetup();
 
     void registerHandlers();
 
