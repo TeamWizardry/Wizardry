@@ -26,12 +26,14 @@ import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModBlocks {
     public static final LazyBlock craftingPlate = new LazyBlock();
     public static final LazyBlock magiciansWorktable = new LazyBlock();
+
     public static final LazyBlock wisdomLog = new LazyBlock();
     public static final LazyBlock wisdomPlanks = new LazyBlock();
     public static final LazyBlock wisdomGildedPlanks = new LazyBlock();
@@ -54,7 +56,7 @@ public class ModBlocks {
         wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_PLANKS)
                 .block(blockSpec -> new Block(blockSpec.getBlockProperties()))
                 .withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
-        wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_GILDED_PLANKS)
+        wisdomGildedPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_GILDED_PLANKS)
                 .block(blockSpec -> new Block(blockSpec.getBlockProperties()))
                 .withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
         wisdomLeaves.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LEAVES)
@@ -86,7 +88,6 @@ public class ModBlocks {
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
                 .block(blockSpec -> new BlockWorktable(blockSpec.getBlockProperties()))));
     }
-
 
     @SubscribeEvent
     public static void registerTile(RegistryEvent.Register<TileEntityType<?>> event) {

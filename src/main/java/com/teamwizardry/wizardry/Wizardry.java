@@ -26,6 +26,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -36,69 +37,71 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(Wizardry.MODID)
 public class Wizardry extends BaseMod {
-	public static final String MODID = "wizardry";
-	public static final Logger LOGGER = LogManager.getLogger(MODID);
+    public static final String MODID = "wizardry";
+    public static final Logger LOGGER = LogManager.getLogger(MODID);
 
-	public static IProxy PROXY;
-	public static Wizardry INSTANCE;
-	public static final CourierChannel NETWORK = new CourierChannel(
-			new ResourceLocation(Wizardry.MODID, "network"), "0"
-	);
+    public static IProxy PROXY;
+    public static Wizardry INSTANCE;
+    public static final CourierChannel NETWORK = new CourierChannel(
+            new ResourceLocation(Wizardry.MODID, "network"), "0"
+    );
 
-	public Wizardry() {
-		INSTANCE = this;
-		PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public Wizardry() {
+        INSTANCE = this;
+        PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		eventBus.addListener(this::init);
-		eventBus.addListener(this::registerRegistries);
-		MinecraftForge.EVENT_BUS.addListener(this::serverStartingEvent);
-		eventBus.addGenericListener(Pattern.class, this::registerPatterns);
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        eventBus.addListener(this::init);
+        eventBus.addListener(this::registerRegistries);
+        MinecraftForge.EVENT_BUS.addListener(this::serverStartingEvent);
+        eventBus.addGenericListener(Pattern.class, this::registerPatterns);
 
-		// Initialize Items
-		ModItems.initializeItems(getRegistrationManager());
-		ModItems.initializeItemGroup();
+        // Initialize Items
+        ModItems.initializeItems(getRegistrationManager());
+        ModItems.initializeItemGroup();
 
-		// Initialize Blocks
-		ModBlocks.registerBlocks(getRegistrationManager());
+        // Initialize Blocks
+        ModBlocks.registerBlocks(getRegistrationManager());
 
-		// Register packets
-		NETWORK.register(new CRenderSpellPacket(), NetworkDirection.PLAY_TO_CLIENT);
+        // Register packets
+        NETWORK.register(new CRenderSpellPacket(), NetworkDirection.PLAY_TO_CLIENT);
 
-		PROXY.registerHandlers();
-	}
+        PROXY.registerHandlers();
+    }
 
-	public static ResourceLocation location(String path) {
-		return new ResourceLocation(MODID, path);
-	}
+    public static ResourceLocation location(String path) {
+        return new ResourceLocation(MODID, path);
+    }
 
-	private void registerRegistries(RegistryEvent.NewRegistry event) {
-		new RegistryBuilder<Pattern>().setType(Pattern.class)
-				.setName(new ResourceLocation(MODID, "pattern"))
-				.disableSaving()
-				.create();
-	}
+    private void registerRegistries(RegistryEvent.NewRegistry event) {
+        new RegistryBuilder<Pattern>().setType(Pattern.class)
+                .setName(new ResourceLocation(MODID, "pattern"))
+                .disableSaving()
+                .create();
+    }
 
-	private void registerPatterns(RegistryEvent.Register<Pattern> event) {
-		PatternInit.init(event.getRegistry());
-	}
+    private void registerPatterns(RegistryEvent.Register<Pattern> event) {
+        PatternInit.init(event.getRegistry());
+    }
 
-	public void serverStartingEvent(FMLServerAboutToStartEvent event) {
-		IReloadableResourceManager manager = event.getServer().getResourceManager();
-		manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> {
-		    ComponentRegistry.loadTargets();
-		    ModifierLoader.loadModifiers(manager);
-		    ModuleLoader.loadModules(manager);
-		});
+    public void serverStartingEvent(FMLServerAboutToStartEvent event) {
+        IReloadableResourceManager manager = event.getServer().getResourceManager();
+        manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> {
+            ComponentRegistry.loadTargets();
+            ModifierLoader.loadModifiers(manager);
+            ModuleLoader.loadModules(manager);
+        });
 
-		CapabilityManager.INSTANCE.register(IManaCapability.class, new ManaStorage(), () -> new ManaCapabilityImpl(0, 1000, 1000, 1000));
-	}
+        CapabilityManager.INSTANCE.register(IManaCapability.class,
+                new ManaStorage(),
+                () -> new ManaCapabilityImpl(0, 1000, 1000, 1000));
+    }
 
-	public void clientSetup(FMLClientSetupEvent event) {
-		PROXY.clientSetup();
-	}
+    public void clientSetup(FMLClientSetupEvent event) {
+        PROXY.clientSetup();
+    }
 
-	public void init(final FMLCommonSetupEvent event) {
-		LOGGER.info("Initializing!");
-	}
+    public void init(final FMLCommonSetupEvent event) {
+        LOGGER.info("Initializing!");
+    }
 }

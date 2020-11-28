@@ -2,11 +2,12 @@
   "type": "minecraft:block",
   "pools": [
     {
+      "name": "main",
       "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "wizardry:crafting_plate"
+          "name": "wizardry:worktable"
         }
       ],
       "conditions": [
