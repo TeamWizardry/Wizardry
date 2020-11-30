@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.foundation.block.BaseLogBlock;
 import com.teamwizardry.librarianlib.foundation.registration.BlockSpec;
 import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
 import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
+import com.teamwizardry.librarianlib.foundation.registration.RenderLayerSpec;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling;
@@ -69,13 +70,14 @@ public class ModBlocks {
                 .tickRandomly()
                 .hardnessAndResistance(0.0f)
                 .sound(SoundType.PLANT)
+                .renderLayer(RenderLayerSpec.CUTOUT_MIPPED)
                 .block(blockSpec -> new BlockWisdomSapling(new WisdomTree(), blockSpec.getBlockProperties()))));
 
         // Fluids
         liquidMana.from(reggie.add(new BlockSpec(LibBlockNames.MANA_FLUID)
                 .material(Material.WATER)
                 .doesNotBlockMovement()
-                .lightValue(5)
+                .lightValue(12)
                 .hardnessAndResistance(100.0F)
                 .noDrops()
                 .block(blockSpec -> new BlockMana(() -> ModFluids.MANA_FLUID, blockSpec.getBlockProperties()))));

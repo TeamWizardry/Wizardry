@@ -12,11 +12,12 @@ import com.teamwizardry.librarianlib.mosaic.Sprite;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
+import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
+import com.teamwizardry.wizardry.common.spell.component.Module;
 import ll.dev.thecodewarrior.bitfont.typesetting.TextLayoutManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.awt.*;
 import java.util.Map;
@@ -161,11 +162,10 @@ public class WorktableGUI extends FacadeScreen {
         titleLayer.setColor(Color.WHITE);
         parent.add(titleLayer);
 
-        IForgeRegistry<Pattern> registry = GameRegistry.findRegistry(Pattern.class);
         int row = 0;
         int column = 0;
-        for (Map.Entry<ResourceLocation, Pattern> patternEntry : registry.getEntries()) {
-            if (!clazz.isInstance(patternEntry.getValue())) continue;
+        for (Map.Entry<String, Module> entry : ComponentRegistry.getModules().entrySet()) {
+            if (!clazz.isInstance(entry.getValue().getPattern())) continue;
 
             SpriteLayer cell = new SpriteLayer(SPRITE_GRID_CELL,
                     column * 24 + 2 + 2 * column,
@@ -173,11 +173,14 @@ public class WorktableGUI extends FacadeScreen {
                     24,
                     24);
             Sprite sprite = new Mosaic(new ResourceLocation(
-                    "wizardry:textures/modules/" + patternEntry.getValue().getRegistryName().getPath() +
+                    "wizardry:textures/modules/" + entry.getValue().getName() +
                             ".png"), 32, 32).getSprite("");
             SpriteLayer patternSprite = new SpriteLayer(sprite, 2, 2, 24 - 4, 24 - 4);
+            patternSprite.setTooltipText(I18n.format(
+                    "wizardry.spell.wizardry:" + entry.getValue().getPattern().getRegistryName().getPath() + ":" +
+                            entry.getValue().getName()));
             patternSprite.BUS.hook(GuiLayerEvents.MouseClick.class, (event) -> {
-                pickPattern.pickPattern(sprite, patternEntry.getValue());
+                pickPattern.pickPattern(sprite, entry.getValue());
             });
             cell.add(patternSprite);
             parent.add(cell);

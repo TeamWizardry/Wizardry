@@ -37,8 +37,6 @@ public class ClientProxy implements IProxy {
         setRenderLayer(ModFluids.MANA_FLUID_FLOWING, RenderType.getTranslucent());
         setRenderLayer(ModFluids.MANA_FLUID, RenderType.getTranslucent());
 
-        setRenderLayer(ModBlocks.wisdomSapling.get(), RenderType.getCutoutMipped());
-
         if (!isDataGenRun) {
             physicsGlitter.addToGame();
             predeterminedGlitter.addToGame();
