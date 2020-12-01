@@ -74,6 +74,7 @@ public class LayerPickPattern extends GuiLayer {
 
 
         shapesLayer = new SpriteLayer(SPRITE_HUGE_PAPER_1, 0, getHeighti(), getHeighti(), getWidthi() / 2);
+        shapesLayer.setClipToBounds(true);
         shapesLayer.getPos_rm().animate(Vec2d.ZERO, 8, Easing.easeOutQuart);
 
         shapeIconLayer = new SpriteLayer(ICON_HUMAN_TARGET,
@@ -118,6 +119,7 @@ public class LayerPickPattern extends GuiLayer {
                 getHeighti(),
                 getHeighti(),
                 getWidthi() / 2);
+        actionsLayer.setClipToBounds(true);
         actionsLayer.getPos_rm().animate(new Vec2d(getWidth() / 2.0, 0), 12, Easing.easeOutQuart);
 
         actionsIconLayer = new SpriteLayer(ICON_ELECTRIC,
@@ -185,6 +187,7 @@ public class LayerPickPattern extends GuiLayer {
         modifierPane.forEachChild(modifierPane::remove);
         friendlyModifierDescriptions.clear();
         modifiers.clear();
+        tokens = 6;
 
         TextLayer modifierPaneLefTitle = new TextLayer(2 + 4,
                 2 + 22 / 2,
@@ -236,28 +239,27 @@ public class LayerPickPattern extends GuiLayer {
                 friendlyModifier == null) return;
 
         paneSpriteLayer.setSprite(patternSprite);
-        paneSpriteLayer.getAnchor_rm().animate(new Vec2d(0.5, 0.5 / 2), 5, Easing.easeOutExpo);
-        paneSpriteLayer.getScale_rm().animate(new Vec2d(2, 2), 5, Easing.easeOutExpo);
-        paneSpriteLayer.getAnchor_rm().animate(new Vec2d(0.5, 0), 5, Easing.easeInCirc, 10);
-        paneSpriteLayer.getScale_rm().animate(new Vec2d(1, 1), 5, Easing.easeInCirc, 10);
+        paneSpriteLayer.getAnchor_rm().animate(new Vec2d(0.5, 0.25), 6, Easing.easeOutExpo);
+        paneSpriteLayer.getScale_rm().animate(new Vec2d(1.25, 1.25), 6, Easing.easeOutExpo);
+        paneSpriteLayer.getAnchor_rm().animate(new Vec2d(0.5, 0), 3, Easing.easeInCirc, 10);
+        paneSpriteLayer.getScale_rm().animate(new Vec2d(1, 1), 3, Easing.easeInCirc, 10);
 
         String patternName = module.getPattern().getRegistryName().getPath();
         String moduleName = module.getName();
         paneTitle.setText(I18n.format("wizardry.spell.wizardry:" + patternName + ":" + moduleName));
         paneTitle.markTextDirty();
-        paneTitle.getAnchor_rm().animate(new Vec2d(0.5, 0.5 / 2), 5, Easing.easeOutExpo, 1);
-        paneTitle.getScale_rm().animate(new Vec2d(2, 2), 5, Easing.easeOutExpo, 1);
-        paneTitle.getAnchor_rm().animate(new Vec2d(0.5, 0), 6, Easing.easeInCirc, 10);
-        paneTitle.getScale_rm().animate(new Vec2d(1.5, 1.5), 6, Easing.easeInCirc, 10);
+        paneTitle.getAnchor_rm().animate(new Vec2d(0.5, 0.5 / 1.75), 6, Easing.easeOutExpo, 4);
+        paneTitle.getScale_rm().animate(new Vec2d(1.75, 1.75), 6, Easing.easeOutExpo, 4);
+        paneTitle.getAnchor_rm().animate(new Vec2d(0.5, 0), 3, Easing.easeInCirc, 10);
+        paneTitle.getScale_rm().animate(new Vec2d(1.5, 1.5), 3, Easing.easeInCirc, 10);
 
         paneSubtitle.setText(I18n.format("wizardry.spell.wizardry:" + patternName + ":" + moduleName + ".desc"));
         paneSubtitle.markTextDirty();
         paneSubtitle.fitToText(TextLayer.FitType.VERTICAL);
-        paneSubtitle.getAnchor_rm().animate(new Vec2d(0.5, 0.5 / 1.25), 5, Easing.easeOutExpo, 2);
-        paneSubtitle.getScale_rm().animate(new Vec2d(1.25, 1.25), 5, Easing.easeOutExpo, 2);
-        paneSubtitle.getAnchor_rm().animate(new Vec2d(0.5, 0), 7, Easing.easeInCirc, 10);
-        paneSubtitle.getScale_rm().animate(new Vec2d(1, 1), 7, Easing.easeInCirc, 10);
+        paneSubtitle.getScale_rm().animate(new Vec2d(1.1, 1.1), 6, Easing.easeOutExpo, 6);
+        paneSubtitle.getScale_rm().animate(new Vec2d(1, 1), 4, Easing.easeInCirc, 10);
 
+        friendlyModifier.getPos_rm().animate(new Vec2d(8 * 2, getHeight() + friendlyModifier.getHeighti()), 4, Easing.easeInCubic);
 
         List<String> attributes = module.getAttributes();
         Map<String, List<Double>> attributeValues = module.getAttributeValues();
@@ -271,7 +273,8 @@ public class LayerPickPattern extends GuiLayer {
                 String attribute = attributes.get(i);
 
                 friendlyModifierDescriptions.putIfAbsent(attribute, I18n.format(
-                        "wizardry.spell.wizardry:" + patternName + ":" + moduleName + "." + attribute, attributeValues.get(attribute).get(0)));
+                        "wizardry.spell.wizardry:" + patternName + ":" + moduleName + "." + attribute,
+                        attributeValues.get(attribute).get(0)));
 
                 createModifierTile(attribute,
                         patternName,
@@ -282,19 +285,21 @@ public class LayerPickPattern extends GuiLayer {
                         i);
             }
 
-            friendlyModifier.setText(friendlyModifierDescriptions.values()
-                    .stream()
-                    .map(str -> "- " + str)
-                    .collect(Collectors.joining("\n\n")));
 
-            friendlyModifier.fitToText(TextLayer.FitType.VERTICAL);
-            friendlyModifier.markTextDirty();
-            friendlyModifier.getPos_rm().animate(new Vec2d(8 * 2, getHeight()),
-                    new Vec2d(8 * 2,
-                            actionsSubtitleText.getYi() + actionsSubtitleText.getHeighti() + 8 * 2),
-                    8,
-                    Easing.easeInOutQuart,
-                    4);
+            TextLayer finalFriendlyModifier = friendlyModifier;
+            delay(8, () -> {
+                finalFriendlyModifier.setText(friendlyModifierDescriptions.values()
+                        .stream()
+                        .map(str -> "- " + str)
+                        .collect(Collectors.joining("\n\n")));
+                finalFriendlyModifier.fitToText(TextLayer.FitType.VERTICAL);
+                finalFriendlyModifier.markTextDirty();
+                finalFriendlyModifier.getPos_rm()
+                        .animate(new Vec2d(8 * 2,
+                                        actionsSubtitleText.getYi() + actionsSubtitleText.getHeighti() + 8 * 2),
+                                8,
+                                Easing.easeOutCubic);
+            });
 
             modifierPane.getPos_rm()
                     .animate(new Vec2d(getWidth() / 4, getHeight() / 2), 8, Easing.easeInOutQuart, 8);
@@ -302,7 +307,8 @@ public class LayerPickPattern extends GuiLayer {
         }
     }
 
-    private void createModifierTile(String attributeName, String pattern, String moduleName, int attributeAmount, List<Double> attribValues,
+    private void createModifierTile(String attributeName, String pattern, String moduleName, int attributeAmount,
+                                    List<Double> attribValues,
                                     TextLayer friendlyModifier, int i) {
         modifiers.putIfAbsent(attributeName, 0);
 
