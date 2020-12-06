@@ -12,7 +12,6 @@ import java.awt.*;
 
 import static com.teamwizardry.wizardry.client.gui.WorktableGUI.*;
 
-@SuppressWarnings("SuspiciousNameCombination")
 public class WButton extends GuiLayer {
 
     public WButton(Sprite icon, String text, int posX, int posY, int width, int height) {

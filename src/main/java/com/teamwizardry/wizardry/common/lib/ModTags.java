@@ -1,14 +1,13 @@
 package com.teamwizardry.wizardry.common.lib;
 
-import com.teamwizardry.wizardry.Wizardry;
+import static com.teamwizardry.wizardry.Wizardry.MODID;
+
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
-
-import static com.teamwizardry.wizardry.Wizardry.MODID;
 
 public class ModTags {
 

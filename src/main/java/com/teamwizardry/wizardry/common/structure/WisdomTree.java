@@ -1,17 +1,18 @@
 package com.teamwizardry.wizardry.common.structure;
 
+import java.util.Random;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.teamwizardry.wizardry.common.init.ModBlocks;
+
 import net.minecraft.block.trees.Tree;
 import net.minecraft.world.gen.blockstateprovider.SimpleBlockStateProvider;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.TreeFeature;
 import net.minecraft.world.gen.feature.TreeFeatureConfig;
 import net.minecraft.world.gen.foliageplacer.BlobFoliagePlacer;
 import net.minecraftforge.common.IPlantable;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
 
 /**
  * Project: Wizardry

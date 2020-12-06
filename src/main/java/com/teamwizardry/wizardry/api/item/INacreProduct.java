@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.api.item;
 
-import com.teamwizardry.wizardry.api.WNBT;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -12,6 +11,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.awt.*;
+
+import com.teamwizardry.wizardry.api.utils.WNBT;
 
 import static com.teamwizardry.wizardry.api.StringConsts.*;
 

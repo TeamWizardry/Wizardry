@@ -1,5 +1,8 @@
 package com.teamwizardry.wizardry.common.block.fluid.mana;
 
+import java.util.Random;
+import java.util.function.Supplier;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.entity.Entity;
@@ -8,10 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.ForgeEventFactory;
-
-import java.util.Random;
-import java.util.function.Supplier;
 
 public class BlockMana extends FlowingFluidBlock {
     public BlockMana(Supplier<? extends FlowingFluid> supplier,

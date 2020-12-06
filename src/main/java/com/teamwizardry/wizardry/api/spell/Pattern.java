@@ -1,16 +1,17 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.Wizardry;
+import java.awt.Color;
+
+import com.teamwizardry.wizardry.api.WizConsts;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.lib.LibTheme;
 import com.teamwizardry.wizardry.common.network.CRenderSpellPacket;
+
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-
-import java.awt.*;
 
 
 /**
@@ -62,11 +63,11 @@ public abstract class Pattern extends ForgeRegistryEntry<Pattern> {
 
     /**
      * Call this whenever you want to send a render packet of the current instance to the client.
-     * Shapes trigger this with an updated target Interactor so the client can render exactly where the target is.
+     * Shapes trigger this with an updated target {@link Interactor} so the client can render exactly where the target is.
      * Effects also use this for obvious reasons.
      */
     protected void sendRenderPacket(World world, Instance instance, Interactor target) {
-        Wizardry.NETWORK.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(target.getPos().x,
+        WizConsts.getCourier().send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(target.getPos().x,
                         target.getPos().y,
                         target.getPos().z,
                         256,

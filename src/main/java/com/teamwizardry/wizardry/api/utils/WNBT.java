@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api;
+package com.teamwizardry.wizardry.api.utils;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;

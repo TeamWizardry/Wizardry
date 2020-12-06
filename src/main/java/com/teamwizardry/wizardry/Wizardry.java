@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry;
 
-import com.teamwizardry.librarianlib.courier.CourierChannel;
 import com.teamwizardry.librarianlib.foundation.BaseMod;
+import com.teamwizardry.wizardry.api.WizConsts;
 import com.teamwizardry.wizardry.api.capability.mana.IManaCapability;
 import com.teamwizardry.wizardry.api.capability.mana.ManaCapabilityImpl;
 import com.teamwizardry.wizardry.api.capability.mana.ManaStorage;
@@ -16,45 +16,35 @@ import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import com.teamwizardry.wizardry.proxy.IProxy;
 import com.teamwizardry.wizardry.proxy.ServerProxy;
+
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Mod(Wizardry.MODID)
 public class Wizardry extends BaseMod {
     public static final String MODID = "wizardry";
-    public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     public static IProxy PROXY;
     public static Wizardry INSTANCE;
-    public static final CourierChannel NETWORK = new CourierChannel(
-            new ResourceLocation(Wizardry.MODID, "network"), "0"
-    );
 
     public Wizardry() {
         INSTANCE = this;
         PROXY = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
-
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        eventBus.addListener(this::init);
-        eventBus.addListener(this::registerRegistries);
-        MinecraftForge.EVENT_BUS.addListener(this::serverStartingEvent);
-        eventBus.addGenericListener(Pattern.class, this::registerPatterns);
+        
+        // Initialize API Constants
+        setLoggerBaseName(Wizardry.MODID.toUpperCase().charAt(0) + Wizardry.MODID.substring(1));
+        WizConsts.setLogger(this.getLogger());
+        WizConsts.setCourier(this.getCourier());
 
         // Initialize Items
         ModItems.initializeItems(getRegistrationManager());
@@ -64,7 +54,7 @@ public class Wizardry extends BaseMod {
         ModBlocks.registerBlocks(getRegistrationManager());
 
         // Register packets
-        NETWORK.register(new CRenderSpellPacket(), NetworkDirection.PLAY_TO_CLIENT);
+        this.getCourier().register(new CRenderSpellPacket(), NetworkDirection.PLAY_TO_CLIENT);
 
         PROXY.registerHandlers();
     }
@@ -73,17 +63,21 @@ public class Wizardry extends BaseMod {
         return new ResourceLocation(MODID, path);
     }
 
-    private void registerRegistries(RegistryEvent.NewRegistry event) {
+    @Override
+    protected void createRegistries()
+    {
         new RegistryBuilder<Pattern>().setType(Pattern.class)
-                .setName(new ResourceLocation(MODID, "pattern"))
-                .disableSaving()
-                .create();
+            .setName(location("pattern"))
+            .disableSaving()
+            .create();
     }
-
-    private void registerPatterns(RegistryEvent.Register<Pattern> event) {
+    
+    @SubscribeEvent
+    public void registerPatterns(RegistryEvent.Register<Pattern> event) {
         PatternInit.init(event.getRegistry());
     }
 
+    @SubscribeEvent
     public void serverStartingEvent(FMLServerAboutToStartEvent event) {
         IReloadableResourceManager manager = event.getServer().getResourceManager();
         manager.addReloadListener((ISelectiveResourceReloadListener) (listener, predicate) -> {
@@ -97,11 +91,8 @@ public class Wizardry extends BaseMod {
                 () -> new ManaCapabilityImpl(0, 1000, 1000, 1000));
     }
 
+    @Override
     public void clientSetup(FMLClientSetupEvent event) {
         PROXY.clientSetup();
-    }
-
-    public void init(final FMLCommonSetupEvent event) {
-        LOGGER.info("Initializing!");
     }
 }

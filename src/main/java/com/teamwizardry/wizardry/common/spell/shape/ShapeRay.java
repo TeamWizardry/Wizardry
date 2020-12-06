@@ -25,11 +25,12 @@ import java.awt.*;
 import static com.teamwizardry.wizardry.api.spell.Attributes.RANGE;
 
 public class ShapeRay extends PatternShape {
+    private static final Raycaster ray = new Raycaster();
+    
     @Override
     public void run(World world, Instance instance, Interactor target) {
         Vec3d start = target.getPos();
         Vec3d end = start.add(target.getLook().scale(instance.getAttributeValue(RANGE)));
-        Raycaster ray = new Raycaster();
         Entity sourceEntity = target.getEntity();
         ray.cast(world,
                 BlockMode.VISUAL,
@@ -55,6 +56,7 @@ public class ShapeRay extends PatternShape {
                 newTarget = new Interactor((LivingEntity) ray.getEntity());
                 break;
         }
+        ray.reset();
 
         ModSounds.playSound(world, instance.getCaster(), target, ModSounds.SUBTLE_MAGIC_BOOK_GLINT);
         super.run(world, instance, newTarget);

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api;
+package com.teamwizardry.wizardry.common;
 
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;

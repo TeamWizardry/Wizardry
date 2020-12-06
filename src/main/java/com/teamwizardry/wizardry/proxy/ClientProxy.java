@@ -1,15 +1,22 @@
 package com.teamwizardry.wizardry.proxy;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.gui.WorktableGUI;
-import com.teamwizardry.wizardry.client.particle.*;
+import com.teamwizardry.wizardry.client.particle.GlitterBox;
+import com.teamwizardry.wizardry.client.particle.KeyFramedGlitter;
+import com.teamwizardry.wizardry.client.particle.KeyFramedGlitterBox;
+import com.teamwizardry.wizardry.client.particle.PhysicsGlitter;
+import com.teamwizardry.wizardry.client.particle.PredeterminedGlitter;
 import com.teamwizardry.wizardry.common.init.ModBlocks;
 import com.teamwizardry.wizardry.common.init.ModFluids;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -17,9 +24,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientProxy implements IProxy {

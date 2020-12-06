@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.apache.logging.log4j.Logger;
+
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.ISpellComponent;
 import com.teamwizardry.wizardry.configs.ServerConfigs;
@@ -15,6 +17,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ComponentRegistry
 {
+    private static final Logger LOGGER = Wizardry.INSTANCE.makeLogger(ComponentRegistry.class);
+    
     private static final Map<String, Module> modules = new HashMap<>();
     private static final Map<String, Modifier> modifiers = new HashMap<>();
     private static final Map<List<Item>, ISpellComponent> spellComponents = new HashMap<>();
@@ -65,7 +69,7 @@ public class ComponentRegistry
         {
             if (listStartsWith(keys, items))
             {
-                Wizardry.LOGGER.warn("Spell component registration failed for {} {}, recipe hidden by {}",
+                LOGGER.warn("Spell component registration failed for {} {}, recipe hidden by {}",
                         component.getClass().getSimpleName(), component.getName(), spellComponents.get(keys).getName());
                 return false;
             }

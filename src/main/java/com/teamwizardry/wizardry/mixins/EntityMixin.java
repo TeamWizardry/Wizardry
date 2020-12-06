@@ -57,6 +57,7 @@ public abstract class EntityMixin extends CapabilityProvider<Entity> {
         handleManaMovement(ModTags.Fluids.MANA);
     }
 
+    @SuppressWarnings("deprecation")
     public void handleManaMovement(Tag<Fluid> fluidTag) {
         AxisAlignedBB axisalignedbb = this.getBoundingBox().shrink(0.001D);
         int bbMinX = MathHelper.floor(axisalignedbb.minX);

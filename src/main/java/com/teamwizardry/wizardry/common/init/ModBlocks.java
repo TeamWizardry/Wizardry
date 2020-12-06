@@ -13,6 +13,7 @@ import com.teamwizardry.wizardry.common.block.fluid.mana.BlockMana;
 import com.teamwizardry.wizardry.common.lib.LibBlockNames;
 import com.teamwizardry.wizardry.common.structure.WisdomTree;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
@@ -27,7 +28,6 @@ import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

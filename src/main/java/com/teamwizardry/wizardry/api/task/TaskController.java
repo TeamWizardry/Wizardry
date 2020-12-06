@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nonnull;
@@ -125,7 +126,7 @@ public class TaskController implements INBTSerializable<CompoundNBT> {
 	public void deserializeNBT(CompoundNBT nbt) {
 
 		if (nbt.contains(StringConsts.QUEUE)) {
-			ListNBT listNBT = nbt.getList(StringConsts.QUEUE, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+			ListNBT listNBT = nbt.getList(StringConsts.QUEUE, NBT.TAG_COMPOUND);
 			for (INBT inbt : listNBT) {
 				if (!(inbt instanceof CompoundNBT)) continue;
 
