@@ -1,0 +1,6 @@
+{
+  "parent": "block/fence_side",
+  "textures": {
+    "texture": "wizardry:block/nacre_block_bricks"
+  }
+}

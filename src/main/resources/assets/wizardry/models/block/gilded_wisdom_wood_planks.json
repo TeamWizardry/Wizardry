@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "wizardry:block/gilded_wisdom_wood_planks"
+  }
+}

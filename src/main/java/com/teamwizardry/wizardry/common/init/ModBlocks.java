@@ -1,10 +1,7 @@
 package com.teamwizardry.wizardry.common.init;
 
 import com.teamwizardry.librarianlib.foundation.block.BaseLogBlock;
-import com.teamwizardry.librarianlib.foundation.registration.BlockSpec;
-import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
-import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
-import com.teamwizardry.librarianlib.foundation.registration.RenderLayerSpec;
+import com.teamwizardry.librarianlib.foundation.registration.*;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling;
@@ -37,33 +34,83 @@ public class ModBlocks {
 
     public static final LazyBlock wisdomLog = new LazyBlock();
     public static final LazyBlock wisdomPlanks = new LazyBlock();
-    public static final LazyBlock wisdomGildedPlanks = new LazyBlock();
     public static final LazyBlock wisdomLeaves = new LazyBlock();
     public static final LazyBlock wisdomDoor = new LazyBlock();
+    public static final LazyBlock wisdomSlab = new LazyBlock();
+    public static final LazyBlock wisdomStairs = new LazyBlock();
     public static final LazyBlock wisdomFence = new LazyBlock();
+    public static final LazyBlock wisdomFenceGate = new LazyBlock();
     public static final LazyBlock wisdomSapling = new LazyBlock();
+
+    public static final LazyBlock wisdomGildedPlanks = new LazyBlock();
+    public static final LazyBlock wisdomGildedSlab = new LazyBlock();
+    public static final LazyBlock wisdomGildedStairs = new LazyBlock();
+    public static final LazyBlock wisdomGildedFence = new LazyBlock();
+    public static final LazyBlock wisdomGildedFenceGate = new LazyBlock();
+
+    public static final LazyBlock nacreBlock = new LazyBlock();
+    public static final LazyBlock nacreSlab = new LazyBlock();
+    public static final LazyBlock nacreStairs = new LazyBlock();
+    public static final LazyBlock nacreFence = new LazyBlock();
+    public static final LazyBlock nacreFenceGate = new LazyBlock();
+
+    public static final LazyBlock nacreBrickBlock = new LazyBlock();
+    public static final LazyBlock nacreBrickSlab = new LazyBlock();
+    public static final LazyBlock nacreBrickStairs = new LazyBlock();
+    public static final LazyBlock nacreBrickFence = new LazyBlock();
+    public static final LazyBlock nacreBrickFenceGate = new LazyBlock();
 
     // Fluids
     public static final LazyBlock liquidMana = new LazyBlock();
 
 
     public static void registerBlocks(RegistrationManager reggie) {
+        ///////////////////////////////
         // Basic Blocks
+        ///////////////////////////////
 
+        ////////////////
         // Wisdom Wood
+        ////////////////
+
+        // Planks
+        BuildingBlockCollection wisdomPlanksCollection = new BuildingBlockCollection("wisdom_wood_planks", "wisdom_wood");
+        wisdomPlanksCollection.getBlockProperties()
+                .material(Material.WOOD)
+                .mapColor(MaterialColor.WOOD)
+                .sound(SoundType.WOOD)
+                .hardnessAndResistance(2f);
+
+        wisdomPlanks.from(reggie.add(wisdomPlanksCollection.getFull()));
+        wisdomSlab.from(reggie.add(wisdomPlanksCollection.getSlab()));
+        wisdomStairs.from(reggie.add(wisdomPlanksCollection.getStairs()));
+        wisdomFence.from(reggie.add(wisdomPlanksCollection.getFence()));
+        wisdomFenceGate.from(reggie.add(wisdomPlanksCollection.getFenceGate()));
+
+        // Gilded
+        BuildingBlockCollection wisdomGildedCollection = new BuildingBlockCollection("gilded_wisdom_wood_planks", "gilded_wisdom_wood");
+        wisdomGildedCollection.getBlockProperties()
+                .material(Material.WOOD)
+                .mapColor(MaterialColor.WOOD)
+                .sound(SoundType.WOOD)
+                .hardnessAndResistance(2f);
+
+        wisdomGildedPlanks.from(reggie.add(wisdomGildedCollection.getFull()));
+        wisdomGildedSlab.from(reggie.add(wisdomGildedCollection.getSlab()));
+        wisdomGildedStairs.from(reggie.add(wisdomGildedCollection.getStairs()));
+        wisdomGildedFence.from(reggie.add(wisdomGildedCollection.getFence()));
+        wisdomGildedFenceGate.from(reggie.add(wisdomGildedCollection.getFenceGate()));
+
+        // Non-Group variants
         wisdomLog.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LOG)
                 .block(blockSpec -> new BaseLogBlock(MaterialColor.BROWN, blockSpec.getBlockProperties()))
                 .withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
-        wisdomPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_PLANKS)
-                .block(blockSpec -> new Block(blockSpec.getBlockProperties()))
-                .withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
-        wisdomGildedPlanks.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_GILDED_PLANKS)
-                .block(blockSpec -> new Block(blockSpec.getBlockProperties()))
-                .withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
+
         wisdomLeaves.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LEAVES)
                 .material(Material.LEAVES)
                 .hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT).notSolid()
                 .block(blockSpec -> new LeavesBlock(blockSpec.getBlockProperties()))));
+
         wisdomSapling.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_SAPLING)
                 .material(Material.PLANTS)
                 .doesNotBlockMovement()
@@ -73,7 +120,39 @@ public class ModBlocks {
                 .renderLayer(RenderLayerSpec.CUTOUT_MIPPED)
                 .block(blockSpec -> new BlockWisdomSapling(new WisdomTree(), blockSpec.getBlockProperties()))));
 
+        ////////////////
+        // Nacre
+        ////////////////
+        BuildingBlockCollection nacreCollection = new BuildingBlockCollection("nacre_block", "nacre_block");
+        nacreCollection.getBlockProperties()
+                .material(Material.ROCK)
+                .mapColor(MaterialColor.STONE)
+                .sound(SoundType.STONE)
+                .hardnessAndResistance(2f);
+
+        nacreBlock.from(reggie.add(nacreCollection.getFull()));
+        nacreSlab.from(reggie.add(nacreCollection.getSlab()));
+        nacreStairs.from(reggie.add(nacreCollection.getStairs()));
+        nacreFence.from(reggie.add(nacreCollection.getFence()));
+        nacreFenceGate.from(reggie.add(nacreCollection.getFenceGate()));
+
+        BuildingBlockCollection nacreBrickCollection = new BuildingBlockCollection("nacre_block_bricks", "nacre_block_brick");
+        nacreBrickCollection.getBlockProperties()
+                .material(Material.ROCK)
+                .mapColor(MaterialColor.STONE)
+                .sound(SoundType.STONE)
+                .hardnessAndResistance(2f);
+
+        nacreBrickBlock.from(reggie.add(nacreBrickCollection.getFull()));
+        nacreBrickSlab.from(reggie.add(nacreBrickCollection.getSlab()));
+        nacreBrickStairs.from(reggie.add(nacreBrickCollection.getStairs()));
+        nacreBrickFence.from(reggie.add(nacreBrickCollection.getFence()));
+        nacreBrickFenceGate.from(reggie.add(nacreBrickCollection.getFenceGate()));
+
+
+        ///////////////////////////////
         // Fluids
+        ///////////////////////////////
         liquidMana.from(reggie.add(new BlockSpec(LibBlockNames.MANA_FLUID)
                 .material(Material.WATER)
                 .doesNotBlockMovement()
@@ -82,7 +161,10 @@ public class ModBlocks {
                 .noDrops()
                 .block(blockSpec -> new BlockMana(() -> ModFluids.MANA_FLUID, blockSpec.getBlockProperties()))));
 
+
+        ///////////////////////////////
         // Tile Entities
+        ///////////////////////////////
         craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
                 .block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));

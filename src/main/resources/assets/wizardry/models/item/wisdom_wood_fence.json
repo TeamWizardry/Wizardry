@@ -1,6 +1,3 @@
 {
-  "parent": "block/fence_inventory",
-  "textures": {
-    "texture": "wizardry:block/wisdom_wood_planks"
-  }
+  "parent": "wizardry:block/wisdom_wood_fence_inventory"
 }
