@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
-import jdk.nashorn.internal.ir.Block;
-import jdk.nashorn.internal.ir.Statement;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.Block;
 
 /**
  * Project: Wizardry
@@ -10,7 +8,7 @@ import net.minecraft.block.Blocks;
  * Copyright (c) Carbon 2020
  */
 public class BlockManaBattery extends Block {
-	public BlockManaBattery(long token, int finish, Statement... statements) {
-		super(token, finish, statements);
+	public BlockManaBattery(Properties properties) {
+		super(properties);
 	}
 }
