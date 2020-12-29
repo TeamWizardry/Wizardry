@@ -5,7 +5,7 @@ import java.awt.Color;
 import com.teamwizardry.wizardry.api.WizConsts;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.lib.LibTheme;
-import com.teamwizardry.wizardry.common.network.CRenderSpellPacket;
+import com.teamwizardry.wizardry.common.packet.CRenderSpellPacket;
 
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;

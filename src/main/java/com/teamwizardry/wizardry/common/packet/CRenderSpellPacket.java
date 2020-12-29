@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.network;
+package com.teamwizardry.wizardry.common.packet;
 
 import com.teamwizardry.librarianlib.core.util.Client;
 import com.teamwizardry.librarianlib.core.util.sided.SidedSupplier;
