@@ -109,7 +109,8 @@ public class ManaNetwork extends WorldSavedData
         
         for (int x = -chunkDist; x <= chunkDist; x++)
             for (int z = -chunkDist; z <= chunkDist; z++)
-                nodes.addAll(this.positions.getOrDefault(new ChunkPos(centerX + x, centerZ + z), Collections.emptySet()));
+                this.positions.getOrDefault(new ChunkPos(centerX + x, centerZ + z), Collections.emptySet()).stream()
+                    .filter(node -> node.distanceSq(pos) <= maxDist * maxDist).forEach(nodes::add);
         
         return nodes;
     }
