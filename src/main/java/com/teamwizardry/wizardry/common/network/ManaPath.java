@@ -3,6 +3,9 @@ package com.teamwizardry.wizardry.common.network;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.teamwizardry.wizardry.api.block.IManaNode;
+import com.teamwizardry.wizardry.api.block.IManaNode.ManaNodeType;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;

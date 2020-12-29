@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.block.IManaNode;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;

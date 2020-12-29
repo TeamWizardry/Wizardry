@@ -1,10 +1,17 @@
-package com.teamwizardry.wizardry.common.network;
+package com.teamwizardry.wizardry.api.block;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public interface IManaNode
 {
+    public enum ManaNodeType
+    {
+        SOURCE,
+        SINK,
+        ROUTER
+    }
+    
     public ManaNodeType getManaNodeType();
     
     public default boolean addMana(World world, BlockPos pos, double amount) { return false; }
