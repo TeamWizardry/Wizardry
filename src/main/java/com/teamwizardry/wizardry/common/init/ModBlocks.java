@@ -109,7 +109,7 @@ public class ModBlocks {
         wisdomLeaves.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LEAVES)
                 .material(Material.LEAVES)
                 .hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT).notSolid()
-                .block(blockSpec -> new LeavesBlock(blockSpec.getBlockProperties()))));
+                .block(blockSpec -> new LeavesBlock(blockSpec.getBlockProperties().getVanillaProperties()))));
 
         wisdomSapling.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_SAPLING)
                 .material(Material.PLANTS)
@@ -118,7 +118,7 @@ public class ModBlocks {
                 .hardnessAndResistance(0.0f)
                 .sound(SoundType.PLANT)
                 .renderLayer(RenderLayerSpec.CUTOUT_MIPPED)
-                .block(blockSpec -> new BlockWisdomSapling(new WisdomTree(), blockSpec.getBlockProperties()))));
+                .block(blockSpec -> new BlockWisdomSapling(new WisdomTree(), blockSpec.getBlockProperties().getVanillaProperties()))));
 
         ////////////////
         // Nacre
@@ -159,7 +159,7 @@ public class ModBlocks {
                 .lightValue(12)
                 .hardnessAndResistance(100.0F)
                 .noDrops()
-                .block(blockSpec -> new BlockMana(() -> ModFluids.MANA_FLUID, blockSpec.getBlockProperties()))));
+                .block(blockSpec -> new BlockMana(() -> ModFluids.MANA_FLUID, blockSpec.getBlockProperties().getVanillaProperties()))));
 
 
         ///////////////////////////////
@@ -167,10 +167,10 @@ public class ModBlocks {
         ///////////////////////////////
         craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
-                .block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties()))));
+                .block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties().getVanillaProperties()))));
         magiciansWorktable.from(reggie.add(new BlockSpec(LibBlockNames.WORKTABLE)
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
-                .block(blockSpec -> new BlockWorktable(blockSpec.getBlockProperties()))));
+                .block(blockSpec -> new BlockWorktable(blockSpec.getBlockProperties().getVanillaProperties()))));
     }
 
     @SubscribeEvent
