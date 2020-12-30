@@ -31,6 +31,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ModBlocks {
     public static final LazyBlock craftingPlate = new LazyBlock();
     public static final LazyBlock magiciansWorktable = new LazyBlock();
+    public static final LazyBlock manaBattery = new LazyBlock();
 
     public static final LazyBlock wisdomLog = new LazyBlock();
     public static final LazyBlock wisdomPlanks = new LazyBlock();
@@ -168,6 +169,7 @@ public class ModBlocks {
         craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
                 .block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties().getVanillaProperties()))));
+
         magiciansWorktable.from(reggie.add(new BlockSpec(LibBlockNames.WORKTABLE)
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
                 .block(blockSpec -> new BlockWorktable(blockSpec.getBlockProperties().getVanillaProperties()))));
@@ -199,5 +201,4 @@ public class ModBlocks {
                 },
                 wisdomLeaves.get());
     }
-
 }

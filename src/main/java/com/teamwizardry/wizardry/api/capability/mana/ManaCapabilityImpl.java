@@ -1,6 +1,16 @@
 package com.teamwizardry.wizardry.api.capability.mana;
 
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class ManaCapabilityImpl implements IManaCapability {
+	public static Capability<IManaCapability> manaCapability = null;
+
 	private long mana, maxMana;
 	private long burnout, maxBurnout;
 
@@ -49,5 +59,11 @@ public class ManaCapabilityImpl implements IManaCapability {
 	@Override
 	public void setMaxBurnout(long maxBurnout) {
 		this.maxBurnout = maxBurnout;
+	}
+
+	@NotNull
+	@Override
+	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+		return LazyOptional.empty();
 	}
 }

@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.api.capability.mana;
 
-public interface IManaCapability {
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
+public interface IManaCapability extends ICapabilityProvider {
 
 	long getMana();
 
