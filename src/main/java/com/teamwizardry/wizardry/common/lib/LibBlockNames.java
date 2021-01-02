@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.lib;
 public class LibBlockNames {
 	public static final String CRAFTING_PLATE = "crafting_plate";
 	public static final String WORKTABLE = "worktable";
+	public static final String MANA_BATTERY = "mana_battery";
 
 	public static final String WISDOM_LOG = "wisdom_wood_log";
 	public static final String WISDOM_PLANKS = "wisdom_wood_planks";

@@ -91,7 +91,7 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
     @Nullable
     @Override
     public TileCraftingPlate createNewTileEntity(IBlockReader worldIn) {
-        return LibTileEntityType.CRAFTING_PLATE.create();
+        return LibTileEntityType.CRAFTING_PLATE.get().create();
     }
 
     @Override

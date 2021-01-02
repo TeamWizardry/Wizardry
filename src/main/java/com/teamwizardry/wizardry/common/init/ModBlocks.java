@@ -4,13 +4,16 @@ import com.teamwizardry.librarianlib.foundation.block.BaseLogBlock;
 import com.teamwizardry.librarianlib.foundation.registration.*;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
+import com.teamwizardry.wizardry.common.block.BlockManaBattery;
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling;
 import com.teamwizardry.wizardry.common.block.BlockWorktable;
 import com.teamwizardry.wizardry.common.block.fluid.mana.BlockMana;
 import com.teamwizardry.wizardry.common.lib.LibBlockNames;
+import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
 import com.teamwizardry.wizardry.common.structure.WisdomTree;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 
+import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
@@ -18,6 +21,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.FoliageColors;
 import net.minecraft.world.biome.BiomeColors;
@@ -26,6 +30,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModBlocks {
@@ -164,24 +169,31 @@ public class ModBlocks {
 
 
         ///////////////////////////////
-        // Tile Entities
+        // Complex Blocks
         ///////////////////////////////
-        craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
-                .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
-                .block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties().getVanillaProperties()))));
 
+        // Has a GUI and stuff, but no TE
         magiciansWorktable.from(reggie.add(new BlockSpec(LibBlockNames.WORKTABLE)
                 .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
                 .block(blockSpec -> new BlockWorktable(blockSpec.getBlockProperties().getVanillaProperties()))));
+
+        //////////////////
+        // Tile Entities
+        //////////////////
+        craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
+                .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
+                .tileEntity(LibTileEntityType.CRAFTING_PLATE)
+                .block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties().getVanillaProperties()))));
+
+        manaBattery.from(reggie.add(new BlockSpec(LibBlockNames.MANA_BATTERY)
+                .material(Material.GLASS).hardnessAndResistance(3f).sound(SoundType.GLASS).notSolid()
+                .tileEntity(LibTileEntityType.MANA_BATTERY)
+                .block(blockSpec -> new BlockManaBattery(blockSpec.getBlockProperties().getVanillaProperties()))));
     }
 
-    @SubscribeEvent
-    public static void registerTile(RegistryEvent.Register<TileEntityType<?>> event) {
-        IForgeRegistry<TileEntityType<?>> r = event.getRegistry();
-
-        TileEntityType<?> type = TileEntityType.Builder.create(TileCraftingPlate::new, craftingPlate.get()).build(null);
-
-        r.register(type.setRegistryName(Wizardry.MODID, LibBlockNames.CRAFTING_PLATE));
+    public static void registerTile(RegistrationManager registrationManager) {
+        LibTileEntityType.MANA_BATTERY.from(registrationManager.add(new TileEntitySpec<>("mana_battery", TileManaBattery::new)));
+        LibTileEntityType.CRAFTING_PLATE.from(registrationManager.add(new TileEntitySpec<>("crafting_plate", TileCraftingPlate::new)));
     }
 
     @SubscribeEvent

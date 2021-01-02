@@ -37,7 +37,7 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
     private NonNullList<ItemStack> inventory;
 
     public TileCraftingPlate() {
-        super(LibTileEntityType.CRAFTING_PLATE);
+        super(LibTileEntityType.CRAFTING_PLATE.get());
 
         inventory = NonNullList.withSize(INV_SIZE, ItemStack.EMPTY);
     }

@@ -2,9 +2,6 @@ package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.foundation.BaseMod;
 import com.teamwizardry.wizardry.api.WizConsts;
-import com.teamwizardry.wizardry.api.capability.mana.IManaCapability;
-import com.teamwizardry.wizardry.api.capability.mana.ManaCapabilityImpl;
-import com.teamwizardry.wizardry.api.capability.mana.ManaStorage;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.ModBlocks;
 import com.teamwizardry.wizardry.common.init.ModItems;
@@ -16,10 +13,8 @@ import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import com.teamwizardry.wizardry.proxy.IProxy;
 import com.teamwizardry.wizardry.proxy.ServerProxy;
-
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -50,7 +45,8 @@ public class Wizardry extends BaseMod {
         ModItems.initializeItems(getRegistrationManager());
         ModItems.initializeItemGroup();
 
-        // Initialize Blocks
+        // Initialize Blocks + Tile Entities
+        ModBlocks.registerTile(getRegistrationManager());
         ModBlocks.registerBlocks(getRegistrationManager());
 
         // Register packets
@@ -85,10 +81,6 @@ public class Wizardry extends BaseMod {
             ModifierLoader.loadModifiers(manager);
             ModuleLoader.loadModules(manager);
         });
-
-        CapabilityManager.INSTANCE.register(IManaCapability.class,
-                new ManaStorage(),
-                () -> new ManaCapabilityImpl(0, 1000, 1000, 1000));
     }
 
     @Override

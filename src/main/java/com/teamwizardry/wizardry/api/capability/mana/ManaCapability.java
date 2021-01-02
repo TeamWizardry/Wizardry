@@ -1,20 +1,32 @@
 package com.teamwizardry.wizardry.api.capability.mana;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import com.teamwizardry.librarianlib.foundation.capability.BaseCapability;
+import com.teamwizardry.librarianlib.prism.Save;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public class ManaCapabilityImpl implements IManaCapability {
-	public static Capability<IManaCapability> manaCapability = null;
+/*
+* Written by Carbon
+* Mana Capability default implementation
+* Thank u code <3
+* */
+public class ManaCapability extends BaseCapability implements IManaCapability {
+	@CapabilityInject(IManaCapability.class)
+	public static Capability<IManaCapability> MANA_CAPABILITY;
 
-	private long mana, maxMana;
-	private long burnout, maxBurnout;
+	@Save
+	private long mana;
 
-	public ManaCapabilityImpl(long mana, long maxMana, long burnout, long maxBurnout) {
+	@Save
+	private long maxMana;
+
+	@Save
+	private long burnout;
+
+	@Save
+	private long maxBurnout;
+
+	public ManaCapability(long mana, long maxMana, long burnout, long maxBurnout) {
 		this.mana = mana;
 		this.maxMana = maxMana;
 		this.burnout = burnout;
@@ -59,11 +71,5 @@ public class ManaCapabilityImpl implements IManaCapability {
 	@Override
 	public void setMaxBurnout(long maxBurnout) {
 		this.maxBurnout = maxBurnout;
-	}
-
-	@NotNull
-	@Override
-	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		return LazyOptional.empty();
 	}
 }
