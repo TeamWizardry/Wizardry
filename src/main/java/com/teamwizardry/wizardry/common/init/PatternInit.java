@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.init;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
+import com.teamwizardry.wizardry.common.spell.effect.EffectArcane;
 import com.teamwizardry.wizardry.common.spell.effect.EffectBurn;
 import com.teamwizardry.wizardry.common.spell.shape.ShapeRay;
 import com.teamwizardry.wizardry.common.spell.shape.ShapeZone;
@@ -18,6 +19,7 @@ public class PatternInit
                              );
         
         // Effects
-        registry.registerAll(new EffectBurn().setRegistryName(Wizardry.MODID, "burn"));
+        registry.registerAll(new EffectBurn().setRegistryName(Wizardry.MODID, "burn"),
+                             new EffectArcane().setRegistryName(Wizardry.MODID, "arcane"));
     }
 }
