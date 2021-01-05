@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
+import com.teamwizardry.wizardry.api.block.IManaNode;
 import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.block.*;
@@ -27,7 +28,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable {
+public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable, IManaNode {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 13.0D, 16.0D);
@@ -149,6 +150,11 @@ public class BlockCraftingPlate extends ContainerBlock implements IWaterLoggable
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED);
+    }
+
+    @Override
+    public ManaNodeType getManaNodeType() {
+        return ManaNodeType.SINK;
     }
 }
 

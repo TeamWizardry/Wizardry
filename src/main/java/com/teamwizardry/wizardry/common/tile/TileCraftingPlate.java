@@ -1,7 +1,10 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.math.Vec2d;
+import com.teamwizardry.librarianlib.prism.Save;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.capability.mana.IManaCapability;
+import com.teamwizardry.wizardry.api.capability.mana.ManaCapability;
 import com.teamwizardry.wizardry.api.utils.MathUtils;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.lib.LibTheme;
@@ -17,12 +20,16 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.IHopper;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -30,6 +37,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class TileCraftingPlate extends TileEntity implements ITickableTileEntity, IHopper {
+
+    @Save
+    public final ManaCapability manaStorage = new ManaCapability(0, 1000, 0, 0);
+    private final LazyOptional<IManaCapability> manaCap = LazyOptional.of(() -> manaStorage);
 
     private static final int INV_SIZE = 256;
     private static final int MAX_STACK_SIZE = 6;
@@ -338,5 +349,15 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
     @Override
     public double getZPos() {
         return (double) this.pos.getZ() + 0.5D;
+    }
+
+    @NotNull
+    @Override
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @org.jetbrains.annotations.Nullable Direction side) {
+        if(cap == ManaCapability.MANA_CAPABILITY) {
+            return manaCap.cast();
+        } else {
+            return super.getCapability(cap);
+        }
     }
 }

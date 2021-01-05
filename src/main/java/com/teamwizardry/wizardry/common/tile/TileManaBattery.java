@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class TileManaBattery extends TileEntity {
     @Save
     public final ManaCapability manaStorage = new ManaCapability(0, 10000, 0, 5000);
-    private final LazyOptional<IManaCapability> manaCap = LazyOptional.of(() -> manaStorage);;
+    private final LazyOptional<IManaCapability> manaCap = LazyOptional.of(() -> manaStorage);
 
     public TileManaBattery() {
         super(LibTileEntityType.MANA_BATTERY.get());
