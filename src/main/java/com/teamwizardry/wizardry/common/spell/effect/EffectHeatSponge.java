@@ -27,6 +27,7 @@ import java.awt.*;
 public class EffectHeatSponge extends PatternEffect {
     // Time in ticks added to the effect per duration
     private static final int DURATION_MULTIPLIER = 20 * 5;
+    private static final boolean EXINGUISH_MULTIPLE = true;
 
     private static final Color[] colors = new Color[]{Color.WHITE, Color.GRAY, Color.BLUE};
 
@@ -43,23 +44,27 @@ public class EffectHeatSponge extends PatternEffect {
     @Override
     public void affectBlock(World world, Interactor block, Instance instance) {
         if (block.getType() != Interactor.InteractorType.BLOCK) return;
-        BlockPos pos = block.getBlockPos();
 
-        BlockPos[] poses = new BlockPos[]{pos, pos.up(), pos.north(), pos.south(), pos.east(), pos.west(), pos.down()};
+        BlockPos blockPos = block.getBlockPos();
+        BlockPos[] positions = new BlockPos[]{blockPos, blockPos.up(), blockPos.north(), blockPos.south(), blockPos.east(), blockPos.west(), blockPos.down()};
+        boolean hasExtinguished = false;
 
-        for(BlockPos position : poses) {
-            BlockState state = world.getBlockState(position);
+        for(BlockPos targetPosition : positions) {
+            BlockState state = world.getBlockState(targetPosition);
 
             if(state.getBlock() == Blocks.FIRE) {
-                world.removeBlock(position, false);
-                return;  // this is intentional. Only one fire will be extinguished.
+                world.removeBlock(targetPosition, false);
+                if(!EXINGUISH_MULTIPLE) return;  // this is intentional. Only one fire will be extinguished.
+                else hasExtinguished = true;
             }
         }
 
-        IFluidState fState = world.getFluidState(pos);
+        if(hasExtinguished) return;
+
+        IFluidState fState = world.getFluidState(blockPos);
 
         if (fState.isSource() && fState.getFluid().isEquivalentTo(Fluids.LAVA)) {
-            world.setBlockState(pos, Blocks.OBSIDIAN.getDefaultState());
+            world.setBlockState(blockPos, Blocks.OBSIDIAN.getDefaultState());
         }
     }
 
