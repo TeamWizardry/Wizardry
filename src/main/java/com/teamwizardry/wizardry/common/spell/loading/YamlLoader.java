@@ -65,8 +65,8 @@ public class YamlLoader
                 if(pack.getResourceNamespaces(ResourcePackType.SERVER_DATA).isEmpty() || !(pack instanceof ResourcePack))
                     continue;
                 if(pack instanceof ModFileResourcePack){
-                    for (ResourceLocation resourceLocation : loadModulesFromModFile(ResourcePackType.SERVER_DATA, folder, Integer.MAX_VALUE, file -> file.endsWith(".yaml"), ((ModFileResourcePack) pack).getModFile())) {
-                        LOGGER.info("Found Module file: " + resourceLocation);
+                    for (ResourceLocation resourceLocation : loadYamlsFromModFile(ResourcePackType.SERVER_DATA, folder, Integer.MAX_VALUE, file -> file.endsWith(".yaml"), ((ModFileResourcePack) pack).getModFile())) {
+                        LOGGER.info("Found Yaml file: " + resourceLocation);
                         try {
                             objects.addAll(loadYamls(pack.getResourceStream(ResourcePackType.SERVER_DATA, resourceLocation),
                                     compiler));
@@ -76,7 +76,7 @@ public class YamlLoader
                     }
                 } else {
                     for (ResourceLocation resourceLocation :  pack.getAllResourceLocations(ResourcePackType.SERVER_DATA, (String) pack.getResourceNamespaces(ResourcePackType.SERVER_DATA).toArray()[0], folder, Integer.MAX_VALUE, file -> file.endsWith(".yaml"))) {
-                        LOGGER.info("Found Module file: " + resourceLocation);
+                        LOGGER.info("Found Yaml file: " + resourceLocation);
                         try {
                             objects.addAll(loadYamls(pack.getResourceStream(ResourcePackType.SERVER_DATA, resourceLocation),
                                     compiler));
@@ -94,7 +94,7 @@ public class YamlLoader
     /**
      * Creates a list from an input stream, using the given compliation function
      * 
-     * @param file            the input stream to read modules from
+     * @param file            the input stream to read yamls from
      * @param compiler        the function that takes the parsed yaml and produces an object
      * @return the List of objects compiled from the input yaml stream
      */
@@ -117,7 +117,7 @@ public class YamlLoader
      * @param modFile The Mod file in which to search
      * @return A {@link Collection<ResourceLocation>} constructed from the values in the yaml
      */
-    protected static Collection<ResourceLocation> loadModulesFromModFile(ResourcePackType type, String pathIn, int maxDepth, Predicate<String> filter, ModFile modFile)
+    protected static Collection<ResourceLocation> loadYamlsFromModFile(ResourcePackType type, String pathIn, int maxDepth, Predicate<String> filter, ModFile modFile)
     {
         try
         {
