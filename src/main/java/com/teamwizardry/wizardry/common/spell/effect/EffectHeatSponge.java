@@ -44,18 +44,16 @@ public class EffectHeatSponge extends PatternEffect {
     public void affectBlock(World world, Interactor block, Instance instance) {
         if (block.getType() != Interactor.InteractorType.BLOCK) return;
         BlockPos pos = block.getBlockPos();
-        BlockState state = world.getBlockState(pos);
 
-        if(state.getBlock() == Blocks.FIRE) {
-            world.removeBlock(pos, false);
-            return;
-        }
+        BlockPos[] poses = new BlockPos[]{pos, pos.up(), pos.north(), pos.south(), pos.east(), pos.west(), pos.down()};
 
-        state = world.getBlockState(pos.up());
+        for(BlockPos position : poses) {
+            BlockState state = world.getBlockState(position);
 
-        if(state.getBlock() == Blocks.FIRE) {
-            world.removeBlock(pos.up(), false);
-            return;
+            if(state.getBlock() == Blocks.FIRE) {
+                world.removeBlock(position, false);
+                return;  // this is intentional. Only one fire will be extinguished.
+            }
         }
 
         IFluidState fState = world.getFluidState(pos);
