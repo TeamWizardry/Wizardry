@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.wizardry.api.StringConsts;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.Interactor;
+import com.teamwizardry.wizardry.api.spell.ShapeInstance;
 import com.teamwizardry.wizardry.common.spell.SpellCompiler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -12,6 +13,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Project: Wizardry
@@ -26,7 +28,7 @@ public class ItemStaff extends Item implements INacreProduct.INacreDecayProduct 
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    public @NotNull ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemstack = player.getHeldItem(hand);
 
         // TODO: Test spell, delete when spell crafting is finished
@@ -37,7 +39,7 @@ public class ItemStaff extends Item implements INacreProduct.INacreDecayProduct 
                             new ItemStack(Items.LEATHER),
                             new ItemStack(Items.LAPIS_LAZULI),
                             new ItemStack(Items.LAPIS_LAZULI),
-                            new ItemStack(Items.PORKCHOP))
+                            new ItemStack(Items.GLOWSTONE_DUST))
                     .toInstance(caster)
                     .run(world, caster);
         }

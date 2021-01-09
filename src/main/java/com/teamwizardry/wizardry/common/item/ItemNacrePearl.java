@@ -60,15 +60,4 @@ public class ItemNacrePearl extends Item implements INacreProduct {
 			return super.getTranslationKey(stack);
 		return super.getTranslationKey(stack) + "." + getNameType(stack);
 	}
-
-	@Override
-	public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-
-		items.add(new ItemStack(this));
-		ItemStack stack = new ItemStack(this);
-		stack.getOrCreateTag().putFloat(StringConsts.PURITY_OVERRIDE, 2f);
-		items.add(stack);
-
-		super.fillItemGroup(group, items);
-	}
 }

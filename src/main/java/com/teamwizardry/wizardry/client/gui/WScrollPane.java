@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.client.gui;
 import com.teamwizardry.librarianlib.facade.layer.GuiLayer;
 import com.teamwizardry.librarianlib.facade.layer.GuiLayerEvents;
 import com.teamwizardry.librarianlib.facade.layers.SpriteLayer;
-import com.teamwizardry.librarianlib.facade.pastry.components.ScrollPane;
+import com.teamwizardry.librarianlib.facade.pastry.layers.ScrollPane;
 import com.teamwizardry.librarianlib.math.Rect2d;
 import com.teamwizardry.librarianlib.math.Vec2d;
 import net.minecraft.util.math.MathHelper;

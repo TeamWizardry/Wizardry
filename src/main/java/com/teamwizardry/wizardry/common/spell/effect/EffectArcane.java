@@ -27,7 +27,7 @@ public class EffectArcane extends PatternEffect {
     public void affectEntity(World world, Interactor entity, Instance instance) {
         if(entity.getType() != Interactor.InteractorType.ENTITY) return;
 
-        entity.getEntity().attackEntityFrom(DamageSource.MAGIC, (float) instance.getAttributeValue("potency") * POTENCY_MULTIPLIER);
+        entity.getEntity().attackEntityFrom(DamageSource.MAGIC, (float) instance.getAttributeValue("intensity") * POTENCY_MULTIPLIER);
         ModSounds.playSound(world, instance.getCaster(), entity, ModSounds.FIREWORK, 0.1f);
     }
 
