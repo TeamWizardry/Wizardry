@@ -88,6 +88,6 @@ public abstract class Pattern extends ForgeRegistryEntry<Pattern> {
     }
 
     protected Color getRandomColor() {
-        return getColors()[RandUtil.nextInt(getColors().length - 1)];
+        return getColors()[RandUtil.nextInt(getColors().length)];
     }
 }
