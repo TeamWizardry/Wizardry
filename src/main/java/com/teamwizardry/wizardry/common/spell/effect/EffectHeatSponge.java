@@ -47,7 +47,13 @@ public class EffectHeatSponge extends PatternEffect {
         if (block.getType() != Interactor.InteractorType.BLOCK) return;
 
         BlockPos blockPos = block.getBlockPos();
-        BlockPos[] positions = new BlockPos[]{blockPos, blockPos.up(), blockPos.north(), blockPos.south(), blockPos.east(), blockPos.west(), blockPos.down()};
+
+        if(world.getBlockState(blockPos).getBlock() == Blocks.FIRE) {
+            world.removeBlock(blockPos, false);
+            return;
+        }
+
+        BlockPos[] positions = new BlockPos[]{blockPos.up(), blockPos.north(), blockPos.south(), blockPos.east(), blockPos.west(), blockPos.down()};
         boolean hasExtinguished = false;
 
         for(BlockPos targetPosition : positions) {
