@@ -1,9 +1,9 @@
-module: wizardry:arcane
-name: arcane
+module: wizardry:vacuum
+name: vacuum
 items:
-  - minecraft:glowstone_dust
-mana: 40
-burnout: 10
+  - minecraft:empty_bottle
+mana: 10
+burnout: 30
 modifiers:
   duration:
     values:
@@ -30,5 +30,5 @@ modifiers:
       - 22
       - 20
       - 18
-action: damage
-element: mana
+action: break
+element: air

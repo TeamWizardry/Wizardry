@@ -39,7 +39,7 @@ public class ItemStaff extends Item implements INacreProduct.INacreDecayProduct 
                             new ItemStack(Items.LEATHER),
                             new ItemStack(Items.LAPIS_LAZULI),
                             new ItemStack(Items.LAPIS_LAZULI),
-                            new ItemStack(Items.GLOWSTONE_DUST))
+                            new ItemStack(Items.MAGMA_CREAM))
                     .toInstance(caster)
                     .run(world, caster);
         }

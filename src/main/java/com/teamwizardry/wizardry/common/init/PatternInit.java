@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.spell.effect.EffectArcane;
 import com.teamwizardry.wizardry.common.spell.effect.EffectBurn;
+import com.teamwizardry.wizardry.common.spell.effect.EffectHeatSponge;
 import com.teamwizardry.wizardry.common.spell.shape.ShapeRay;
 import com.teamwizardry.wizardry.common.spell.shape.ShapeZone;
 
@@ -20,6 +21,7 @@ public class PatternInit
         
         // Effects
         registry.registerAll(new EffectBurn().setRegistryName(Wizardry.MODID, "burn"),
-                             new EffectArcane().setRegistryName(Wizardry.MODID, "arcane"));
+                             new EffectArcane().setRegistryName(Wizardry.MODID, "arcane"),
+                             new EffectHeatSponge().setRegistryName(Wizardry.MODID, "heat_sponge"));
     }
 }
