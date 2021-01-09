@@ -11,6 +11,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FireBlock;
 import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.fluid.LavaFluid;
@@ -63,8 +64,10 @@ public class EffectHeatSponge extends PatternEffect {
 
         IFluidState fState = world.getFluidState(blockPos);
 
-        if (fState.isSource() && fState.getFluid().isEquivalentTo(Fluids.LAVA)) {
-            world.setBlockState(blockPos, Blocks.OBSIDIAN.getDefaultState());
+        // TODO: Make a map of fluids to a pair of blocks (replaceSource, replaceFlowing) and pull from that instead of hardcoding
+        if (fState.getFluid().isEquivalentTo(Fluids.LAVA)) {
+            BlockState setState = fState.isSource() ? Blocks.OBSIDIAN.getDefaultState() : Blocks.COBBLESTONE.getDefaultState();
+            world.setBlockState(blockPos, setState);
         }
     }
 
