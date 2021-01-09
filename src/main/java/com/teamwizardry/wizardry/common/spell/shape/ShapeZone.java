@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.spell.shape;
 import com.teamwizardry.librarianlib.math.Easing;
 import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.WizConsts;
 import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.PatternShape;
@@ -43,18 +44,26 @@ public class ShapeZone extends PatternShape {
         final CompoundNBT pointsTag = new CompoundNBT();
         final List<Interactor> interactors = new ArrayList<>();
 
+        WizConsts.getLogger().debug("Range: " + rangeSq);
+
         // Run on entities
         List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class,
                 region,
                 entity -> entity.getPositionVec().squareDistanceTo(center) <= rangeSq);
-        double numEntityProcs = entities.size() * procFraction;
-        while (entities.size() > numEntityProcs)
-            entities.remove((int) (Math.random() * entities.size()));
-        for (LivingEntity entity : entities) {
 
+        int numEntityProcs = (int)Math.ceil(entities.size() * procFraction);
+
+        WizConsts.getLogger().debug("Entities: " + entities.size() + "\nprocFrac: " + procFraction + "\nnumProcs: " + numEntityProcs);
+
+        while (entities.size() > numEntityProcs) {
+            entities.remove((int) (Math.random() * entities.size()));
+        }
+
+        for (LivingEntity entity : entities) {
             Interactor interactor = new Interactor(entity);
             Vec3d point = interactor.getPos();
             interactors.add(interactor);
+
             CompoundNBT pointNBT = new CompoundNBT();
             pointNBT.putDouble("x", point.x);
             pointNBT.putDouble("y", point.y);
@@ -64,23 +73,32 @@ public class ShapeZone extends PatternShape {
 
         // Run on blocks
         List<BlockPos> blocks = new LinkedList<>();
-        for (int x = (int) Math.floor(region.minX); x < Math.ceil(region.maxX); x++)
-            for (int y = (int) Math.floor(region.minY); y < Math.ceil(region.maxY); y++)
-                for (int z = (int) Math.floor(region.minZ); z < Math.ceil(region.maxZ); z++)
-                    if (center.squareDistanceTo(x, y, z) <= rangeSq)
+
+        for (int x = (int) Math.floor(region.minX); x < Math.ceil(region.maxX); x++) {
+            for (int y = (int) Math.floor(region.minY); y < Math.ceil(region.maxY); y++) {
+                for (int z = (int) Math.floor(region.minZ); z < Math.ceil(region.maxZ); z++) {
+                    if (center.squareDistanceTo(x, y, z) <= rangeSq) {
                         blocks.add(new BlockPos(x, y, z));
+                    }
+                }
+            }
+        }
+
         double numBlockProcs = blocks.size() * procFraction;
-        while (blocks.size() > numBlockProcs)
+
+        while (blocks.size() > numBlockProcs) {
             blocks.remove((int) (Math.random() * blocks.size()));
+        }
+
         for (BlockPos pos : blocks) {
             Vec3d direction = new Vec3d(pos.getX() + 0.5 - center.x,
                     pos.getY() + 0.5 - center.y,
                     pos.getZ() + 0.5 - center.z);
 
-            Interactor interactor = new Interactor(pos,
-                    Direction.getFacingFromVector(direction.x, direction.y, direction.z));
+            Interactor interactor = new Interactor(pos, Direction.getFacingFromVector(direction.x, direction.y, direction.z));
             Vec3d point = interactor.getPos();
             interactors.add(interactor);
+
             CompoundNBT pointNBT = new CompoundNBT();
             pointNBT.putDouble("x", point.x);
             pointNBT.putDouble("y", point.y);
