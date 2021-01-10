@@ -1,10 +1,12 @@
 package com.teamwizardry.wizardry.common.item;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.teamwizardry.wizardry.api.StringConsts;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.Interactor;
-import com.teamwizardry.wizardry.api.spell.ShapeInstance;
 import com.teamwizardry.wizardry.common.spell.SpellCompiler;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -13,7 +15,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Project: Wizardry

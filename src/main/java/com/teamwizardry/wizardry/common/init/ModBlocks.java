@@ -1,7 +1,12 @@
 package com.teamwizardry.wizardry.common.init;
 
 import com.teamwizardry.librarianlib.foundation.block.BaseLogBlock;
-import com.teamwizardry.librarianlib.foundation.registration.*;
+import com.teamwizardry.librarianlib.foundation.registration.BlockSpec;
+import com.teamwizardry.librarianlib.foundation.registration.BuildingBlockCollection;
+import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
+import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
+import com.teamwizardry.librarianlib.foundation.registration.RenderLayerSpec;
+import com.teamwizardry.librarianlib.foundation.registration.TileEntitySpec;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.block.BlockManaBattery;
@@ -12,25 +17,19 @@ import com.teamwizardry.wizardry.common.lib.LibBlockNames;
 import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
 import com.teamwizardry.wizardry.common.structure.WisdomTree;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
-
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
-import net.minecraft.block.Block;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.FoliageColors;
 import net.minecraft.world.biome.BiomeColors;
 import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryManager;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModBlocks {

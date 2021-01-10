@@ -1,16 +1,14 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.wizardry.api.StringConsts;
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.wizardry.api.item.INacreProduct;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
-
-import javax.annotation.Nonnull;
 
 /**
  * Project: Wizardry

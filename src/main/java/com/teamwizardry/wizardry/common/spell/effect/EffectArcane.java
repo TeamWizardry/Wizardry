@@ -1,21 +1,20 @@
 package com.teamwizardry.wizardry.common.spell.effect;
 
+import java.awt.Color;
+
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.WizConsts;
+import com.teamwizardry.wizardry.api.spell.Attributes;
 import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
-import com.teamwizardry.wizardry.api.spell.Attributes;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import com.teamwizardry.wizardry.common.init.ModSounds;
+
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.Level;
-
-import java.awt.*;
 
 /*
 * By: Carbon

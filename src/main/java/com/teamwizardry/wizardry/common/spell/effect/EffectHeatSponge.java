@@ -1,29 +1,25 @@
 package com.teamwizardry.wizardry.common.spell.effect;
 
+import java.awt.Color;
+
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.Attributes;
 import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
 import com.teamwizardry.wizardry.api.spell.PatternEffect;
-import com.teamwizardry.wizardry.api.spell.Attributes;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.FireBlock;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.fluid.LavaFluid;
-import net.minecraft.item.HoeItem;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.awt.*;
 
 public class EffectHeatSponge extends PatternEffect {
     // Time in ticks added to the effect per duration
