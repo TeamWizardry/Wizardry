@@ -1,18 +1,21 @@
 package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.foundation.BaseMod;
+import com.teamwizardry.librarianlib.prism.Prisms;
 import com.teamwizardry.wizardry.api.WizConsts;
 import com.teamwizardry.wizardry.api.spell.Pattern;
 import com.teamwizardry.wizardry.common.init.ModBlocks;
 import com.teamwizardry.wizardry.common.init.ModItems;
 import com.teamwizardry.wizardry.common.init.PatternInit;
 import com.teamwizardry.wizardry.common.packet.CRenderSpellPacket;
+import com.teamwizardry.wizardry.common.prism.ModuleSerializer;
 import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
 import com.teamwizardry.wizardry.common.spell.loading.ModifierLoader;
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import com.teamwizardry.wizardry.proxy.IProxy;
 import com.teamwizardry.wizardry.proxy.ServerProxy;
+
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -53,6 +56,9 @@ public class Wizardry extends BaseMod {
         this.getCourier().register(new CRenderSpellPacket(), NetworkDirection.PLAY_TO_CLIENT);
 
         PROXY.registerHandlers();
+        
+        // Register custom serializers
+        Prisms.getNbt().register(ModuleSerializer.get());
     }
 
     public static ResourceLocation location(String path) {

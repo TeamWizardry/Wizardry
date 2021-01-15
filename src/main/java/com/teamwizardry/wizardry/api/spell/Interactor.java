@@ -1,6 +1,14 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import static com.teamwizardry.wizardry.api.capability.mana.ManaCapability.MANA_CAPABILITY;
+import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.BLOCK;
+import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.ENTITY;
+
 import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
+import com.teamwizardry.wizardry.api.block.IManaNode;
+import com.teamwizardry.wizardry.api.capability.mana.IManaCapability;
+
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,9 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.BLOCK;
-import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.ENTITY;
 
 public class Interactor {
     public enum InteractorType {
@@ -27,6 +32,11 @@ public class Interactor {
     private final BlockPos block;
     private final Direction dir;
 
+    /**
+     * Create an Interactor attached to a given {@link BlockPos}.
+     * Spells cast on this block should take the {@link Direction}
+     * into account, but this is by no means required.
+     */
     public Interactor(BlockPos pos, Direction dir) {
         this.type = BLOCK;
         this.block = pos;
@@ -34,6 +44,12 @@ public class Interactor {
         this.entity = null;
     }
 
+    /**
+     * Create an Interactor attached to a given {@link LivingEntity}.
+     * Spells cast on this entity are not guaranteed to have consistent
+     * locations or directions, take this into account when dealing with
+     * non-instantaneous effects.
+     */
     public Interactor(LivingEntity entity)
     {
         this.type = ENTITY;
@@ -42,6 +58,11 @@ public class Interactor {
         this.dir = null;
     }
 
+    /**
+     * Gives the location the Interactor is currently seeing.
+     * Returns the current eye position of the linked {@link LivingEntity}
+     * or the center of the linked {@link BlockPos}.
+     */
     public Vec3d getPos() {
         switch (type) {
             case ENTITY:
@@ -70,6 +91,11 @@ public class Interactor {
         return pos;
     }
 
+    /**
+     * Tells the "direction" this Interactor is facing. For {@link LivingEntity} Interactors
+     * this is their look vector, for {@link BlockPos} Interactors it is the {@link Vec3d} form
+     * of their {@link Direction}.
+     */
     public Vec3d getLook() {
         switch (type) {
             case ENTITY:
@@ -88,12 +114,31 @@ public class Interactor {
     
     public InteractorType getType() { return this.type; }
     
+    /**
+     * Drains mana from and adds burnout to the Interactor's target.
+     * @return Returns {@code true} if enough mana was drained to cast the spell.
+     * Returns {@code false} otherwise, although mana and burnout are still modified.
+     */
     public boolean consumeCost(World world, double mana, double burnout)
     {
         switch (this.type)
         {
-            case BLOCK: return world.getTileEntity(block) != null; // TODO: Consume mana from tile entity
-            case ENTITY: return this.entity instanceof PlayerEntity; // TODO: Consume mana from living entity
+            case BLOCK:
+                Block block = world.getBlockState(this.block).getBlock();
+                if (block instanceof IManaNode)
+                    return ((IManaNode) block).removeMana(world, this.block, mana) <= 0;
+                return false;
+            case ENTITY:
+                IManaCapability cap = this.entity.getCapability(MANA_CAPABILITY).orElse(null);
+                if (cap == null) return false;
+                cap.setBurnout(Math.min(cap.getBurnout() + burnout, cap.getMaxBurnout()));
+                if (cap.getMana() < mana)
+                {
+                    cap.setMana(0);
+                    return false;
+                }
+                cap.setMana(cap.getMana() - mana);
+                return true;
         }
         throw new InconceivableException("No other hittable types");
     }

@@ -15,18 +15,18 @@ public class ManaCapability extends BaseCapability implements IManaCapability {
 	public static Capability<IManaCapability> MANA_CAPABILITY;
 
 	@Save
-	private long mana;
+	private double mana;
 
 	@Save
-	private long maxMana;
+	private double maxMana;
 
 	@Save
-	private long burnout;
+	private double burnout;
 
 	@Save
-	private long maxBurnout;
+	private double maxBurnout;
 
-	public ManaCapability(long mana, long maxMana, long burnout, long maxBurnout) {
+	public ManaCapability(double mana, double maxMana, double burnout, double maxBurnout) {
 		this.mana = mana;
 		this.maxMana = maxMana;
 		this.burnout = burnout;
@@ -34,42 +34,42 @@ public class ManaCapability extends BaseCapability implements IManaCapability {
 	}
 
 	@Override
-	public long getMana() {
+	public double getMana() {
 		return mana;
 	}
 
 	@Override
-	public void setMana(long mana) {
+	public void setMana(double mana) {
 		this.mana = mana;
 	}
 
 	@Override
-	public long getMaxMana() {
+	public double getMaxMana() {
 		return maxMana;
 	}
 
 	@Override
-	public void setMaxMana(long maxMana) {
+	public void setMaxMana(double maxMana) {
 		this.maxMana = maxMana;
 	}
 
 	@Override
-	public long getBurnout() {
+	public double getBurnout() {
 		return burnout;
 	}
 
 	@Override
-	public void setBurnout(long burnout) {
+	public void setBurnout(double burnout) {
 		this.burnout = burnout;
 	}
 
 	@Override
-	public long getMaxBurnout() {
+	public double getMaxBurnout() {
 		return maxBurnout;
 	}
 
 	@Override
-	public void setMaxBurnout(long maxBurnout) {
+	public void setMaxBurnout(double maxBurnout) {
 		this.maxBurnout = maxBurnout;
 	}
 }

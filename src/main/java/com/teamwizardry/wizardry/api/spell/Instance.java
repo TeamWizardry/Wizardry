@@ -15,6 +15,16 @@ import java.util.stream.Collectors;
 
 import static com.teamwizardry.wizardry.api.StringConsts.*;
 
+/**
+ * Contains data relevant to a single cast event of a {@code Module}
+ * Do not construct, instances are provided for calls to
+ * {@link Pattern#affectBlock(World, Interactor, Instance)} and
+ * {@link Pattern#affectEntity(World, Interactor, Instance)}.
+ * @see EffectInstance
+ * @see ShapeInstance
+ * @see PatternEffect
+ * @see PatternShape
+ */
 public abstract class Instance {
     protected Pattern pattern;
     protected TargetType targetType;
@@ -60,10 +70,21 @@ public abstract class Instance {
         return this.targetType;
     }
 
+    /**
+     * List of all known attribute values. Keys found in {@link Attributes}.
+     * Use {@link Map#getOrDefault(Object, Object)} to retrieve values, as
+     * only attributes with values and ranges defined in Module yamls will
+     * appear in here.
+     * @see #getAttributeValue(String)
+     */
     public Map<String, Double> getAttributeValues() {
         return this.attributeValues;
     }
 
+    /**
+     * Retrieve the value for a given {@link Attribute}. Defaults to 1 if neither
+     * value nor range were defined in the Module's yaml
+     */
     public double getAttributeValue(String attribute) {
         return this.attributeValues.getOrDefault(attribute, 1.0);
     }

@@ -59,7 +59,10 @@ public class ManaPath
         double manaToTransfer = Math.min(sourceNode.getMana(world, sourcePos), sinkNode.getMissingMana(world, sinkPos));
         
         if (manaToTransfer > 0)
-            return sourceNode.removeMana(world, sourcePos, manaToTransfer) && sinkNode.addMana(world, sinkPos, manaToTransfer);
+        {
+            sourceNode.transferMana(world, sourcePos, sinkPos, manaToTransfer);
+            return true;
+        }
         return false;
     }
 }
