@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "wizardry:wisdom_wood_gilded_planks"
+          "name": "wizardry:gilded_wisdom_wood_planks"
         }
       ],
       "conditions": [
