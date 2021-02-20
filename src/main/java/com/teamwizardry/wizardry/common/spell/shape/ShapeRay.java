@@ -15,7 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -29,8 +29,8 @@ public class ShapeRay extends PatternShape {
     
     @Override
     public void run(World world, Instance instance, Interactor target) {
-        Vec3d start = target.getPos();
-        Vec3d end = start.add(target.getLook().scale(instance.getAttributeValue(RANGE)));
+        Vector3d start = target.getPos();
+        Vector3d end = start.add(target.getLook().scale(instance.getAttributeValue(RANGE)));
         Entity sourceEntity = target.getEntity();
         ray.cast(world,
                 BlockMode.VISUAL,
@@ -48,8 +48,8 @@ public class ShapeRay extends PatternShape {
             case NONE:
             case BLOCK:
             case FLUID:
-                Vec3d dir = end.subtract(start);
-                Vec3d hit = new Vec3d(ray.getHitX(), ray.getHitY(), ray.getHitZ());
+                Vector3d dir = end.subtract(start);
+                Vector3d hit = new Vector3d(ray.getHitX(), ray.getHitY(), ray.getHitZ());
                 newTarget = new Interactor(new BlockPos(hit), Direction.getFacingFromVector(dir.x, dir.y, dir.z));
                 break;
             case ENTITY:
@@ -67,8 +67,8 @@ public class ShapeRay extends PatternShape {
     public void runClient(World world, Instance instance, Interactor target) {
 
         Color[] colors = ColorUtils.mergeColorSets(instance.getEffectColors());
-        Vec3d v1 = instance.getCaster().getClientPos();
-        Vec3d v2 = target.getPos();
+        Vector3d v1 = instance.getCaster().getClientPos();
+        Vector3d v2 = target.getPos();
 
         for (int i = 0; i < 30; i++) {
             double a = i / 30.0;

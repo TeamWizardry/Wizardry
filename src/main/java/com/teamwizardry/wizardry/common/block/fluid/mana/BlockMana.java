@@ -19,6 +19,7 @@ public class BlockMana extends FlowingFluidBlock {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
         // TODO float
 

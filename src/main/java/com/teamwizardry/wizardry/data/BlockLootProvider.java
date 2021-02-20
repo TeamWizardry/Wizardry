@@ -1,23 +1,30 @@
 package com.teamwizardry.wizardry.data;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.teamwizardry.wizardry.Wizardry;
-import net.minecraft.block.Block;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.*;
-import net.minecraft.world.storage.loot.conditions.SurvivesExplosion;
-import net.minecraft.world.storage.loot.functions.CopyNbt;
-import net.minecraftforge.registries.ForgeRegistries;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.teamwizardry.wizardry.Wizardry;
+
+import net.minecraft.block.Block;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DirectoryCache;
+import net.minecraft.data.IDataProvider;
+import net.minecraft.loot.ConstantRange;
+import net.minecraft.loot.ItemLootEntry;
+import net.minecraft.loot.LootEntry;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTableManager;
+import net.minecraft.loot.conditions.SurvivesExplosion;
+import net.minecraft.loot.functions.CopyNbt;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class BlockLootProvider implements IDataProvider {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

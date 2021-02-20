@@ -1,18 +1,20 @@
 package com.teamwizardry.wizardry.common.packet;
 
+import java.util.function.Supplier;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.teamwizardry.librarianlib.core.util.Client;
-import com.teamwizardry.librarianlib.core.util.sided.SidedSupplier;
+import com.teamwizardry.librarianlib.core.util.sided.ClientRunnable;
+import com.teamwizardry.librarianlib.courier.CourierBuffer;
 import com.teamwizardry.librarianlib.courier.PacketType;
 import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
+
 import ll.dev.thecodewarrior.prism.annotation.RefractClass;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 @RefractClass
 public class CRenderSpellPacket extends PacketType<CRenderSpellPacket.Packet> {
@@ -22,29 +24,29 @@ public class CRenderSpellPacket extends PacketType<CRenderSpellPacket.Packet> {
     }
 
     @Override
-    public void encode(Packet packet, @NotNull PacketBuffer buffer) {
+    public void encode(Packet packet, @NotNull CourierBuffer buffer) {
         buffer.writeCompoundTag(packet.instance);
         buffer.writeCompoundTag(packet.target);
     }
 
     @Override
-    public Packet decode(@NotNull PacketBuffer buffer) {
+    public Packet decode(@NotNull CourierBuffer buffer) {
         return new Packet(buffer.readCompoundTag(), buffer.readCompoundTag());
     }
 
     @Override
     public void handle(Packet packet, @NotNull Supplier<NetworkEvent.Context> context) {
-        PlayerEntity player = SidedSupplier.client(Client::getPlayer);
-        if (player == null) return;
+        context.get().enqueueWork(((ClientRunnable) () -> {
+            PlayerEntity player = Client.getPlayer();
+            if (player == null) return;
 
-        context.get().enqueueWork(() -> {
+            Instance.fromNBT(player.getEntityWorld(), packet.instance)
+            .runClient(player.getEntityWorld(),
+                    Interactor.fromNBT(player.getEntityWorld(), packet.target));
 
-            Instance.fromNBT(player.getEntityWorld().getWorld(), packet.instance)
-                    .runClient(player.getEntityWorld().getWorld(),
-                            Interactor.fromNBT(player.getEntityWorld().getWorld(), packet.target));
-        });
+        }));
     }
-
+    
     public static class Packet {
         public final CompoundNBT instance;
         public final CompoundNBT target;
@@ -54,5 +56,4 @@ public class CRenderSpellPacket extends PacketType<CRenderSpellPacket.Packet> {
             this.target = target;
         }
     }
-
 }

@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'http://repo.spongepowered.org/maven' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
         jcenter()
         mavenCentral()
     }
@@ -94,7 +94,7 @@ allprojects {
         maven { url 'https://jitpack.io' }
         maven { url 'https://dl.bintray.com/teamwizardry/teamwizardry' }
         maven { url 'https://minecraft.curseforge.com/api/maven/' }
-        maven { url 'http://repo.spongepowered.org/maven' }
+        maven { url 'https://repo.spongepowered.org/repository/maven-public' }
         maven { url 'http://maven.shadowfacts.net/' }
         maven {
             // for JEI
@@ -105,7 +105,6 @@ allprojects {
             name "curios"
             url "https://maven.theillusivec4.top/"
         }
-        maven { url = 'http://repo.spongepowered.org/maven' }
 
         maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
     }
@@ -127,8 +126,8 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
 
-    compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0:api")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
 
     compile 'org.spongepowered:spongeapi:7.0.0'
     compile 'org.spongepowered:mixin:0.7.5-SNAPSHOT'
@@ -136,7 +135,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 
-    runtimeOnly fg.deobf("com.teamwizardry.worldcrafter:WorldCrafter:0.0.1")
+    // runtimeOnly fg.deobf("com.teamwizardry.worldcrafter:WorldCrafter:0.0.1")
 }
 
 mixin {

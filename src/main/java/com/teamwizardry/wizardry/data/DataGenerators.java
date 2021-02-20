@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.data;
 
 import com.teamwizardry.wizardry.Wizardry;
+
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;

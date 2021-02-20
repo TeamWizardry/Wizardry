@@ -1,21 +1,23 @@
 package com.teamwizardry.wizardry.mixins;
 
-import com.teamwizardry.wizardry.common.lib.ModTags;
-import net.minecraft.entity.Entity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.IFluidState;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.teamwizardry.wizardry.common.lib.ModTags;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.tags.ITag;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.CapabilityProvider;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin extends CapabilityProvider<Entity> {
@@ -44,10 +46,10 @@ public abstract class EntityMixin extends CapabilityProvider<Entity> {
     public abstract boolean isPushedByWater();
 
     @Shadow
-    public abstract void setMotion(Vec3d motionIn);
+    public abstract void setMotion(Vector3d motionIn);
 
     @Shadow
-    public abstract Vec3d getMotion();
+    public abstract Vector3d getMotion();
 
     @Shadow
     protected double submergedHeight;
@@ -58,7 +60,7 @@ public abstract class EntityMixin extends CapabilityProvider<Entity> {
     }
 
     @SuppressWarnings("deprecation")
-    public void handleManaMovement(Tag<Fluid> fluidTag) {
+    public void handleManaMovement(ITag<Fluid> fluidTag) {
         AxisAlignedBB axisalignedbb = this.getBoundingBox().shrink(0.001D);
         int bbMinX = MathHelper.floor(axisalignedbb.minX);
         int bbMaxX = MathHelper.ceil(axisalignedbb.maxX);
@@ -74,7 +76,7 @@ public abstract class EntityMixin extends CapabilityProvider<Entity> {
                         for (int y = bbMinY; y < bbMaxY; ++y) {
                             for (int z = bbMinZ; z < bbMaxZ; ++z) {
                                 pos.setPos(x, y, z);
-                                IFluidState fluidState = this.world.getFluidState(pos);
+                                FluidState fluidState = this.world.getFluidState(pos);
                                 if (fluidState.isTagged(fluidTag)) {
                                     this.setMotion(this.getMotion().add(0, 0.075, 0));
                                     break primary;

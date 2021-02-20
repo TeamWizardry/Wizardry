@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.particle;
 
 import com.teamwizardry.librarianlib.math.Easing;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.awt.*;
 
@@ -42,11 +42,11 @@ public class KeyFramedGlitterBox {
         return this;
     }
 
-    public KeyFramedGlitterBox pos(Vec3d vec) {
+    public KeyFramedGlitterBox pos(Vector3d vec) {
         return pos(vec, null);
     }
 
-    public KeyFramedGlitterBox pos(Vec3d vec, Easing easing) {
+    public KeyFramedGlitterBox pos(Vector3d vec, Easing easing) {
         posEasings[posFrameCount] = easing == null ? 0 : KeyFramedGlitter.easingArray.indexOf(easing);
         pos[posFrameCount * 3] = vec.x;
         pos[posFrameCount * 3 + 1] = vec.y;

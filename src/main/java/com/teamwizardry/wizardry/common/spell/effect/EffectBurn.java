@@ -1,5 +1,11 @@
 package com.teamwizardry.wizardry.common.spell.effect;
 
+import static com.teamwizardry.wizardry.api.spell.Attributes.DURATION;
+import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.BLOCK;
+import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.ENTITY;
+
+import java.awt.Color;
+
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Instance;
 import com.teamwizardry.wizardry.api.spell.Interactor;
@@ -7,20 +13,10 @@ import com.teamwizardry.wizardry.api.spell.PatternEffect;
 import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import com.teamwizardry.wizardry.common.init.ModSounds;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FireBlock;
-import net.minecraft.item.FlintAndSteelItem;
-import net.minecraft.util.math.BlockPos;
+
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.awt.*;
-
-import static com.teamwizardry.wizardry.api.spell.Attributes.DURATION;
-import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.BLOCK;
-import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.ENTITY;
 
 public class EffectBurn extends PatternEffect {
 
@@ -38,15 +34,15 @@ public class EffectBurn extends PatternEffect {
         if (block.getType() != BLOCK)
             return;
 
-        BlockPos pos = block.getBlockPos();
-        BlockPos off = pos.offset(block.getDir().getOpposite());
-        if (FlintAndSteelItem.canSetFire(world.getBlockState(pos), world, pos)) {
-            BlockState posFire = ((FireBlock) Blocks.FIRE).getStateForPlacement(world, pos);
-            world.setBlockState(pos, posFire);
-        } else if (FlintAndSteelItem.canSetFire(world.getBlockState(off), world, off)) {
-            BlockState offFire = ((FireBlock) Blocks.FIRE).getStateForPlacement(world, off);
-            world.setBlockState(off, offFire);
-        }
+//        BlockPos pos = block.getBlockPos();
+//        BlockPos off = pos.offset(block.getDir().getOpposite());
+//        if (AbstractFireBlock.canLightBlock(world, pos, block.getDir())) {
+//            BlockState posFire = ((FireBlock) Blocks.FIRE).getStateForPlacement(world, pos);
+//            world.setBlockState(pos, posFire);
+//        } else if (FlintAndSteelItem.canSetFire(world.getBlockState(off), world, off)) {
+//            BlockState offFire = ((FireBlock) Blocks.FIRE).getStateForPlacement(world, off);
+//            world.setBlockState(off, offFire);
+//        }
         ModSounds.playSound(world, instance.getCaster(), block, ModSounds.FIRE, 0.1f);
     }
 

@@ -71,7 +71,7 @@ public abstract class Pattern extends ForgeRegistryEntry<Pattern> {
                         target.getPos().y,
                         target.getPos().z,
                         256,
-                        world.getDimension().getType())),
+                        world.getDimensionKey())),
                 new CRenderSpellPacket.Packet(instance.toNBT(), target.toNBT()));
     }
 

@@ -13,7 +13,7 @@ import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
@@ -64,7 +64,7 @@ public class EffectHeatSponge extends PatternEffect {
 
         if(hasExtinguished) return;
 
-        IFluidState fState = world.getFluidState(blockPos);
+        FluidState fState = world.getFluidState(blockPos);
 
         // TODO: Make a map of fluids to a pair of blocks (replaceSource, replaceFlowing) and pull from that instead of hardcoding
         if (fState.getFluid().isEquivalentTo(Fluids.LAVA)) {

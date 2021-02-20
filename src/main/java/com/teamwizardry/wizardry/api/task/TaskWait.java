@@ -4,7 +4,7 @@ import com.teamwizardry.wizardry.api.StringConsts;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 
@@ -45,7 +45,7 @@ public class TaskWait extends Task {
 	}
 
 	@Override
-	public <R extends Entity & IRobot> void onConfigure(R robotEntity, @Nullable BlockPos targetBlock, @Nullable Entity targetEntity, Vec3d lookVec, TaskController controller) {
+	public <R extends Entity & IRobot> void onConfigure(R robotEntity, @Nullable BlockPos targetBlock, @Nullable Entity targetEntity, Vector3d lookVec, TaskController controller) {
 
 	}
 

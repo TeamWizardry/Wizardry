@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.data;
 
 import com.teamwizardry.wizardry.common.init.ModItems;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;

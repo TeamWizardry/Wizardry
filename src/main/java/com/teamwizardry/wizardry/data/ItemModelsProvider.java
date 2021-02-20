@@ -1,10 +1,11 @@
 package com.teamwizardry.wizardry.data;
 
 import com.teamwizardry.wizardry.Wizardry;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class ItemModelsProvider extends net.minecraftforge.client.model.generators.ItemModelProvider {
 	public ItemModelsProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {

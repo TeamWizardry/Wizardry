@@ -36,8 +36,9 @@ public class BlockManaBattery extends ContainerBlock implements IWaterLoggable, 
 		return 15;
 	}
 
-	@Override
-	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-		return false;
-	}
+	// TODO: Check if necessary, find replacement
+//	@Override
+//	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+//		return false;
+//	}
 }

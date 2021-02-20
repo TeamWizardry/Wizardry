@@ -20,7 +20,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,7 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.Attributes.RANGE;
 public class ShapeZone extends PatternShape {
     @Override
     public void run(World world, Instance instance, Interactor target) {
-        Vec3d center = target.getPos();
+        Vector3d center = target.getPos();
         double range = instance.getAttributeValue(RANGE);
         double procFraction = MathHelper.clamp(instance.getAttributeValue(INTENSITY), 0, 1);
         AxisAlignedBB region = new AxisAlignedBB(new BlockPos(center)).grow(range - 1);
@@ -61,7 +61,7 @@ public class ShapeZone extends PatternShape {
 
         for (LivingEntity entity : entities) {
             Interactor interactor = new Interactor(entity);
-            Vec3d point = interactor.getPos();
+            Vector3d point = interactor.getPos();
             interactors.add(interactor);
 
             CompoundNBT pointNBT = new CompoundNBT();
@@ -91,12 +91,12 @@ public class ShapeZone extends PatternShape {
         }
 
         for (BlockPos pos : blocks) {
-            Vec3d direction = new Vec3d(pos.getX() + 0.5 - center.x,
+            Vector3d direction = new Vector3d(pos.getX() + 0.5 - center.x,
                     pos.getY() + 0.5 - center.y,
                     pos.getZ() + 0.5 - center.z);
 
             Interactor interactor = new Interactor(pos, Direction.getFacingFromVector(direction.x, direction.y, direction.z));
-            Vec3d point = interactor.getPos();
+            Vector3d point = interactor.getPos();
             interactors.add(interactor);
 
             CompoundNBT pointNBT = new CompoundNBT();
@@ -151,7 +151,7 @@ public class ShapeZone extends PatternShape {
                 double a = i / 60.0;
                 Vec2d dot = MathUtils.genCirclePerimeterDot((float) range,
                         (float) (360f * RandUtil.nextFloat(-10, 10) * a * Math.PI / 180.0f));
-                Vec3d circleDotPos = target.getPos().add(dot.getX(), 0, dot.getY());
+                Vector3d circleDotPos = target.getPos().add(dot.getX(), 0, dot.getY());
                 Wizardry.PROXY.spawnKeyedParticle(
                         new KeyFramedGlitterBox(RandUtil.nextInt(40, 50))
                                 .pos(target.getPos(), Easing.easeOutQuart)
@@ -176,10 +176,10 @@ public class ShapeZone extends PatternShape {
             final CompoundNBT points = nbt.getCompound("points");
             for (String pointKey : points.keySet()) {
                 CompoundNBT pointTag = points.getCompound(pointKey);
-                Vec3d point = new Vec3d(pointTag.getDouble("x"), pointTag.getDouble("y"), pointTag.getDouble("z"));
+                Vector3d point = new Vector3d(pointTag.getDouble("x"), pointTag.getDouble("y"), pointTag.getDouble("z"));
                 double yDist = Math.abs(target.getPos().y - point.getY());
                 for (int i = 0; i < 5; i++) {
-                    Vec3d to = point.add(0, RandUtil.nextDouble(-yDist, yDist), 0);
+                    Vector3d to = point.add(0, RandUtil.nextDouble(-yDist, yDist), 0);
                     Wizardry.PROXY.spawnKeyedParticle(
                             new KeyFramedGlitterBox(20)
                                     .pos(point)

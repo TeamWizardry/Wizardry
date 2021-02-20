@@ -1,5 +1,13 @@
 package com.teamwizardry.wizardry.common.tile;
 
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.librarianlib.prism.Save;
 import com.teamwizardry.wizardry.Wizardry;
@@ -10,6 +18,8 @@ import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.lib.LibTheme;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
+
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,17 +34,11 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class TileCraftingPlate extends TileEntity implements ITickableTileEntity, IHopper {
 
@@ -66,8 +70,8 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
+    public void read(BlockState state, CompoundNBT compound) {
+        super.read(state, compound);
         this.inventory = NonNullList.withSize(INV_SIZE, ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(compound, this.inventory);
 
@@ -103,12 +107,12 @@ public class TileCraftingPlate extends TileEntity implements ITickableTileEntity
 
         if (world != null && world.isRemote && world.getGameTime() % 2 == 0) {
 
-            Vec3d target = new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
+            Vector3d target = new Vector3d(RandUtil.nextDouble(-0.01, 0.01),
                     RandUtil.nextDouble(0, 0.05),
                     RandUtil.nextDouble(-0.01, 0.01));
             for (int i = 0; i < 5; i++) {
                 Vec2d randDot = MathUtils.genRandomDotInCircle(0.1f);
-                Vec3d origin = new Vec3d(getPos()).add(0.5 + randDot.getX(),
+                Vector3d origin = Vector3d.copy(getPos()).add(0.5 + randDot.getX(),
                         0.7 + RandUtil.nextDouble(0, 0.3),
                         0.5 + randDot.getY());
                 Wizardry.PROXY.spawnParticle(

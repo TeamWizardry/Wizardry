@@ -15,8 +15,8 @@ import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathType;
@@ -61,7 +61,7 @@ public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
         }
 
         @Override
-        public @NotNull String getName() {
+        public @NotNull String getString() {
             return this.name;
         }
     }
@@ -140,7 +140,7 @@ public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
     }
 
     @Override
-    public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, IFluidState fluidStateIn) {
+    public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
         if (!state.get(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
 
             worldIn.setBlockState(pos, state.with(WATERLOGGED, Boolean.TRUE), 3);
@@ -154,7 +154,7 @@ public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
 
     @Override
     @SuppressWarnings("deprecation")
-    public IFluidState getFluidState(BlockState state) {
+    public FluidState getFluidState(BlockState state) {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 
@@ -170,8 +170,8 @@ public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
         if (!worldIn.isRemote) {
             BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING));
             worldIn.setBlockState(blockpos, state.with(PART, WorktablePart.RIGHT), 3);
-            worldIn.notifyNeighbors(pos, Blocks.AIR);
-            state.updateNeighbors(worldIn, pos, 3);
+            worldIn.notifyNeighborsOfStateChange(pos, Blocks.AIR);
+            state.updateNeighbours(worldIn, pos, 3);
         }
     }
 

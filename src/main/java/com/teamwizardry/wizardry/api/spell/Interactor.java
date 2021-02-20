@@ -15,7 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -63,12 +63,12 @@ public class Interactor {
      * Returns the current eye position of the linked {@link LivingEntity}
      * or the center of the linked {@link BlockPos}.
      */
-    public Vec3d getPos() {
+    public Vector3d getPos() {
         switch (type) {
             case ENTITY:
-                return entity.getPositionVector().add(0, entity.getEyeHeight(entity.getPose()), 0);
+                return entity.getPositionVec().add(0, entity.getEyeHeight(entity.getPose()), 0);
             case BLOCK:
-                return new Vec3d(block).add(0.5, 0.5, 0.5);
+                return Vector3d.copyCentered(block);
         }
         throw new InconceivableException("No other hittable types");
     }
@@ -79,13 +79,13 @@ public class Interactor {
      * Never use this outside of rendering purposes only.
      */
     @OnlyIn(Dist.CLIENT)
-    public Vec3d getClientPos() {
-        Vec3d pos = getPos();
+    public Vector3d getClientPos() {
+        Vector3d pos = getPos();
         if (type == ENTITY && entity instanceof PlayerEntity) {
             if (pos == null) return null;
             float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - entity.rotationYaw));
             float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - entity.rotationYaw));
-            return new Vec3d(offX, 0, offZ).add(pos);
+            return new Vector3d(offX, 0, offZ).add(pos);
         }
 
         return pos;
@@ -93,15 +93,15 @@ public class Interactor {
 
     /**
      * Tells the "direction" this Interactor is facing. For {@link LivingEntity} Interactors
-     * this is their look vector, for {@link BlockPos} Interactors it is the {@link Vec3d} form
+     * this is their look vector, for {@link BlockPos} Interactors it is the {@link Vector3d} form
      * of their {@link Direction}.
      */
-    public Vec3d getLook() {
+    public Vector3d getLook() {
         switch (type) {
             case ENTITY:
                 return entity.getLookVec();
             case BLOCK:
-                return new Vec3d(dir.getDirectionVec());
+                return Vector3d.copy(dir.getDirectionVec());
         }
         throw new InconceivableException("No other hittable types");
     }

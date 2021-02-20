@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.common.init;
 
-import com.teamwizardry.librarianlib.foundation.block.BaseLogBlock;
 import com.teamwizardry.librarianlib.foundation.registration.BlockSpec;
 import com.teamwizardry.librarianlib.foundation.registration.BuildingBlockCollection;
 import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
 import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
 import com.teamwizardry.librarianlib.foundation.registration.RenderLayerSpec;
 import com.teamwizardry.librarianlib.foundation.registration.TileEntitySpec;
+import com.teamwizardry.librarianlib.foundation.registration.WoodBlockCollection;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.block.BlockManaBattery;
@@ -20,7 +20,6 @@ import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -78,15 +77,22 @@ public class ModBlocks {
         // Wisdom Wood
         ////////////////
 
-        // Planks
-        BuildingBlockCollection wisdomPlanksCollection = new BuildingBlockCollection("wisdom_wood_planks", "wisdom_wood");
-        wisdomPlanksCollection.getBlockProperties()
+        // Base
+        WoodBlockCollection wisdomPlanksCollection = new WoodBlockCollection(reggie, "wisdom_wood", MaterialColor.BROWN, MaterialColor.BROWN);
+        wisdomPlanksCollection.getLogProperties()
+                .material(Material.WOOD)
+                .mapColor(MaterialColor.WOOD)
+                .sound(SoundType.WOOD)
+                .hardnessAndResistance(2f);
+        wisdomPlanksCollection.getPlankProperties()
                 .material(Material.WOOD)
                 .mapColor(MaterialColor.WOOD)
                 .sound(SoundType.WOOD)
                 .hardnessAndResistance(2f);
 
-        wisdomPlanks.from(reggie.add(wisdomPlanksCollection.getFull()));
+        wisdomLog.from(reggie.add(wisdomPlanksCollection.getLog()));
+        wisdomLeaves.from(reggie.add(wisdomPlanksCollection.getLeaves()));
+        wisdomPlanks.from(reggie.add(wisdomPlanksCollection.getPlanks()));
         wisdomSlab.from(reggie.add(wisdomPlanksCollection.getSlab()));
         wisdomStairs.from(reggie.add(wisdomPlanksCollection.getStairs()));
         wisdomFence.from(reggie.add(wisdomPlanksCollection.getFence()));
@@ -107,15 +113,7 @@ public class ModBlocks {
         wisdomGildedFenceGate.from(reggie.add(wisdomGildedCollection.getFenceGate()));
 
         // Non-Group variants
-        wisdomLog.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LOG)
-                .block(blockSpec -> new BaseLogBlock(MaterialColor.BROWN, blockSpec.getBlockProperties()))
-                .withProperties(BaseLogBlock.DEFAULT_PROPERTIES)));
-
-        wisdomLeaves.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_LEAVES)
-                .material(Material.LEAVES)
-                .hardnessAndResistance(0.2F).tickRandomly().sound(SoundType.PLANT).notSolid()
-                .block(blockSpec -> new LeavesBlock(blockSpec.getBlockProperties().getVanillaProperties()))));
-
+        // TODO: Move to WoodBlockCollection once LibLib tree-gen is in
         wisdomSapling.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_SAPLING)
                 .material(Material.PLANTS)
                 .doesNotBlockMovement()
@@ -161,7 +159,7 @@ public class ModBlocks {
         liquidMana.from(reggie.add(new BlockSpec(LibBlockNames.MANA_FLUID)
                 .material(Material.WATER)
                 .doesNotBlockMovement()
-                .lightValue(12)
+                .lightLevel(12)
                 .hardnessAndResistance(100.0F)
                 .noDrops()
                 .block(blockSpec -> new BlockMana(() -> ModFluids.MANA_FLUID, blockSpec.getBlockProperties().getVanillaProperties()))));
