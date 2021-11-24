@@ -1,19 +1,8 @@
-package com.teamwizardry.wizardry.api.capability.mana;
+package com.teamwizardry.wizardry.api.capability.mana
 
-public interface IManaCapability {
-	double getMana();
-
-	void setMana(double mana);
-
-	double getMaxMana();
-
-	void setMaxMana(double maxMana);
-
-	double getBurnout();
-
-	void setBurnout(double burnout);
-
-	double getMaxBurnout();
-
-	void setMaxBurnout(double maxBurnout);
+interface IManaCapability {
+    var mana: Double
+    var maxMana: Double
+    var burnout: Double
+    var maxBurnout: Double
 }

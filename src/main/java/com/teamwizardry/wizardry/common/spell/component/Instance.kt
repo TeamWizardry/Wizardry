@@ -1,116 +1,139 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-import java.awt.Color;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.world.World;
+import net.fabricmc.api.Environment
+import java.awt.Color
 
 /**
- * Contains data relevant to a single cast event of a {@code Module}
+ * Contains data relevant to a single cast event of a `Module`
  * Do not construct, instances are provided for calls to
- * {@link Pattern#affectBlock(World, Interactor, Instance)} and
- * {@link Pattern#affectEntity(World, Interactor, Instance)}.
+ * [Pattern.affectBlock] and
+ * [Pattern.affectEntity].
  * @see EffectInstance
+ *
  * @see ShapeInstance
+ *
  * @see PatternEffect
+ *
  * @see PatternShape
  */
-public abstract class Instance {
-    public static final String PATTERN_TYPE = "pattern_type";
-    
-    protected Pattern pattern;
-    protected TargetType targetType;
-    protected Map<String, Double> attributeValues;
-    protected double manaCost;
-    protected double burnoutCost;
-
-    protected ShapeInstance nextShape;
-    protected List<EffectInstance> effects;
-
-    protected Interactor caster;
-    protected NbtCompound extraData;
-
-    public Instance(Pattern pattern, TargetType targetType, Map<String, Double> attributeValues, double manaCost,
-                    double burnoutCost, Interactor caster) {
-        this.pattern = pattern;
-        this.targetType = targetType;
-        this.attributeValues = attributeValues;
-        this.manaCost = manaCost;
-        this.burnoutCost = burnoutCost;
-
-        this.caster = caster;
-        this.extraData = new NbtCompound();
-
-        this.effects = new LinkedList<>();
-    }
-
-    public Instance setNext(ShapeInstance next) {
-        this.nextShape = next;
-        return this;
-    }
-
-    public Instance addEffect(EffectInstance effect) {
-        this.effects.add(effect);
-        return this;
-    }
-
-    public Pattern getPattern() {
-        return this.pattern;
-    }
-
-    public TargetType getTargetType() {
-        return this.targetType;
-    }
+abstract class Instance(
+    var pattern: Pattern?, targetType: TargetType, attributeValues: Map<String?, Double>, manaCost: Double,
+    burnoutCost: Double, caster: Interactor
+) {
+    private var targetType: TargetType
 
     /**
-     * List of all known attribute values. Keys found in {@link Attributes}.
-     * Use {@link Map#getOrDefault(Object, Object)} to retrieve values, as
+     * List of all known attribute values. Keys found in [Attributes].
+     * Use [Map.getOrDefault] to retrieve values, as
      * only attributes with values and ranges defined in Module yamls will
      * appear in here.
-     * @see #getAttributeValue(String)
+     * @see .getAttributeValue
      */
-    public Map<String, Double> getAttributeValues() {
-        return this.attributeValues;
+    private var attributeValues: Map<String?, Double>
+        protected set
+    private var manaCost: Double
+        protected set
+    private var burnoutCost: Double
+        protected set
+    var nextShape: ShapeInstance? = null
+    var effects: MutableList<EffectInstance>
+    protected var caster: Interactor
+    protected var extraData: NbtCompound
+    fun setNext(next: ShapeInstance?): Instance {
+        nextShape = next
+        return this
+    }
+
+    fun addEffect(effect: EffectInstance): Instance {
+        effects.add(effect)
+        return this
+    }
+
+    fun getTargetType(): TargetType {
+        return targetType
     }
 
     /**
-     * Retrieve the value for a given {@link Attributes}. Defaults to 1 if neither
+     * Retrieve the value for a given [Attributes]. Defaults to 1 if neither
      * value nor range were defined in the Module's yaml
      */
-    public double getAttributeValue(String attribute) {
-        return this.attributeValues.getOrDefault(attribute, 1.0);
+    fun getAttributeValue(attribute: String?): Double {
+        return attributeValues[attribute] ?: 1.0
     }
 
-    public double getManaCost() {
-        return this.manaCost;
+    fun getCaster(): Interactor {
+        return caster
     }
 
-    public double getBurnoutCost() {
-        return this.burnoutCost;
+    fun getExtraData(): NbtCompound {
+        return extraData
     }
 
-    public Interactor getCaster() {
-        return this.caster;
+    fun run(world: World, target: Interactor?) {
+        pattern!!.run(world, this, target)
     }
 
-    public static Instance fromNBT(World world, NbtCompound nbt) {
-        Pattern pattern;
-        TargetType targetType;
-        Map<String, Double> attributeValues = null;
-        double manaCost = 0;
-        double burnoutCost = 0;
+    @Environment(EnvType.CLIENT)
+    fun runClient(world: World?, target: Interactor?) {
+        pattern!!.runClient(world, this, target)
+    }
 
-        ShapeInstance nextShape = null;
-        List<EffectInstance> effects = new LinkedList<>();
+    val effectColors: List<Array<Color>>
+        get() {
+            val colors = effects.stream()
+                .map { obj: EffectInstance -> obj.getPattern() }
+                .map { obj: Pattern? -> obj.getColors() }
+                .collect(Collectors.toList<Array<Color>>())
+            if (nextShape != null) {
+                colors.addAll(nextShape.getEffectColors())
+            }
+            return colors
+        }
 
-        Interactor caster;
-        NbtCompound extraData = new NbtCompound();
+    fun toNBT(): NbtCompound {
+
+//        if (pattern != null)
+//            nbt.putString(PATTERN, pattern.getRegistryName().toString());
+//
+//        if (targetType != null)
+//            nbt.putString(TARGET_TYPE, targetType.toString());
+//
+//        if (attributeValues != null) {
+//            NbtCompound nbtAttributeValues = new NbtCompound();
+//            attributeValues.forEach(nbtAttributeValues::putDouble);
+//            nbt.put(ATTRIBUTE_VALUES, nbtAttributeValues);
+//        }
+//
+//        nbt.putDouble(MANA_COST, manaCost);
+//        nbt.putDouble(BURNOUT_COST, burnoutCost);
+//
+//        if (nextShape != null)
+//            nbt.put(NEXT_SHAPE, nextShape.toNBT());
+//
+//        if (!effects.isEmpty()) {
+//            NbtCompound nbtEffects = new NbtCompound();
+//            for (EffectInstance instance : effects)
+//                nbtEffects.put(effects.indexOf(instance) + "", instance.toNBT());
+//            nbt.put(EFFECTS, nbtEffects);
+//        }
+//
+//        nbt.put(CASTER, caster.toNBT());
+//        nbt.put(EXTRA_DATA, extraData);
+        return NbtCompound()
+    }
+
+    companion object {
+        const val PATTERN_TYPE = "pattern_type"
+        fun fromNBT(world: World?, nbt: NbtCompound?): Instance? {
+            var pattern: Pattern
+            var targetType: TargetType
+            val attributeValues: Map<String, Double>? = null
+            val manaCost = 0.0
+            val burnoutCost = 0.0
+            val nextShape: ShapeInstance? = null
+            val effects: List<EffectInstance> = LinkedList<EffectInstance>()
+            var caster: Interactor
+            val extraData = NbtCompound()
 
 //        if (nbt.contains(PATTERN))
 //            pattern = GameRegistry.findRegistry(Pattern.class).getValue(new Identifier(nbt.getString(PATTERN)));
@@ -163,64 +186,17 @@ public abstract class Instance {
 //        } else throw new InconceivableException("Pattern type must always be specified.");
 
 //        return instance;
-        return null;
-    }
-
-    public NbtCompound getExtraData() {
-        return extraData;
-    }
-
-    public void run(World world, Interactor target) {
-        this.pattern.run(world, this, target);
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void runClient(World world, Interactor target) {
-        this.pattern.runClient(world, this, target);
-    }
-
-    public List<Color[]> getEffectColors() {
-
-        List<Color[]> colors = this.effects.stream()
-                .map(EffectInstance::getPattern)
-                .map(Pattern::getColors).collect(Collectors.toList());
-        if (nextShape != null) {
-            colors.addAll(nextShape.getEffectColors());
+            return null
         }
-        return colors;
     }
 
-    public NbtCompound toNBT() {
-        NbtCompound nbt = new NbtCompound();
-
-//        if (pattern != null)
-//            nbt.putString(PATTERN, pattern.getRegistryName().toString());
-//
-//        if (targetType != null)
-//            nbt.putString(TARGET_TYPE, targetType.toString());
-//
-//        if (attributeValues != null) {
-//            NbtCompound nbtAttributeValues = new NbtCompound();
-//            attributeValues.forEach(nbtAttributeValues::putDouble);
-//            nbt.put(ATTRIBUTE_VALUES, nbtAttributeValues);
-//        }
-//
-//        nbt.putDouble(MANA_COST, manaCost);
-//        nbt.putDouble(BURNOUT_COST, burnoutCost);
-//
-//        if (nextShape != null)
-//            nbt.put(NEXT_SHAPE, nextShape.toNBT());
-//
-//        if (!effects.isEmpty()) {
-//            NbtCompound nbtEffects = new NbtCompound();
-//            for (EffectInstance instance : effects)
-//                nbtEffects.put(effects.indexOf(instance) + "", instance.toNBT());
-//            nbt.put(EFFECTS, nbtEffects);
-//        }
-//
-//        nbt.put(CASTER, caster.toNBT());
-//        nbt.put(EXTRA_DATA, extraData);
-
-        return nbt;
+    init {
+        this.targetType = targetType
+        this.attributeValues = attributeValues
+        this.manaCost = manaCost
+        this.burnoutCost = burnoutCost
+        this.caster = caster
+        extraData = NbtCompound()
+        effects = LinkedList<EffectInstance>()
     }
 }

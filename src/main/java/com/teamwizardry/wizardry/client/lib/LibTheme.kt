@@ -1,10 +1,9 @@
-package com.teamwizardry.wizardry.client.lib;
+package com.teamwizardry.wizardry.client.lib
 
-import java.awt.*;
+import java.awt.Color
 
-public class LibTheme {
-
-	public static final Color accentColor = Color.CYAN;
-	public static final Color hintColor = Color.yellow;
-	public static final Color backgroundColor = new Color(0x3D1A12);
+object LibTheme {
+    val accentColor: Color = Color.CYAN
+    val hintColor: Color = Color.yellow
+    val backgroundColor = Color(0x3D1A12)
 }

@@ -1,21 +1,15 @@
-package com.teamwizardry.wizardry.proxy;
+package com.teamwizardry.wizardry.proxy
 
-import com.teamwizardry.wizardry.client.particle.GlitterBox;
+import com.teamwizardry.wizardry.client.particle.GlitterBox
+import net.minecraft.item.ItemStack
+import net.minecraft.util.Hand
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+interface IProxy {
+    fun clientSetup()
+    fun registerHandlers()
+    fun setItemStackHandHandler(hand: Hand?, stack: ItemStack?)
+    fun spawnParticle(box: GlitterBox)
 
-public interface IProxy {
-
-    void clientSetup();
-
-    void registerHandlers();
-
-    void setItemStackHandHandler(Hand hand, ItemStack stack);
-
-    void spawnParticle(GlitterBox box);
-
-//    void spawnKeyedParticle(KeyFramedGlitterBox box);
-
-    void openWorktableGui();
+    //    void spawnKeyedParticle(KeyFramedGlitterBox box);
+    fun openWorktableGui()
 }

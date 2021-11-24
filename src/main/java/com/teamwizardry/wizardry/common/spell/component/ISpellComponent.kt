@@ -1,11 +1,8 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-import java.util.List;
+import net.minecraft.item.Item
 
-import net.minecraft.item.Item;
-
-public interface ISpellComponent
-{
-	String getName();
-	List<Item> getItems();
+interface ISpellComponent {
+    val name: String
+    val items: List<Item>
 }

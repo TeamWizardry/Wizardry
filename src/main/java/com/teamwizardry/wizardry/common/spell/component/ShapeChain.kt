@@ -1,66 +1,56 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.function.Consumer
 
-import com.teamwizardry.librarianlib.scribe.Save;
+class ShapeChain(shape: ModuleShape?) : SpellChain(shape) {
+    @Save
+    private var next: ShapeChain? = null
 
-import net.minecraft.nbt.NbtCompound;
-
-public class ShapeChain extends SpellChain
-{
-    @Save private ShapeChain next;
-    @Save private List<EffectChain> effects;
-    
-    public ShapeChain(ModuleShape shape)
-    {
-        super(shape);
-        effects = new LinkedList<>();
-    }
-    
-    public ShapeChain setNext(ShapeChain nextShape) { this.next = nextShape; return this; }
-    public ShapeChain addEffect(EffectChain chain) { this.effects.add(chain); return this; }
-    
-    @Override
-    public ShapeInstance toInstance(Interactor caster)
-    {
-        ShapeInstance instance = (ShapeInstance) super.toInstance(caster);
-        if (next != null)
-            instance.setNext(next.toInstance(caster));
-        effects.stream().map(effect -> effect.toInstance(caster)).forEach(instance::addEffect);
-        return instance;
+    @Save
+    private val effects: MutableList<EffectChain>
+    fun setNext(nextShape: ShapeChain?): ShapeChain {
+        next = nextShape
+        return this
     }
 
-    @Override
-    public NbtCompound serializeNBT()
-    {
-        NbtCompound nbt = super.serializeNBT();
-        if (next != null)
-            nbt.put(NEXT, next.serializeNBT());
-        
-        NbtCompound effects = new NbtCompound();
-        for (int i = 0; i < effects.getSize(); i++)
-            effects.put(Integer.toString(i), this.effects.get(i).serializeNBT());
-        nbt.put(EFFECTS, effects);
-        
-        return nbt;
+    fun addEffect(chain: EffectChain): ShapeChain {
+        effects.add(chain)
+        return this
     }
 
-    @Override
-    public void deserializeNBT(NbtCompound nbt)
-    {
-        super.deserializeNBT(nbt);
-        if (nbt.contains(NEXT))
-        {
-            this.next = new ShapeChain(null);
-            this.next.deserializeNBT(nbt.getCompound(NEXT));
+    override fun toInstance(caster: Interactor): ShapeInstance {
+        val instance: ShapeInstance = super.toInstance(caster) as ShapeInstance
+        if (next != null) instance.setNext(next!!.toInstance(caster))
+        effects.stream().map({ effect: EffectChain -> effect.toInstance(caster) }).forEach(
+            instance::addEffect!!
+        )
+        return instance
+    }
+
+    override fun serializeNBT(): NbtCompound? {
+        val nbt: NbtCompound? = super.serializeNBT()
+        if (next != null) nbt.put(NEXT, next!!.serializeNBT())
+        val effects = NbtCompound()
+        for (i in 0 until effects.getSize()) effects.put(i.toString(), this.effects[i].serializeNBT())
+        nbt.put(EFFECTS, effects)
+        return nbt
+    }
+
+    override fun deserializeNBT(nbt: NbtCompound) {
+        super.deserializeNBT(nbt)
+        if (nbt.contains(NEXT)) {
+            next = ShapeChain(null)
+            next!!.deserializeNBT(nbt.getCompound(NEXT))
         }
-        
-        NbtCompound effects = nbt.getCompound(EFFECTS);
-        effects.getKeys().forEach(index -> {
-            EffectChain effect = new EffectChain(null);
-            effect.deserializeNBT(effects.getCompound(index));
-            this.effects.add(effect);
-        });
+        val effects: NbtCompound = nbt.getCompound(EFFECTS)
+        effects.getKeys().forEach(Consumer { index: String? ->
+            val effect = EffectChain(null)
+            effect.deserializeNBT(effects.getCompound(index))
+            this.effects.add(effect)
+        })
+    }
+
+    init {
+        effects = LinkedList<EffectChain>()
     }
 }

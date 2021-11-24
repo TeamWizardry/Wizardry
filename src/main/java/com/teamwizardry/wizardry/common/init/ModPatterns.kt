@@ -1,10 +1,8 @@
-package com.teamwizardry.wizardry.common.init;
+package com.teamwizardry.wizardry.common.init
 
-public class ModPatterns
-{
-//    public static Registry PATTERN;
-    
-    public static void init() {
+object ModPatterns {
+    //    public static Registry PATTERN;
+    fun init() {
 //        Registry.register(Registry.REGISTRIES, id, entry)
     }
 }

@@ -1,136 +1,96 @@
-package com.teamwizardry.wizardry.common.spell;
+package com.teamwizardry.wizardry.common.spell
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import com.teamwizardry.wizardry.common.spell.component.Modifier
+import com.teamwizardry.wizardry.configs.ServerConfigs
+import net.minecraft.item.Item
+import java.util.*
+import java.util.function.Function
+import java.util.function.Supplier
+import java.util.stream.Stream
 
-import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry;
-import com.teamwizardry.wizardry.common.spell.component.EffectChain;
-import com.teamwizardry.wizardry.common.spell.component.ISpellComponent;
-import com.teamwizardry.wizardry.common.spell.component.Modifier;
-import com.teamwizardry.wizardry.common.spell.component.ModuleEffect;
-import com.teamwizardry.wizardry.common.spell.component.ModuleShape;
-import com.teamwizardry.wizardry.common.spell.component.ShapeChain;
-import com.teamwizardry.wizardry.common.spell.component.TargetComponent;
-import com.teamwizardry.wizardry.common.spell.component.TargetType;
-import com.teamwizardry.wizardry.configs.ServerConfigs;
+class SpellCompiler private constructor() {
+    private var firstShape: ShapeChain? = null
+    private var currentShape: ShapeChain? = null
+    private var currentEffect: EffectChain? = null
+    private var modifierCount = 0
+    private fun compileSpell(vararg items: ItemStack?): ShapeChain? {
+        return this.compileSpell(listOf(*items))
+    }
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+    fun compileSpell(items: List<ItemStack>): ShapeChain? {
+        val components: List<ISpellComponent?> = processItems(items)
+        return compile(components)
+    }
 
-public class SpellCompiler
-{
-    private ShapeChain firstShape;
-    private ShapeChain currentShape;
-    private EffectChain currentEffect;
-    
-    private int modifierCount = 0;
-    
-    public ShapeChain compileSpell(ItemStack... items)
-    {
-        return this.compileSpell(Arrays.asList(items));
-    }
-    
-    public ShapeChain compileSpell(List<ItemStack> items)
-    {
-        List<ISpellComponent> components = processItems(items);
-        ShapeChain spell = compile(components);
-        return spell;
-    }
-    
-    private List<ISpellComponent> processItems(List<ItemStack> items)
-    {
-        List<ISpellComponent> components = new LinkedList<>();
-        
-        LinkedList<Item> flattened = items.stream()
-                                          .flatMap(stack -> IntStream.range(0, stack.getCount())
-                                                                     .mapToObj(n -> stack.getItem()))
-                                                                     .collect(Collectors.toCollection(LinkedList::new));
-        while (!flattened.isEmpty())
-        {
-            ISpellComponent component = ComponentRegistry.getComponentForItems(flattened);
-            if (component == null)
-                flattened.remove();
-            else for (int i = 0; i < component.getItems().size(); i++)
-                flattened.remove();
-            components.add(component);
+    private fun processItems(items: List<ItemStack>): List<ISpellComponent?> {
+        val components: MutableList<ISpellComponent?> = LinkedList<ISpellComponent>()
+        val flattened: LinkedList<Item> = items.stream()
+            .flatMap(Function<ItemStack, Stream<out Item>> { stack: ItemStack ->
+                IntStream.range(0, stack.getCount())
+                    .mapToObj<Item>(IntFunction<Item> { n: Int -> stack.getItem() })
+            })
+            .collect(
+                Collectors.toCollection<Item, LinkedList<Item>>(
+                    Supplier { LinkedList() })
+            )
+        while (!flattened.isEmpty()) {
+            val component: ISpellComponent = ComponentRegistry.getComponentForItems(flattened)
+            if (component == null) flattened.remove() else for (i in component.getItems().indices) flattened.remove()
+            components.add(component)
         }
-        
-        return components;
+        return components
     }
-    
-    private ShapeChain compile(List<ISpellComponent> components)
-    {
-        for (ISpellComponent component : components)
-        {
-            if (component instanceof ModuleShape)
-                handleShape((ModuleShape)component);
-            else if (component instanceof ModuleEffect)
-                handleEffect((ModuleEffect)component);
-            else if (component instanceof Modifier)
-                handleModifier((Modifier)component);
-            else if (component instanceof TargetComponent)
-                handleTarget((TargetComponent)component);
+
+    private fun compile(components: List<ISpellComponent?>): ShapeChain? {
+        for (component in components) {
+            if (component is ModuleShape) handleShape(component as ModuleShape) else if (component is ModuleEffect) handleEffect(
+                component as ModuleEffect
+            ) else if (component is Modifier) handleModifier(component as Modifier) else if (component is TargetComponent) handleTarget(
+                component as TargetComponent
+            )
         }
-        
-        return firstShape;
+        return firstShape
     }
-    
-    private void handleShape(ModuleShape shape)
-    {
-        ShapeChain next = new ShapeChain(shape);
-        if (firstShape == null)
-        {
-            firstShape = currentShape = next;
+
+    private fun handleShape(shape: ModuleShape) {
+        val next = ShapeChain(shape)
+        if (firstShape == null) {
+            currentShape = next
+            firstShape = currentShape
+        } else {
+            currentShape.setNext(next)
+            currentShape = next
         }
-        else
-        {
-            currentShape.setNext(next);
-            currentShape = next;
-        }
-        modifierCount = 0;
+        modifierCount = 0
     }
-    
-    private void handleEffect(ModuleEffect effect)
-    {
+
+    private fun handleEffect(effect: ModuleEffect) {
         if (firstShape == null) // Spells have to start with shapes!
-            return;
-        currentEffect = new EffectChain(effect);
-        currentShape.addEffect(currentEffect);
-        modifierCount = 0;
+            return
+        currentEffect = EffectChain(effect)
+        currentShape.addEffect(currentEffect)
+        modifierCount = 0
     }
-    
-    private void handleModifier(Modifier modifier)
-    {
-        if (modifierCount++ > ServerConfigs.maxModifiers)
-            return;
+
+    private fun handleModifier(modifier: Modifier) {
+        if (modifierCount++ > ServerConfigs.maxModifiers) return
         if (firstShape == null) // Spells have to start with shapes!
-            return;
-        if (currentEffect == null)
-            currentShape.addModifier(modifier);
-        else currentEffect.addModifier(modifier);
+            return
+        if (currentEffect == null) currentShape.addModifier(modifier) else currentEffect.addModifier(modifier)
     }
-    
-    private void handleTarget(TargetComponent target)
-    {
+
+    private fun handleTarget(target: TargetComponent) {
         if (firstShape == null) // Spells have to start with shapes!
-            return;
-        TargetType targetType = TargetType.ALL;
-        if (target == ComponentRegistry.getEntityTarget())
-            targetType = TargetType.ENTITY;
-        else if (target == ComponentRegistry.getBlockTarget())
-            targetType = TargetType.BLOCK;
-        if (currentEffect == null)
-            currentShape.setTarget(targetType);
-        else currentEffect.setTarget(targetType);
+            return
+        var targetType: TargetType = TargetType.ALL
+        if (target === ComponentRegistry.getEntityTarget()) targetType =
+            TargetType.ENTITY else if (target === ComponentRegistry.getBlockTarget()) targetType = TargetType.BLOCK
+        if (currentEffect == null) currentShape.setTarget(targetType) else currentEffect.setTarget(targetType)
     }
-    
-    private SpellCompiler() {}
-    
-    public static SpellCompiler get()
-    {
-        return new SpellCompiler();
+
+    companion object {
+        fun get(): SpellCompiler {
+            return SpellCompiler()
+        }
     }
 }

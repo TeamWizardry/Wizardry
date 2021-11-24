@@ -1,48 +1,33 @@
-package com.teamwizardry.wizardry.common.block;
+package com.teamwizardry.wizardry.common.block
 
-import java.util.Random;
+import com.teamwizardry.wizardry.common.init.ModBlocks
+import net.minecraft.block.AbstractBlock
+import net.minecraft.world.gen.feature.Feature
+import java.util.*
 
-import org.jetbrains.annotations.Nullable;
+class BlockWisdomSapling(generator: SaplingGenerator?, settings: AbstractBlock.Settings?) :
+    SaplingBlock(generator, settings) {
+    open class WisdomSaplingGenerator : SaplingGenerator() {
+        private var config: TreeFeatureConfig? = null
+        private val treeFeatureConfig: TreeFeatureConfig?
+            get() {
+                if (config == null) config = TreeFeatureConfig.Builder(
+                    SimpleBlockStateProvider(ModBlocks.wisdomLog.defaultState),
+                    StraightTrunkPlacer(5, 2, 0),
+                    SimpleBlockStateProvider(ModBlocks.wisdomLeaves.defaultState),
+                    SimpleBlockStateProvider(ModBlocks.wisdomSapling.defaultState),
+                    BlobFoliagePlacer(ConstantIntProvider.create(5), ConstantIntProvider.ZERO, 3),
+                    TwoLayersFeatureSize(1, 0, 1)
+                )
+                    .build()
+                return config
+            }
 
-import com.teamwizardry.wizardry.common.init.ModBlocks;
-
-import net.minecraft.block.SaplingBlock;
-import net.minecraft.block.sapling.SaplingGenerator;
-import net.minecraft.util.math.intprovider.ConstantIntProvider;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.TreeFeatureConfig;
-import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
-import net.minecraft.world.gen.foliage.BlobFoliagePlacer;
-import net.minecraft.world.gen.stateprovider.SimpleBlockStateProvider;
-import net.minecraft.world.gen.trunk.StraightTrunkPlacer;
-
-public class BlockWisdomSapling extends SaplingBlock {
-    public BlockWisdomSapling(SaplingGenerator generator, Settings settings) {
-        super(generator, settings);
-    }
-    
-    public static class WisdomSaplingGenerator extends SaplingGenerator {
-        
-        private TreeFeatureConfig config;
-        
-        public TreeFeatureConfig getTreeFeatureConfig() {
-            if (config == null)
-                config = new TreeFeatureConfig.Builder(
-                        new SimpleBlockStateProvider(ModBlocks.wisdomLog.getDefaultState()),
-                        new StraightTrunkPlacer(5, 2, 0),
-                        new SimpleBlockStateProvider(ModBlocks.wisdomLeaves.getDefaultState()),
-                        new SimpleBlockStateProvider(ModBlocks.wisdomSapling.getDefaultState()),
-                        new BlobFoliagePlacer(ConstantIntProvider.create(5), ConstantIntProvider.ZERO, 3),
-                        new TwoLayersFeatureSize(1,0,1))
-                        .build();    
-            return config;
-        }
-        
-        @Nullable
-        @Override
-        protected ConfiguredFeature<TreeFeatureConfig, ?> getTreeFeature(Random randomIn, boolean hasNearbyFlora) {
-            return Feature.TREE.configure(getTreeFeatureConfig());
+        protected override fun getTreeFeature(
+            randomIn: Random,
+            hasNearbyFlora: Boolean
+        ): ConfiguredFeature<TreeFeatureConfig, *>? {
+            return Feature.TREE.configure(treeFeatureConfig)
         }
     }
 }

@@ -1,25 +1,24 @@
-package com.teamwizardry.wizardry.mixins;
+package com.teamwizardry.wizardry.mixins
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import net.minecraft.block.BlockState
+import net.minecraft.block.Blocks
+import net.minecraft.entity.EntityType
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.BlockView
+import org.spongepowered.asm.mixin.Mixin
+import org.spongepowered.asm.mixin.gen.Invoker
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
+@Mixin(Blocks::class)
+interface BlocksMixin {
+    companion object {
+        @Invoker("never")
+        fun never(state: BlockState?, world: BlockView?, pos: BlockPos?): Boolean {
+            throw AssertionError()
+        }
 
-@Mixin(Blocks.class)
-public interface BlocksMixin
-{
-    @Invoker("never")
-    public static boolean never(BlockState state, BlockView world, BlockPos pos) {
-        throw new AssertionError();
-    }
-    
-    
-    @Invoker("canSpawnOnLeaves")
-    public static Boolean canSpawnOnLeaves(BlockState state, BlockView world, BlockPos pos, EntityType<?> type) {
-        throw new AssertionError();
+        @Invoker("canSpawnOnLeaves")
+        fun canSpawnOnLeaves(state: BlockState?, world: BlockView?, pos: BlockPos?, type: EntityType<*>?): Boolean? {
+            throw AssertionError()
+        }
     }
 }

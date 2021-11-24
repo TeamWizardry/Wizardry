@@ -1,30 +1,39 @@
-package com.teamwizardry.wizardry.common.init;
+package com.teamwizardry.wizardry.common.init
 
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.block.fluid.mana.ManaFluid;
-import com.teamwizardry.wizardry.common.block.fluid.nacre.NacreFluid;
+import com.teamwizardry.wizardry.Wizardry
+import com.teamwizardry.wizardry.common.block.fluid.mana.ManaFluid
+import com.teamwizardry.wizardry.common.block.fluid.nacre.NacreFluid
+import net.minecraft.fluid.Fluid
+import net.minecraft.item.*
+import net.minecraft.util.registry.Registry
 
-import net.minecraft.fluid.FlowableFluid;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.registry.Registry;
-
-public class ModFluids {
-
-    public static FlowableFluid STILL_MANA;
-    public static FlowableFluid FLOWING_MANA;
-    public static FlowableFluid STILL_NACRE;
-    public static FlowableFluid FLOWING_NACRE;
-
-    public static void init()
-    {
-        STILL_MANA = Registry.register(Registry.FLUID, Wizardry.getId("mana"), new ManaFluid.Still());
-        FLOWING_MANA = Registry.register(Registry.FLUID, Wizardry.getId("flowing_mana"), new ManaFluid.Flowing());
-        ModItems.manaBucket = new BucketItem(STILL_MANA, new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1));
-        
-        STILL_NACRE = Registry.register(Registry.FLUID, Wizardry.getId("nacre"), new NacreFluid.Still());
-        FLOWING_NACRE = Registry.register(Registry.FLUID, Wizardry.getId("flowing_nacre"), new NacreFluid.Flowing());
-        ModItems.nacreBucket = new BucketItem(STILL_NACRE, new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1));
+object ModFluids {
+    var STILL_MANA: FlowableFluid? = null
+    var FLOWING_MANA: FlowableFluid? = null
+    var STILL_NACRE: FlowableFluid? = null
+    var FLOWING_NACRE: FlowableFluid? = null
+    fun init() {
+        STILL_MANA = Registry.register<Fluid, ManaFluid.Still>(
+            Registry.FLUID,
+            Wizardry.getId("mana"),
+            ManaFluid.Still()
+        )
+        FLOWING_MANA = Registry.register<Fluid, ManaFluid.Flowing>(
+            Registry.FLUID,
+            Wizardry.getId("flowing_mana"),
+            ManaFluid.Flowing()
+        )
+        ModItems.manaBucket = BucketItem(STILL_MANA, Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1))
+        STILL_NACRE = Registry.register<Fluid, NacreFluid.Still>(
+            Registry.FLUID,
+            Wizardry.getId("nacre"),
+            NacreFluid.Still()
+        )
+        FLOWING_NACRE = Registry.register<Fluid, NacreFluid.Flowing>(
+            Registry.FLUID,
+            Wizardry.getId("flowing_nacre"),
+            NacreFluid.Flowing()
+        )
+        ModItems.nacreBucket = BucketItem(STILL_NACRE, Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1))
     }
 }

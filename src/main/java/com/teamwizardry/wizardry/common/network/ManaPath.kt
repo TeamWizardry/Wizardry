@@ -1,68 +1,45 @@
-package com.teamwizardry.wizardry.common.network;
+package com.teamwizardry.wizardry.common.network
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.block.BlockState
+import net.minecraft.util.math.BlockPos
 
-import com.teamwizardry.wizardry.common.block.IManaNode;
-import com.teamwizardry.wizardry.common.block.IManaNode.ManaNodeType;
+class ManaPath {
+    private var nodes: MutableList<BlockPos>
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-public class ManaPath
-{
-    private List<BlockPos> nodes;
-    
-    public ManaPath(BlockPos... nodes)
-    {
-        this.nodes = new ArrayList<>();
-        for (BlockPos node : nodes)
-            this.nodes.add(node);
+    constructor(vararg nodes: BlockPos) {
+        this.nodes = ArrayList()
+        for (node in nodes) this.nodes.add(node)
     }
-    
-    public ManaPath(ManaPath path, BlockPos... nodes)
-    {
-        this.nodes = new ArrayList<>();
-        this.nodes.addAll(path.nodes);
-        for (BlockPos node : nodes)
-            this.nodes.add(node);
+
+    constructor(path: ManaPath?, vararg nodes: BlockPos) {
+        this.nodes = ArrayList()
+        this.nodes.addAll(path!!.nodes)
+        for (node in nodes) this.nodes.add(node)
     }
-    
-    public boolean transfer(World world)
-    {
-        BlockPos sinkPos = nodes.get(0);
-        BlockState sinkState = world.getBlockState(sinkPos);
-        Block sink = sinkState.getBlock();
-        if (!(sink instanceof IManaNode) || ((IManaNode) sink).getManaNodeType() != ManaNodeType.SINK)
-                return true;
-        
-        BlockPos sourcePos = nodes.get(nodes.size()-1);
-        BlockState sourceState = world.getBlockState(sourcePos);
-        Block source = sourceState.getBlock();
-        if (!(source instanceof IManaNode) || ((IManaNode) source).getManaNodeType() != ManaNodeType.SOURCE)
-                return true;
-        
-        for (int i = 1; i < nodes.size()-1; i++)
-        {
-            BlockPos node = nodes.get(i);
-            BlockState state = world.getBlockState(node);
-            Block block = state.getBlock();
-            if (!(block instanceof IManaNode) || ((IManaNode) block).getManaNodeType() != ManaNodeType.ROUTER)
-                return true;
+
+    fun transfer(world: World): Boolean {
+        val sinkPos = nodes[0]
+        val sinkState: BlockState = world.getBlockState(sinkPos)
+        val sink = sinkState.block
+        if (sink !is IManaNode || (sink as IManaNode).getManaNodeType() != ManaNodeType.SINK) return true
+        val sourcePos = nodes[nodes.size - 1]
+        val sourceState: BlockState = world.getBlockState(sourcePos)
+        val source = sourceState.block
+        if (source !is IManaNode || (source as IManaNode).getManaNodeType() != ManaNodeType.SOURCE) return true
+        for (i in 1 until nodes.size - 1) {
+            val node = nodes[i]
+            val state: BlockState = world.getBlockState(node)
+            val block = state.block
+            if (block !is IManaNode || (block as IManaNode).getManaNodeType() != ManaNodeType.ROUTER) return true
         }
-        
-        IManaNode sourceNode = (IManaNode) source;
-        IManaNode sinkNode = (IManaNode) sink;
-        
-        double manaToTransfer = Math.min(sourceNode.getMana(world, sourcePos), sinkNode.getMissingMana(world, sinkPos));
-        
-        if (manaToTransfer > 0)
-        {
-            sourceNode.transferMana(world, sourcePos, sinkPos, manaToTransfer);
-            return true;
+        val sourceNode: IManaNode = source as IManaNode
+        val sinkNode: IManaNode = sink as IManaNode
+        val manaToTransfer: Double =
+            Math.min(sourceNode.getMana(world, sourcePos), sinkNode.getMissingMana(world, sinkPos))
+        if (manaToTransfer > 0) {
+            sourceNode.transferMana(world, sourcePos, sinkPos, manaToTransfer)
+            return true
         }
-        return false;
+        return false
     }
 }

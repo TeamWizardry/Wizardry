@@ -1,66 +1,63 @@
-package com.teamwizardry.wizardry.common.utils;
+package com.teamwizardry.wizardry.common.utils
 
-import java.util.Random;
+import net.minecraft.util.math.Vec3d
+import java.util.*
 
-import net.minecraft.util.math.Vec3d;
+object RandUtil {
+    private var random = Random()
+    fun nextVec3d(minX: Double, maxX: Double, minY: Double, maxY: Double, minZ: Double, maxZ: Double): Vec3d {
+        return Vec3d(nextDouble(minX, maxX), nextDouble(minY, maxY), nextDouble(minZ, maxZ))
+    }
 
-public class RandUtil {
+    private fun nextDouble(min: Double, max: Double): Double {
+        return random.nextDouble() * (max - min) + min
+    }
 
-	public static Random random = new Random();
+    fun nextDouble(bound: Double): Double {
+        return random.nextDouble() * bound
+    }
 
-	public static Vec3d nextVec3d(double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
-		return new Vec3d(nextDouble(minX, maxX), nextDouble(minY, maxY), nextDouble(minZ, maxZ));
-	}
+    fun nextDouble(): Long {
+        return random.nextDouble().toLong()
+    }
 
-	public static double nextDouble(double min, double max) {
-		return (random.nextDouble() * (max - min)) + min;
-	}
+    fun nextLong(min: Long, max: Long): Long {
+        return (random.nextDouble() * (max - min) + min).toLong()
+    }
 
-	public static double nextDouble(double bound) {
-		return (random.nextDouble() * (bound));
-	}
+    fun nextLong(bound: Long): Long {
+        return (random.nextDouble() * bound).toLong()
+    }
 
-	public static long nextDouble() {
-		return (long) random.nextDouble();
-	}
+    fun nextLong(): Double {
+        return random.nextDouble()
+    }
 
-	public static long nextLong(long min, long max) {
-		return (long) ((random.nextDouble() * (max - min)) + min);
-	}
+    fun nextFloat(min: Float, max: Float): Float {
+        return random.nextFloat() * (max - min) + min
+    }
 
-	public static long nextLong(long bound) {
-		return (long) (random.nextDouble() * (bound));
-	}
+    fun nextFloat(bound: Float): Float {
+        return random.nextFloat() * bound
+    }
 
-	public static double nextLong() {
-		return random.nextDouble();
-	}
+    fun nextFloat(): Float {
+        return random.nextFloat()
+    }
 
-	public static float nextFloat(float min, float max) {
-		return (random.nextFloat() * (max - min)) + min;
-	}
+    fun nextInt(min: Int, max: Int): Int {
+        return (random.nextDouble() * (max - min) + min).toInt()
+    }
 
-	public static float nextFloat(float bound) {
-		return (random.nextFloat() * (bound));
-	}
+    fun nextInt(bound: Int): Int {
+        return (random.nextDouble() * bound).toInt()
+    }
 
-	public static float nextFloat() {
-		return random.nextFloat();
-	}
+    fun nextInt(): Int {
+        return random.nextDouble().toInt()
+    }
 
-	public static int nextInt(int min, int max) {
-		return (int) ((random.nextDouble() * (max - min)) + min);
-	}
-
-	public static int nextInt(int bound) {
-		return (int) (random.nextDouble() * bound);
-	}
-
-	public static int nextInt() {
-		return (int) random.nextDouble();
-	}
-
-	public static boolean nextBoolean() {
-		return random.nextBoolean();
-	}
+    fun nextBoolean(): Boolean {
+        return random.nextBoolean()
+    }
 }

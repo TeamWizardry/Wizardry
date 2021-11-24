@@ -1,21 +1,18 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-import java.util.List;
-import java.util.Map;
+import net.minecraft.item.Item
 
-import net.minecraft.item.Item;
-
-public class ModuleShape extends Module
-{
-    protected final String form;
-    
-    public ModuleShape(PatternShape pattern, String name, List<Item> items, double baseManaCost, double baseBurnoutCost, String form, String element, Map<String, Double> modifierCosts, Map<String, List<Double>> attributeValues)
-    {
-        super(pattern, name, items, baseManaCost, baseBurnoutCost, element, modifierCosts, attributeValues);
-        this.form = form;
-    }
-    
-    @Override public PatternShape getPattern() { return (PatternShape) pattern; }
-    
-    public String getForm() { return form; }
+class ModuleShape(
+    pattern: PatternShape,
+    name: String,
+    items: List<Item>,
+    baseManaCost: Double,
+    baseBurnoutCost: Double,
+    val form: String,
+    element: String,
+    modifierCosts: Map<String?, Double>,
+    attributeValues: Map<String, List<Double>>
+) : Module(pattern, name, items, baseManaCost, baseBurnoutCost, element, modifierCosts, attributeValues) {
+    override val pattern: Pattern
+        get() = field as PatternShape
 }

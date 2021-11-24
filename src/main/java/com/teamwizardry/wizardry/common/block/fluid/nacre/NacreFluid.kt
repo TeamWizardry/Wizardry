@@ -1,71 +1,83 @@
-package com.teamwizardry.wizardry.common.block.fluid.nacre;
+package com.teamwizardry.wizardry.common.block.fluid.nacre
 
-import com.teamwizardry.wizardry.common.init.ModBlocks;
-import com.teamwizardry.wizardry.common.init.ModFluids;
-import com.teamwizardry.wizardry.common.init.ModItems;
+import com.teamwizardry.wizardry.common.init.ModBlocks
+import com.teamwizardry.wizardry.common.init.ModFluids
+import com.teamwizardry.wizardry.common.init.ModItems
+import net.minecraft.block.*
+import net.minecraft.fluid.Fluid
+import net.minecraft.item.Item
+import net.minecraft.state.property.Properties
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Direction
+import net.minecraft.world.BlockView
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.fluid.FlowableFluid;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.Item;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+abstract class NacreFluid : FlowableFluid() {
+    val flowing: Fluid
+        get() = ModFluids.FLOWING_NACRE
+    val still: Fluid
+        get() = ModFluids.STILL_NACRE
+    protected val isInfinite: Boolean
+        protected get() = false
 
-public abstract class NacreFluid extends FlowableFluid
-{
-    @Override public Fluid getFlowing() { return ModFluids.FLOWING_NACRE; }
-
-    @Override public Fluid getStill() { return ModFluids.STILL_NACRE; }
-
-    @Override protected boolean isInfinite() { return false; }
-
-    @Override
-    protected void beforeBreakingBlock(WorldAccess world, BlockPos pos, BlockState state)
-    {
-        BlockEntity entity = state.hasBlockEntity() ? world.getBlockEntity(pos) : null;
-        Block.dropStacks(state, world, pos, entity);
+    protected override fun beforeBreakingBlock(world: WorldAccess, pos: BlockPos, state: BlockState) {
+        val entity: BlockEntity? = if (state.hasBlockEntity()) world.getBlockEntity(pos) else null
+        Block.dropStacks(state, world, pos, entity)
     }
 
-    @Override protected int getFlowSpeed(WorldView world) { return 4; }
+    protected override fun getFlowSpeed(world: WorldView): Int {
+        return 4
+    }
 
-    @Override protected int getLevelDecreasePerBlock(WorldView world) { return 1; }
+    protected override fun getLevelDecreasePerBlock(world: WorldView): Int {
+        return 1
+    }
 
-    @Override public Item getBucketItem() { return ModItems.nacreBucket; }
+    val bucketItem: Item
+        get() = ModItems.nacreBucket!!
 
-    @Override protected boolean canBeReplacedWith(FluidState state, BlockView world, BlockPos pos, Fluid fluid, Direction direction) { return false; }
+    protected override fun canBeReplacedWith(
+        state: FluidState,
+        world: BlockView,
+        pos: BlockPos,
+        fluid: Fluid,
+        direction: Direction
+    ): Boolean {
+        return false
+    }
 
-    @Override public int getTickRate(WorldView world) { return 200; }
+    override fun getTickRate(world: WorldView): Int {
+        return 200
+    }
 
-    @Override protected float getBlastResistance() { return 100.0F; }
+    protected val blastResistance: Float
+        protected get() = 100.0f
 
-    @Override protected BlockState toBlockState(FluidState state) { return ModBlocks.liquidNacre.getDefaultState().with(Properties.LEVEL_15, getBlockStateLevel(state)); }
-    
-    public static class Flowing extends NacreFluid
-    {
-        @Override
-        protected void appendProperties(StateManager.Builder<Fluid, FluidState> builder)
-        {
-            super.appendProperties(builder);
-            builder.add(LEVEL);
+    protected override fun toBlockState(state: FluidState): BlockState {
+        return ModBlocks.liquidNacre.defaultState.with(Properties.LEVEL_15, FlowableFluid.getBlockStateLevel(state))
+    }
+
+    open class Flowing : NacreFluid() {
+        protected override fun appendProperties(builder: StateManager.Builder<Fluid, FluidState>) {
+            super.appendProperties(builder)
+            builder.add(FlowableFluid.LEVEL)
         }
 
-        @Override public int getLevel(FluidState state) { return state.get(LEVEL); }
+        override fun getLevel(state: FluidState): Int {
+            return state.get<Int>(FlowableFluid.LEVEL)
+        }
 
-        @Override public boolean isStill(FluidState state) { return false; }
+        override fun isStill(state: FluidState): Boolean {
+            return false
+        }
     }
-    
-    public static class Still extends NacreFluid
-    {
-        @Override public int getLevel(FluidState state) { return 8; }
-        
-        @Override public boolean isStill(FluidState state) { return true; }
+
+    class Still : NacreFluid() {
+        override fun getLevel(state: FluidState): Int {
+            return 8
+        }
+
+        override fun isStill(state: FluidState): Boolean {
+            return true
+        }
     }
 }

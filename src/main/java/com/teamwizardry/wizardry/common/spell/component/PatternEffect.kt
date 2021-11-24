@@ -1,6 +1,3 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-public abstract class PatternEffect extends Pattern
-{
-
-}
+abstract class PatternEffect : Pattern()

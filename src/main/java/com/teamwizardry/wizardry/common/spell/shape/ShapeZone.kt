@@ -1,112 +1,92 @@
-package com.teamwizardry.wizardry.common.spell.shape;
+package com.teamwizardry.wizardry.common.spell.shape
 
-import static com.teamwizardry.wizardry.common.spell.component.Attributes.INTENSITY;
-import static com.teamwizardry.wizardry.common.spell.component.Attributes.RANGE;
+import com.teamwizardry.wizardry.common.spell.component.Instance
+import com.teamwizardry.wizardry.common.spell.component.PatternShape
+import net.fabricmc.api.Environment
+import net.minecraft.util.math.Box
+import net.minecraft.util.math.Direction
+import java.awt.Color
+import java.util.function.Predicate
+import kotlin.math.ceil
+import kotlin.math.floor
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-
-import com.teamwizardry.librarianlib.math.Vec2d;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.init.ModSounds;
-import com.teamwizardry.wizardry.common.spell.component.Instance;
-import com.teamwizardry.wizardry.common.spell.component.Interactor;
-import com.teamwizardry.wizardry.common.spell.component.PatternShape;
-import com.teamwizardry.wizardry.common.utils.ColorUtils;
-import com.teamwizardry.wizardry.common.utils.MathUtils;
-import com.teamwizardry.wizardry.common.utils.RandUtil;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
-public class ShapeZone extends PatternShape {
-    @Override
-    public void run(World world, Instance instance, Interactor target) {
-        Vec3d center = target.getPos();
-        double range = instance.getAttributeValue(RANGE);
-        double procFraction = MathHelper.clamp(instance.getAttributeValue(INTENSITY), 0, 1);
-        Box region = new Box(new BlockPos(center)).expand(range - 1);
-        double rangeSq = range * range;
-
-        final NbtCompound pointsTag = new NbtCompound();
-        final List<Interactor> interactors = new ArrayList<>();
-
-        Wizardry.LOGGER.debug("Range: " + rangeSq);
+class ShapeZone : PatternShape() {
+    fun run(world: World, instance: Instance, target: Interactor) {
+        val center: Vec3d = target.getPos()
+        val range = instance.getAttributeValue(RANGE)
+        val procFraction: Double = MathHelper.clamp(instance.getAttributeValue(INTENSITY), 0.0, 1.0)
+        val region = Box(BlockPos(center)).expand(range - 1)
+        val rangeSq = range * range
+        val pointsTag = NbtCompound()
+        val interactors: MutableList<Interactor> = ArrayList<Interactor>()
+        Wizardry.Companion.LOGGER.debug("Range: $rangeSq")
 
         // Run on entities
-        List<LivingEntity> entities = world.getEntitiesByClass(LivingEntity.class,
-                region,
-                entity -> entity.getPos().squaredDistanceTo(center) <= rangeSq);
-
-        int numEntityProcs = (int)Math.ceil(entities.size() * procFraction);
-
-        Wizardry.LOGGER.debug("Entities: " + entities.size() + "\nprocFrac: " + procFraction + "\nnumProcs: " + numEntityProcs);
-
-        while (entities.size() > numEntityProcs) {
-            entities.remove((int) (Math.random() * entities.size()));
+        val entities: List<LivingEntity> = world.getEntitiesByClass<LivingEntity>(
+            LivingEntity::class.java,
+            region,
+            Predicate<LivingEntity> { entity: LivingEntity -> entity.getPos().squaredDistanceTo(center) <= rangeSq })
+        val numEntityProcs = ceil(entities.size * procFraction).toInt()
+        Wizardry.Companion.LOGGER.debug(
+            """
+    Entities: ${entities.size}
+    procFrac: $procFraction
+    numProcs: $numEntityProcs
+    """.trimIndent()
+        )
+        while (entities.size > numEntityProcs) {
+            entities.removeAt((Math.random() * entities.size).toInt())
         }
-
-        for (LivingEntity entity : entities) {
-            Interactor interactor = new Interactor(entity);
-            Vec3d point = interactor.getPos();
-            interactors.add(interactor);
-
-            NbtCompound pointNBT = new NbtCompound();
-            pointNBT.putDouble("x", point.x);
-            pointNBT.putDouble("y", point.y);
-            pointNBT.putDouble("z", point.z);
-            pointsTag.put(UUID.randomUUID().toString(), pointNBT);
+        for (entity in entities) {
+            val interactor = Interactor(entity)
+            val point: Vec3d = interactor.getPos()
+            interactors.add(interactor)
+            val pointNBT = NbtCompound()
+            pointNBT.putDouble("x", point.x)
+            pointNBT.putDouble("y", point.y)
+            pointNBT.putDouble("z", point.z)
+            pointsTag.put(UUID.randomUUID().toString(), pointNBT)
         }
 
         // Run on blocks
-        List<BlockPos> blocks = new LinkedList<>();
-
-        for (int x = (int) Math.floor(region.minX); x < Math.ceil(region.maxX); x++) {
-            for (int y = (int) Math.floor(region.minY); y < Math.ceil(region.maxY); y++) {
-                for (int z = (int) Math.floor(region.minZ); z < Math.ceil(region.maxZ); z++) {
-                    if (center.squaredDistanceTo(x, y, z) <= rangeSq) {
-                        blocks.add(new BlockPos(x, y, z));
+        val blocks: MutableList<BlockPos> = LinkedList<BlockPos>()
+        var x = floor(region.minX).toInt()
+        while (x < ceil(region.maxX)) {
+            var y = floor(region.minY).toInt()
+            while (y < ceil(region.maxY)) {
+                var z = floor(region.minZ).toInt()
+                while (z < ceil(region.maxZ)) {
+                    if (center.squaredDistanceTo(x.toDouble(), y.toDouble(), z.toDouble()) <= rangeSq) {
+                        blocks.add(BlockPos(x, y, z))
                     }
+                    z++
                 }
+                y++
             }
+            x++
         }
-
-        double numBlockProcs = blocks.size() * procFraction;
-
-        while (blocks.size() > numBlockProcs) {
-            blocks.remove((int) (Math.random() * blocks.size()));
+        val numBlockProcs = blocks.size * procFraction
+        while (blocks.size > numBlockProcs) {
+            blocks.removeAt((Math.random() * blocks.size).toInt())
         }
-
-        for (BlockPos pos : blocks) {
-            Vec3d direction = new Vec3d(pos.getX() + 0.5 - center.x,
-                    pos.getY() + 0.5 - center.y,
-                    pos.getZ() + 0.5 - center.z);
-
-            Interactor interactor = new Interactor(pos, Direction.getFacing(direction.x, direction.y, direction.z));
-            Vec3d point = interactor.getPos();
-            interactors.add(interactor);
-
-            NbtCompound pointNBT = new NbtCompound();
-            pointNBT.putDouble("x", point.x);
-            pointNBT.putDouble("y", point.y);
-            pointNBT.putDouble("z", point.z);
-            pointsTag.put(UUID.randomUUID().toString(), pointNBT);
+        for (pos in blocks) {
+            val direction = Vec3d(
+                pos.getX() + 0.5 - center.x,
+                pos.getY() + 0.5 - center.y,
+                pos.getZ() + 0.5 - center.z
+            )
+            val interactor = Interactor(pos, Direction.getFacing(direction.x, direction.y, direction.z))
+            val point: Vec3d = interactor.getPos()
+            interactors.add(interactor)
+            val pointNBT = NbtCompound()
+            pointNBT.putDouble("x", point.x)
+            pointNBT.putDouble("y", point.y)
+            pointNBT.putDouble("z", point.z)
+            pointsTag.put(UUID.randomUUID().toString(), pointNBT)
         }
-
-        instance.getExtraData().putBoolean("exploded", false);
-        sendRenderPacket(world, instance, target);
-        ModSounds.playSound(world, instance.getCaster(), target, ModSounds.HIGH_PITCHED_SOLO_BLEEP, 0.5f, 2f);
+        instance.extraData.putBoolean("exploded", false)
+        sendRenderPacket(world, instance, target)
+        ModSounds.playSound(world, instance.caster, target, ModSounds.HIGH_PITCHED_SOLO_BLEEP, 0.5f, 2f)
 
 //        SequenceEventLoop.createSequence(new Sequence(world, 10)
 //                .event(0f, (seq) -> {
@@ -127,30 +107,26 @@ public class ShapeZone extends PatternShape {
 //                    SequenceEventLoop.createSequence(sequence);
 //
 //                }));
-
     }
 
-    @Override
-    public boolean disableAutomaticRenderPacket() {
-        return true;
+    override fun disableAutomaticRenderPacket(): Boolean {
+        return true
     }
 
-    @Override
     @Environment(EnvType.CLIENT)
-    public void runClient(World world, Instance instance, Interactor target) {
-
-        final NbtCompound nbt = instance.getExtraData();
-
-        double range = instance.getAttributeValue(RANGE);
-        Color[] colors = ColorUtils.mergeColorSets(instance.getEffectColors());
-
+    fun runClient(world: World?, instance: Instance, target: Interactor) {
+        val nbt: NbtCompound = instance.extraData
+        val range = instance.getAttributeValue(RANGE)
+        val colors: Array<Color> = ColorUtils.mergeColorSets(instance.effectColors)
         if (nbt.contains("exploded") && !nbt.getBoolean("exploded")) {
-            for (int i = 0; i < 60; i++) {
-                double a = i / 60.0;
-                Vec2d dot = MathUtils.genCirclePerimeterDot((float) range,
-                        (float) (360f * RandUtil.nextFloat(-10, 10) * a * Math.PI / 180.0f));
-                Vec3d circleDotPos = target.getPos().add(dot.getX(), 0, dot.getY());
-//                Wizardry.PROXY.spawnKeyedParticle(
+            for (i in 0..59) {
+                val a = i / 60.0
+                val dot: Vec2d = MathUtils.genCirclePerimeterDot(
+                    range.toFloat(),
+                    (360f * RandUtil.nextFloat(-10f, 10f) * a * Math.PI / 180.0f).toFloat()
+                )
+                val circleDotPos: Vec3d = target.getPos().add(dot.x, 0.0, dot.y)
+                //                Wizardry.PROXY.spawnKeyedParticle(
 //                        new KeyFramedGlitterBox(RandUtil.nextInt(40, 50))
 //                                .pos(target.getPos(), Easing.easeOutQuart)
 //                                .pos(circleDotPos)
@@ -169,16 +145,15 @@ public class ShapeZone extends PatternShape {
 //                );
             }
         }
-
         if (nbt.contains("points")) {
-            final NbtCompound points = nbt.getCompound("points");
-            for (String pointKey : points.getKeys()) {
-                NbtCompound pointTag = points.getCompound(pointKey);
-                Vec3d point = new Vec3d(pointTag.getDouble("x"), pointTag.getDouble("y"), pointTag.getDouble("z"));
-                double yDist = Math.abs(target.getPos().y - point.getY());
-                for (int i = 0; i < 5; i++) {
-                    Vec3d to = point.add(0, RandUtil.nextDouble(-yDist, yDist), 0);
-//                    Wizardry.PROXY.spawnKeyedParticle(
+            val points: NbtCompound = nbt.getCompound("points")
+            for (pointKey in points.getKeys()) {
+                val pointTag: NbtCompound = points.getCompound(pointKey)
+                val point = Vec3d(pointTag.getDouble("x"), pointTag.getDouble("y"), pointTag.getDouble("z"))
+                val yDist: Double = Math.abs(target.getPos().y - point.getY())
+                for (i in 0..4) {
+                    val to: Vec3d = point.add(0.0, RandUtil.nextDouble(-yDist, yDist), 0.0)
+                    //                    Wizardry.PROXY.spawnKeyedParticle(
 //                            new KeyFramedGlitterBox(20)
 //                                    .pos(point)
 //                                    .pos(point, Easing.easeOutQuart)

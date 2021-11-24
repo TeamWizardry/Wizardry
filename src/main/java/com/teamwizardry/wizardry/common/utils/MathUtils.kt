@@ -1,24 +1,18 @@
-package com.teamwizardry.wizardry.common.utils;
+package com.teamwizardry.wizardry.common.utils
 
-import com.teamwizardry.librarianlib.math.Vec2d;
-import net.minecraft.util.math.MathHelper;
-
-public class MathUtils {
-
-    public static Vec2d genRandomDotInCircle(float radius) {
-        float theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
-        float r = radius * RandUtil.nextFloat();
-        float x = r * MathHelper.cos(theta);
-        float y = r * MathHelper.sin(theta);
-
-        return new Vec2d(x, y);
+object MathUtils {
+    fun genRandomDotInCircle(radius: Float): Vec2d {
+        val theta = 2.0f * Math.PI.toFloat() * RandUtil.nextFloat()
+        val r = radius * RandUtil.nextFloat()
+        val x: Float = r * MathHelper.cos(theta)
+        val y: Float = r * MathHelper.sin(theta)
+        return Vec2d(x, y)
     }
 
-    public static Vec2d genCirclePerimeterDot(float radius, float angle) {
-        float theta = 2.0f * (float) Math.PI * angle;
-        float x = radius * MathHelper.cos(theta);
-        float y = radius * MathHelper.sin(theta);
-
-        return new Vec2d(x, y);
+    fun genCirclePerimeterDot(radius: Float, angle: Float): Vec2d {
+        val theta = 2.0f * Math.PI.toFloat() * angle
+        val x: Float = radius * MathHelper.cos(theta)
+        val y: Float = radius * MathHelper.sin(theta)
+        return Vec2d(x, y)
     }
 }

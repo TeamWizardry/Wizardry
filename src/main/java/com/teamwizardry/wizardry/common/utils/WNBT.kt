@@ -1,62 +1,59 @@
-package com.teamwizardry.wizardry.common.utils;
+package com.teamwizardry.wizardry.common.utils
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.item.ItemStack
 
-public class WNBT {
-
-    public static float getFloat(NbtCompound tag, String key, float defaultValue) {
-        return tag.contains(key, NbtElement.FLOAT_TYPE) ? tag.getFloat(key) : defaultValue;
+object WNBT {
+    fun getFloat(tag: NbtCompound, key: String?, defaultValue: Float): Float {
+        return if (tag.contains(key, NbtElement.FLOAT_TYPE.toInt())) tag.getFloat(key) else defaultValue
     }
 
-    public static int getInt(NbtCompound tag, String key, int defaultValue) {
-        return tag.contains(key, NbtElement.INT_TYPE) ? tag.getInt(key) : defaultValue;
+    fun getInt(tag: NbtCompound, key: String?, defaultValue: Int): Int {
+        return if (tag.contains(key, NbtElement.INT_TYPE.toInt())) tag.getInt(key) else defaultValue
     }
 
-    public static double getDouble(NbtCompound tag, String key, double defaultValue) {
-        return tag.contains(key, NbtElement.DOUBLE_TYPE) ? tag.getDouble(key) : defaultValue;
+    private fun getDouble(tag: NbtCompound, key: String?, defaultValue: Double): Double {
+        return if (tag.contains(key, NbtElement.DOUBLE_TYPE.toInt())) tag.getDouble(key) else defaultValue
     }
 
-    public static String getString(NbtCompound tag, String key, String defaultValue) {
-        return tag.contains(key, NbtElement.STRING_TYPE) ? tag.getString(key) : defaultValue;
+    private fun getString(tag: NbtCompound, key: String?, defaultValue: String?): String {
+        return if (tag.contains(key, NbtElement.STRING_TYPE.toInt())) tag.getString(key) else defaultValue!!
     }
 
-    public static boolean getBoolean(NbtCompound tag, String key, boolean defaultValue) {
-        return tag.contains(key, NbtElement.BYTE_TYPE) ? tag.getBoolean(key) : defaultValue;
+    private fun getBoolean(tag: NbtCompound, key: String?, defaultValue: Boolean): Boolean {
+        return if (tag.contains(key, NbtElement.BYTE_TYPE.toInt())) tag.getBoolean(key) else defaultValue
     }
 
-    public static long getLong(NbtCompound tag, String key, long defaultValue) {
-        return tag.contains(key, NbtElement.LONG_TYPE) ? tag.getLong(key) : defaultValue;
+    fun getLong(tag: NbtCompound, key: String?, defaultValue: Long): Long {
+        return if (tag.contains(key, NbtElement.LONG_TYPE.toInt())) tag.getLong(key) else defaultValue
     }
 
-    public static float getFloat(ItemStack stack, String key, float defaultValue) {
-        NbtCompound tag = stack.getOrCreateNbt();
-        return getFloat(tag, key, defaultValue);
+    fun getFloat(stack: ItemStack, key: String?, defaultValue: Float): Float {
+        val tag: NbtCompound = stack.orCreateNbt
+        return getFloat(tag, key, defaultValue)
     }
 
-    public static int getInt(ItemStack stack, String key, int defaultValue) {
-        NbtCompound tag = stack.getOrCreateNbt();
-        return getInt(tag, key, defaultValue);
+    fun getInt(stack: ItemStack, key: String?, defaultValue: Int): Int {
+        val tag: NbtCompound = stack.orCreateNbt
+        return getInt(tag, key, defaultValue)
     }
 
-    public static double getDouble(ItemStack stack, String key, double defaultValue) {
-        NbtCompound tag = stack.getOrCreateNbt();
-        return getDouble(tag, key, defaultValue);
+    private fun getDouble(stack: ItemStack, key: String?, defaultValue: Double): Double {
+        val tag: NbtCompound = stack.orCreateNbt
+        return getDouble(tag, key, defaultValue)
     }
 
-    public static String getString(ItemStack stack, String key, String defaultValue) {
-        NbtCompound tag = stack.getOrCreateNbt();
-        return getString(tag, key, defaultValue);
+    private fun getString(stack: ItemStack, key: String?, defaultValue: String?): String {
+        val tag: NbtCompound = stack.orCreateNbt
+        return getString(tag, key, defaultValue)
     }
 
-	public static boolean getBoolean(ItemStack stack, String key, boolean defaultValue) {
-        NbtCompound tag = stack.getOrCreateNbt();
-        return getBoolean(tag, key, defaultValue);
+    private fun getBoolean(stack: ItemStack, key: String?, defaultValue: Boolean): Boolean {
+        val tag: NbtCompound = stack.orCreateNbt
+        return getBoolean(tag, key, defaultValue)
     }
 
-	public static long getLong(ItemStack stack, String key, long defaultValue) {
-        NbtCompound tag = stack.getOrCreateNbt();
-        return getLong(tag, key, defaultValue);
+    fun getLong(stack: ItemStack, key: String?, defaultValue: Long): Long {
+        val tag: NbtCompound = stack.orCreateNbt
+        return getLong(tag, key, defaultValue)
     }
 }

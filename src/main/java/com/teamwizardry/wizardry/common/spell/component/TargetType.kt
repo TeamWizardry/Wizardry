@@ -1,8 +1,5 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-public enum TargetType
-{
-    ALL,
-    BLOCK,
-    ENTITY
+enum class TargetType {
+    ALL, BLOCK, ENTITY
 }

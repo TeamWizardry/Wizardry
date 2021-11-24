@@ -1,6 +1,3 @@
-package com.teamwizardry.wizardry.configs;
+package com.teamwizardry.wizardry.configs
 
-public class ClientConfigs
-{
-
-}
+class ClientConfigs

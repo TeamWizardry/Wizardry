@@ -1,34 +1,18 @@
-package com.teamwizardry.wizardry.common.block.entity.manabattery;
+package com.teamwizardry.wizardry.common.block.entity.manabattery
 
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.block.AbstractBlock
+import net.minecraft.block.BlockState
+import net.minecraft.util.math.BlockPos
 
-import com.teamwizardry.wizardry.common.block.IManaNode;
+class BlockManaBattery(settings: AbstractBlock.Settings?) : BlockWithEntity(settings), Waterloggable, IManaNode {
+    val manaNodeType: ManaNodeType
+        get() = ManaNodeType.SOURCE
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Waterloggable;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.BlockPos;
-
-public class BlockManaBattery extends BlockWithEntity implements Waterloggable, IManaNode {
-	public BlockManaBattery(Settings settings) {
-		super(settings);
-	}
-
-	@Override
-	public ManaNodeType getManaNodeType() {
-		return ManaNodeType.SOURCE;
-	}
-
-	@Nullable
-	@Override
-	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return new BlockManaBatteryEntity(pos, state);
-	}
-
-	// TODO: Check if necessary, find replacement
-//	@Override
-//	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-//		return false;
-//	}
+    override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity {
+        return BlockManaBatteryEntity(pos, state)
+    } // TODO: Check if necessary, find replacement
+    //	@Override
+    //	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    //		return false;
+    //	}
 }

@@ -1,13 +1,9 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-public class Attributes
-{
-    public static final String INTENSITY = "intensity";
-    public static final String SPEED = "speed";
-    public static final String RANGE = "range";
-    public static final String DURATION = "duration";
-    public static final String RECOVERY = "recovery";
-    
-    /**unconstructable */
-    private Attributes() {}
+object Attributes {
+    const val INTENSITY = "intensity"
+    const val SPEED = "speed"
+    const val RANGE = "range"
+    const val DURATION = "duration"
+    const val RECOVERY = "recovery"
 }

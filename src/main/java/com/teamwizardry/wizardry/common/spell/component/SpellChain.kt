@@ -1,88 +1,90 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.function.Consumer
 
-import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
-import com.teamwizardry.librarianlib.scribe.Save;
+abstract class SpellChain // implements INBTSerializable<NbtCompound>
+    (@field:Save protected var module: Module?) {
+    @Save
+    protected var targetType: TargetType = TargetType.ALL
 
-import net.minecraft.nbt.NbtCompound;
+    @Save
+    protected var modifiers: MutableMap<String?, Int> = HashMap()
 
-public abstract class SpellChain// implements INBTSerializable<NbtCompound>
-{
-    public static final String MODULE = "module";
-    public static final String TARGET = "target";
-    public static final String MODIFIERS = "modifiers";
-    public static final String MULTIPLIER = "multiplier";
-    public static final String NEXT = "next";
-    public static final String EFFECTS = "effects";
-    
-    @Save protected Module module;
-    @Save protected TargetType targetType = TargetType.ALL;
-    @Save protected Map<String, Integer> modifiers;
-    @Save protected double manaMultiplier;
-    
-    public SpellChain(Module module)
-    {
-        this.module = module;
-        this.modifiers = new HashMap<>();
+    @Save
+    protected var manaMultiplier = 0.0
+    fun addModifier(modifier: Modifier): SpellChain {
+        val attribute = modifier.attribute
+        modifiers.merge(attribute, 1, BiFunction<Int, Int, Int> { a: Int, b: Int -> a + b })
+        manaMultiplier *= module!!.getCostPerModifier(attribute)
+        return this
     }
-    
-    public SpellChain addModifier(Modifier modifier)
-    {
-        String attribute = modifier.getAttribute();
-        modifiers.merge(attribute, 1, (a,b) -> a+b);
-        manaMultiplier *= module.getCostPerModifier(attribute);
-        return this;
+
+    fun setTarget(target: TargetType): SpellChain {
+        targetType = target
+        return this
     }
-    
-    public SpellChain setTarget(TargetType target) { this.targetType = target; return this; }
-    
-    public Instance toInstance(Interactor caster)
-    {
+
+    open fun toInstance(caster: Interactor): Instance? {
         // TODO: Get modifications from Caster (Halo, potions, autocaster tiers, etc.)
-        
-        Map<String, Double> attributeValues = new HashMap<>();
+        val attributeValues: MutableMap<String?, Double> = HashMap()
         // Set the value for all unmodified values
-        module.getAllAttributes().forEach(attribute -> attributeValues.put(attribute, module.getAttributeValue(attribute, 0)));
+        module.getAllAttributes().forEach(Consumer { attribute: String? ->
+            attributeValues[attribute] = module!!.getAttributeValue(attribute, 0)
+        })
         // Then set the modified ones with their proper totals
-        modifiers.forEach((attribute, count) -> attributeValues.put(attribute, module.getAttributeValue(attribute, count)));
-        
-        if (module instanceof ModuleShape)
-            return new ShapeInstance(module.getPattern(), targetType, attributeValues, module.getBaseManaCost() * manaMultiplier, module.getBaseBurnoutCost() * manaMultiplier, caster);
-        else if (module instanceof ModuleEffect)
-            return new EffectInstance(module.getPattern(), targetType, attributeValues, module.getBaseManaCost() * manaMultiplier, module.getBaseBurnoutCost() * manaMultiplier, caster);
-        throw new InconceivableException("How? There are only two module types, you shouldn't ever be constructing the root");
-    }
-    
-    public NbtCompound serializeNBT()
-    {
-        NbtCompound nbt = new NbtCompound();
-        
-        String moduleName = ComponentRegistry.getModules().entrySet().stream().filter(entry -> entry.getValue().equals(module)).map(Entry::getKey).findFirst().get();
-        nbt.putString(MODULE, moduleName);
-        
-        String targetVal = targetType.name();
-        nbt.putString(TARGET, targetVal);
-        
-        NbtCompound modifiers = new NbtCompound();
-        this.modifiers.forEach(modifiers::putInt);
-        nbt.put(MODIFIERS, modifiers);
-        
-        nbt.putDouble(MULTIPLIER, manaMultiplier);
-        
-        return nbt;
+        modifiers.forEach { (attribute: String?, count: Int) ->
+            attributeValues[attribute] = module!!.getAttributeValue(attribute, count)
+        }
+        if (module is ModuleShape) return ShapeInstance(
+            module.getPattern(),
+            targetType,
+            attributeValues,
+            module.getBaseManaCost() * manaMultiplier,
+            module.getBaseBurnoutCost() * manaMultiplier,
+            caster
+        ) else if (module is ModuleEffect) return EffectInstance(
+            module.getPattern(),
+            targetType,
+            attributeValues,
+            module.getBaseManaCost() * manaMultiplier,
+            module.getBaseBurnoutCost() * manaMultiplier,
+            caster
+        )
+        throw InconceivableException("How? There are only two module types, you shouldn't ever be constructing the root")
     }
 
-    public void deserializeNBT(NbtCompound nbt)
-    {
-        this.module = ComponentRegistry.getModules().get(nbt.getString(MODULE));
-        this.targetType = TargetType.valueOf(nbt.getString(TARGET));
-        
-        NbtCompound modifiers = nbt.getCompound(MODIFIERS);
-        modifiers.getKeys().forEach(attribute -> this.modifiers.put(attribute, modifiers.getInt(attribute)));
-        
-        this.manaMultiplier = nbt.getDouble(MULTIPLIER);
+    open fun serializeNBT(): NbtCompound? {
+        val nbt = NbtCompound()
+        val moduleName = ComponentRegistry.getModules().entries.stream()
+            .filter { (_, value): Map.Entry<String?, Module?> -> value == module }
+            .map { (key): Map.Entry<String?, Module?> -> key }
+            .findFirst().get()
+        nbt.putString(MODULE, moduleName)
+        val targetVal: String = targetType.name()
+        nbt.putString(TARGET, targetVal)
+        val modifiers = NbtCompound()
+        this.modifiers.forEach { (key: String?, value: Int?) -> modifiers.putInt(key, value) }
+        nbt.put(MODIFIERS, modifiers)
+        nbt.putDouble(MULTIPLIER, manaMultiplier)
+        return nbt
     }
+
+    open fun deserializeNBT(nbt: NbtCompound) {
+        module = ComponentRegistry.getModules()[nbt.getString(MODULE)]
+        targetType = TargetType.valueOf(nbt.getString(TARGET))
+        val modifiers: NbtCompound = nbt.getCompound(MODIFIERS)
+        modifiers.getKeys()
+            .forEach(Consumer { attribute: String? -> this.modifiers[attribute] = modifiers.getInt(attribute) })
+        manaMultiplier = nbt.getDouble(MULTIPLIER)
+    }
+
+    companion object {
+        const val MODULE = "module"
+        const val TARGET = "target"
+        const val MODIFIERS = "modifiers"
+        const val MULTIPLIER = "multiplier"
+        const val NEXT = "next"
+        const val EFFECTS = "effects"
+    }
+
 }

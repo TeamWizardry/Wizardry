@@ -1,100 +1,71 @@
-package com.teamwizardry.wizardry.common.spell.component;
+package com.teamwizardry.wizardry.common.spell.component
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import com.teamwizardry.wizardry.configs.ServerConfigs
+import net.minecraft.item.Item
+import net.minecraft.util.Identifier
+import net.minecraft.util.registry.Registry
+import org.apache.logging.log4j.Logger
 
-import org.apache.logging.log4j.Logger;
+object ComponentRegistry {
+    private val LOGGER: Logger = Wizardry.Companion.INSTANCE.makeLogger(ComponentRegistry::class.java)
+    private val modules: MutableMap<String?, Module?> = HashMap()
+    private val modifiers: MutableMap<String?, Modifier> = HashMap()
+    private val spellComponents: MutableMap<List<Item?>?, ISpellComponent?> = HashMap()
+    private var entityTarget: TargetComponent? = null
+        private set
+    private var blockTarget: TargetComponent? = null
+        private set
 
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.configs.ServerConfigs;
-
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-
-public class ComponentRegistry
-{
-    private static final Logger LOGGER = Wizardry.INSTANCE.makeLogger(ComponentRegistry.class);
-    
-    private static final Map<String, Module> modules = new HashMap<>();
-    private static final Map<String, Modifier> modifiers = new HashMap<>();
-    private static final Map<List<Item>, ISpellComponent> spellComponents = new HashMap<>();
-    
-    private static TargetComponent entityTarget;
-    private static TargetComponent blockTarget;
-    
-    /**
-     * Unconstructible
-     */
-    private ComponentRegistry() {}
-    
-    public static void addModule(Module module)
-    {
-        tryRegister(module, modules);
-    }
-    
-    public static void addModifier(Modifier modifier)
-    {
-        tryRegister(modifier, modifiers);
+    fun addModule(module: Module?) {
+        tryRegister(module, modules)
     }
 
-    public static ISpellComponent getComponentForItems(List<Item> items)
-    {
-        for (List<Item> spells : spellComponents.keySet())
-            if (listStartsWith(items, spells))
-                return spellComponents.get(spells);
-        return null;
+    fun addModifier(modifier: Modifier) {
+        tryRegister(modifier, modifiers)
     }
-    
-    private static boolean listStartsWith(List<Item> list, List<Item> other)
-    {
-        if (other.size() > list.size())
-            return false;
-        
-        ListIterator<Item> listIter = list.listIterator();
-        ListIterator<Item> otherIter = other.listIterator();
-        while (listIter.hasNext() && otherIter.hasNext())
-            if (!listIter.next().equals(otherIter.next()))
-                return false;
-        return true;
+
+    fun getComponentForItems(items: List<Item?>?): ISpellComponent? {
+        for (spells in spellComponents.keys) if (listStartsWith(items, spells)) return spellComponents[spells]
+        return null
     }
-    
-    private static <Component extends ISpellComponent> boolean tryRegister(Component component, Map<String, ? super Component> map)
-    {
-        List<Item> items = component.getItems();
-        for (List<Item> keys : spellComponents.keySet())
-        {
-            if (listStartsWith(keys, items))
-            {
-                LOGGER.warn("Spell component registration failed for {} {}, recipe hidden by {}",
-                        component.getClass().getSimpleName(), component.getName(), spellComponents.get(keys).getName());
-                return false;
+
+    private fun listStartsWith(list: List<Item?>?, other: List<Item?>?): Boolean {
+        if (other!!.size > list!!.size) return false
+        val listIter = list.listIterator()
+        val otherIter = other.listIterator()
+        while (listIter.hasNext() && otherIter.hasNext()) if (listIter.next() != otherIter.next()) return false
+        return true
+    }
+
+    private fun <Component : ISpellComponent?> tryRegister(
+        component: Component,
+        map: MutableMap<String?, in Component>
+    ): Boolean {
+        val items = component.getItems()
+        for (keys in spellComponents.keys) {
+            if (listStartsWith(keys, items)) {
+                LOGGER.warn(
+                    "Spell component registration failed for {} {}, recipe hidden by {}",
+                    component.javaClass.getSimpleName(), component.getName(), spellComponents[keys].getName()
+                )
+                return false
             }
         }
-        map.put(component.getName(), component);
-        spellComponents.put(component.getItems(), component);
-        return true;
+        map[component.getName()] = component
+        spellComponents[component.getItems()] = component
+        return true
     }
-    
-    public static void loadTargets()
-    {
-        if (entityTarget != null)
-            spellComponents.remove(entityTarget.getItems());
-        if (blockTarget != null)
-            spellComponents.remove(blockTarget.getItems());
-        
-        entityTarget = new TargetComponent("entityTarget", Registry.ITEM.get(new Identifier(ServerConfigs.entityTargetItem)));
-        blockTarget = new TargetComponent("blockTarget", Registry.ITEM.get(new Identifier(ServerConfigs.blockTargetItem)));
-        
-        spellComponents.put(entityTarget.getItems(), entityTarget);
-        spellComponents.put(blockTarget.getItems(), blockTarget);
+
+    fun loadTargets() {
+        if (entityTarget != null) spellComponents.remove(entityTarget.getItems())
+        if (blockTarget != null) spellComponents.remove(blockTarget.getItems())
+        entityTarget = TargetComponent("entityTarget", Registry.ITEM[Identifier(ServerConfigs.entityTargetItem)])
+        blockTarget = TargetComponent("blockTarget", Registry.ITEM[Identifier(ServerConfigs.blockTargetItem)])
+        spellComponents[entityTarget.getItems()] = entityTarget
+        spellComponents[blockTarget.getItems()] = blockTarget
     }
-    
-    public static TargetComponent getEntityTarget() { return entityTarget; }
-    public static TargetComponent getBlockTarget() { return blockTarget; }
-    public static Map<String, Module> getModules() {
-        return modules;
+
+    fun getModules(): Map<String?, Module?> {
+        return modules
     }
 }

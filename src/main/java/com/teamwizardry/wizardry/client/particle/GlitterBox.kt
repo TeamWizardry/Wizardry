@@ -1,177 +1,150 @@
-package com.teamwizardry.wizardry.client.particle;
+package com.teamwizardry.wizardry.client.particle
 
-import java.awt.Color;
+import com.teamwizardry.wizardry.client.lib.LibTheme
+import java.awt.Color
 
-import com.teamwizardry.wizardry.client.lib.LibTheme;
+class GlitterBox(
+    val lifetime: Int,
+    val originX: Float,
+    val originY: Float,
+    val originZ: Float,
+    val targetX: Float,
+    val targetY: Float,
+    val targetZ: Float,
+    val physics: Boolean,
+    val initialColor: Color,
+    val goalColor: Color,
+    val initialSize: Float,
+    val goalSize: Float,
+    val initialAlpha: Float,
+    val middleAlpha: Float,
+    val goalAlpha: Float,
+    val gravity: Float,
+    val drag: Float,
+    val friction: Float,
+    val bounce: Float
+) {
+    class GlitterBoxFactory {
+        private var originX = 0f
+        private var originY = 0f
+        private var originZ = 0f
+        private var targetX = 0f
+        private var targetY = 0f
+        private var targetZ = 0f
+        private var physics = true
+        private var initialColor: Color = LibTheme.accentColor
+        private var goalColor: Color? = LibTheme.accentColor
+        private var initialSize = 30f
+        private var goalSize = -1f
+        private var gravity = 0f
+        private var drag = 0f
+        private var friction = 0f
+        private var bounce = 0f
+        private var initialAlpha = 1f
+        private var middleAlpha = 1f
+        private var goalAlpha = 1f
+        fun setGoalAlpha(goalAlpha: Float): GlitterBoxFactory {
+            this.goalAlpha = goalAlpha
+            return this
+        }
 
-import net.minecraft.util.math.Vec3d;
+        fun setMiddleAlpha(middleAlpha: Float): GlitterBoxFactory {
+            this.middleAlpha = middleAlpha
+            return this
+        }
 
-public class GlitterBox {
+        fun setInitialAlpha(initialAlpha: Float): GlitterBoxFactory {
+            this.initialAlpha = initialAlpha
+            return this
+        }
 
-	public final int lifetime;
+        fun setOrigin(origin: Vec3d): GlitterBoxFactory {
+            return setOrigin(origin.x, origin.y, origin.z)
+        }
 
-	public final float originX, originY, originZ;
-	public final float targetX, targetY, targetZ;
-	public final boolean physics;
+        private fun setOrigin(x: Float, y: Float, z: Float): GlitterBoxFactory {
+            originX = x
+            originY = y
+            originZ = z
+            return this
+        }
 
-	public final Color initialColor;
-	public final Color goalColor;
+        private fun setOrigin(x: Double, y: Double, z: Double): GlitterBoxFactory {
+            return setOrigin(x.toFloat(), y.toFloat(), z.toFloat())
+        }
 
-	public final float initialSize;
-	public final float goalSize;
+        fun setTarget(target: Vec3d): GlitterBoxFactory {
+            return setTarget(target.x, target.y, target.z)
+        }
 
-	public final float initialAlpha;
-	public final float middleAlpha;
-	public final float goalAlpha;
+        private fun setTarget(x: Float, y: Float, z: Float): GlitterBoxFactory {
+            targetX = x
+            targetY = y
+            targetZ = z
+            return this
+        }
 
-	public final float gravity;
-	public final float drag;
-	public final float friction;
-	public final float bounce;
+        private fun setTarget(x: Double, y: Double, z: Double): GlitterBoxFactory {
+            return setTarget(x.toFloat(), y.toFloat(), z.toFloat())
+        }
 
-	public GlitterBox(int lifetime, float originX, float originY, float originZ, float targetX, float targetY,
-					  float targetZ, boolean physics, Color initialColor, Color goalColor, float initialSize,
-					  float goalSize, float initialAlpha, float middleAlpha, float goalAlpha, float gravity, float drag,
-					  float friction, float bounce) {
-		this.lifetime = lifetime;
-		this.originX = originX;
-		this.originY = originY;
-		this.originZ = originZ;
-		this.targetX = targetX;
-		this.targetY = targetY;
-		this.targetZ = targetZ;
-		this.physics = physics;
-		this.initialColor = initialColor;
-		this.goalColor = goalColor;
-		this.initialSize = initialSize;
-		this.goalSize = goalSize;
-		this.initialAlpha = initialAlpha;
-		this.middleAlpha = middleAlpha;
-		this.goalAlpha = goalAlpha;
-		this.gravity = gravity;
-		this.drag = drag;
-		this.friction = friction;
-		this.bounce = bounce;
-	}
+        fun setIsPhysics(isPhysics: Boolean): GlitterBoxFactory {
+            physics = isPhysics
+            return this
+        }
 
-	public static class GlitterBoxFactory {
-		private float originX = 0, originY = 0, originZ = 0;
-		private float targetX = 0, targetY = 0, targetZ = 0;
-		private boolean physics = true;
-		private Color initialColor = LibTheme.accentColor;
-		private Color goalColor = LibTheme.accentColor;
-		private float initialSize = 30;
-		private float goalSize = -1;
-		private float gravity = 0;
-		private float drag = 0;
-		private float friction = 0;
-		private float bounce = 0;
-		private float initialAlpha = 1;
-		private float middleAlpha = 1;
-		private float goalAlpha = 1;
+        fun setInitialColor(initialColor: Color): GlitterBoxFactory {
+            this.initialColor = initialColor
+            return this
+        }
 
-		public GlitterBoxFactory setGoalAlpha(float goalAlpha) {
-			this.goalAlpha = goalAlpha;
-			return this;
-		}
+        fun setGoalColor(goalColor: Color?): GlitterBoxFactory {
+            this.goalColor = goalColor
+            return this
+        }
 
-		public GlitterBoxFactory setMiddleAlpha(float middleAlpha) {
-			this.middleAlpha = middleAlpha;
-			return this;
-		}
+        fun setInitialSize(initialSize: Float): GlitterBoxFactory {
+            this.initialSize = initialSize
+            return this
+        }
 
-		public GlitterBoxFactory setInitialAlpha(float initialAlpha) {
-			this.initialAlpha = initialAlpha;
-			return this;
+        fun setGoalSize(goalSize: Float): GlitterBoxFactory {
+            this.goalSize = goalSize
+            return this
+        }
 
-		}
+        fun setGravity(gravity: Float): GlitterBoxFactory {
+            this.gravity = gravity
+            return this
+        }
 
-		public GlitterBoxFactory setOrigin(Vec3d origin) {
-			return setOrigin(origin.x, origin.y, origin.z);
-		}
+        fun setDrag(drag: Float): GlitterBoxFactory {
+            this.drag = drag
+            return this
+        }
 
-		public GlitterBoxFactory setOrigin(float x, float y, float z) {
-			this.originX = x;
-			this.originY = y;
-			this.originZ = z;
-			return this;
-		}
+        fun setFriction(friction: Float): GlitterBoxFactory {
+            this.friction = friction
+            return this
+        }
 
-		public GlitterBoxFactory setOrigin(double x, double y, double z) {
-			return setOrigin((float) x, (float) y, (float) z);
+        fun setBounce(bounce: Float): GlitterBoxFactory {
+            this.bounce = bounce
+            return this
+        }
 
-		}
-
-		public GlitterBoxFactory setTarget(Vec3d target) {
-			return setTarget(target.x, target.y, target.z);
-		}
-
-		public GlitterBoxFactory setTarget(float x, float y, float z) {
-			this.targetX = x;
-			this.targetY = y;
-			this.targetZ = z;
-			return this;
-		}
-
-		public GlitterBoxFactory setTarget(double x, double y, double z) {
-			return setTarget((float) x, (float) y, (float) z);
-		}
-
-		public GlitterBoxFactory setIsPhysics(boolean isPhysics) {
-			this.physics = isPhysics;
-			return this;
-		}
-
-		public GlitterBoxFactory setInitialColor(Color initialColor) {
-			this.initialColor = initialColor;
-			return this;
-		}
-
-		public GlitterBoxFactory setGoalColor(Color goalColor) {
-			this.goalColor = goalColor;
-			return this;
-		}
-
-		public GlitterBoxFactory setInitialSize(float initialSize) {
-			this.initialSize = initialSize;
-			return this;
-		}
-
-		public GlitterBoxFactory setGoalSize(float goalSize) {
-			this.goalSize = goalSize;
-			return this;
-		}
-
-		public GlitterBoxFactory setGravity(float gravity) {
-			this.gravity = gravity;
-			return this;
-		}
-
-		public GlitterBoxFactory setDrag(float drag) {
-			this.drag = drag;
-			return this;
-		}
-
-		public GlitterBoxFactory setFriction(float friction) {
-			this.friction = friction;
-			return this;
-		}
-
-		public GlitterBoxFactory setBounce(float bounce) {
-			this.bounce = bounce;
-			return this;
-		}
-
-		public GlitterBox createGlitterBox(int lifetime) {
-			return new GlitterBox(lifetime,
-					originX, originY, originZ,
-					targetX, targetY, targetZ,
-					physics, initialColor, goalColor == null ? initialColor : goalColor,
-					initialSize, goalSize == -1 ? initialSize : goalSize,
-					initialAlpha, middleAlpha, goalAlpha, gravity,
-					drag,
-					friction,
-					bounce);
-		}
-	}
+        fun createGlitterBox(lifetime: Int): GlitterBox {
+            return GlitterBox(
+                lifetime,
+                originX, originY, originZ,
+                targetX, targetY, targetZ,
+                physics, initialColor, (if (goalColor == null) initialColor else goalColor)!!,
+                initialSize, if (goalSize == -1f) initialSize else goalSize,
+                initialAlpha, middleAlpha, goalAlpha, gravity,
+                drag,
+                friction,
+                bounce
+            )
+        }
+    }
 }

@@ -1,38 +1,19 @@
-package com.teamwizardry.wizardry.common.spell.effect;
+package com.teamwizardry.wizardry.common.spell.effect
 
-import static com.teamwizardry.wizardry.common.spell.component.Attributes.DURATION;
-import static com.teamwizardry.wizardry.common.spell.component.Interactor.InteractorType.BLOCK;
-import static com.teamwizardry.wizardry.common.spell.component.Interactor.InteractorType.ENTITY;
+import com.teamwizardry.wizardry.common.spell.component.Instance
+import com.teamwizardry.wizardry.common.spell.component.PatternEffect
+import net.fabricmc.api.Environment
+import java.awt.Color
 
-import java.awt.Color;
-
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.particle.GlitterBox;
-import com.teamwizardry.wizardry.common.init.ModSounds;
-import com.teamwizardry.wizardry.common.spell.component.Instance;
-import com.teamwizardry.wizardry.common.spell.component.Interactor;
-import com.teamwizardry.wizardry.common.spell.component.PatternEffect;
-import com.teamwizardry.wizardry.common.utils.RandUtil;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.world.World;
-
-public class EffectBurn extends PatternEffect {
-
-    @Override
-    public void affectEntity(World world, Interactor entity, Instance instance) {
-        if (entity.getType() != ENTITY)
-            return;
-
-        entity.getEntity().setFireTicks((int) instance.getAttributeValue(DURATION));
-        ModSounds.playSound(world, instance.getCaster(), entity, ModSounds.FIRE, 0.1f);
+class EffectBurn : PatternEffect() {
+    fun affectEntity(world: World?, entity: Interactor, instance: Instance) {
+        if (entity.getType() != InteractorType.ENTITY) return
+        entity.getEntity().setFireTicks(instance.getAttributeValue(DURATION).toInt())
+        playSound(world, instance.caster, entity, ModSounds.FIRE, 0.1f)
     }
 
-    @Override
-    public void affectBlock(World world, Interactor block, Instance instance) {
-        if (block.getType() != BLOCK)
-            return;
+    fun affectBlock(world: World?, block: Interactor, instance: Instance) {
+        if (block.getType() != InteractorType.BLOCK) return
 
 //        BlockPos pos = block.getBlockPos();
 //        BlockPos off = pos.offset(block.getDir().getOpposite());
@@ -43,38 +24,41 @@ public class EffectBurn extends PatternEffect {
 //            BlockState offFire = ((FireBlock) Blocks.FIRE).getStateForPlacement(world, off);
 //            world.setBlockState(off, offFire);
 //        }
-        ModSounds.playSound(world, instance.getCaster(), block, ModSounds.FIRE, 0.1f);
+        playSound(world, instance.caster, block, ModSounds.FIRE, 0.1f)
     }
 
-    private static final Color[] colors = new Color[]{Color.RED, Color.ORANGE, Color.DARK_GRAY};
+    val colors: Array<Color>
+        get() = Companion.colors
 
-    @Override
-    public Color[] getColors() {
-        return colors;
-    }
-
-    @Override
     @Environment(EnvType.CLIENT)
-    public void runClient(World world, Instance instance, Interactor target) {
+    override fun runClient(world: World?, instance: Instance?, target: Interactor) {
+        for (i in 0..99) Wizardry.Companion.PROXY.spawnParticle(
+            GlitterBoxFactory()
+                .setOrigin(
+                    target.getPos()
+                        .add(
+                            RandUtil.nextDouble(-0.15, 0.15),
+                            RandUtil.nextDouble(-0.15, 0.15),
+                            RandUtil.nextDouble(-0.15, 0.15)
+                        )
+                )
+                .setTarget(
+                    RandUtil.nextDouble(-0.5, 0.5),
+                    RandUtil.nextDouble(-0.5, 0.5),
+                    RandUtil.nextDouble(-0.5, 0.5)
+                )
+                .setDrag(RandUtil.nextFloat(0.2f, 0.3f))
+                .setGravity(RandUtil.nextFloat(-0.005f, -0.015f))
+                .setInitialColor(getRandomColor())
+                .setGoalColor(getRandomColor())
+                .setInitialSize(RandUtil.nextFloat(0.1f, 0.3f))
+                .setGoalSize(0f)
+                .setInitialAlpha(RandUtil.nextFloat(0.5f, 1f))
+                .createGlitterBox(RandUtil.nextInt(5, 25))
+        )
+    }
 
-        for (int i = 0; i < 100; i++)
-            Wizardry.PROXY.spawnParticle(
-                    new GlitterBox.GlitterBoxFactory()
-                            .setOrigin(target.getPos()
-                                    .add(RandUtil.nextDouble(-0.15, 0.15),
-                                            RandUtil.nextDouble(-0.15, 0.15),
-                                            RandUtil.nextDouble(-0.15, 0.15)))
-                            .setTarget(RandUtil.nextDouble(-0.5, 0.5),
-                                    RandUtil.nextDouble(-0.5, 0.5),
-                                    RandUtil.nextDouble(-0.5, 0.5))
-                            .setDrag(RandUtil.nextFloat(0.2f, 0.3f))
-                            .setGravity(RandUtil.nextFloat(-0.005f, -0.015f))
-                            .setInitialColor(getRandomColor())
-                            .setGoalColor(getRandomColor())
-                            .setInitialSize(RandUtil.nextFloat(0.1f, 0.3f))
-                            .setGoalSize(0)
-                            .setInitialAlpha(RandUtil.nextFloat(0.5f, 1))
-                            .createGlitterBox(RandUtil.nextInt(5, 25)));
-
+    companion object {
+        private val colors = arrayOf(Color.RED, Color.ORANGE, Color.DARK_GRAY)
     }
 }
