@@ -1,0 +1,15 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:devil_dust"
+  },
+  "title": "wizardry.book.items_blocks.devil_dust.title",
+  "content": [
+    "wizardry.book.items_blocks.devil_dust.content0",
+    "wizardry.book.items_blocks.devil_dust.content1",
+    {
+      "type": "recipe",
+      "recipe": "wizardry:devil_dust"
+    }
+  ]
+}

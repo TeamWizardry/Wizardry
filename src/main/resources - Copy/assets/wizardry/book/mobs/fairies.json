@@ -1,0 +1,12 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:fairy_wings"
+  },
+  "title": "wizardry.book.mobs.fairies.title",
+  "description": "wizardry.book.mobs.fairies.desc",
+  "content": [
+    "wizardry.book.mobs.fairies.content1",
+    "wizardry.book.mobs.fairies.content2"
+  ]
+}

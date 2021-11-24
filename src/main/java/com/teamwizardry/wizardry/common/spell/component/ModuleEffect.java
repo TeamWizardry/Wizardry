@@ -1,11 +1,9 @@
 package com.teamwizardry.wizardry.common.spell.component;
 
-import com.teamwizardry.wizardry.api.spell.PatternEffect;
-
-import net.minecraft.item.Item;
-
 import java.util.List;
 import java.util.Map;
+
+import net.minecraft.item.Item;
 
 public class ModuleEffect extends Module {
     protected final String action;

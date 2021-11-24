@@ -1,74 +1,86 @@
 package com.teamwizardry.wizardry.common.init;
 
-import com.teamwizardry.librarianlib.foundation.registration.BlockSpec;
-import com.teamwizardry.librarianlib.foundation.registration.BuildingBlockCollection;
-import com.teamwizardry.librarianlib.foundation.registration.LazyBlock;
-import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
-import com.teamwizardry.librarianlib.foundation.registration.RenderLayerSpec;
-import com.teamwizardry.librarianlib.foundation.registration.TileEntitySpec;
-import com.teamwizardry.librarianlib.foundation.registration.WoodBlockCollection;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
-import com.teamwizardry.wizardry.common.block.BlockManaBattery;
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling;
+import com.teamwizardry.wizardry.common.block.BlockWisdomSapling.WisdomSaplingGenerator;
 import com.teamwizardry.wizardry.common.block.BlockWorktable;
+import com.teamwizardry.wizardry.common.block.access.Invokers.DoorBlock;
+import com.teamwizardry.wizardry.common.block.access.Invokers.StairsBlock;
+import com.teamwizardry.wizardry.common.block.entity.craftingplate.BlockCraftingPlate;
+import com.teamwizardry.wizardry.common.block.entity.craftingplate.BlockCraftingPlateEntity;
+import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBattery;
+import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBatteryEntity;
 import com.teamwizardry.wizardry.common.block.fluid.mana.BlockMana;
-import com.teamwizardry.wizardry.common.lib.LibBlockNames;
-import com.teamwizardry.wizardry.common.lib.LibTileEntityType;
-import com.teamwizardry.wizardry.common.structure.WisdomTree;
-import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
-import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import com.teamwizardry.wizardry.common.block.fluid.nacre.BlockNacre;
+import com.teamwizardry.wizardry.mixins.BlocksMixin;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.block.AbstractBlock.Settings;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FenceBlock;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.FluidBlock;
+import net.minecraft.block.LeavesBlock;
+import net.minecraft.block.MapColor;
+import net.minecraft.block.Material;
+import net.minecraft.block.PillarBlock;
+import net.minecraft.block.SlabBlock;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
-import net.minecraft.world.FoliageColors;
-import net.minecraft.world.biome.BiomeColors;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.item.Item;
+import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
-@Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModBlocks {
-    public static final LazyBlock craftingPlate = new LazyBlock();
-    public static final LazyBlock magiciansWorktable = new LazyBlock();
-    public static final LazyBlock manaBattery = new LazyBlock();
 
-    public static final LazyBlock wisdomLog = new LazyBlock();
-    public static final LazyBlock wisdomPlanks = new LazyBlock();
-    public static final LazyBlock wisdomLeaves = new LazyBlock();
-    public static final LazyBlock wisdomDoor = new LazyBlock();
-    public static final LazyBlock wisdomSlab = new LazyBlock();
-    public static final LazyBlock wisdomStairs = new LazyBlock();
-    public static final LazyBlock wisdomFence = new LazyBlock();
-    public static final LazyBlock wisdomFenceGate = new LazyBlock();
-    public static final LazyBlock wisdomSapling = new LazyBlock();
+    private static Settings wisdomWoodSettings = Settings.of(Material.WOOD, MapColor.BROWN).sounds(BlockSoundGroup.WOOD).strength(2);
+    
+    public static Block craftingPlate = new BlockCraftingPlate(Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2).solidBlock(BlocksMixin::never));
+    public static BlockEntityType<BlockCraftingPlateEntity> craftingPlateEntity;
+    public static Block magiciansWorktable = new BlockWorktable(Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2).solidBlock(BlocksMixin::never));
+    public static Block manaBattery = new BlockManaBattery(Settings.of(Material.GLASS).sounds(BlockSoundGroup.AMETHYST_BLOCK).strength(3).solidBlock(BlocksMixin::never).luminance(state -> 15));
+    public static BlockEntityType<BlockManaBatteryEntity> manaBatteryEntity;
 
-    public static final LazyBlock wisdomGildedPlanks = new LazyBlock();
-    public static final LazyBlock wisdomGildedSlab = new LazyBlock();
-    public static final LazyBlock wisdomGildedStairs = new LazyBlock();
-    public static final LazyBlock wisdomGildedFence = new LazyBlock();
-    public static final LazyBlock wisdomGildedFenceGate = new LazyBlock();
+    public static Block wisdomLog = new PillarBlock(wisdomWoodSettings);
+    public static Block wisdomWood = new Block(wisdomWoodSettings);
+    public static Block wisdomStrippedLog = new PillarBlock(wisdomWoodSettings);
+    public static Block wisdomStrippedWood = new Block(wisdomWoodSettings);
+    public static Block wisdomPlanks = new Block(wisdomWoodSettings);
+    public static Block wisdomLeaves = new LeavesBlock(Settings.of(Material.LEAVES).strength(0.2F).ticksRandomly().sounds(BlockSoundGroup.GRASS).nonOpaque().allowsSpawning(BlocksMixin::canSpawnOnLeaves).suffocates(BlocksMixin::never).blockVision(BlocksMixin::never));
+    public static Block wisdomDoor = new DoorBlock(wisdomWoodSettings.nonOpaque());
+    public static Block wisdomSlab = new SlabBlock(wisdomWoodSettings);
+    public static Block wisdomStairs = new StairsBlock(wisdomPlanks.getDefaultState(), wisdomWoodSettings);
+    public static Block wisdomFence = new FenceBlock(wisdomWoodSettings);
+    public static Block wisdomFenceGate = new FenceGateBlock(wisdomWoodSettings);
+    public static Block wisdomSapling = new BlockWisdomSapling(new WisdomSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.OAK_SAPLING));
 
-    public static final LazyBlock nacreBlock = new LazyBlock();
-    public static final LazyBlock nacreSlab = new LazyBlock();
-    public static final LazyBlock nacreStairs = new LazyBlock();
-    public static final LazyBlock nacreFence = new LazyBlock();
-    public static final LazyBlock nacreFenceGate = new LazyBlock();
+    public static Block wisdomGildedPlanks;
+    public static Block wisdomGildedSlab;
+    public static Block wisdomGildedStairs;
+    public static Block wisdomGildedFence;
+    public static Block wisdomGildedFenceGate;
 
-    public static final LazyBlock nacreBrickBlock = new LazyBlock();
-    public static final LazyBlock nacreBrickSlab = new LazyBlock();
-    public static final LazyBlock nacreBrickStairs = new LazyBlock();
-    public static final LazyBlock nacreBrickFence = new LazyBlock();
-    public static final LazyBlock nacreBrickFenceGate = new LazyBlock();
+    public static Block nacreBlock;
+    public static Block nacreSlab;
+    public static Block nacreStairs;
+    public static Block nacreFence;
+    public static Block nacreFenceGate;
+
+    public static Block nacreBrickBlock;
+    public static Block nacreBrickSlab;
+    public static Block nacreBrickStairs;
+    public static Block nacreBrickFence;
+    public static Block nacreBrickFenceGate;
 
     // Fluids
-    public static final LazyBlock liquidMana = new LazyBlock();
+    public static FluidBlock liquidMana = new BlockMana(ModFluids.STILL_MANA, FabricBlockSettings.copy(Blocks.WATER));;
+    public static FluidBlock liquidNacre = new BlockNacre(ModFluids.STILL_NACRE, FabricBlockSettings.copy(Blocks.WATER));;
 
 
-    public static void registerBlocks(RegistrationManager reggie) {
+    public static void init() {
         ///////////////////////////////
         // Basic Blocks
         ///////////////////////////////
@@ -78,136 +90,98 @@ public class ModBlocks {
         ////////////////
 
         // Base
-        WoodBlockCollection wisdomPlanksCollection = new WoodBlockCollection(reggie, "wisdom_wood", MaterialColor.BROWN, MaterialColor.BROWN);
-        wisdomPlanksCollection.getLogProperties()
-                .material(Material.WOOD)
-                .mapColor(MaterialColor.WOOD)
-                .sound(SoundType.WOOD)
-                .hardnessAndResistance(2f);
-        wisdomPlanksCollection.getPlankProperties()
-                .material(Material.WOOD)
-                .mapColor(MaterialColor.WOOD)
-                .sound(SoundType.WOOD)
-                .hardnessAndResistance(2f);
-
-        wisdomLog.from(reggie.add(wisdomPlanksCollection.getLog()));
-        wisdomLeaves.from(reggie.add(wisdomPlanksCollection.getLeaves()));
-        wisdomPlanks.from(reggie.add(wisdomPlanksCollection.getPlanks()));
-        wisdomSlab.from(reggie.add(wisdomPlanksCollection.getSlab()));
-        wisdomStairs.from(reggie.add(wisdomPlanksCollection.getStairs()));
-        wisdomFence.from(reggie.add(wisdomPlanksCollection.getFence()));
-        wisdomFenceGate.from(reggie.add(wisdomPlanksCollection.getFenceGate()));
+        register(wisdomLog, "wisdom_log");
+        register(wisdomWood, "wisdom_wood");
+        register(wisdomStrippedLog, "stripped_wisdom_log");
+        register(wisdomStrippedWood, "stripped_wisdom_wood");
+        register(wisdomPlanks, "wisdom_planks");
+        register(wisdomLeaves, "wisdom_leaves");
+        register(wisdomDoor, "wisdom_door");
+        register(wisdomSlab, "wisdom_slab");
+        register(wisdomStairs, "wisdom_stairs");
+        register(wisdomFence, "wisdom_fence");
+        register(wisdomFenceGate, "wisdom_gate");
+        register(wisdomSapling, "wisdom_sapling");
 
         // Gilded
-        BuildingBlockCollection wisdomGildedCollection = new BuildingBlockCollection("gilded_wisdom_wood_planks", "gilded_wisdom_wood");
-        wisdomGildedCollection.getBlockProperties()
-                .material(Material.WOOD)
-                .mapColor(MaterialColor.WOOD)
-                .sound(SoundType.WOOD)
-                .hardnessAndResistance(2f);
-
-        wisdomGildedPlanks.from(reggie.add(wisdomGildedCollection.getFull()));
-        wisdomGildedSlab.from(reggie.add(wisdomGildedCollection.getSlab()));
-        wisdomGildedStairs.from(reggie.add(wisdomGildedCollection.getStairs()));
-        wisdomGildedFence.from(reggie.add(wisdomGildedCollection.getFence()));
-        wisdomGildedFenceGate.from(reggie.add(wisdomGildedCollection.getFenceGate()));
+//        BuildingBlockCollection wisdomGildedCollection = new BuildingBlockCollection("gilded_wisdom_wood_planks", "gilded_wisdom_wood");
+//        wisdomGildedCollection.getBlockProperties()
+//                .material(Material.WOOD)
+//                .mapColor(MaterialColor.WOOD)
+//                .sound(SoundType.WOOD)
+//                .hardnessAndResistance(2f);
 
         // Non-Group variants
-        // TODO: Move to WoodBlockCollection once LibLib tree-gen is in
-        wisdomSapling.from(reggie.add(new BlockSpec(LibBlockNames.WISDOM_SAPLING)
-                .material(Material.PLANTS)
-                .doesNotBlockMovement()
-                .tickRandomly()
-                .hardnessAndResistance(0.0f)
-                .sound(SoundType.PLANT)
-                .renderLayer(RenderLayerSpec.CUTOUT_MIPPED)
-                .block(blockSpec -> new BlockWisdomSapling(new WisdomTree(), blockSpec.getBlockProperties().getVanillaProperties()))));
+        
 
         ////////////////
         // Nacre
         ////////////////
-        BuildingBlockCollection nacreCollection = new BuildingBlockCollection("nacre_block", "nacre_block");
-        nacreCollection.getBlockProperties()
-                .material(Material.ROCK)
-                .mapColor(MaterialColor.STONE)
-                .sound(SoundType.STONE)
-                .hardnessAndResistance(2f);
-
-        nacreBlock.from(reggie.add(nacreCollection.getFull()));
-        nacreSlab.from(reggie.add(nacreCollection.getSlab()));
-        nacreStairs.from(reggie.add(nacreCollection.getStairs()));
-        nacreFence.from(reggie.add(nacreCollection.getFence()));
-        nacreFenceGate.from(reggie.add(nacreCollection.getFenceGate()));
-
-        BuildingBlockCollection nacreBrickCollection = new BuildingBlockCollection("nacre_block_bricks", "nacre_block_brick");
-        nacreBrickCollection.getBlockProperties()
-                .material(Material.ROCK)
-                .mapColor(MaterialColor.STONE)
-                .sound(SoundType.STONE)
-                .hardnessAndResistance(2f);
-
-        nacreBrickBlock.from(reggie.add(nacreBrickCollection.getFull()));
-        nacreBrickSlab.from(reggie.add(nacreBrickCollection.getSlab()));
-        nacreBrickStairs.from(reggie.add(nacreBrickCollection.getStairs()));
-        nacreBrickFence.from(reggie.add(nacreBrickCollection.getFence()));
-        nacreBrickFenceGate.from(reggie.add(nacreBrickCollection.getFenceGate()));
-
+//        nacreCollection.getBlockProperties()
+//                .material(Material.ROCK)
+//                .mapColor(MaterialColor.STONE)
+//                .sound(SoundType.STONE)
+//                .hardnessAndResistance(2f);
+//
+//        nacreBrickCollection.getBlockProperties()
+//                .material(Material.ROCK)
+//                .mapColor(MaterialColor.STONE)
+//                .sound(SoundType.STONE)
+//                .hardnessAndResistance(2f);
 
         ///////////////////////////////
         // Fluids
         ///////////////////////////////
-        liquidMana.from(reggie.add(new BlockSpec(LibBlockNames.MANA_FLUID)
-                .material(Material.WATER)
-                .doesNotBlockMovement()
-                .lightLevel(12)
-                .hardnessAndResistance(100.0F)
-                .noDrops()
-                .block(blockSpec -> new BlockMana(() -> ModFluids.MANA_FLUID, blockSpec.getBlockProperties().getVanillaProperties()))));
-
+        
+        Registry.register(Registry.BLOCK, Wizardry.getId("mana"), liquidMana);
+        Registry.register(Registry.BLOCK, Wizardry.getId("nacre"), liquidNacre);
 
         ///////////////////////////////
         // Complex Blocks
         ///////////////////////////////
 
         // Has a GUI and stuff, but no TE
-        magiciansWorktable.from(reggie.add(new BlockSpec(LibBlockNames.WORKTABLE)
-                .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
-                .block(blockSpec -> new BlockWorktable(blockSpec.getBlockProperties().getVanillaProperties()))));
+        register(magiciansWorktable, "worktable");
 
         //////////////////
-        // Tile Entities
+        // Block Entities
         //////////////////
-        craftingPlate.from(reggie.add(new BlockSpec(LibBlockNames.CRAFTING_PLATE)
-                .material(Material.WOOD).hardnessAndResistance(2f).sound(SoundType.WOOD).notSolid()
-                .tileEntity(LibTileEntityType.CRAFTING_PLATE)
-                .block(blockSpec -> new BlockCraftingPlate(blockSpec.getBlockProperties().getVanillaProperties()))));
 
-        manaBattery.from(reggie.add(new BlockSpec(LibBlockNames.MANA_BATTERY)
-                .material(Material.GLASS).hardnessAndResistance(3f).sound(SoundType.GLASS).notSolid()
-                .tileEntity(LibTileEntityType.MANA_BATTERY)
-                .block(blockSpec -> new BlockManaBattery(blockSpec.getBlockProperties().getVanillaProperties()))));
+        register(craftingPlate, "crafting_plate");
+        register(manaBattery, "mana_battery");
     }
 
-    public static void registerTile(RegistrationManager registrationManager) {
-        LibTileEntityType.MANA_BATTERY.from(registrationManager.add(new TileEntitySpec<>("mana_battery", TileManaBattery::new)));
-        LibTileEntityType.CRAFTING_PLATE.from(registrationManager.add(new TileEntitySpec<>("crafting_plate", TileCraftingPlate::new)));
+    public static void initBlockEntities() {
+        craftingPlateEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE,
+                                                Wizardry.getId("crafting_plate"), 
+                                                FabricBlockEntityTypeBuilder.create(BlockCraftingPlateEntity::new, craftingPlate)
+                                                                            .build());
+        manaBatteryEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE,
+                                              Wizardry.getId("mana_battery"),
+                                              FabricBlockEntityTypeBuilder.create(BlockManaBatteryEntity::new, manaBattery)
+                                                                          .build());
     }
 
-    @SubscribeEvent
-    public static void registerBlockColors(ColorHandlerEvent.Block event) {
-        event.getBlockColors().register((blockState, lightReader, pos, color) ->
-                        lightReader != null && pos != null
-                                ? BiomeColors.getFoliageColor(lightReader, pos)
-                                : FoliageColors.getDefault(),
-                wisdomLeaves.get());
-    }
+//    public static void registerBlockColors(ColorHandlerEvent.Block event) {
+//        event.getBlockColors().register((blockState, lightReader, pos, color) ->
+//                        lightReader != null && pos != null
+//                                ? BiomeColors.getFoliageColor(lightReader, pos)
+//                                : FoliageColors.getDefault(),
+//                wisdomLeaves.get());
+//    }
 
-    @SubscribeEvent
-    public static void registerItemBlockColors(ColorHandlerEvent.Item event) {
-        event.getItemColors().register((stack, color) -> {
-                    BlockState blockstate = ((BlockItem) stack.getItem()).getBlock().getDefaultState();
-                    return event.getBlockColors().getColor(blockstate, null, null, color);
-                },
-                wisdomLeaves.get());
+//    @SubscribeEvent
+//    public static void registerItemBlockColors(ColorHandlerEvent.Item event) {
+//        event.getItemColors().register((stack, color) -> {
+//                    BlockState blockstate = ((BlockItem) stack.getItem()).getBlock().getDefaultState();
+//                    return event.getBlockColors().getColor(blockstate, null, null, color);
+//                },
+//                wisdomLeaves.get());
+//    }
+    
+    private static void register(Block block, String path) {
+        Identifier id = Wizardry.getId(path);
+        Registry.register(Registry.BLOCK, id, block);
+        Registry.register(Registry.ITEM, id, new BlockItem(block, new Item.Settings().group(ModItems.wizardry)));
     }
 }

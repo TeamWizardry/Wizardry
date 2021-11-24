@@ -1,0 +1,8 @@
+{
+  "input": {
+    "item": "wizardry:fairy_dust"
+  },
+  "output": {
+    "item": "wizardry:sky_dust"
+  }
+}

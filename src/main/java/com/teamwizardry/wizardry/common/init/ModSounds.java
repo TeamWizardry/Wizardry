@@ -2,18 +2,16 @@ package com.teamwizardry.wizardry.common.init;
 
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.Interactor;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.world.World;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import com.teamwizardry.wizardry.common.spell.component.Interactor;
 
-@Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
+
 public final class ModSounds {
 
     public static SoundEvent GLASS_BREAK = makeSound("glassbreak");
@@ -112,7 +110,7 @@ public final class ModSounds {
                 caster.getType() == Interactor.InteractorType.ENTITY ?
                         caster.getEntity() instanceof PlayerEntity ?
                                 SoundCategory.PLAYERS :
-                                caster.getEntity() instanceof MonsterEntity ?
+                                caster.getEntity() instanceof MobEntity ?
                                         SoundCategory.HOSTILE :
                                         SoundCategory.NEUTRAL :
                         SoundCategory.BLOCKS,
@@ -135,80 +133,79 @@ public final class ModSounds {
     }
 
     private static SoundEvent makeSound(String name) {
-        ResourceLocation loc = new ResourceLocation(Wizardry.MODID, name);
-        return new SoundEvent(loc).setRegistryName(loc);
+        Identifier loc = Wizardry.getId(name);
+        return new SoundEvent(loc);
     }
 
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<SoundEvent> event) {
-        event.getRegistry().register(GLASS_BREAK);
-        event.getRegistry().register(FIZZING_LOOP);
-        event.getRegistry().register(FRYING_SIZZLE);
-        event.getRegistry().register(BUBBLING);
-        event.getRegistry().register(HARP1);
-        event.getRegistry().register(HARP2);
-        event.getRegistry().register(BELL);
-        event.getRegistry().register(HALLOWED_SPIRIT);
-        event.getRegistry().register(EXPLOSION_BOOM);
-        event.getRegistry().register(PROJECTILE_LAUNCH);
-        event.getRegistry().register(BASS_BOOM);
-        event.getRegistry().register(CHAINY_ZAP);
-        event.getRegistry().register(CHORUS_GOOD);
-        event.getRegistry().register(COLD_WIND);
-        event.getRegistry().register(ELECTRIC_BLAST);
-        event.getRegistry().register(ETHEREAL_PASS_BY);
-        event.getRegistry().register(FAIRY);
-        event.getRegistry().register(FIRE);
-        event.getRegistry().register(FIREBALL);
-        event.getRegistry().register(FLY);
-        event.getRegistry().register(FROST_FORM);
-        event.getRegistry().register(HEAL);
-        event.getRegistry().register(LIGHTNING);
-        event.getRegistry().register(SLOW_MOTION_IN);
-        event.getRegistry().register(SLOW_MOTION_OUT);
-        event.getRegistry().register(SMOKE_BLAST);
-        event.getRegistry().register(TELEPORT);
-        event.getRegistry().register(THUNDERBLAST);
-        event.getRegistry().register(WIND);
-        event.getRegistry().register(ZAP);
-        event.getRegistry().register(ELECTRIC_WHITE_NOISE);
-        event.getRegistry().register(SPARKLE);
-        event.getRegistry().register(POP);
-        event.getRegistry().register(BELL_TING);
-        event.getRegistry().register(BUTTON_CLICK_IN);
-        event.getRegistry().register(BUTTON_CLICK_OUT);
-        event.getRegistry().register(ETHEREAL);
-        event.getRegistry().register(WHOOSH);
-        event.getRegistry().register(WING_FLAP);
-        event.getRegistry().register(ZOOM);
-        event.getRegistry().register(GOOD_ETHEREAL_CHILLS);
-        event.getRegistry().register(SCRIBBLING);
-        event.getRegistry().register(SPELL_FAIL);
-        event.getRegistry().register(GAS_LEAK);
-        event.getRegistry().register(GRACE);
-        event.getRegistry().register(SOUND_BOMB);
-        event.getRegistry().register(FIREWORK);
-        event.getRegistry().register(MARBLE_EXPLOSION);
-        event.getRegistry().register(SLIME_SQUISHING);
-        event.getRegistry().register(DARK_SPELL_WHISPERS);
-        event.getRegistry().register(DARK_SUCK_N_BLOW);
-        event.getRegistry().register(ECHOY_HORROR_BREATHE);
-        event.getRegistry().register(ELECTRIC_WHASHOOSH);
-        event.getRegistry().register(ENCHANTED_WHASHOOSH);
-        event.getRegistry().register(FROST_CRACKLE);
-        event.getRegistry().register(HELLFIRE_LIGHT_MATCH);
-        event.getRegistry().register(LARGE_BELL_BOINK);
-        event.getRegistry().register(HIGH_PITCHED_SOLO_BLEEP);
-        event.getRegistry().register(ICE_BREATHE);
-        event.getRegistry().register(MAGIC_GLINT_LIGHT_BREATHE);
-        event.getRegistry().register(NEGATIVELY_PITCHED_BREATHE_PUHH);
-        event.getRegistry().register(POSITIVELY_PITCHED_BREATHE_PUHH);
-        event.getRegistry().register(STUTTERY_ELECTRIC_GRILL);
-        event.getRegistry().register(SUBTLE_MAGIC_BOOK_GLINT);
-        event.getRegistry().register(SUDDEN_ANGELIC_SMOKE);
-        event.getRegistry().register(SUDDEN_DARK_PAFOOF);
-        event.getRegistry().register(TIME_REVERSE);
-        event.getRegistry().register(TINY_BELL);
-        event.getRegistry().register(POSITIVE_LIGHT_TWINKLE);
+    public static void init() {
+        Registry.register(Registry.SOUND_EVENT, GLASS_BREAK.getId(), GLASS_BREAK);
+        Registry.register(Registry.SOUND_EVENT, FIZZING_LOOP.getId(), FIZZING_LOOP);
+        Registry.register(Registry.SOUND_EVENT, FRYING_SIZZLE.getId(), FRYING_SIZZLE);
+        Registry.register(Registry.SOUND_EVENT, BUBBLING.getId(), BUBBLING);
+        Registry.register(Registry.SOUND_EVENT, HARP1.getId(), HARP1);
+        Registry.register(Registry.SOUND_EVENT, HARP2.getId(), HARP2);
+        Registry.register(Registry.SOUND_EVENT, BELL.getId(), BELL);
+        Registry.register(Registry.SOUND_EVENT, HALLOWED_SPIRIT.getId(), HALLOWED_SPIRIT);
+        Registry.register(Registry.SOUND_EVENT, EXPLOSION_BOOM.getId(), EXPLOSION_BOOM);
+        Registry.register(Registry.SOUND_EVENT, PROJECTILE_LAUNCH.getId(), PROJECTILE_LAUNCH);
+        Registry.register(Registry.SOUND_EVENT, BASS_BOOM.getId(), BASS_BOOM);
+        Registry.register(Registry.SOUND_EVENT, CHAINY_ZAP.getId(), CHAINY_ZAP);
+        Registry.register(Registry.SOUND_EVENT, CHORUS_GOOD.getId(), CHORUS_GOOD);
+        Registry.register(Registry.SOUND_EVENT, COLD_WIND.getId(), COLD_WIND);
+        Registry.register(Registry.SOUND_EVENT, ELECTRIC_BLAST.getId(), ELECTRIC_BLAST);
+        Registry.register(Registry.SOUND_EVENT, ETHEREAL_PASS_BY.getId(), ETHEREAL_PASS_BY);
+        Registry.register(Registry.SOUND_EVENT, FAIRY.getId(), FAIRY);
+        Registry.register(Registry.SOUND_EVENT, FIRE.getId(), FIRE);
+        Registry.register(Registry.SOUND_EVENT, FIREBALL.getId(), FIREBALL);
+        Registry.register(Registry.SOUND_EVENT, FLY.getId(), FLY);
+        Registry.register(Registry.SOUND_EVENT, FROST_FORM.getId(), FROST_FORM);
+        Registry.register(Registry.SOUND_EVENT, HEAL.getId(), HEAL);
+        Registry.register(Registry.SOUND_EVENT, LIGHTNING.getId(), LIGHTNING);
+        Registry.register(Registry.SOUND_EVENT, SLOW_MOTION_IN.getId(), SLOW_MOTION_IN);
+        Registry.register(Registry.SOUND_EVENT, SLOW_MOTION_OUT.getId(), SLOW_MOTION_OUT);
+        Registry.register(Registry.SOUND_EVENT, SMOKE_BLAST.getId(), SMOKE_BLAST);
+        Registry.register(Registry.SOUND_EVENT, TELEPORT.getId(), TELEPORT);
+        Registry.register(Registry.SOUND_EVENT, THUNDERBLAST.getId(), THUNDERBLAST);
+        Registry.register(Registry.SOUND_EVENT, WIND.getId(), WIND);
+        Registry.register(Registry.SOUND_EVENT, ZAP.getId(), ZAP);
+        Registry.register(Registry.SOUND_EVENT, ELECTRIC_WHITE_NOISE.getId(), ELECTRIC_WHITE_NOISE);
+        Registry.register(Registry.SOUND_EVENT, SPARKLE.getId(), SPARKLE);
+        Registry.register(Registry.SOUND_EVENT, POP.getId(), POP);
+        Registry.register(Registry.SOUND_EVENT, BELL_TING.getId(), BELL_TING);
+        Registry.register(Registry.SOUND_EVENT, BUTTON_CLICK_IN.getId(), BUTTON_CLICK_IN);
+        Registry.register(Registry.SOUND_EVENT, BUTTON_CLICK_OUT.getId(), BUTTON_CLICK_OUT);
+        Registry.register(Registry.SOUND_EVENT, ETHEREAL.getId(), ETHEREAL);
+        Registry.register(Registry.SOUND_EVENT, WHOOSH.getId(), WHOOSH);
+        Registry.register(Registry.SOUND_EVENT, WING_FLAP.getId(), WING_FLAP);
+        Registry.register(Registry.SOUND_EVENT, ZOOM.getId(), ZOOM);
+        Registry.register(Registry.SOUND_EVENT, GOOD_ETHEREAL_CHILLS.getId(), GOOD_ETHEREAL_CHILLS);
+        Registry.register(Registry.SOUND_EVENT, SCRIBBLING.getId(), SCRIBBLING);
+        Registry.register(Registry.SOUND_EVENT, SPELL_FAIL.getId(), SPELL_FAIL);
+        Registry.register(Registry.SOUND_EVENT, GAS_LEAK.getId(), GAS_LEAK);
+        Registry.register(Registry.SOUND_EVENT, GRACE.getId(), GRACE);
+        Registry.register(Registry.SOUND_EVENT, SOUND_BOMB.getId(), SOUND_BOMB);
+        Registry.register(Registry.SOUND_EVENT, FIREWORK.getId(), FIREWORK);
+        Registry.register(Registry.SOUND_EVENT, MARBLE_EXPLOSION.getId(), MARBLE_EXPLOSION);
+        Registry.register(Registry.SOUND_EVENT, SLIME_SQUISHING.getId(), SLIME_SQUISHING);
+        Registry.register(Registry.SOUND_EVENT, DARK_SPELL_WHISPERS.getId(), DARK_SPELL_WHISPERS);
+        Registry.register(Registry.SOUND_EVENT, DARK_SUCK_N_BLOW.getId(), DARK_SUCK_N_BLOW);
+        Registry.register(Registry.SOUND_EVENT, ECHOY_HORROR_BREATHE.getId(), ECHOY_HORROR_BREATHE);
+        Registry.register(Registry.SOUND_EVENT, ELECTRIC_WHASHOOSH.getId(), ELECTRIC_WHASHOOSH);
+        Registry.register(Registry.SOUND_EVENT, ENCHANTED_WHASHOOSH.getId(), ENCHANTED_WHASHOOSH);
+        Registry.register(Registry.SOUND_EVENT, FROST_CRACKLE.getId(), FROST_CRACKLE);
+        Registry.register(Registry.SOUND_EVENT, HELLFIRE_LIGHT_MATCH.getId(), HELLFIRE_LIGHT_MATCH);
+        Registry.register(Registry.SOUND_EVENT, LARGE_BELL_BOINK.getId(), LARGE_BELL_BOINK);
+        Registry.register(Registry.SOUND_EVENT, HIGH_PITCHED_SOLO_BLEEP.getId(), HIGH_PITCHED_SOLO_BLEEP);
+        Registry.register(Registry.SOUND_EVENT, ICE_BREATHE.getId(), ICE_BREATHE);
+        Registry.register(Registry.SOUND_EVENT, MAGIC_GLINT_LIGHT_BREATHE.getId(), MAGIC_GLINT_LIGHT_BREATHE);
+        Registry.register(Registry.SOUND_EVENT, NEGATIVELY_PITCHED_BREATHE_PUHH.getId(), NEGATIVELY_PITCHED_BREATHE_PUHH);
+        Registry.register(Registry.SOUND_EVENT, POSITIVELY_PITCHED_BREATHE_PUHH.getId(), POSITIVELY_PITCHED_BREATHE_PUHH);
+        Registry.register(Registry.SOUND_EVENT, STUTTERY_ELECTRIC_GRILL.getId(), STUTTERY_ELECTRIC_GRILL);
+        Registry.register(Registry.SOUND_EVENT, SUBTLE_MAGIC_BOOK_GLINT.getId(), SUBTLE_MAGIC_BOOK_GLINT);
+        Registry.register(Registry.SOUND_EVENT, SUDDEN_ANGELIC_SMOKE.getId(), SUDDEN_ANGELIC_SMOKE);
+        Registry.register(Registry.SOUND_EVENT, SUDDEN_DARK_PAFOOF.getId(), SUDDEN_DARK_PAFOOF);
+        Registry.register(Registry.SOUND_EVENT, TIME_REVERSE.getId(), TIME_REVERSE);
+        Registry.register(Registry.SOUND_EVENT, TINY_BELL.getId(), TINY_BELL);
+        Registry.register(Registry.SOUND_EVENT, POSITIVE_LIGHT_TWINKLE.getId(), POSITIVE_LIGHT_TWINKLE);
     }
 }

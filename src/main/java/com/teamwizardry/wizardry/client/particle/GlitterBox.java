@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.client.particle;
 
-import com.teamwizardry.wizardry.client.lib.LibTheme;
-import net.minecraft.util.math.vector.Vector3d;
+import java.awt.Color;
 
-import java.awt.*;
+import com.teamwizardry.wizardry.client.lib.LibTheme;
+
+import net.minecraft.util.math.Vec3d;
 
 public class GlitterBox {
 
@@ -85,7 +86,7 @@ public class GlitterBox {
 
 		}
 
-		public GlitterBoxFactory setOrigin(Vector3d origin) {
+		public GlitterBoxFactory setOrigin(Vec3d origin) {
 			return setOrigin(origin.x, origin.y, origin.z);
 		}
 
@@ -101,7 +102,7 @@ public class GlitterBox {
 
 		}
 
-		public GlitterBoxFactory setTarget(Vector3d target) {
+		public GlitterBoxFactory setTarget(Vec3d target) {
 			return setTarget(target.x, target.y, target.z);
 		}
 

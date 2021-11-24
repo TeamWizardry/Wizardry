@@ -1,0 +1,49 @@
+{
+  "title": "wizardry.book.title",
+  "subtitle": "wizardry.book.subtitle",
+  "color": "0x331409",
+  "highlight": "0x00ffdd",
+  "categories": [
+    {
+      "title": "wizardry.book.steps.title",
+      "icon": "wizardry:gui/book/icons/orb_wand",
+      "description": "test",
+      "entries": [
+        "wizardry:steps/step_1_mana",
+        "wizardry:steps/step_2_garbs",
+        "wizardry:steps/step_3_nacre",
+        "wizardry:steps/step_4_structures",
+        "wizardry:steps/step_5_spell_creation"
+      ]
+    },
+    {
+      "title": "wizardry.book.itemsblocks.title",
+      "icon": "wizardry:gui/book/icons/hot_spices",
+      "description": "test",
+      "entries": [
+        "wizardry:itemsblocks/crude_halo",
+        "wizardry:itemsblocks/devil_dust",
+        "wizardry:itemsblocks/orbs",
+        "wizardry:itemsblocks/wisdom_wood"
+      ]
+    },
+    {
+      "title": "wizardry.book.mobs.title",
+      "icon": "wizardry:gui/book/icons/fangs",
+      "description": "test",
+      "entries": [
+        "wizardry:mobs/fairies",
+        "wizardry:mobs/spiritwights",
+        "wizardry:mobs/unicorns"
+      ]
+    },
+    {
+      "title": "wizardry.book.dimensions.title",
+      "icon": "wizardry:gui/book/icons/magic_gate",
+      "description": "test",
+      "entries": [
+        "wizardry:dimensions/underworld"
+      ]
+    }
+  ]
+}

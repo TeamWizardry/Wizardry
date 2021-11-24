@@ -1,204 +1,78 @@
-buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-    }
+plugins {
+    id 'fabric-loom' version '0.9.46'
+    id 'maven-publish'
+    id 'eclipse'
+    id 'idea'
+    id 'java'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
 
-version = mod_version
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
+
+archivesBaseName = project.archivesBaseName
+version = project.mod_version
 group = 'com.teamwizardry.wizardry'
-archivesBaseName = 'wizardry'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-
-minecraft {
-    mappings channel: mcp_mappings_channel, version: mcp_version
-
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            arg "--mixin.config=" + archivesBaseName + ".mixins.json"
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-            property 'fml.earlyprogresswindow', 'false'
-
-            mods {
-                wizardry {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            arg "--mixin.config=" + archivesBaseName + ".mixins.json"
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                wizardry {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'wizardry', '--all', '--output', file('src/generated/resources/')
-
-            mods {
-                wizardry {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
-
-allprojects {
-    repositories {
-        mavenLocal()
-        maven { url 'https://files.minecraftforge.net/maven' }
-        jcenter()
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-        maven { url 'https://dl.bintray.com/teamwizardry/teamwizardry' }
-        maven { url 'https://minecraft.curseforge.com/api/maven/' }
-        maven { url 'https://repo.spongepowered.org/repository/maven-public' }
-        maven { url 'http://maven.shadowfacts.net/' }
-        maven {
-            // for JEI
-            name "progwml6"
-            url "http://dvs1.progwml6.com/files/maven"
-        }
-        maven {
-            name "curios"
-            url "https://maven.theillusivec4.top/"
-        }
-
-        maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
-    }
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    minecraft group: 'net.minecraftforge', name: 'forge', version: "${mc_version}-${forge_version}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    implementation 'org.yaml:snakeyaml:1.21'
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
     [
-            "com.teamwizardry.librarianlib:librarianlib-prism:$liblib_version",
-            "com.teamwizardry.librarianlib:librarianlib-facade:$liblib_version",
-            "com.teamwizardry.librarianlib:librarianlib-glitter:$liblib_version",
-            "com.teamwizardry.librarianlib:librarianlib-foundation:$liblib_version",
-            "com.teamwizardry.librarianlib:librarianlib-etcetera:$liblib_version"
+            "com.teamwizardry.librarianlib:scribe:${liblib_version}",
+            "com.teamwizardry.librarianlib:facade:${liblib_version}",
+            "com.teamwizardry.librarianlib:glitter:${liblib_version}",
+            "com.teamwizardry.librarianlib:etcetera:${liblib_version}"
     ].each {
-        implementation(it) { exclude group: 'kottle', module: 'Kottle' }
+        modImplementation(it)
     }
-
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.0'
-
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}:api")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
-
-    compile 'org.spongepowered:spongeapi:7.0.0'
-    compile 'org.spongepowered:mixin:0.7.5-SNAPSHOT'
-
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
-
-    // runtimeOnly fg.deobf("com.teamwizardry.worldcrafter:WorldCrafter:0.0.1")
-}
-
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
 }
 
 processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
+    inputs.property "version", project.version
 
-        // replace version
-        expand 'version': project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
     }
+}
 
-    // copy everything else, thats not the mods.toml
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+
+    it.options.release = 16
+}
+
+java {
+    withSourcesJar()
 }
 
 jar {
-    archiveName = "${mod_id}-${version}.${extension}"
-
-    manifest {
-        attributes([
-                "MixinConfigs"            : "${mod_id}.mixins.json",
-                "Specification-Title"     : "${mod_id}",
-                "Specification-Vendor"    : "${mod_authors}",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : "${mod_id}",
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "${mod_authors}",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-        ])
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
     }
 }
 
-test {
-    useJUnitPlatform()
-    testLogging.exceptionFormat = 'full'
-    finalizedBy jacocoTestReport
-}
-
-jacocoTestReport {
-    reports {
-        html.destination file("$projectDir/jacoco")
-    }
-}
-
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    builtBy 'reobfJar'
-}
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact reobfArtifact
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
         }
     }
+
     repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
+        
     }
 }

@@ -1,0 +1,11 @@
+{
+	"output": {
+		"item": "wizardry:wisdom_sapling"
+	},
+	"input": {
+		"type": "forge:ore_dict",
+		"ore": "treeSapling"
+	},
+	"duration": 0,
+	"harp": false
+}

@@ -2,8 +2,6 @@ package com.teamwizardry.wizardry.common.spell.component;
 
 import java.util.List;
 
-import com.teamwizardry.wizardry.api.spell.ISpellComponent;
-
 import net.minecraft.item.Item;
 
 public class Modifier implements ISpellComponent

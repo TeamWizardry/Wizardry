@@ -1,0 +1,76 @@
+{
+  "textures": {
+    "particle": "wizardry:block/pearl_holder_detail"
+  },
+  "elements": [
+    {
+      "__comment": "orb",
+      "from": [
+        6.5,
+        6.5,
+        6.5
+      ],
+      "to": [
+        9.5,
+        9.5,
+        9.5
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            4,
+            12,
+            7,
+            15
+          ],
+          "texture": "#particle"
+        },
+        "up": {
+          "uv": [
+            4,
+            12,
+            7,
+            15
+          ],
+          "texture": "#particle"
+        },
+        "north": {
+          "uv": [
+            4,
+            12,
+            7,
+            15
+          ],
+          "texture": "#particle"
+        },
+        "south": {
+          "uv": [
+            4,
+            12,
+            7,
+            15
+          ],
+          "texture": "#particle"
+        },
+        "west": {
+          "uv": [
+            4,
+            12,
+            7,
+            15
+          ],
+          "texture": "#particle"
+        },
+        "east": {
+          "uv": [
+            4,
+            12,
+            7,
+            15
+          ],
+          "texture": "#particle"
+        }
+      }
+    }
+  ]
+}

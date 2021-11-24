@@ -1,0 +1,24 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:orb",
+    "data": 1
+  },
+  "title": "wizardry.book.steps.mana.title",
+  "description": "wizardry.book.steps.mana.desc",
+  "content": [
+    "wizardry.book.steps.mana.content0",
+    "wizardry.book.steps.mana.content1",
+    "wizardry.book.steps.mana.content2",
+    {
+      "type": "recipe",
+      "recipe": "wizardry:syringe/syringe"
+    },
+    {
+      "type": "recipe",
+      "recipe": "wizardry:syringe/fill_mana_syringe"
+    },
+    "wizardry.book.steps.mana.content3",
+    "wizardry.book.steps.mana.content4"
+  ]
+}

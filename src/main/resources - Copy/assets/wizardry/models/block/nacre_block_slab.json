@@ -1,0 +1,8 @@
+{
+  "parent": "block/slab",
+  "textures": {
+    "side": "wizardry:block/nacre_block",
+    "bottom": "wizardry:block/nacre_block",
+    "top": "wizardry:block/nacre_block"
+  }
+}

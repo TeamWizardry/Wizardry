@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wizardry:syringe",
+      "data": 3
+    }
+  ],
+  "result": {
+    "item": "wizardry:syringe",
+    "data": 0
+  }
+}

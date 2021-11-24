@@ -1,0 +1,13 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:cape"
+  },
+  "title": "wizardry.book.steps.garbs.title",
+  "description": "wizardry.book.steps.garbs.desc",
+  "content": [
+    "wizardry.book.steps.garbs.content0",
+    "wizardry.book.steps.garbs.content1",
+    "wizardry.book.steps.garbs.content2"
+  ]
+}

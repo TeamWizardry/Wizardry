@@ -1,0 +1,11 @@
+{
+	"type": "block",
+	"output": {
+		"block": "wizardry:nacre_fluid"
+	},
+	"input": {
+		"type": "forge:ore_dict",
+		"ore": "nuggetGold"
+	},
+	"consume": true
+}

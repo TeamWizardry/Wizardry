@@ -2,17 +2,22 @@ package com.teamwizardry.wizardry.common.spell.component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException;
-import com.teamwizardry.librarianlib.prism.Save;
-import com.teamwizardry.wizardry.api.spell.EffectInstance;
-import com.teamwizardry.wizardry.api.spell.Instance;
-import com.teamwizardry.wizardry.api.spell.Interactor;
-import com.teamwizardry.wizardry.api.spell.ShapeInstance;
-import com.teamwizardry.wizardry.api.spell.TargetType;
+import com.teamwizardry.librarianlib.scribe.Save;
 
-public abstract class SpellChain// implements INBTSerializable<CompoundNBT>
+import net.minecraft.nbt.NbtCompound;
+
+public abstract class SpellChain// implements INBTSerializable<NbtCompound>
 {
+    public static final String MODULE = "module";
+    public static final String TARGET = "target";
+    public static final String MODIFIERS = "modifiers";
+    public static final String MULTIPLIER = "multiplier";
+    public static final String NEXT = "next";
+    public static final String EFFECTS = "effects";
+    
     @Save protected Module module;
     @Save protected TargetType targetType = TargetType.ALL;
     @Save protected Map<String, Integer> modifiers;
@@ -51,35 +56,33 @@ public abstract class SpellChain// implements INBTSerializable<CompoundNBT>
         throw new InconceivableException("How? There are only two module types, you shouldn't ever be constructing the root");
     }
     
-//    @Override
-//    public CompoundNBT serializeNBT()
-//    {
-//        CompoundNBT nbt = new CompoundNBT();
-//        
-//        String moduleName = ComponentRegistry.getModules().entrySet().stream().filter(entry -> entry.getValue().equals(module)).map(Entry::getKey).findFirst().get();
-//        nbt.putString(MODULE, moduleName);
-//        
-//        String targetVal = targetType.name();
-//        nbt.putString(TARGET, targetVal);
-//        
-//        CompoundNBT modifiers = new CompoundNBT();
-//        this.modifiers.forEach(modifiers::putInt);
-//        nbt.put(MODIFIERS, modifiers);
-//        
-//        nbt.putDouble(MULTIPLIER, manaMultiplier);
-//        
-//        return nbt;
-//    }
-//
-//    @Override
-//    public void deserializeNBT(CompoundNBT nbt)
-//    {
-//        this.module = ComponentRegistry.getModules().get(nbt.getString(MODULE));
-//        this.targetType = TargetType.valueOf(nbt.getString(TARGET));
-//        
-//        CompoundNBT modifiers = nbt.getCompound(MODIFIERS);
-//        modifiers.keySet().forEach(attribute -> this.modifiers.put(attribute, modifiers.getInt(attribute)));
-//        
-//        this.manaMultiplier = nbt.getDouble(MULTIPLIER);
-//    }
+    public NbtCompound serializeNBT()
+    {
+        NbtCompound nbt = new NbtCompound();
+        
+        String moduleName = ComponentRegistry.getModules().entrySet().stream().filter(entry -> entry.getValue().equals(module)).map(Entry::getKey).findFirst().get();
+        nbt.putString(MODULE, moduleName);
+        
+        String targetVal = targetType.name();
+        nbt.putString(TARGET, targetVal);
+        
+        NbtCompound modifiers = new NbtCompound();
+        this.modifiers.forEach(modifiers::putInt);
+        nbt.put(MODIFIERS, modifiers);
+        
+        nbt.putDouble(MULTIPLIER, manaMultiplier);
+        
+        return nbt;
+    }
+
+    public void deserializeNBT(NbtCompound nbt)
+    {
+        this.module = ComponentRegistry.getModules().get(nbt.getString(MODULE));
+        this.targetType = TargetType.valueOf(nbt.getString(TARGET));
+        
+        NbtCompound modifiers = nbt.getCompound(MODIFIERS);
+        modifiers.getKeys().forEach(attribute -> this.modifiers.put(attribute, modifiers.getInt(attribute)));
+        
+        this.manaMultiplier = nbt.getDouble(MULTIPLIER);
+    }
 }

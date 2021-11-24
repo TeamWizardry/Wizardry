@@ -1,0 +1,17 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"AA",
+		"AA",
+		"AA"
+	],
+	"key": {
+		"A": {
+			"type": "forge:ore_dict",
+			"ore": "leather"
+		}
+	},
+	"result": {
+		"item": "wizardry:cape"
+	}
+}

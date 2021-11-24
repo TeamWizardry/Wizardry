@@ -8,12 +8,11 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.ISpellComponent;
 import com.teamwizardry.wizardry.configs.ServerConfigs;
 
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public class ComponentRegistry
 {
@@ -86,8 +85,8 @@ public class ComponentRegistry
         if (blockTarget != null)
             spellComponents.remove(blockTarget.getItems());
         
-        entityTarget = new TargetComponent("entityTarget", ForgeRegistries.ITEMS.getValue(new ResourceLocation(ServerConfigs.entityTargetItem)));
-        blockTarget = new TargetComponent("blockTarget", ForgeRegistries.ITEMS.getValue(new ResourceLocation(ServerConfigs.blockTargetItem)));
+        entityTarget = new TargetComponent("entityTarget", Registry.ITEM.get(new Identifier(ServerConfigs.entityTargetItem)));
+        blockTarget = new TargetComponent("blockTarget", Registry.ITEM.get(new Identifier(ServerConfigs.blockTargetItem)));
         
         spellComponents.put(entityTarget.getItems(), entityTarget);
         spellComponents.put(blockTarget.getItems(), blockTarget);

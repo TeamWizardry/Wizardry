@@ -1,0 +1,8 @@
+{
+  "parent": "block/stairs",
+  "textures": {
+    "side": "wizardry:block/nacre_block_bricks",
+    "bottom": "wizardry:block/nacre_block_bricks",
+    "top": "wizardry:block/nacre_block_bricks"
+  }
+}

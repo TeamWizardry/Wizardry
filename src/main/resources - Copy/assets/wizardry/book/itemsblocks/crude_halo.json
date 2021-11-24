@@ -1,0 +1,15 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:halo_fake"
+  },
+  "title": "wizardry.book.items_blocks.crude_halo.title",
+  "content": [
+    "wizardry.book.items_blocks.crude_halo.content0",
+    "wizardry.book.items_blocks.crude_halo.content1",
+    {
+      "type": "recipe",
+      "recipe": "wizardry:halo_fake"
+    }
+  ]
+}

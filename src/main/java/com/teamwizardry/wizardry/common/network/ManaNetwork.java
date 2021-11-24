@@ -10,16 +10,16 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaNode;
+import com.teamwizardry.wizardry.common.block.IManaNode;
 
 import net.minecraft.block.Block;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.world.PersistentState;
 
-public class ManaNetwork extends WorldSavedData
+public class ManaNetwork extends PersistentState
 {
     private static final String DATA_NAME = Wizardry.MODID + "_ManaNetwork";
     private static final String POSITIONS = "positions";
@@ -30,14 +30,13 @@ public class ManaNetwork extends WorldSavedData
     
     private ManaNetwork()
     {
-        super(DATA_NAME);
         this.positions = new HashMap<>();
         this.paths = new LinkedList<>();
     }
     
     public static ManaNetwork get(ServerWorld world)
     {
-        return world.getSavedData().getOrCreate(ManaNetwork::new, DATA_NAME);
+        return world.getPersistentStateManager().getOrCreate(ManaNetwork::readNbt, ManaNetwork::new, DATA_NAME);
     }
     
     public void addBlock(BlockPos pos)
@@ -111,27 +110,27 @@ public class ManaNetwork extends WorldSavedData
         for (int x = -chunkDist; x <= chunkDist; x++)
             for (int z = -chunkDist; z <= chunkDist; z++)
                 this.positions.getOrDefault(new ChunkPos(centerX + x, centerZ + z), Collections.emptySet()).stream()
-                    .filter(node -> node.distanceSq(pos) <= maxDist * maxDist).forEach(nodes::add);
+                    .filter(node -> node.getSquaredDistance(pos) <= maxDist * maxDist).forEach(nodes::add);
         
         return nodes;
     }
 
-    @Override
-    public void read(CompoundNBT nbt)
+    public static ManaNetwork readNbt(NbtCompound nbt)
     {
+        ManaNetwork network = new ManaNetwork();
         for (long pos : nbt.getLongArray(POSITIONS))
         {
             BlockPos block = BlockPos.fromLong(pos);
             ChunkPos chunk = new ChunkPos(block);
-            positions.computeIfAbsent(chunk, k -> new HashSet<>()).add(block);
+            network.positions.computeIfAbsent(chunk, k -> new HashSet<>()).add(block);
         }
+        return network;
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound)
+    public NbtCompound writeNbt(NbtCompound compound)
     {
-        compound.putLongArray(POSITIONS, positions.values().stream().flatMap(Set::stream).mapToLong(BlockPos::toLong).toArray());
+        compound.putLongArray(POSITIONS, positions.values().stream().flatMap(Set::stream).mapToLong(BlockPos::asLong).toArray());
         return compound;
     }
-
 }

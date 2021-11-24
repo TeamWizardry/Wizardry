@@ -1,0 +1,21 @@
+{
+	"type": "forge:ore_shaped",
+	"pattern": [
+		"A",
+		"B"
+	],
+	"key": {
+		"A": {
+			"ore": "slabWood",
+			"type": "forge:ore_dict"
+		},
+		"B": {
+			"ore": "blockGlass",
+			"type": "forge:ore_dict"
+		}
+	},
+	"result": {
+		"item": "wizardry:jar_item",
+		"data": 0
+	}
+}

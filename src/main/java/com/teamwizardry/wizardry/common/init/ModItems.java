@@ -1,72 +1,58 @@
 package com.teamwizardry.wizardry.common.init;
 
-import com.teamwizardry.librarianlib.foundation.registration.ItemSpec;
-import com.teamwizardry.librarianlib.foundation.registration.LazyItem;
-import com.teamwizardry.librarianlib.foundation.registration.RegistrationManager;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.block.fluid.mana.ItemManaBucket;
-import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
-import com.teamwizardry.wizardry.common.item.ItemStaff;
-import com.teamwizardry.wizardry.common.lib.LibItemNames;
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.item.Food;
-import net.minecraft.item.Items;
-import net.minecraft.item.Rarity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ModItems {
-    public static final LazyItem wisdomStick = new LazyItem();
-    public static final LazyItem staff = new LazyItem();
-    public static final LazyItem nacrePearl = new LazyItem();
-    public static final LazyItem devilDust = new LazyItem();
-    public static final LazyItem skyDust = new LazyItem();
-    public static final LazyItem fairyDust = new LazyItem();
-    public static final LazyItem fairyWings = new LazyItem();
-    public static final LazyItem fairyApple = new LazyItem();
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Rarity;
+import net.minecraft.util.registry.Registry;
 
-    public static final LazyItem manaBucket = new LazyItem();
+public class ModItems
+{
+    public static final ItemGroup wizardry = FabricItemGroupBuilder.build(Wizardry.getId("general"), () -> new ItemStack(ModItems.staff));
 
-    public static void initializeItems(RegistrationManager reggie) {
-        wisdomStick.from(reggie.add(new ItemSpec(LibItemNames.WISDOM_STICK)));
-        devilDust.from(reggie.add(new ItemSpec(LibItemNames.DEVIL_DUST).rarity(Rarity.UNCOMMON)));
-        skyDust.from(reggie.add(new ItemSpec(LibItemNames.SKY_DUST).rarity(Rarity.UNCOMMON)));
-        fairyDust.from(reggie.add(new ItemSpec(LibItemNames.FAIRY_DUST).rarity(Rarity.UNCOMMON)));
-        fairyWings.from(reggie.add(new ItemSpec(LibItemNames.FAIRY_WINGS).rarity(Rarity.UNCOMMON)));
+    public static final Item wisdomStick = new Item(new FabricItemSettings().group(wizardry));
+    
+    public static final Item staff = new Item(new FabricItemSettings().group(wizardry).maxCount(1).rarity(Rarity.UNCOMMON));
+    public static final Item pearl = new Item(new FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON));
 
-        fairyApple.from(reggie.add(new ItemSpec(LibItemNames.FAIRY_APPLE).rarity(Rarity.RARE).food(
-                new Food.Builder()
-                        .setAlwaysEdible()
-                        .hunger(5)
-                        .saturation(10)
-                        .effect(() -> new EffectInstance(Effects.REGENERATION, 20 * 15), 1f)
-                        .effect(() -> new EffectInstance(Effects.JUMP_BOOST, 20 * 60 * 2, 1), 1f)
-                        .effect(() -> new EffectInstance(Effects.GLOWING, 20 * 30), 1f)
-                        .build())));
+    public static final Item devilDust = new Item(new FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON));
+    public static final Item skyDust = new Item(new FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON));
+    public static final Item fairyDust = new Item(new FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON));
+    public static final Item fairyWings = new Item(new FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON));
 
-        staff.from(reggie.add(new ItemSpec(LibItemNames.STAFF).maxStackSize(1)
-                .rarity(Rarity.UNCOMMON)
-                .item(itemSpec -> new ItemStaff(itemSpec.getItemProperties()))));
-        nacrePearl.from(reggie.add(new ItemSpec(LibItemNames.NACRE_PEARL).maxStackSize(1)
-                .rarity(Rarity.UNCOMMON)
-                .item(itemSpec -> new ItemNacrePearl(itemSpec.getItemProperties()))));
+    public static final Item fairyApple = new Item(new FabricItemSettings().group(wizardry).rarity(Rarity.RARE).food(
+            new FoodComponent.Builder()
+                             .hunger(5)
+                             .saturationModifier(2)
+                             .alwaysEdible()
+                             .statusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 20*15), 1)
+                             .statusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, 20*60*2, 1), 1)
+                             .statusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 20*30), 1)
+                             .build()
+    ));
+    
+    public static Item manaBucket;
+    public static Item nacreBucket;
 
-        manaBucket.from(reggie.add(new ItemSpec(LibItemNames.MANA_BUCKET)
-                .containerItem(Items.BUCKET)
-                .maxStackSize(1)
-                .item(itemSpec -> new ItemManaBucket(() -> ModFluids.MANA_FLUID, itemSpec.getItemProperties()))));
+    public static void init()
+    {
+        initItem(wisdomStick, "wisdom_stick");
+        initItem(staff, "staff");
+        initItem(pearl, "pearl");
+        initItem(devilDust, "devil_dust");
+        initItem(skyDust, "sky_dust");
+        initItem(fairyDust, "fairy_dust");
+        initItem(fairyWings, "fairy_wings");
+        initItem(fairyApple, "fairy_apple");
+        initItem(manaBucket, "mana_bucket");
     }
 
-    public static void initializeItemGroup() {
-        Wizardry.INSTANCE.getRegistrationManager().setItemGroupIcon(staff);
-    }
-
-    @SubscribeEvent
-    public static void registerItemBlockColors(ColorHandlerEvent.Item event) {
-        event.getItemColors().register((IItemColor) nacrePearl.get(), nacrePearl.get());
-    }
+    private static void initItem(Item item, String path) { Registry.register(Registry.ITEM, Wizardry.getId(path), item); }
 }

@@ -1,0 +1,12 @@
+{
+  "type": "entry",
+  "icon": "wizardry:empty",
+  "title": "wizardry.book.mobs.spirit_wights.title",
+  "description": "wizardry.book.mobs.spirit_wights.desc",
+  "content": [
+    "wizardry.book.mobs.spirit_wights.content1",
+    "wizardry.book.mobs.spirit_wights.content2",
+    "wizardry.book.mobs.spirit_wights.content3",
+    "wizardry.book.mobs.spirit_wights.content4"
+  ]
+}

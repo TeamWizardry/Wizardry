@@ -1,0 +1,12 @@
+{
+	"output": {
+		"item": "wizardry:orb",
+		"data": 1
+	},
+	"input": {
+		"item": "wizardry:orb",
+		"data": 0
+	},
+	"duration": 0,
+	"harp": false
+}

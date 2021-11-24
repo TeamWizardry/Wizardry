@@ -4,48 +4,47 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.lib.LibBlockStateProperties;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.block.material.PushReaction;
+import net.minecraft.block.HorizontalFacingBlock;
+import net.minecraft.block.Waterloggable;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.pathfinding.PathType;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
+import net.minecraft.stat.Stats;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.EnumProperty;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldEvents;
 
 /**
  * Project: Wizardry
  * Created by Carbon
  * Copyright (c) Carbon 2020
  */
-public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
-    public static final EnumProperty<WorktablePart> PART = LibBlockStateProperties.WORKTABLE_PART;
-    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+public class BlockWorktable extends HorizontalFacingBlock implements Waterloggable {
+    public static final EnumProperty<WorktablePart> PART = EnumProperty.of("part", BlockWorktable.WorktablePart.class);
+    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 
-    public enum WorktablePart implements IStringSerializable {
+    public enum WorktablePart implements StringIdentifiable {
         LEFT("left"),
         RIGHT("right");
 
@@ -61,16 +60,16 @@ public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
         }
 
         @Override
-        public @NotNull String getString() {
+        public @NotNull String asString() {
             return this.name;
         }
     }
 
-    public BlockWorktable(Properties properties) {
-        super(properties);
-        this.setDefaultState(this.stateContainer.getBaseState()
+    public BlockWorktable(Settings settings) {
+        super(settings);
+        this.setDefaultState(this.stateManager.getDefaultState()
                 .with(PART, WorktablePart.LEFT)
-                .with(HORIZONTAL_FACING, Direction.NORTH)
+                .with(FACING, Direction.NORTH)
                 .with(WATERLOGGED, Boolean.FALSE));
     }
 
@@ -79,109 +78,79 @@ public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
-                                          BlockPos currentPos, BlockPos facingPos) {
-        if (stateIn.get(WATERLOGGED)) {
-            worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
-        }
-        if (facing == getDirectionToOther(stateIn.get(PART), stateIn.get(HORIZONTAL_FACING))) {
-            return facingState.getBlock() == this && facingState.get(PART) != stateIn.get(PART) ?
-                    stateIn :
-                    Blocks.AIR.getDefaultState();
-        } else {
-            return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
-        }
+    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state,
+                             @Nullable BlockEntity te, ItemStack stack) {
+        super.afterBreak(world, player, pos, Blocks.AIR.getDefaultState(), te, stack);
     }
 
     @Override
-    public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state,
-                             @javax.annotation.Nullable TileEntity te, ItemStack stack) {
-        super.harvestBlock(worldIn, player, pos, Blocks.AIR.getDefaultState(), te, stack);
-    }
-
-    @Override
-    public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         WorktablePart worktablePart = state.get(PART);
-        BlockPos blockpos = pos.offset(getDirectionToOther(worktablePart, state.get(HORIZONTAL_FACING)));
-        BlockState blockstate = worldIn.getBlockState(blockpos);
+        BlockPos blockpos = pos.offset(getDirectionToOther(worktablePart, state.get(FACING)));
+        BlockState blockstate = world.getBlockState(blockpos);
         if (blockstate.getBlock() == this && blockstate.get(PART) != worktablePart) {
-            worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 35);
-            worldIn.playEvent(player, 2001, blockpos, Block.getStateId(blockstate));
-            if (!worldIn.isRemote && !player.isCreative()) {
-                ItemStack itemstack = player.getHeldItemMainhand();
-                spawnDrops(state, worldIn, pos, null, player, itemstack);
-                spawnDrops(blockstate, worldIn, blockpos, null, player, itemstack);
+            world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL | Block.SKIP_DROPS);
+            world.syncWorldEvent(player, WorldEvents.BLOCK_BROKEN, blockpos, Block.getRawIdFromState(blockstate));
+            if (!world.isClient && !player.isCreative()) {
+                ItemStack itemstack = player.getMainHandStack();
+                Block.dropStacks(state, world, pos, null, player, itemstack);
+                Block.dropStacks(blockstate, world, blockpos, null, player, itemstack);
             }
 
-            player.addStat(Stats.BLOCK_MINED.get(this));
+            player.increaseStat(Stats.MINED.getOrCreateStat(this), 1);
         }
 
-        super.onBlockHarvested(worldIn, pos, state, player);
+        super.onBreak(world, pos, state, player);
     }
 
     @Nullable
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-        IWorld iworld = context.getWorld();
-        Direction direction = context.getPlacementHorizontalFacing().rotateY();
-        BlockPos blockpos = context.getPos();
+    public BlockState getStateForPlacement(ItemPlacementContext context) {
+        World world = context.getWorld();
+        Direction direction = context.getPlayerFacing().rotateYClockwise();
+        BlockPos blockpos = context.getBlockPos();
         BlockPos blockpos1 = blockpos.offset(direction);
-        boolean flag = iworld.getFluidState(blockpos).getFluid() == Fluids.WATER;
-        return context.getWorld().getBlockState(blockpos1).isReplaceable(context) ?
+        boolean flag = world.getFluidState(blockpos).getFluid() == Fluids.WATER;
+        return context.getWorld().getBlockState(blockpos1).canReplace(context) ?
                 this.getDefaultState()
-                        .with(HORIZONTAL_FACING, direction)
+                        .with(FACING, direction)
                         .with(WATERLOGGED, flag) :
                 null;
     }
-
+    
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING, PART, WATERLOGGED);
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING, PART, WATERLOGGED);
     }
 
     @Override
-    public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
-        if (!state.get(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
-
-            worldIn.setBlockState(pos, state.with(WATERLOGGED, Boolean.TRUE), 3);
-            worldIn.getPendingFluidTicks()
-                    .scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
     public FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
     }
 
-    @Override
-    public PushReaction getPushReaction(BlockState state) {
-        return PushReaction.IGNORE;  // Don't want dupes
-    }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.onPlaced(world, pos, state, placer, stack);
 
-        if (!worldIn.isRemote) {
-            BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING));
-            worldIn.setBlockState(blockpos, state.with(PART, WorktablePart.RIGHT), 3);
-            worldIn.notifyNeighborsOfStateChange(pos, Blocks.AIR);
-            state.updateNeighbours(worldIn, pos, 3);
+        if (!world.isClient) {
+            BlockPos blockpos = pos.offset(state.get(FACING));
+            world.setBlockState(blockpos, state.with(PART, WorktablePart.RIGHT), 3);
+            world.updateNeighbors(pos, Blocks.AIR);
+            state.updateNeighbors(world, pos, Block.NOTIFY_ALL);
         }
     }
+    
+    @Override
+    public PistonBehavior getPistonBehavior(BlockState state) {
+        return PistonBehavior.IGNORE; // Don't want dupes
+    }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public @NotNull ActionResultType onBlockActivated(@NotNull BlockState state, @NotNull World worldIn,
+    public @NotNull ActionResult onUse(@NotNull BlockState state, @NotNull World world,
                                                       @NotNull BlockPos pos, @NotNull PlayerEntity player,
-                                                      @NotNull Hand handIn, @NotNull BlockRayTraceResult hit) {
-        if (worldIn.isRemote) Wizardry.PROXY.openWorktableGui();
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+                                                      @NotNull Hand hand, @NotNull BlockHitResult hit) {
+        if (world.isClient) Wizardry.PROXY.openWorktableGui();
+        return super.onUse(state, world, pos, player, hand, hit);
     }
 
     public BlockRenderType getRenderType(BlockState state) {
@@ -189,7 +158,7 @@ public class BlockWorktable extends HorizontalBlock implements IWaterLoggable {
     }
 
     @Override
-    public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+    public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
         return false;
     }
 }

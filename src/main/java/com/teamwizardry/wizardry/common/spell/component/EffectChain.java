@@ -1,8 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.component;
 
-import com.teamwizardry.wizardry.api.spell.EffectInstance;
-import com.teamwizardry.wizardry.api.spell.Interactor;
-
 public class EffectChain extends SpellChain
 {
     public EffectChain(ModuleEffect effect)

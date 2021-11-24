@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.teamwizardry.wizardry.api.spell.ISpellComponent;
-import com.teamwizardry.wizardry.api.spell.Pattern;
-
 import net.minecraft.item.Item;
 
 public class Module implements ISpellComponent
@@ -82,9 +79,9 @@ public class Module implements ISpellComponent
         return attributeValues;
     }
 
-    public String toString() { return pattern.getRegistryName() + ":" + name + " = [" + items + ", " + element + "]"; }
+//    public String toString() { return pattern.getRegistryName() + ":" + name + " = [" + items + ", " + element + "]"; }
     
-    public String getTranslationKey() { return "wizardry.spell." + pattern.getRegistryName() + ":" + name; }
+//    public String getTranslationKey() { return "wizardry.spell." + pattern.getRegistryName() + ":" + name; }
     
-    public String getTranslationKey(String key) { return getTranslationKey() + "." + key; }
+//    public String getTranslationKey(String key) { return getTranslationKey() + "." + key; }
 }

@@ -1,0 +1,14 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:cloud"
+  },
+  "title": "wizardry.book.dimensions.underworld.title",
+  "description": "wizardry.book.dimensions.underworld.desc",
+  "content": [
+    "wizardry.book.dimensions.underworld.content1",
+    "wizardry.book.dimensions.underworld.content2",
+    "wizardry.book.dimensions.underworld.content3",
+    "wizardry.book.dimensions.underworld.content4"
+  ]
+}

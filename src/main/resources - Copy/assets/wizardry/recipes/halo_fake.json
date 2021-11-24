@@ -1,0 +1,21 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"AGA",
+		"G G",
+		"AGA"
+	],
+	"key": {
+		"A": {
+			"item": "wizardry:orb",
+			"data": 1
+		},
+		"G": {
+			"type": "forge:ore_dict",
+			"ore": "ingotGold"
+		}
+	},
+	"result": {
+		"item": "wizardry:halo_fake"
+	}
+}

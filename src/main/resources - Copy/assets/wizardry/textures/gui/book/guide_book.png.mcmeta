@@ -1,0 +1,22 @@
+{
+	"spritesheet":{
+		"textureWidth":300,
+		"textureHeight":300,
+		"sprites":{
+			"book":[0, 0, 146, 180],
+			"book_filling": [146, 0, 146, 180],
+			"arrow_next":[0, 180, 18, 10],
+			"arrow_next_pressed":[18, 180, 18, 10],
+			"arrow_back":[0, 190, 18, 10],
+			"arrow_back_pressed":[18, 190, 18, 10],
+			"arrow_home": [36, 189, 18, 9],
+			"arrow_home_pressed": [36, 180, 18, 9],
+			"banner": [0, 200, 140, 31],
+			"bookmark": [0, 231, 133, 13],
+			"magnifier": [54, 180, 12, 12],
+			"text_cursor": [66, 180, 3, 9],
+			"result_box": [146, 0, 133, 114],
+			"title_bar": [0, 246, 86, 11]
+		}
+	}
+}

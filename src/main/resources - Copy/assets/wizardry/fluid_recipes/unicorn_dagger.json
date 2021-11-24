@@ -1,0 +1,22 @@
+{
+	"output": {
+		"item": "wizardry:unicorn_dagger"
+	},
+	"input": {
+		"item": "wizardry:unicorn_horn"
+	},
+	"extraInputs": [
+		{
+			"type": "forge:ore_dict",
+			"ore": "ingotGold"
+		},
+		{
+			"item": "wizardry:devil_dust"
+		},
+		{
+			"item": "minecraft:quartz_block",
+			"data": 0
+		}
+	],
+	"harp": false
+}

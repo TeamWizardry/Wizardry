@@ -1,24 +1,16 @@
 package com.teamwizardry.wizardry.common.item;
 
-import javax.annotation.Nonnull;
-
-import com.teamwizardry.wizardry.api.item.INacreProduct;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-/**
- * Project: Wizardry
- * Created by Carbon
- * Copyright (c) Carbon 2020
- */
 public class ItemNacrePearl extends Item implements INacreProduct {
 
-	public ItemNacrePearl(Properties properties) {
-		super(properties);
+	public ItemNacrePearl(Settings settings) {
+		super(settings);
 	}
 
 	@Override
@@ -28,14 +20,15 @@ public class ItemNacrePearl extends Item implements INacreProduct {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
-	@Override
-	public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
-		colorableOnEntityItemUpdate(entity);
+	// TODO - find item entity version of this
+//	@Override
+//	public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+//		colorableOnEntityItemUpdate(entity);
+//
+//		return super.onEntityItemUpdate(stack, entity);
+//	}
 
-		return super.onEntityItemUpdate(stack, entity);
-	}
-
-	private String getNameType(@Nonnull ItemStack stack) {
+	private String getNameType(@NotNull ItemStack stack) {
 		float quality = this.getQuality(stack);
 		if (quality > 1)
 			return "ancient";
@@ -54,7 +47,7 @@ public class ItemNacrePearl extends Item implements INacreProduct {
 
 	@Override
 	public String getTranslationKey(ItemStack stack) {
-		if (!stack.hasTag())
+		if (!stack.hasNbt())
 			return super.getTranslationKey(stack);
 		return super.getTranslationKey(stack) + "." + getNameType(stack);
 	}

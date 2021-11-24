@@ -1,41 +1,42 @@
 package com.teamwizardry.wizardry.common.spell.shape;
 
+import static com.teamwizardry.wizardry.common.spell.component.Attributes.RANGE;
+
+import java.awt.Color;
+
 import com.teamwizardry.librarianlib.etcetera.Raycaster;
 import com.teamwizardry.librarianlib.etcetera.Raycaster.BlockMode;
 import com.teamwizardry.librarianlib.etcetera.Raycaster.FluidMode;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.Instance;
-import com.teamwizardry.wizardry.api.spell.Interactor;
-import com.teamwizardry.wizardry.api.spell.PatternShape;
-import com.teamwizardry.wizardry.api.utils.ColorUtils;
-import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import com.teamwizardry.wizardry.common.init.ModSounds;
+import com.teamwizardry.wizardry.common.spell.component.Instance;
+import com.teamwizardry.wizardry.common.spell.component.Interactor;
+import com.teamwizardry.wizardry.common.spell.component.PatternShape;
+import com.teamwizardry.wizardry.common.utils.ColorUtils;
+import com.teamwizardry.wizardry.common.utils.RandUtil;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.awt.*;
-
-import static com.teamwizardry.wizardry.api.spell.Attributes.RANGE;
 
 public class ShapeRay extends PatternShape {
     private static final Raycaster ray = new Raycaster();
     
     @Override
     public void run(World world, Instance instance, Interactor target) {
-        Vector3d start = target.getPos();
-        Vector3d end = start.add(target.getLook().scale(instance.getAttributeValue(RANGE)));
+        Vec3d start = target.getPos();
+        Vec3d end = start.add(target.getLook().multiply(instance.getAttributeValue(RANGE)));
         Entity sourceEntity = target.getEntity();
         ray.cast(world,
                 BlockMode.VISUAL,
                 FluidMode.ANY,
-                entity -> entity instanceof LivingEntity && !entity.isEntityEqual(sourceEntity),
+                entity -> entity instanceof LivingEntity && !entity.equals(sourceEntity), // TODO - where'd the better equality check move to?
                 start.x,
                 start.y,
                 start.z,
@@ -48,9 +49,9 @@ public class ShapeRay extends PatternShape {
             case NONE:
             case BLOCK:
             case FLUID:
-                Vector3d dir = end.subtract(start);
-                Vector3d hit = new Vector3d(ray.getHitX(), ray.getHitY(), ray.getHitZ());
-                newTarget = new Interactor(new BlockPos(hit), Direction.getFacingFromVector(dir.x, dir.y, dir.z));
+                Vec3d dir = end.subtract(start);
+                Vec3d hit = new Vec3d(ray.getHitX(), ray.getHitY(), ray.getHitZ());
+                newTarget = new Interactor(new BlockPos(hit), Direction.getFacing(dir.x, dir.y, dir.z));
                 break;
             case ENTITY:
                 newTarget = new Interactor((LivingEntity) ray.getEntity());
@@ -62,13 +63,13 @@ public class ShapeRay extends PatternShape {
         super.run(world, instance, newTarget);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
+    @Environment(EnvType.CLIENT)
     public void runClient(World world, Instance instance, Interactor target) {
 
         Color[] colors = ColorUtils.mergeColorSets(instance.getEffectColors());
-        Vector3d v1 = instance.getCaster().getClientPos();
-        Vector3d v2 = target.getPos();
+        Vec3d v1 = instance.getCaster().getClientPos();
+        Vec3d v2 = target.getPos();
 
         for (int i = 0; i < 30; i++) {
             double a = i / 30.0;

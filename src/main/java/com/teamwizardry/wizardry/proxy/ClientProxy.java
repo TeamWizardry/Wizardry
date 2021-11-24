@@ -1,61 +1,30 @@
 package com.teamwizardry.wizardry.proxy;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.gui.WorktableGUI;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
-import com.teamwizardry.wizardry.client.particle.KeyFramedGlitter;
-import com.teamwizardry.wizardry.client.particle.KeyFramedGlitterBox;
-import com.teamwizardry.wizardry.client.particle.PhysicsGlitter;
-import com.teamwizardry.wizardry.client.particle.PredeterminedGlitter;
-import com.teamwizardry.wizardry.common.init.ModBlocks;
 import com.teamwizardry.wizardry.common.init.ModFluids;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.fluid.Fluid;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientProxy implements IProxy {
 
-    private final PhysicsGlitter physicsGlitter = new PhysicsGlitter();
-    private final PredeterminedGlitter predeterminedGlitter = new PredeterminedGlitter();
-    private final KeyFramedGlitter keyFramedGlitter = new KeyFramedGlitter();
+//    private final PhysicsGlitter physicsGlitter = new PhysicsGlitter();
+//    private final PredeterminedGlitter predeterminedGlitter = new PredeterminedGlitter();
+//    private final KeyFramedGlitter keyFramedGlitter = new KeyFramedGlitter();
 
     private static boolean isDataGenRun = false;
 
     @Override
     public void clientSetup() {
-        setRenderLayer(ModBlocks.liquidMana.get(), RenderType.getTranslucent());
-
-        setRenderLayer(ModFluids.MANA_FLUID_FLOWING, RenderType.getTranslucent());
-        setRenderLayer(ModFluids.MANA_FLUID, RenderType.getTranslucent());
+        BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), ModFluids.STILL_MANA, ModFluids.FLOWING_MANA);
 
         if (!isDataGenRun) {
-            physicsGlitter.addToGame();
-            predeterminedGlitter.addToGame();
-            keyFramedGlitter.addToGame();
+//            physicsGlitter.addToGame();
+//            predeterminedGlitter.addToGame();
+//            keyFramedGlitter.addToGame();
         }
-    }
-
-    private static void setRenderLayer(Block block, RenderType... types) {
-        List<RenderType> typeList = Arrays.asList(types);
-        RenderTypeLookup.setRenderLayer(block, typeList::contains);
-    }
-
-    private static void setRenderLayer(Fluid fluid, RenderType... types) {
-        List<RenderType> typeList = Arrays.asList(types);
-        RenderTypeLookup.setRenderLayer(fluid, typeList::contains);
     }
 
     @Override
@@ -63,10 +32,9 @@ public class ClientProxy implements IProxy {
 
     }
 
-    @SubscribeEvent
-    public static void dataGen(GatherDataEvent event) {
-        isDataGenRun = !event.includeClient();
-    }
+//    public static void dataGen(GatherDataEvent event) {
+//        isDataGenRun = !event.includeClient();
+//    }
 
     @Override
     public void setItemStackHandHandler(Hand hand, ItemStack stack) {
@@ -78,19 +46,19 @@ public class ClientProxy implements IProxy {
     @Override
     public void spawnParticle(GlitterBox box) {
         if (box.physics) {
-            physicsGlitter.spawn(box);
+//            physicsGlitter.spawn(box);
         } else {
-            predeterminedGlitter.spawn(box);
+//            predeterminedGlitter.spawn(box);
         }
     }
 
-    @Override
-    public void spawnKeyedParticle(KeyFramedGlitterBox box) {
-        keyFramedGlitter.spawn(box);
-    }
+//    @Override
+//    public void spawnKeyedParticle(KeyFramedGlitterBox box) {
+//        keyFramedGlitter.spawn(box);
+//    }
 
     @Override
     public void openWorktableGui() {
-        Minecraft.getInstance().displayGuiScreen(new WorktableGUI());
+//        MinecraftClient.getInstance().setScreen(new WorktableGUI());
     }
 }

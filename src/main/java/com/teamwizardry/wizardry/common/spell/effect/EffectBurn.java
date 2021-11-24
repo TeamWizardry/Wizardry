@@ -1,22 +1,22 @@
 package com.teamwizardry.wizardry.common.spell.effect;
 
-import static com.teamwizardry.wizardry.api.spell.Attributes.DURATION;
-import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.BLOCK;
-import static com.teamwizardry.wizardry.api.spell.Interactor.InteractorType.ENTITY;
+import static com.teamwizardry.wizardry.common.spell.component.Attributes.DURATION;
+import static com.teamwizardry.wizardry.common.spell.component.Interactor.InteractorType.BLOCK;
+import static com.teamwizardry.wizardry.common.spell.component.Interactor.InteractorType.ENTITY;
 
 import java.awt.Color;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.Instance;
-import com.teamwizardry.wizardry.api.spell.Interactor;
-import com.teamwizardry.wizardry.api.spell.PatternEffect;
-import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import com.teamwizardry.wizardry.common.init.ModSounds;
+import com.teamwizardry.wizardry.common.spell.component.Instance;
+import com.teamwizardry.wizardry.common.spell.component.Interactor;
+import com.teamwizardry.wizardry.common.spell.component.PatternEffect;
+import com.teamwizardry.wizardry.common.utils.RandUtil;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class EffectBurn extends PatternEffect {
 
@@ -25,7 +25,7 @@ public class EffectBurn extends PatternEffect {
         if (entity.getType() != ENTITY)
             return;
 
-        entity.getEntity().setFire((int) instance.getAttributeValue(DURATION));
+        entity.getEntity().setFireTicks((int) instance.getAttributeValue(DURATION));
         ModSounds.playSound(world, instance.getCaster(), entity, ModSounds.FIRE, 0.1f);
     }
 
@@ -53,8 +53,8 @@ public class EffectBurn extends PatternEffect {
         return colors;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
+    @Environment(EnvType.CLIENT)
     public void runClient(World world, Instance instance, Interactor target) {
 
         for (int i = 0; i < 100; i++)

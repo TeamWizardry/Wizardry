@@ -1,0 +1,11 @@
+{
+  "input": {
+    "type": "forge:ore_dict",
+    "ore": "blockRedstone"
+  },
+  "output": {
+    "item": "wizardry:devil_dust",
+    "count": 9
+  },
+  "duration": 900
+}

@@ -1,0 +1,11 @@
+{
+	"output": {
+		"item": "wizardry:wisdom_leaves"
+	},
+	"input": {
+		"type": "forge:ore_dict",
+		"ore": "treeLeaves"
+	},
+	"duration": 0,
+	"harp": false
+}

@@ -3,18 +3,18 @@ package com.teamwizardry.wizardry.common.spell.effect;
 import java.awt.Color;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.Attributes;
-import com.teamwizardry.wizardry.api.spell.Instance;
-import com.teamwizardry.wizardry.api.spell.Interactor;
-import com.teamwizardry.wizardry.api.spell.PatternEffect;
-import com.teamwizardry.wizardry.api.utils.RandUtil;
 import com.teamwizardry.wizardry.client.particle.GlitterBox;
 import com.teamwizardry.wizardry.common.init.ModSounds;
+import com.teamwizardry.wizardry.common.spell.component.Attributes;
+import com.teamwizardry.wizardry.common.spell.component.Instance;
+import com.teamwizardry.wizardry.common.spell.component.Interactor;
+import com.teamwizardry.wizardry.common.spell.component.PatternEffect;
+import com.teamwizardry.wizardry.common.utils.RandUtil;
 
-import net.minecraft.util.DamageSource;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /*
 * By: Carbon
@@ -28,7 +28,7 @@ public class EffectArcane extends PatternEffect {
     public void affectEntity(World world, Interactor entity, Instance instance) {
         if(entity.getType() != Interactor.InteractorType.ENTITY) return;
 
-        entity.getEntity().attackEntityFrom(DamageSource.MAGIC, (float) instance.getAttributeValue(Attributes.INTENSITY) * POTENCY_MULTIPLIER);
+        entity.getEntity().damage(DamageSource.MAGIC, (float) instance.getAttributeValue(Attributes.INTENSITY) * POTENCY_MULTIPLIER);
         ModSounds.playSound(world, instance.getCaster(), entity, ModSounds.FIREWORK, 0.1f);
     }
 
@@ -47,8 +47,8 @@ public class EffectArcane extends PatternEffect {
         return colors;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
+    @Environment(EnvType.CLIENT)
     public void runClient(World world, Instance instance, Interactor target) {
         for (int i = 0; i < 100; i++)
             Wizardry.PROXY.spawnParticle(

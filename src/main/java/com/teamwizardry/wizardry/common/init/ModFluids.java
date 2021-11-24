@@ -1,40 +1,30 @@
 package com.teamwizardry.wizardry.common.init;
 
 import com.teamwizardry.wizardry.Wizardry;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.fml.common.Mod;
+import com.teamwizardry.wizardry.common.block.fluid.mana.ManaFluid;
+import com.teamwizardry.wizardry.common.block.fluid.nacre.NacreFluid;
 
-@Mod.EventBusSubscriber(modid = Wizardry.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+import net.minecraft.fluid.FlowableFluid;
+import net.minecraft.item.BucketItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.registry.Registry;
+
 public class ModFluids {
 
-    public static ForgeFlowingFluid.Properties MANA_FLUID_PROPERTIES = new ForgeFlowingFluid.Properties(
-            () -> ModFluids.MANA_FLUID,
-            () -> ModFluids.MANA_FLUID_FLOWING,
-            FluidAttributes.builder(
-            new ResourceLocation(Wizardry.MODID, "fluid/mana_still"),
-            new ResourceLocation(Wizardry.MODID, "fluid/mana_flowing"))
-            .density(200)
-            .viscosity(500)
-            .luminosity(0)
-            .temperature(20)
-            .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY))
-            .block(() -> (FlowingFluidBlock) ModBlocks.liquidMana.get())
-            .bucket(ModItems.manaBucket::get);
+    public static FlowableFluid STILL_MANA;
+    public static FlowableFluid FLOWING_MANA;
+    public static FlowableFluid STILL_NACRE;
+    public static FlowableFluid FLOWING_NACRE;
 
-    public static ForgeFlowingFluid.Flowing MANA_FLUID_FLOWING = new ForgeFlowingFluid.Flowing(MANA_FLUID_PROPERTIES);
-    public static ForgeFlowingFluid.Source MANA_FLUID = new ForgeFlowingFluid.Source(MANA_FLUID_PROPERTIES);
-
-    @SubscribeEvent
-    public static void registerFluids(RegistryEvent.Register<Fluid> event) {
-
-        event.getRegistry().register(MANA_FLUID_FLOWING.setRegistryName("mana_fluid_flowing"));
-        event.getRegistry().register(MANA_FLUID.setRegistryName("mana_fluid"));
+    public static void init()
+    {
+        STILL_MANA = Registry.register(Registry.FLUID, Wizardry.getId("mana"), new ManaFluid.Still());
+        FLOWING_MANA = Registry.register(Registry.FLUID, Wizardry.getId("flowing_mana"), new ManaFluid.Flowing());
+        ModItems.manaBucket = new BucketItem(STILL_MANA, new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1));
+        
+        STILL_NACRE = Registry.register(Registry.FLUID, Wizardry.getId("nacre"), new NacreFluid.Still());
+        FLOWING_NACRE = Registry.register(Registry.FLUID, Wizardry.getId("flowing_nacre"), new NacreFluid.Flowing());
+        ModItems.nacreBucket = new BucketItem(STILL_NACRE, new Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1));
     }
 }

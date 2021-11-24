@@ -1,0 +1,13 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:unicorn_horn"
+  },
+  "title": "wizardry.book.mobs.unicorns.title",
+  "description": "wizardry.book.mobs.unicorns.desc",
+  "content": [
+    "wizardry.book.mobs.unicorns.content1",
+    "wizardry.book.mobs.unicorns.content2",
+    "wizardry.book.mobs.unicorns.content3"
+  ]
+}

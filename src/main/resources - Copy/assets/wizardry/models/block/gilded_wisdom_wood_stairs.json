@@ -1,0 +1,8 @@
+{
+  "parent": "block/stairs",
+  "textures": {
+    "side": "wizardry:block/gilded_wisdom_planks",
+    "bottom": "wizardry:block/gilded_wisdom_planks",
+    "top": "wizardry:block/gilded_wisdom_planks"
+  }
+}
