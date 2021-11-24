@@ -1,9 +1,0 @@
-{
-	"spritesheet":{
-		"textureWidth":256,
-		"textureHeight":256,
-		"sprites":{
-			"blue":[0, 0, 133, 37]
-		}
-	}
-}

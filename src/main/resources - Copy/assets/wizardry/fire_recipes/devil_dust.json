@@ -1,9 +1,0 @@
-{
-  "input": {
-    "type": "forge:ore_dict",
-    "ore": "dustRedstone"
-  },
-  "output": {
-    "item": "wizardry:devil_dust"
-  }
-}

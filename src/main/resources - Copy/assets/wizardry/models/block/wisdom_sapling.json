@@ -1,6 +1,0 @@
- {
-  "parent": "block/cross",
-  "textures": {
-    "cross": "wizardry:block/wisdom_sapling"
-  }
-}

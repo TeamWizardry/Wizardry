@@ -1,7 +1,0 @@
-{
-  "parent": "item/handheld",
-  "textures": {
-    "layer0": "wizardry:item/empty",
-    "layer1": "wizardry:item/staff"
-  }
-}

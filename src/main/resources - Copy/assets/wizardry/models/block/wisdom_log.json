@@ -1,7 +1,0 @@
-{
-  "parent": "block/cube_column",
-  "textures": {
-    "side": "wizardry:block/wisdom_log",
-    "end": "wizardry:block/wisdom_log_top"
-  }
-}

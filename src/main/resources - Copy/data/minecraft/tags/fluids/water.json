@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-  	"wizardry:mana",
-  	"wizardry:flowing_mana",
-  	"wizardry:nacre",
-  	"wizardry:flowing_nacre"
-  ]
-}

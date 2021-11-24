@@ -1,7 +1,0 @@
-{
-  "parent": "block/door_bottom",
-  "textures": {
-    "bottom": "wizardry:block/wisdom_door_bottom",
-    "top": "wizardry:block/wisdom_door_top"
-  }
-}

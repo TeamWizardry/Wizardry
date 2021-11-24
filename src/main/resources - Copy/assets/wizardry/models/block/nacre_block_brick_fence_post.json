@@ -1,6 +1,0 @@
-{
-  "parent": "block/fence_post",
-  "textures": {
-    "texture": "wizardry:block/nacre_block_bricks"
-  }
-}

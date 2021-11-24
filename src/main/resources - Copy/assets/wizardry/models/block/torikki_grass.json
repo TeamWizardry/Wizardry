@@ -1,9 +1,0 @@
-{
-  "parent": "block/cube_bottom_top",
-  "textures": {
-    "particle": "wizardry:block/torikki_dirt",
-    "bottom": "wizardry:block/torikki_dirt",
-    "top": "wizardry:block/torikki_grass_top",
-    "side": "wizardry:block/torikki_grass_side"
-  }
-}

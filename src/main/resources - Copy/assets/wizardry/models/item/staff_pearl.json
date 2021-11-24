@@ -1,8 +1,0 @@
-{
-  "parent": "item/handheld",
-  "textures": {
-    "layer0": "wizardry:item/staff_pearl",
-    "layer1": "wizardry:item/staff",
-    "layer2": "wizardry:item/staff_pearl_highlight"
-  }
-}
