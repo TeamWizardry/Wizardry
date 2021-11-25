@@ -33,14 +33,9 @@
 
     "depends": {
         "fabric": "*",
-        "fabric-language-kotlin": "*",
+        "fabric-language-kotlin": ">=1.6.4+kotlin.1.5.30",
         "minecraft": "1.17.x",
-        "java": ">=16"
-    },
-    "recommends": {
-        "librarianlib": ">=5.0.0"
-    },
-    "suggests": {
-
+        "java": ">=16",
+        "liblib-core": ">=5.0.0-alpha.10"
     }
 }

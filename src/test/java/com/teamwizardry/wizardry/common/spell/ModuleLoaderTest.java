@@ -1,10 +1,10 @@
 // package com.teamwizardry.wizardry.common.spell;
 
-// import com.teamwizardry.wizardry.Wizardry;
+// import Wizardry;
 // import com.teamwizardry.wizardry.api.spell.*;
-// import com.teamwizardry.wizardry.common.spell.component.Module;
-// import com.teamwizardry.wizardry.common.spell.component.ModuleEffect;
-// import com.teamwizardry.wizardry.common.spell.component.ModuleShape;
+// import Module;
+// import ModuleEffect;
+// import ModuleShape;
 // import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader;
 // import net.minecraft.util.Identifier;
 // import net.minecraft.world.World;
