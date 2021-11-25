@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.utils
 
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtElement
 
 object WNBT {
     fun getFloat(tag: NbtCompound, key: String?, defaultValue: Float): Float {

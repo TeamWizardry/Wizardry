@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.block
 
 import com.teamwizardry.wizardry.api.capability.mana.IManaCapability
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 
 interface IManaNode {
     enum class ManaNodeType {
@@ -59,7 +61,7 @@ interface IManaNode {
      * @return The amount of mana in the given block, 0 if it has no storage
      */
     fun getMana(world: World?, pos: BlockPos?): Double {
-        return 0
+        return 0.0
         //        BlockEntity te = world.getBlockEntity(pos);
 //        IManaCapability cap = te.getCapability(MANA_CAPABILITY).orElse(null);
 //        return cap == null ? 0 : cap.getMana();
@@ -72,7 +74,7 @@ interface IManaNode {
      * @return The size of the given block's mana pool, 0 if it has no storage
      */
     fun getMaxMana(world: World?, pos: BlockPos?): Double {
-        return 0
+        return 0.0
         //        BlockEntity te = world.getBlockEntity(pos);
 //        IManaCapability cap = te.getCapability(MANA_CAPABILITY).orElse(null);
 //        return cap == null ? 0 : cap.getMaxMana();

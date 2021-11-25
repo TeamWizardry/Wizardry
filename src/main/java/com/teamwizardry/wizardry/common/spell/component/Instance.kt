@@ -1,7 +1,12 @@
 package com.teamwizardry.wizardry.common.spell.component
 
+import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.world.World
 import java.awt.Color
+import java.util.*
+import java.util.stream.Collectors
 
 /**
  * Contains data relevant to a single cast event of a `Module`
@@ -16,11 +21,8 @@ import java.awt.Color
  *
  * @see PatternShape
  */
-abstract class Instance(
-    var pattern: Pattern?, targetType: TargetType, attributeValues: Map<String?, Double>, manaCost: Double,
-    burnoutCost: Double, caster: Interactor
-) {
-    private var targetType: TargetType
+abstract class Instance(var pattern: Pattern, targetType: TargetType, attributeValues: Map<String, Double>, manaCost: Double, burnoutCost: Double, caster: Interactor) {
+    var targetType: TargetType
 
     /**
      * List of all known attribute values. Keys found in [Attributes].
@@ -29,17 +31,21 @@ abstract class Instance(
      * appear in here.
      * @see .getAttributeValue
      */
-    private var attributeValues: Map<String?, Double>
+    var attributeValues: Map<String, Double>
         protected set
-    private var manaCost: Double
+    var manaCost: Double
         protected set
-    private var burnoutCost: Double
+    var burnoutCost: Double
         protected set
     var nextShape: ShapeInstance? = null
+        protected set
     var effects: MutableList<EffectInstance>
-    protected var caster: Interactor
-    protected var extraData: NbtCompound
-    fun setNext(next: ShapeInstance?): Instance {
+        protected set
+    var caster: Interactor
+        protected set
+    var extraData: NbtCompound
+        protected set
+    fun setNext(next: ShapeInstance): Instance {
         nextShape = next
         return this
     }
@@ -47,10 +53,6 @@ abstract class Instance(
     fun addEffect(effect: EffectInstance): Instance {
         effects.add(effect)
         return this
-    }
-
-    fun getTargetType(): TargetType {
-        return targetType
     }
 
     /**
@@ -61,31 +63,23 @@ abstract class Instance(
         return attributeValues[attribute] ?: 1.0
     }
 
-    fun getCaster(): Interactor {
-        return caster
-    }
-
-    fun getExtraData(): NbtCompound {
-        return extraData
-    }
-
-    fun run(world: World, target: Interactor?) {
-        pattern!!.run(world, this, target)
+    fun run(world: World, target: Interactor) {
+        pattern.run(world, this, target)
     }
 
     @Environment(EnvType.CLIENT)
-    fun runClient(world: World?, target: Interactor?) {
-        pattern!!.runClient(world, this, target)
+    fun runClient(world: World, target: Interactor) {
+        pattern.runClient(world, this, target)
     }
 
     val effectColors: List<Array<Color>>
         get() {
             val colors = effects.stream()
-                .map { obj: EffectInstance -> obj.getPattern() }
-                .map { obj: Pattern? -> obj.getColors() }
-                .collect(Collectors.toList<Array<Color>>())
+                .map { obj: EffectInstance -> obj.pattern }
+                .map { obj: Pattern -> obj.colors }
+                .collect(Collectors.toList())
             if (nextShape != null) {
-                colors.addAll(nextShape.getEffectColors())
+                colors.addAll(nextShape!!.effectColors)
             }
             return colors
         }

@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.spell.component
 
 class ShapeInstance(
-    pattern: Pattern?,
+    pattern: Pattern,
     targetType: TargetType,
-    attributeValues: Map<String?, Double>,
+    attributeValues: Map<String, Double>,
     manaCost: Double,
     burnoutCost: Double,
     caster: Interactor

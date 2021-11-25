@@ -1,26 +1,39 @@
 package com.teamwizardry.wizardry.common.block.entity.craftingplate
 
 import com.teamwizardry.wizardry.common.init.ModBlocks
+import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.block.BlockState
+import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.Hopper
 import net.minecraft.entity.Entity
+import net.minecraft.entity.ItemEntity
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.inventory.Inventories
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.predicate.entity.EntityPredicates
+import net.minecraft.util.collection.DefaultedList
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
-import java.util.function.Function
-import java.util.function.Predicate
+import net.minecraft.util.shape.VoxelShape
+import net.minecraft.util.shape.VoxelShapes
+import net.minecraft.world.World
 import java.util.function.Supplier
+import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.math.min
 
-open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
-    BlockEntity(ModBlocks.craftingPlateEntity, pos, state), Hopper {
-    private var transferCooldown = -1
-    private var inventory: DefaultedList<ItemStack>? = null
+open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockEntity(ModBlocks.craftingPlateEntity, pos, state), Hopper {
+    var transferCooldown = -1
+        protected set
+    var inventory: DefaultedList<ItemStack>? = null
+        protected set
+
     override fun readNbt(nbt: NbtCompound) {
         super.readNbt(nbt)
-        inventory = DefaultedList.ofSize<ItemStack>(INV_SIZE, ItemStack.EMPTY)
+        inventory = DefaultedList.ofSize(INV_SIZE, ItemStack.EMPTY)
         Inventories.readNbt(nbt, inventory)
         transferCooldown = nbt.getInt("TransferCooldown")
     }
@@ -33,10 +46,10 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
     }
 
     private fun updateHopper(update: Supplier<Boolean>): Boolean {
-        if (this.world == null || this.world.isClient) return false
-        if (isOnTransferCooldown) return false
+        if (this.world == null || this.world!!.isClient) return false
+        if (isOnTransferCooldown()) return false
         if (update.get()) {
-            setTransferCooldown(8)
+            transferCooldown = 8
             this.markDirty()
             return true
         }
@@ -54,8 +67,8 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
     fun addItem(stack: ItemStack): ItemStack {
         for (i in INV_SIZE - 1 downTo 0) {
             val slotStack = getStack(i)
-            if (canCombine(slotStack, stack) && slotStack.count < maxCountPerStack) {
-                val fittable = min(stack.count, maxCountPerStack - slotStack.count)
+            if (canCombine(slotStack, stack) && slotStack.count < BlockCraftingPlateEntity.maxCountPerStack) {
+                val fittable = min(stack.count, BlockCraftingPlateEntity.maxCountPerStack - slotStack.count)
                 stack.decrement(fittable)
                 slotStack.increment(fittable)
                 inventoryChanged()
@@ -63,7 +76,7 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
             } else if (slotStack.isEmpty) {
                 val slotBehind = if (i == 0) ItemStack.EMPTY else getStack(i - 1)
                 if (i == 0 || !canCombine(slotBehind, stack)) {
-                    val fittable = min(stack.count, maxCountPerStack)
+                    val fittable = min(stack.count, BlockCraftingPlateEntity.maxCountPerStack)
                     val copySize = stack.copy()
                     copySize.count = fittable
                     stack.decrement(fittable)
@@ -87,25 +100,26 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
         return stack
     }
 
-    private val captureItems: List<Any>
-        private get() = getInputAreaShape().getBoundingBoxes()
-            .stream()
-            .flatMap<ItemEntity>(Function<Box, Stream<out ItemEntity>> { alignedBB: Box ->
-                getWorld().getEntitiesByClass<ItemEntity>(
-                    ItemEntity::class.java,
-                    alignedBB.offset(hopperX - 0.5, hopperY - 0.5, hopperZ - 0.5),
-                    EntityPredicates.VALID_ENTITY
-                ).stream()
-            })
-            .collect<List<ItemEntity>, Any>(Collectors.toList<ItemEntity>())
+    private fun getCaptureItems(): List<ItemEntity> {
+        return inputAreaShape.boundingBoxes
+                .stream()
+                .flatMap {alignedBB: Box ->
+                    this.world?.getEntitiesByClass(
+                            ItemEntity::class.java,
+                            alignedBB.offset(hopperX - 0.5, hopperY - 0.5, hopperZ - 0.5),
+                            EntityPredicates.VALID_ENTITY
+                    )?.stream() ?: Stream.empty()
+                }
+                .collect(Collectors.toList())
+    }
 
     private fun captureItem(entity: ItemEntity): Boolean {
-        val stack = addItem(entity.getStack().copy())
+        val stack = addItem(entity.stack.copy())
         if (stack.isEmpty) {
-            entity.remove(RemovalReason.DISCARDED)
+            entity.remove(Entity.RemovalReason.DISCARDED)
             return true
         }
-        entity.setStack(stack)
+        entity.stack = stack
         return false
     }
 
@@ -120,101 +134,76 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
             )
         )
         if (VoxelShapes.matchesAnywhere(
-                shape,
-                this.getInputAreaShape(),
-                BooleanBiFunction { a: Boolean, b: Boolean -> a && b })
-        ) updateHopper { captureItem(collidedEntity as ItemEntity) }
+                        shape,
+                        this.inputAreaShape
+                ) {a: Boolean, b: Boolean -> a && b}
+        ) updateHopper { captureItem(collidedEntity) }
     }
     //////////////////////////////////////////////////////////////////////////
-    /**
-     * Returns a NonNullList<ItemStack> of items currently held in the crafting plate.
-    </ItemStack> */
-    fun getInventory(): DefaultedList<ItemStack> {
-        return inventory
-    }
 
-    fun setTransferCooldown(ticks: Int) {
-        transferCooldown = ticks
-    }
+    fun isOnTransferCooldown(): Boolean { return transferCooldown > 0 }
 
-    private val isOnTransferCooldown: Boolean
-        private get() = transferCooldown > 0
-
-    fun mayTransfer(): Boolean {
-        return transferCooldown > 8
-    }
-
-    var items: DefaultedList<ItemStack>
-        get() = inventory
-        protected set(items) {
-            inventory = items
-        }
+    fun mayTransfer(): Boolean { return transferCooldown > 8 }
 
     private fun inventoryChanged() {
         this.markDirty()
-        this.getWorld().updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(), 3)
+        this.world?.updateListeners(this.getPos(), this.cachedState, this.cachedState, 3)
     }
 
     override fun size(): Int {
         return INV_SIZE
     }
 
-    val isEmpty: Boolean
-        get() = items.stream().allMatch(Predicate { obj: ItemStack -> obj.isEmpty })
+    override fun isEmpty(): Boolean {
+        return inventory?.stream()?.allMatch {obj: ItemStack -> obj.isEmpty} ?: true
+    }
 
     override fun getStack(index: Int): ItemStack {
-        return items.get(index)
+        return inventory?.get(index) ?: ItemStack.EMPTY
     }
 
     override fun removeStack(index: Int, amount: Int): ItemStack {
-        val stack: ItemStack = Inventories.splitStack(items, index, amount)
+        val stack: ItemStack = Inventories.splitStack(inventory, index, amount)
         if (!stack.isEmpty) this.markDirty()
         return stack
     }
 
     override fun removeStack(index: Int): ItemStack {
-        return Inventories.removeStack(items, index)
+        return Inventories.removeStack(inventory, index)
     }
 
     override fun setStack(index: Int, stack: ItemStack) {
-        items.set(index, stack)
-        if (stack.count > maxCountPerStack) stack.count = maxCountPerStack
+        inventory?.set(index, stack)
+        if (stack.count > BlockCraftingPlateEntity.maxCountPerStack) stack.count = BlockCraftingPlateEntity.maxCountPerStack
         this.markDirty()
     }
 
     override fun canPlayerUse(player: PlayerEntity): Boolean {
-        return if (this.getWorld().getBlockEntity(this.getPos()) !== this) false else player.squaredDistanceTo(
-            Vec3d.ofCenter(
-                this.getPos()
-            )
-        ) <= 64
+        return if (this.world?.getBlockEntity(this.getPos()) !== this) false else player.squaredDistanceTo(Vec3d.ofCenter(this.getPos())) <= 64
     }
 
     override fun clear() {
-        items.clear()
+        inventory?.clear()
     }
 
     /**
      * Gets the world X position for this hopper entity.
      */
-    private val hopperX: Double
-        get() = this.getPos().getX() + 0.5
+    override fun getHopperX(): Double { return this.getPos().x + 0.5 }
 
     /**
      * Gets the world Y position for this hopper entity.
      */
-    private val hopperY: Double
-        get() = this.getPos().getY().toDouble() + 0.5
+    override fun getHopperY(): Double { return this.getPos().y.toDouble() + 0.5 }
 
     /**
      * Gets the world Z position for this hopper entity.
      */
-    private val hopperZ: Double
-        get() = this.getPos().getZ().toDouble() + 0.5
+    override fun getHopperZ(): Double { return this.getPos().z.toDouble() + 0.5 }
 
     companion object {
         private const val INV_SIZE = 256
-        val maxCountPerStack = 6
+        const val maxCountPerStack = 6
 
         private fun canCombine(left: ItemStack, right: ItemStack): Boolean {
             if (left.item !== right.item) return false else if (left.damage != right.damage) return false
@@ -249,10 +238,10 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
         fun serverTick(world: World?, entity: BlockCraftingPlateEntity) {
             if (world == null) return
             entity.transferCooldown--
-            if (entity.isOnTransferCooldown) return
-            entity.setTransferCooldown(0)
+            if (entity.isOnTransferCooldown()) return
+            entity.transferCooldown = 0
             entity.updateHopper {
-                for (itementity in entity.captureItems) {
+                for (itementity in entity.getCaptureItems()) {
                     if (entity.captureItem(itementity)) {
                         return@updateHopper true
                     }
@@ -260,9 +249,5 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
                 false
             }
         }
-    }
-
-    init {
-        DefaultedList.ofSize<ItemStack>(INV_SIZE, ItemStack.EMPTY)
     }
 }

@@ -9,7 +9,7 @@ object RandUtil {
         return Vec3d(nextDouble(minX, maxX), nextDouble(minY, maxY), nextDouble(minZ, maxZ))
     }
 
-    private fun nextDouble(min: Double, max: Double): Double {
+    fun nextDouble(min: Double, max: Double): Double {
         return random.nextDouble() * (max - min) + min
     }
 

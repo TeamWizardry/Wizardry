@@ -74,8 +74,8 @@
 //         assertTrue(modules.get(0) instanceof ModuleShape);
 //         ModuleShape shape = (ModuleShape) modules.get(0);
 //         assertEquals(testPatterns.get(shapeLoc), shape.getPattern());
-//         assertEquals("zero", shape.getName());
-//         assertEquals(0, shape.getItems().size());
+//         assertEquals("zero", shape.name);
+//         assertEquals(0, shape.items.size());
 //         assertEquals("test", shape.getForm());
 //         assertEquals("module", shape.getElement());
 //     }
@@ -86,8 +86,8 @@
 //         assertTrue(modules.get(1) instanceof ModuleEffect);
 //         ModuleEffect effect = (ModuleEffect) modules.get(1);
 //         assertEquals(testPatterns.get(effectLoc), effect.getPattern());
-//         assertEquals("one", effect.getName());
-//         assertEquals(0, effect.getItems().size());
+//         assertEquals("one", effect.name);
+//         assertEquals(0, effect.items.size());
 //         assertEquals("test", effect.getAction());
 //         assertEquals("module", effect.getElement());    
 //     }

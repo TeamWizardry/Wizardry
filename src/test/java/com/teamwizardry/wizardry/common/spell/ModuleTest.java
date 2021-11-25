@@ -31,11 +31,11 @@
 //     }
 
 //     @Test
-//     public void testGetName()
+//     public void testname
 //     {
-//         assertEquals(name, module.getName());
-//         assertEquals(name, shape.getName());
-//         assertEquals(name, effect.getName());
+//         assertEquals(name, module.name);
+//         assertEquals(name, shape.name);
+//         assertEquals(name, effect.name);
 //     }
     
 //     @Test
@@ -49,8 +49,8 @@
 //     @Test
 //     public void testGetItem()
 //     {
-//         assertNull(module.getItems());
-//         assertNull(shape.getItems());
+//         assertNull(module.items);
+//         assertNull(shape.items);
 //         assertNull(effect.getPattern());
 //     }
     

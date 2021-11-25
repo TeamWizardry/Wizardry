@@ -1,10 +1,16 @@
 package com.teamwizardry.wizardry.common.spell.component
 
+import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException
+import com.teamwizardry.wizardry.common.block.IManaNode
 import net.minecraft.block.*
 import net.minecraft.entity.Entity
+import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.World
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -14,7 +20,7 @@ class Interactor {
     }
 
     val type: InteractorType
-    private val entity: LivingEntity?
+    val entity: LivingEntity?
     val blockPos: BlockPos?
     private val dir: Direction?
 
@@ -51,10 +57,9 @@ class Interactor {
     val pos: Vec3d
         get() {
             return when (type) {
-                InteractorType.ENTITY -> entity.getPos().add(0.0, entity.getEyeHeight(entity.getPose()).toDouble(), 0.0)
+                InteractorType.ENTITY -> entity!!.pos.add(0.0, entity.getEyeHeight(entity.pose).toDouble(), 0.0)
                 InteractorType.BLOCK -> Vec3d.ofCenter(blockPos)
             }
-            throw InconceivableException("No other hittable types")
         }
 
     /**
@@ -62,14 +67,13 @@ class Interactor {
      * their physical hand.
      * Never use this outside of rendering purposes only.
      */
-    val clientPos: Vec3d?
+    val clientPos: Vec3d
         get() {
             val pos: Vec3d = pos
             if (type == InteractorType.ENTITY && entity is PlayerEntity) {
-                if (pos == null) return null
                 val offX = 0.5f * sin(Math.toRadians((-90.0f - entity.bodyYaw).toDouble())).toFloat()
                 val offZ = 0.5f * cos(Math.toRadians((-90.0f - entity.bodyYaw).toDouble())).toFloat()
-                return Vec3d(offX.toDouble(), 0, offZ.toDouble()).add(pos)
+                return Vec3d(offX.toDouble(), 0.0, offZ.toDouble()).add(pos)
             }
             return pos
         }
@@ -82,15 +86,10 @@ class Interactor {
     val look: Vec3d
         get() {
             return when (type) {
-                InteractorType.ENTITY -> entity.getRotationVector()
-                InteractorType.BLOCK -> Vec3d.of(dir!!.vector)
+                InteractorType.ENTITY -> entity!!.rotationVector
+                InteractorType.BLOCK -> Vec3d.of(dir?.vector)
             }
-            throw InconceivableException("No other hittable types")
         }
-
-    fun getEntity(): LivingEntity? {
-        return entity
-    }
 
     /**
      * Drains mana from and adds burnout to the Interactor's target.
@@ -100,7 +99,7 @@ class Interactor {
     fun consumeCost(world: World, mana: Double, burnout: Double): Boolean {
         return when (type) {
             InteractorType.BLOCK -> {
-                val block: Block = world.getBlockState(blockPos).getBlock()
+                val block: Block = world.getBlockState(blockPos).block
                 if (block is IManaNode) (block as IManaNode).removeMana(world, blockPos, mana) <= 0 else false
             }
             InteractorType.ENTITY -> //                IManaCapability cap = this.entity.getCapability(MANA_CAPABILITY).orElse(null);
@@ -114,14 +113,13 @@ class Interactor {
 //                cap.setMana(cap.getMana() - mana);
                 true
         }
-        throw InconceivableException("No other hittable types")
     }
 
     fun toNBT(): NbtCompound {
         val nbt = NbtCompound()
         nbt.putString("type", type.toString())
         when (type) {
-            InteractorType.ENTITY -> nbt.putInt("entity", entity.getId())
+            InteractorType.ENTITY -> nbt.putInt("entity", entity?.id ?: 0)
             InteractorType.BLOCK -> {
                 val pos = NbtCompound()
                 pos.putInt("x", blockPos!!.x)
@@ -138,8 +136,8 @@ class Interactor {
         fun fromNBT(world: World, nbt: NbtCompound): Interactor? {
             return when (InteractorType.valueOf(nbt.getString("type"))) {
                 InteractorType.ENTITY -> {
-                    val entity: Entity = world.getEntityById(nbt.getInt("entity"))
-                    if (entity is LivingEntity) Interactor(entity as LivingEntity) else null
+                    val entity: Entity? = world.getEntityById(nbt.getInt("entity"))
+                    if (entity is LivingEntity) Interactor(entity) else null
                 }
                 InteractorType.BLOCK -> {
                     val pos: NbtCompound = nbt.getCompound("block")
@@ -149,7 +147,6 @@ class Interactor {
                     )
                 }
             }
-            throw InconceivableException("No other hittable types")
         }
     }
 }

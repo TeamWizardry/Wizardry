@@ -1,15 +1,30 @@
 package com.teamwizardry.wizardry.common.block.entity.craftingplate
 
+import com.teamwizardry.wizardry.common.block.IManaNode
 import com.teamwizardry.wizardry.common.init.ModBlocks
 import net.minecraft.block.*
+import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.Entity
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.fluid.FluidState
+import net.minecraft.fluid.Fluids
+import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
+import net.minecraft.state.StateManager
+import net.minecraft.state.property.BooleanProperty
 import net.minecraft.state.property.Properties
+import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
+import net.minecraft.util.ItemScatterer
+import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
+import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
+import net.minecraft.world.World
+import net.minecraft.world.WorldAccess
 
 class BlockCraftingPlate(settings: Settings?) : BlockWithEntity(settings), Waterloggable, IManaNode {
     override fun getRenderType(state: BlockState): BlockRenderType {
@@ -20,48 +35,20 @@ class BlockCraftingPlate(settings: Settings?) : BlockWithEntity(settings), Water
         return SHAPE
     }
 
-    override fun <T : BlockEntity?> getTicker(
-        world: World,
-        state: BlockState,
-        type: BlockEntityType<T>
-    ): BlockEntityTicker<T>? {
-        return if (world.isClient) checkType(
-            type,
-            ModBlocks.craftingPlateEntity,
-            BlockEntityTicker<BlockCraftingPlateEntity> { w: World?, p: BlockPos?, s: BlockState?, e: BlockCraftingPlateEntity? ->
-                BlockCraftingPlateEntity.clientTick(
-                    w,
-                    e
-                )
-            }) else checkType(
-            type,
-            ModBlocks.craftingPlateEntity,
-            BlockEntityTicker<BlockCraftingPlateEntity> { w: World?, p: BlockPos?, s: BlockState?, e: BlockCraftingPlateEntity ->
-                BlockCraftingPlateEntity.serverTick(
-                    world,
-                    e
-                )
-            })
+    override fun <T : BlockEntity?> getTicker(world: World, state: BlockState, type: BlockEntityType<T>): BlockEntityTicker<T>? {
+        return if (world.isClient) checkType(type, ModBlocks.craftingPlateEntity) { w: World?, _: BlockPos?, _: BlockState?, e: BlockCraftingPlateEntity? -> BlockCraftingPlateEntity.clientTick(w, e) }
+        else checkType(type, ModBlocks.craftingPlateEntity) { w: World?, _: BlockPos?, _: BlockState?, e: BlockCraftingPlateEntity -> BlockCraftingPlateEntity.serverTick(w, e) }
     }
 
-    override fun onUse(
-        state: BlockState,
-        world: World,
-        pos: BlockPos,
-        player: PlayerEntity,
-        hand: Hand,
-        hit: BlockHitResult
-    ): ActionResult {
+    @Suppress("DEPRECATION")
+    override fun onUse(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity, hand: Hand, hit: BlockHitResult): ActionResult {
         if (!world.isClient) {
             if (hand == Hand.MAIN_HAND) {
                 val heldItem: ItemStack = player.getStackInHand(hand)
-                val blockEntity: BlockEntity = world.getBlockEntity(pos)
+                val blockEntity: BlockEntity? = world.getBlockEntity(pos)
                 if (blockEntity is BlockCraftingPlateEntity) {
-                    val plate = blockEntity as BlockCraftingPlateEntity
-                    if (heldItem.isEmpty) player.setStackInHand(
-                        hand,
-                        plate.removeItem()
-                    ) else plate.addItem(heldItem.split(1))
+                    if (heldItem.isEmpty) player.setStackInHand(hand, blockEntity.removeItem())
+                    else blockEntity.addItem(heldItem.split(1))
                 }
             }
             return ActionResult.SUCCESS
@@ -70,44 +57,32 @@ class BlockCraftingPlate(settings: Settings?) : BlockWithEntity(settings), Water
     }
 
     override fun onEntityCollision(state: BlockState, world: World, pos: BlockPos, entity: Entity) {
-        val blockEntity: BlockEntity = world.getBlockEntity(pos)
-        if (blockEntity is BlockCraftingPlateEntity) (blockEntity as BlockCraftingPlateEntity).onEntityCollision(entity)
+        val blockEntity: BlockEntity? = world.getBlockEntity(pos)
+        if (blockEntity is BlockCraftingPlateEntity) blockEntity.onEntityCollision(entity)
     }
 
     override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockCraftingPlateEntity {
         return BlockCraftingPlateEntity(pos, state)
     }
 
+    @Suppress("DEPRECATION", "DEPRECATION")
     override fun onStateReplaced(state: BlockState, world: World, pos: BlockPos, newState: BlockState, moved: Boolean) {
-        val blockEntity: BlockEntity = world.getBlockEntity(pos)
-        if (blockEntity is BlockCraftingPlateEntity) ItemScatterer.spawn(
-            world,
-            pos,
-            (blockEntity as BlockCraftingPlateEntity).inventory
-        )
+        val blockEntity: BlockEntity? = world.getBlockEntity(pos)
+        if (blockEntity is BlockCraftingPlateEntity) ItemScatterer.spawn(world, pos, blockEntity.inventory)
         super.onStateReplaced(state, world, pos, newState, moved)
     }
 
     override fun getPlacementState(context: ItemPlacementContext): BlockState? {
-        return this.defaultState.with(
-            WATERLOGGED,
-            context.getWorld().getFluidState(context.getBlockPos()).getFluid() === Fluids.WATER
-        )
+        return this.defaultState.with(WATERLOGGED, context.world.getFluidState(context.blockPos).fluid === Fluids.WATER)
     }
 
-    override fun getStateForNeighborUpdate(
-        state: BlockState,
-        direction: Direction,
-        newState: BlockState,
-        world: WorldAccess,
-        pos: BlockPos,
-        posFrom: BlockPos
-    ): BlockState {
-        if (state.get(WATERLOGGED)) world.getFluidTickScheduler()
-            .schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world))
+    @Suppress("DEPRECATION")
+    override fun getStateForNeighborUpdate(state: BlockState, direction: Direction, newState: BlockState, world: WorldAccess, pos: BlockPos, posFrom: BlockPos): BlockState {
+        if (state.get(WATERLOGGED)) world.fluidTickScheduler.schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world))
         return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom)
     }
 
+    @Suppress("DEPRECATION")
     override fun getFluidState(state: BlockState): FluidState {
         return if (state.get(WATERLOGGED)) Fluids.WATER.getStill(false) else super.getFluidState(state)
     }
@@ -116,8 +91,8 @@ class BlockCraftingPlate(settings: Settings?) : BlockWithEntity(settings), Water
         builder.add(WATERLOGGED)
     }
 
-    val manaNodeType: ManaNodeType
-        get() = ManaNodeType.SINK
+    override val manaNodeType: IManaNode.ManaNodeType
+        get() = IManaNode.ManaNodeType.SINK
 
     companion object {
         val WATERLOGGED: BooleanProperty = Properties.WATERLOGGED

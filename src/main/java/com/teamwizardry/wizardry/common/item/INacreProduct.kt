@@ -2,6 +2,11 @@ package com.teamwizardry.wizardry.common.item
 
 import com.teamwizardry.wizardry.common.utils.WNBT
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.color.item.ItemColorProvider
+import net.minecraft.entity.ItemEntity
+import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.world.World
 import java.awt.Color
 import kotlin.math.max
 import kotlin.math.min
@@ -10,8 +15,8 @@ import kotlin.math.pow
 interface INacreProduct : ItemColorProvider {
     fun colorableOnUpdate(stack: ItemStack, world: World) {
         if (!world.isClient) {
-            val tag: NbtCompound = stack.getOrCreateNbt()
-            if (!tag.contains(RAND)) tag.putFloat(RAND, world.getTime() / 140f % 140f)
+            val tag: NbtCompound = stack.orCreateNbt
+            if (!tag.contains(RAND)) tag.putFloat(RAND, world.time / 140f % 140f)
             if (!tag.contains(PURITY)) {
                 tag.putInt(PURITY, NACRE_PURITY_CONVERSION)
                 tag.putFloat(PURITY_OVERRIDE, 1f)
@@ -24,8 +29,8 @@ interface INacreProduct : ItemColorProvider {
 
     fun colorableOnEntityItemUpdate(entityItem: ItemEntity) {
         if (entityItem.world.isClient) return
-        val stack: ItemStack = entityItem.getStack()
-        val tag: NbtCompound = stack.getOrCreateNbt()
+        val stack: ItemStack = entityItem.stack
+        val tag: NbtCompound = stack.orCreateNbt
         if (!tag.contains(RAND)) tag.putFloat(RAND, entityItem.world.random.nextFloat())
 
 //		BlockState state = entityItem.world.getBlockState(entityItem.getBlockPos());
@@ -42,8 +47,8 @@ interface INacreProduct : ItemColorProvider {
     }
 
     fun getQuality(stack: ItemStack): Float {
-        val tag: NbtCompound = stack.getOrCreateNbt()
-        val override: Float = if (tag.contains(PURITY_OVERRIDE)) tag.getFloat(PURITY_OVERRIDE) else 0
+        val tag: NbtCompound = stack.orCreateNbt
+        val override: Float = if (tag.contains(PURITY_OVERRIDE)) tag.getFloat(PURITY_OVERRIDE) else 0f
         if (override > 0) return override
         val timeConstant = NACRE_PURITY_CONVERSION.toFloat()
         val purity: Int = WNBT.getInt(stack, PURITY, NACRE_PURITY_CONVERSION)
@@ -58,7 +63,7 @@ interface INacreProduct : ItemColorProvider {
 
     override fun getColor(stack: ItemStack, tintIndex: Int): Int {
         if (tintIndex != 0) return 0xFFFFFF
-        val rand: Float = WNBT.getFloat(stack, RAND, -1)
+        val rand: Float = WNBT.getFloat(stack, RAND, -1f)
         var hue = 0f
         if (MinecraftClient.getInstance().world != null) {
             hue = if (rand < 0) MinecraftClient.getInstance().world!!.time / 140f % 140f else rand
@@ -79,11 +84,11 @@ interface INacreProduct : ItemColorProvider {
             }
             val timeSinceCooldown = tick - lastCast
             val decayStage = if (decayCooldown > 0) timeSinceCooldown.toFloat() / decayCooldown else 1f
-            val rand: Float = WNBT.getFloat(stack, RAND, -1)
+            val rand: Float = WNBT.getFloat(stack, RAND, -1f)
             val hue = if (rand < 0) tick / 140f % 140f else rand
             val pow = min(1f, max(0f, getQuality(stack)))
             val decaySaturation: Double =
-                if (lastCast == -1L || decayCooldown <= 0 || decayStage >= 1f) 1f else if (decayStage < decayCurveDelimiter) Math.E.pow(
+                if (lastCast == -1L || decayCooldown <= 0 || decayStage >= 1f) 1.0 else if (decayStage < decayCurveDelimiter) Math.E.pow(
                     (-15 * decayStage).toDouble()
                 ) else Math.E.pow((3 * decayStage - 3).toDouble())
             val saturation = curveConst * (1 - Math.E.pow(-pow.toDouble()).toFloat()) * decaySaturation.toFloat()

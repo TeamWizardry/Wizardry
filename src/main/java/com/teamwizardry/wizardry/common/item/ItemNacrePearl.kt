@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item
 import net.minecraft.entity.Entity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.world.World
 
 class ItemNacrePearl(settings: Settings?) : Item(settings), INacreProduct {
     override fun inventoryTick(stack: ItemStack, worldIn: World, entityIn: Entity, itemSlot: Int, isSelected: Boolean) {
@@ -24,8 +25,6 @@ class ItemNacrePearl(settings: Settings?) : Item(settings), INacreProduct {
     }
 
     override fun getTranslationKey(stack: ItemStack): String {
-        return if (!stack.hasNbt()) super.getTranslationKey(stack) else super.getTranslationKey(stack) + "." + getNameType(
-            stack
-        )
+        return if (!stack.hasNbt()) super.getTranslationKey(stack) else super.getTranslationKey(stack) + "." + getNameType(stack)
     }
 }

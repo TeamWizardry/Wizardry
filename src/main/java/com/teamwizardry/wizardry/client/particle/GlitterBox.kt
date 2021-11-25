@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.particle
 
 import com.teamwizardry.wizardry.client.lib.LibTheme
+import net.minecraft.util.math.Vec3d
 import java.awt.Color
 
 class GlitterBox(
@@ -62,14 +63,14 @@ class GlitterBox(
             return setOrigin(origin.x, origin.y, origin.z)
         }
 
-        private fun setOrigin(x: Float, y: Float, z: Float): GlitterBoxFactory {
+        fun setOrigin(x: Float, y: Float, z: Float): GlitterBoxFactory {
             originX = x
             originY = y
             originZ = z
             return this
         }
 
-        private fun setOrigin(x: Double, y: Double, z: Double): GlitterBoxFactory {
+        fun setOrigin(x: Double, y: Double, z: Double): GlitterBoxFactory {
             return setOrigin(x.toFloat(), y.toFloat(), z.toFloat())
         }
 
@@ -77,14 +78,14 @@ class GlitterBox(
             return setTarget(target.x, target.y, target.z)
         }
 
-        private fun setTarget(x: Float, y: Float, z: Float): GlitterBoxFactory {
+        fun setTarget(x: Float, y: Float, z: Float): GlitterBoxFactory {
             targetX = x
             targetY = y
             targetZ = z
             return this
         }
 
-        private fun setTarget(x: Double, y: Double, z: Double): GlitterBoxFactory {
+        fun setTarget(x: Double, y: Double, z: Double): GlitterBoxFactory {
             return setTarget(x.toFloat(), y.toFloat(), z.toFloat())
         }
 

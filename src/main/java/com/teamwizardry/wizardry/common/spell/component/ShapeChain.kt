@@ -1,5 +1,8 @@
 package com.teamwizardry.wizardry.common.spell.component
 
+import com.teamwizardry.librarianlib.scribe.Save
+import net.minecraft.nbt.NbtCompound
+import java.util.*
 import java.util.function.Consumer
 
 class ShapeChain(shape: ModuleShape?) : SpellChain(shape) {
@@ -21,17 +24,15 @@ class ShapeChain(shape: ModuleShape?) : SpellChain(shape) {
     override fun toInstance(caster: Interactor): ShapeInstance {
         val instance: ShapeInstance = super.toInstance(caster) as ShapeInstance
         if (next != null) instance.setNext(next!!.toInstance(caster))
-        effects.stream().map({ effect: EffectChain -> effect.toInstance(caster) }).forEach(
-            instance::addEffect!!
-        )
+        effects.stream().map {effect: EffectChain -> effect.toInstance(caster)}.forEach(instance::addEffect)
         return instance
     }
 
-    override fun serializeNBT(): NbtCompound? {
-        val nbt: NbtCompound? = super.serializeNBT()
+    override fun serializeNBT(): NbtCompound {
+        val nbt: NbtCompound = super.serializeNBT()
         if (next != null) nbt.put(NEXT, next!!.serializeNBT())
         val effects = NbtCompound()
-        for (i in 0 until effects.getSize()) effects.put(i.toString(), this.effects[i].serializeNBT())
+        for (i in 0 until effects.size) effects.put(i.toString(), this.effects[i].serializeNBT())
         nbt.put(EFFECTS, effects)
         return nbt
     }
@@ -43,7 +44,7 @@ class ShapeChain(shape: ModuleShape?) : SpellChain(shape) {
             next!!.deserializeNBT(nbt.getCompound(NEXT))
         }
         val effects: NbtCompound = nbt.getCompound(EFFECTS)
-        effects.getKeys().forEach(Consumer { index: String? ->
+        effects.keys.forEach(Consumer {index: String? ->
             val effect = EffectChain(null)
             effect.deserializeNBT(effects.getCompound(index))
             this.effects.add(effect)

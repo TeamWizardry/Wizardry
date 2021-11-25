@@ -1,21 +1,25 @@
 package com.teamwizardry.wizardry.common.network
 
 import com.teamwizardry.wizardry.Wizardry
+import com.teamwizardry.wizardry.common.block.IManaNode
 import net.minecraft.block.*
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.ChunkPos
 import net.minecraft.world.PersistentState
 import java.util.*
 import java.util.function.Function
 import java.util.function.Supplier
+import java.util.function.ToLongFunction
+import kotlin.collections.HashMap
 import kotlin.math.ceil
 
 class ManaNetwork private constructor() : PersistentState() {
-    private val positions: MutableMap<ChunkPos, Set<BlockPos>>
+    private val positions: MutableMap<ChunkPos, MutableSet<BlockPos>>
     private val paths: MutableList<ManaPath?>
-    fun addBlock(pos: BlockPos?) {
-        positions.computeIfAbsent(
-            ChunkPos(pos),
-            Function<ChunkPos, Set<BlockPos?>> { k: ChunkPos? -> HashSet<BlockPos?>() }).add(pos)
+    fun addBlock(pos: BlockPos) {
+        positions.computeIfAbsent(ChunkPos(pos)) {HashSet<BlockPos>()}.add(pos)
     }
 
     fun removeBlock(pos: BlockPos) {
@@ -36,20 +40,20 @@ class ManaNetwork private constructor() : PersistentState() {
         }
         while (!nodesToSearch.isEmpty()) {
             val nodePos = nodesToSearch.remove()
-            val nodeBlock: Block = world.getBlockState(nodePos).getBlock()
+            val nodeBlock: Block = world.getBlockState(nodePos).block
             if (nodeBlock !is IManaNode) {
-                positions[ChunkPos(nodePos)].remove(nodePos)
+                positions[ChunkPos(nodePos)]?.remove(nodePos)
                 continue
             }
-            val node: IManaNode = world.getBlockState(nodePos).getBlock() as IManaNode
+            val node: IManaNode = world.getBlockState(nodePos).block as IManaNode
             val path = paths[nodePos]
-            when (node.getManaNodeType()) {
-                ManaNodeType.SINK -> continue
-                ManaNodeType.SOURCE -> {
+            when (node.manaNodeType) {
+                IManaNode.ManaNodeType.SINK -> continue
+                IManaNode.ManaNodeType.SOURCE -> {
                     this.paths.add(path)
                     return true
                 }
-                ManaNodeType.ROUTER -> for (nearby in nodesNear(nodePos)) {
+                IManaNode.ManaNodeType.ROUTER -> for (nearby in nodesNear(nodePos)) {
                     paths[nearby] = ManaPath(path, nearby)
                     nodesToSearch.add(nearby)
                 }
@@ -64,21 +68,17 @@ class ManaNetwork private constructor() : PersistentState() {
         val nodes: MutableList<BlockPos> = LinkedList<BlockPos>()
         val centerX = pos.x shr 4
         val centerZ = pos.z shr 4
-        for (x in -chunkDist..chunkDist) for (z in -chunkDist..chunkDist) positions.getOrDefault(
-            ChunkPos(
-                centerX + x,
-                centerZ + z
-            ), emptySet()
-        ).stream()
-            .filter { node: BlockPos -> node.getSquaredDistance(pos) <= maxDist * maxDist }
-            .forEach { e: BlockPos -> nodes.add(e) }
+        for (x in -chunkDist..chunkDist)
+            for (z in -chunkDist..chunkDist)
+                positions.getOrDefault(ChunkPos(centerX + x, centerZ + z), emptySet())
+                         .stream()
+                         .filter { node: BlockPos -> node.getSquaredDistance(pos) <= maxDist * maxDist }
+                         .forEach { e: BlockPos -> nodes.add(e) }
         return nodes
     }
 
     override fun writeNbt(compound: NbtCompound): NbtCompound {
-        compound.putLongArray(POSITIONS, positions.values.stream().flatMap { obj: Set<BlockPos> -> obj.stream() }
-            .mapToLong(
-                ToLongFunction<BlockPos> { obj: BlockPos -> obj.asLong() }).toArray())
+        compound.putLongArray(POSITIONS, positions.values.stream().flatMap { obj: Set<BlockPos> -> obj.stream() }.mapToLong {obj: BlockPos -> obj.asLong()}.toArray())
         return compound
     }
 
@@ -86,12 +86,7 @@ class ManaNetwork private constructor() : PersistentState() {
         private const val DATA_NAME: String = Wizardry.MODID + "_ManaNetwork"
         private const val POSITIONS = "positions"
         operator fun get(world: ServerWorld): ManaNetwork {
-            return world.getPersistentStateManager()
-                .getOrCreate<ManaNetwork>(
-                    Function<NbtCompound, ManaNetwork> { nbt: NbtCompound -> readNbt(nbt) },
-                    Supplier { ManaNetwork() },
-                    DATA_NAME
-                )
+            return world.persistentStateManager.getOrCreate({ nbt: NbtCompound -> readNbt(nbt) }, { ManaNetwork() }, DATA_NAME)
         }
 
         private fun readNbt(nbt: NbtCompound): ManaNetwork {
@@ -99,16 +94,14 @@ class ManaNetwork private constructor() : PersistentState() {
             for (pos in nbt.getLongArray(POSITIONS)) {
                 val block = BlockPos.fromLong(pos)
                 val chunk = ChunkPos(block)
-                network.positions.computeIfAbsent(
-                    chunk,
-                    Function<ChunkPos, Set<BlockPos?>> { k: ChunkPos? -> HashSet<BlockPos?>() }).add(block)
+                network.positions.computeIfAbsent(chunk) {HashSet<BlockPos>()}.add(block)
             }
             return network
         }
     }
 
     init {
-        positions = HashMap<ChunkPos, Set<BlockPos>>()
-        paths = LinkedList<ManaPath>()
+        positions = HashMap()
+        paths = LinkedList()
     }
 }

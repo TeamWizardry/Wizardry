@@ -1,33 +1,47 @@
 package com.teamwizardry.wizardry.common.spell.shape
 
+import com.teamwizardry.librarianlib.math.Vec2d
+import com.teamwizardry.wizardry.Wizardry
+import com.teamwizardry.wizardry.common.init.ModSounds
+import com.teamwizardry.wizardry.common.spell.component.Attributes.INTENSITY
+import com.teamwizardry.wizardry.common.spell.component.Attributes.RANGE
 import com.teamwizardry.wizardry.common.spell.component.Instance
+import com.teamwizardry.wizardry.common.spell.component.Interactor
 import com.teamwizardry.wizardry.common.spell.component.PatternShape
+import com.teamwizardry.wizardry.common.utils.ColorUtils
+import com.teamwizardry.wizardry.common.utils.MathUtils
+import com.teamwizardry.wizardry.common.utils.RandUtil
+import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.minecraft.util.math.Box
-import net.minecraft.util.math.Direction
+import net.minecraft.entity.LivingEntity
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.util.math.*
+import net.minecraft.world.World
 import java.awt.Color
+import java.util.*
 import java.util.function.Predicate
+import kotlin.collections.ArrayList
 import kotlin.math.ceil
 import kotlin.math.floor
 
 class ShapeZone : PatternShape() {
-    fun run(world: World, instance: Instance, target: Interactor) {
-        val center: Vec3d = target.getPos()
+    override fun run(world: World, instance: Instance, target: Interactor) {
+        val center: Vec3d = target.pos
         val range = instance.getAttributeValue(RANGE)
         val procFraction: Double = MathHelper.clamp(instance.getAttributeValue(INTENSITY), 0.0, 1.0)
         val region = Box(BlockPos(center)).expand(range - 1)
         val rangeSq = range * range
         val pointsTag = NbtCompound()
         val interactors: MutableList<Interactor> = ArrayList<Interactor>()
-        Wizardry.Companion.LOGGER.debug("Range: $rangeSq")
+        Wizardry.LOGGER.debug("Range: $rangeSq")
 
         // Run on entities
-        val entities: List<LivingEntity> = world.getEntitiesByClass<LivingEntity>(
+        val entities: MutableList<LivingEntity> = world.getEntitiesByClass<LivingEntity>(
             LivingEntity::class.java,
             region,
             Predicate<LivingEntity> { entity: LivingEntity -> entity.getPos().squaredDistanceTo(center) <= rangeSq })
         val numEntityProcs = ceil(entities.size * procFraction).toInt()
-        Wizardry.Companion.LOGGER.debug(
+        Wizardry.LOGGER.debug(
             """
     Entities: ${entities.size}
     procFrac: $procFraction
@@ -39,7 +53,7 @@ class ShapeZone : PatternShape() {
         }
         for (entity in entities) {
             val interactor = Interactor(entity)
-            val point: Vec3d = interactor.getPos()
+            val point: Vec3d = interactor.pos
             interactors.add(interactor)
             val pointNBT = NbtCompound()
             pointNBT.putDouble("x", point.x)
@@ -76,7 +90,7 @@ class ShapeZone : PatternShape() {
                 pos.getZ() + 0.5 - center.z
             )
             val interactor = Interactor(pos, Direction.getFacing(direction.x, direction.y, direction.z))
-            val point: Vec3d = interactor.getPos()
+            val point: Vec3d = interactor.pos
             interactors.add(interactor)
             val pointNBT = NbtCompound()
             pointNBT.putDouble("x", point.x)
@@ -114,10 +128,10 @@ class ShapeZone : PatternShape() {
     }
 
     @Environment(EnvType.CLIENT)
-    fun runClient(world: World?, instance: Instance, target: Interactor) {
+    override fun runClient(world: World, instance: Instance, target: Interactor) {
         val nbt: NbtCompound = instance.extraData
         val range = instance.getAttributeValue(RANGE)
-        val colors: Array<Color> = ColorUtils.mergeColorSets(instance.effectColors)
+        val colors: Array<Color>? = ColorUtils.mergeColorSets(instance.effectColors)
         if (nbt.contains("exploded") && !nbt.getBoolean("exploded")) {
             for (i in 0..59) {
                 val a = i / 60.0
@@ -125,7 +139,7 @@ class ShapeZone : PatternShape() {
                     range.toFloat(),
                     (360f * RandUtil.nextFloat(-10f, 10f) * a * Math.PI / 180.0f).toFloat()
                 )
-                val circleDotPos: Vec3d = target.getPos().add(dot.x, 0.0, dot.y)
+                val circleDotPos: Vec3d = target.pos.add(dot.x, 0.0, dot.y)
                 //                Wizardry.PROXY.spawnKeyedParticle(
 //                        new KeyFramedGlitterBox(RandUtil.nextInt(40, 50))
 //                                .pos(target.getPos(), Easing.easeOutQuart)
@@ -150,7 +164,7 @@ class ShapeZone : PatternShape() {
             for (pointKey in points.getKeys()) {
                 val pointTag: NbtCompound = points.getCompound(pointKey)
                 val point = Vec3d(pointTag.getDouble("x"), pointTag.getDouble("y"), pointTag.getDouble("z"))
-                val yDist: Double = Math.abs(target.getPos().y - point.getY())
+                val yDist: Double = Math.abs(target.pos.y - point.getY())
                 for (i in 0..4) {
                     val to: Vec3d = point.add(0.0, RandUtil.nextDouble(-yDist, yDist), 0.0)
                     //                    Wizardry.PROXY.spawnKeyedParticle(

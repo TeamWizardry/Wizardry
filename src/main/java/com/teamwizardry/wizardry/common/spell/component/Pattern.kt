@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.spell.component
 
 import com.teamwizardry.wizardry.client.lib.LibTheme
+import com.teamwizardry.wizardry.common.utils.RandUtil
+import net.minecraft.world.World
 import java.awt.Color
 
 /**
@@ -9,23 +11,25 @@ import java.awt.Color
  * registered under
  */
 abstract class Pattern {
-    fun run(world: World, instance: Instance?, target: Interactor?) {
-        if (instance == null) return
-        if (instance.getCaster() == null || target == null) return
+    open val colors: Array<Color> = arrayOf(
+        LibTheme.accentColor,
+        LibTheme.hintColor,
+        LibTheme.backgroundColor
+    )
+
+    open fun run(world: World, instance: Instance, target: Interactor) {
         when (target.type) {
-            InteractorType.BLOCK -> {
-                when (instance.getTargetType()) {
-                    ALL, BLOCK -> if (instance.getCaster()!!
-                            .consumeCost(world, instance.getManaCost(), instance.getBurnoutCost())
-                    ) affectBlock(world, target, instance)
+            Interactor.InteractorType.BLOCK -> {
+                when (instance.targetType) {
+                    TargetType.ALL, TargetType.BLOCK -> if (instance.caster.consumeCost(world, instance.manaCost, instance.burnoutCost))
+                        affectBlock(world, target, instance)
                     else -> {}
                 }
             }
-            InteractorType.ENTITY -> {
-                when (instance.getTargetType()) {
-                    ALL, ENTITY -> if (instance.getCaster()!!
-                            .consumeCost(world, instance.getManaCost(), instance.getBurnoutCost())
-                    ) affectEntity(world, target, instance)
+            Interactor.InteractorType.ENTITY -> {
+                when (instance.targetType) {
+                    TargetType.ALL, TargetType.ENTITY -> if (instance.caster.consumeCost(world, instance.manaCost, instance.burnoutCost))
+                        affectEntity(world, target, instance)
                     else -> {}
                 }
             }
@@ -33,7 +37,7 @@ abstract class Pattern {
         if (!disableAutomaticRenderPacket()) sendRenderPacket(world, instance, target)
     }
 
-    private fun disableAutomaticRenderPacket(): Boolean {
+    protected open fun disableAutomaticRenderPacket(): Boolean {
         return false
     }
 
@@ -42,7 +46,7 @@ abstract class Pattern {
      * Shapes trigger this with an updated target [Interactor] so the client can render exactly where the target is.
      * Effects also use this for obvious reasons.
      */
-    protected fun sendRenderPacket(world: World?, instance: Instance?, target: Interactor?) {
+    protected fun sendRenderPacket(world: World, instance: Instance, target: Interactor) {
 //        WizConsts.getCourier().send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(target.getPos().x,
 //                        target.getPos().y,
 //                        target.getPos().z,
@@ -51,17 +55,9 @@ abstract class Pattern {
 //                new CRenderSpellPacket.Packet(instance.toNBT(), target.toNBT()));
     }
 
-    fun runClient(world: World?, instance: Instance?, target: Interactor?) {}
-    abstract fun affectEntity(world: World?, entity: Interactor?, instance: Instance?)
-    abstract fun affectBlock(world: World?, block: Interactor?, instance: Instance?)
+    open fun runClient(world: World, instance: Instance, target: Interactor) {}
+    abstract fun affectEntity(world: World, entity: Interactor, instance: Instance)
+    abstract fun affectBlock(world: World, block: Interactor, instance: Instance)
     protected val randomColor: Color
-        protected get() = colors[RandUtil.nextInt(colors.size)]
-
-    companion object {
-        val colors = arrayOf<Color>(
-            LibTheme.accentColor,
-            LibTheme.hintColor,
-            LibTheme.backgroundColor
-        )
-    }
+        get() = colors[RandUtil.nextInt(colors.size)]
 }

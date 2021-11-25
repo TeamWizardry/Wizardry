@@ -10,14 +10,8 @@ package com.teamwizardry.wizardry.common.spell.component
  *
  * @see PatternEffect
  */
-class EffectInstance(
-    pattern: Pattern?, targetType: TargetType, attributeValues: Map<String?, Double>, manaCost: Double,
-    burnoutCost: Double, caster: Interactor
-) : Instance(pattern, targetType, attributeValues, manaCost, burnoutCost, caster) {
+class EffectInstance(pattern: Pattern, targetType: TargetType, attributeValues: Map<String, Double>, manaCost: Double, burnoutCost: Double, caster: Interactor) : Instance(pattern, targetType, attributeValues, manaCost, burnoutCost, caster) {
     init {
-        if (extraData == null) {
-            extraData = NbtCompound()
-        }
         extraData.putString(PATTERN_TYPE, "effect")
     }
 }

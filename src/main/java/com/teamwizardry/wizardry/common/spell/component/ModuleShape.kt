@@ -10,9 +10,9 @@ class ModuleShape(
     baseBurnoutCost: Double,
     val form: String,
     element: String,
-    modifierCosts: Map<String?, Double>,
+    modifierCosts: Map<String, Double>,
     attributeValues: Map<String, List<Double>>
 ) : Module(pattern, name, items, baseManaCost, baseBurnoutCost, element, modifierCosts, attributeValues) {
-    override val pattern: Pattern
+    override val pattern: Pattern = pattern
         get() = field as PatternShape
 }
