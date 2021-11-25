@@ -28,16 +28,20 @@ import net.minecraft.world.World
 import net.minecraft.world.WorldEvents
 
 class BlockWorktable(settings: Settings?) : HorizontalFacingBlock(settings), Waterloggable {
-    enum class WorktablePart : StringIdentifiable {
-        LEFT, RIGHT;
+    enum class WorktablePart(val direction: String) : StringIdentifiable {
+        LEFT("left"), RIGHT("right");
 
-        override fun toString(): String { return name }
+        override fun toString(): String { return direction }
 
-        override fun asString(): String { return name }
+        override fun asString(): String { return direction }
     }
 
     override fun afterBreak(world: World, player: PlayerEntity, pos: BlockPos, state: BlockState, te: BlockEntity?, stack: ItemStack) {
         super.afterBreak(world, player, pos, Blocks.AIR.defaultState, te, stack)
+    }
+
+    init {
+        this.defaultState = this.defaultState.with(PART, WorktablePart.LEFT).with(FACING, Direction.NORTH).with(WATERLOGGED, java.lang.Boolean.FALSE)
     }
 
     override fun onBreak(world: World, pos: BlockPos, state: BlockState, player: PlayerEntity) {
@@ -109,7 +113,5 @@ class BlockWorktable(settings: Settings?) : HorizontalFacingBlock(settings), Wat
         }
     }
 
-    init {
-        this.defaultState = this.stateManager.defaultState.with(PART, WorktablePart.LEFT).with(FACING, Direction.NORTH).with(WATERLOGGED, java.lang.Boolean.FALSE)
-    }
+
 }
