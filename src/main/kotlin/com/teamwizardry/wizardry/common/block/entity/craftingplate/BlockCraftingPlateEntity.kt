@@ -211,7 +211,7 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockE
         }
 
         @Environment(EnvType.CLIENT)
-        fun clientTick(world: World?, entity: BlockCraftingPlateEntity?) {
+        fun clientTick(world: World, entity: BlockCraftingPlateEntity) {
 //        if (world == null) return;
 //        if (world.getTime() % 2 != 0) return;
 //        Vec3d target = new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
@@ -234,9 +234,8 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockE
 //        }
         }
 
-        @Environment(EnvType.SERVER)
-        fun serverTick(world: World?, entity: BlockCraftingPlateEntity) {
-            if (world == null) return
+//        @Environment(EnvType.SERVER)
+        fun serverTick(world: World, entity: BlockCraftingPlateEntity) {
             entity.transferCooldown--
             if (entity.isOnTransferCooldown()) return
             entity.transferCooldown = 0

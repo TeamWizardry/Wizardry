@@ -35,13 +35,31 @@ class BlockCraftingPlate(settings: Settings?) : BlockWithEntity(settings), Water
         return SHAPE
     }
 
-    override fun <T : BlockEntity?> getTicker(world: World, state: BlockState, type: BlockEntityType<T>): BlockEntityTicker<T>? {
-        return if (world.isClient) checkType(type, ModBlocks.craftingPlateEntity) { w: World?, _: BlockPos?, _: BlockState?, e: BlockCraftingPlateEntity? -> BlockCraftingPlateEntity.clientTick(w, e) }
-        else checkType(type, ModBlocks.craftingPlateEntity) { w: World?, _: BlockPos?, _: BlockState?, e: BlockCraftingPlateEntity -> BlockCraftingPlateEntity.serverTick(w, e) }
+    override fun <T : BlockEntity?> getTicker(
+        world: World,
+        state: BlockState,
+        type: BlockEntityType<T>
+    ): BlockEntityTicker<T>? {
+        return checkType(
+            type,
+            ModBlocks.craftingPlateEntity
+        ) { w: World, _: BlockPos, _: BlockState, e: BlockCraftingPlateEntity ->
+            when (world.isClient) {
+                true -> BlockCraftingPlateEntity.clientTick(w, e)
+                false -> BlockCraftingPlateEntity.serverTick(w, e)
+            }
+        }
     }
 
     @Suppress("DEPRECATION")
-    override fun onUse(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity, hand: Hand, hit: BlockHitResult): ActionResult {
+    override fun onUse(
+        state: BlockState,
+        world: World,
+        pos: BlockPos,
+        player: PlayerEntity,
+        hand: Hand,
+        hit: BlockHitResult
+    ): ActionResult {
         if (!world.isClient) {
             if (hand == Hand.MAIN_HAND) {
                 val heldItem: ItemStack = player.getStackInHand(hand)
@@ -77,8 +95,19 @@ class BlockCraftingPlate(settings: Settings?) : BlockWithEntity(settings), Water
     }
 
     @Suppress("DEPRECATION")
-    override fun getStateForNeighborUpdate(state: BlockState, direction: Direction, newState: BlockState, world: WorldAccess, pos: BlockPos, posFrom: BlockPos): BlockState {
-        if (state.get(WATERLOGGED)) world.fluidTickScheduler.schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world))
+    override fun getStateForNeighborUpdate(
+        state: BlockState,
+        direction: Direction,
+        newState: BlockState,
+        world: WorldAccess,
+        pos: BlockPos,
+        posFrom: BlockPos
+    ): BlockState {
+        if (state.get(WATERLOGGED)) world.fluidTickScheduler.schedule(
+            pos,
+            Fluids.WATER,
+            Fluids.WATER.getTickRate(world)
+        )
         return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom)
     }
 

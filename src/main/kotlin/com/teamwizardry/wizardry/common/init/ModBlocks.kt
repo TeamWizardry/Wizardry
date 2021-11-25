@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.init
 
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling.WisdomSaplingGenerator
 import com.teamwizardry.wizardry.common.block.BlockWorktable
@@ -138,9 +137,11 @@ object ModBlocks {
         //////////////////
         register(craftingPlate, "crafting_plate")
         register(manaBattery, "mana_battery")
+
+        initBlockEntities()
     }
 
-    fun initBlockEntities() {
+    private fun initBlockEntities() {
         craftingPlateEntity = Registry.register<BlockEntityType<*>, BlockEntityType<BlockCraftingPlateEntity>>(
             Registry.BLOCK_ENTITY_TYPE,
             getId("crafting_plate"),
