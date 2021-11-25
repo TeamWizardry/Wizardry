@@ -6,7 +6,7 @@ import net.minecraft.nbt.NbtCompound
 import java.util.function.BiFunction
 import java.util.function.Consumer
 
-abstract class SpellChain(@field:Save protected var module: Module) {
+abstract class SpellChain(@field:Save protected var module: Module?) {
     @Save
     protected var targetType: TargetType = TargetType.ALL
 
@@ -18,7 +18,7 @@ abstract class SpellChain(@field:Save protected var module: Module) {
     fun addModifier(modifier: Modifier): SpellChain {
         val attribute = modifier.name
         modifiers.merge(attribute, 1, BiFunction<Int, Int, Int> { a: Int, b: Int -> a + b })
-        manaMultiplier *= module.getCostPerModifier(attribute)
+        manaMultiplier *= module?.getCostPerModifier(attribute) ?: 0.05
         return this
     }
 
@@ -28,6 +28,9 @@ abstract class SpellChain(@field:Save protected var module: Module) {
     }
 
     open fun toInstance(caster: Interactor): Instance? {
+        if (module == null) return null
+        var module = module!!
+
         // TODO: Get modifications from Caster (Halo, potions, autocaster tiers, etc.)
         val attributeValues: MutableMap<String, Double> = HashMap()
         // Set the value for all unmodified values
@@ -56,7 +59,7 @@ abstract class SpellChain(@field:Save protected var module: Module) {
         throw InconceivableException("How? There are only two module types, you shouldn't ever be constructing the root")
     }
 
-    open fun serializeNBT(): NbtCompound? {
+    open fun serializeNBT(): NbtCompound {
         val nbt = NbtCompound()
         val moduleName = ComponentRegistry.modules.entries.stream()
             .filter { (_, value): Map.Entry<String?, Module?> -> value == module }

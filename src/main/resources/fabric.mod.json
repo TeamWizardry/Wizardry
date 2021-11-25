@@ -21,7 +21,10 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.teamwizardry.wizardry.Wizardry"
+            {
+                "adapter": "kotlin",
+                "value": "com.teamwizardry.wizardry.Wizardry"
+            }
         ]
     },
     "mixins": [
@@ -30,6 +33,7 @@
 
     "depends": {
         "fabric": "*",
+        "fabric-language-kotlin": "*",
         "minecraft": "1.17.x",
         "java": ">=16"
     },

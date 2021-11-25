@@ -18,8 +18,8 @@ import net.minecraft.world.WorldAccess
 import net.minecraft.world.WorldView
 
 abstract class NacreFluid : FlowableFluid() {
-    override fun getFlowing(): Fluid { return ModFluids.FLOWING_NACRE }
-    override fun getStill(): Fluid { return ModFluids.STILL_NACRE }
+    override fun getFlowing(): Fluid { return ModFluids.FLOWING_NACRE!! }
+    override fun getStill(): Fluid { return ModFluids.STILL_NACRE!! }
     override fun getBucketItem(): Item { return ModItems.nacreBucket!! }
 
     override fun isInfinite(): Boolean { return false }

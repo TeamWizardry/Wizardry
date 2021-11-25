@@ -19,8 +19,8 @@ import net.minecraft.world.WorldView
 
 abstract class ManaFluid : FlowableFluid() {
 
-    override fun getFlowing(): Fluid { return ModFluids.FLOWING_MANA }
-    override fun getStill(): Fluid { return ModFluids.STILL_MANA }
+    override fun getFlowing(): Fluid { return ModFluids.FLOWING_MANA!! }
+    override fun getStill(): Fluid { return ModFluids.STILL_MANA!! }
     override fun getBucketItem(): Item { return ModItems.manaBucket!! }
 
     override fun isInfinite(): Boolean { return false }
