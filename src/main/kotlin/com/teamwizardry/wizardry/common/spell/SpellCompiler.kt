@@ -25,14 +25,13 @@ class SpellCompiler private constructor() {
     private fun processItems(items: List<ItemStack>): List<ISpellComponent> {
         val components: MutableList<ISpellComponent> = LinkedList<ISpellComponent>()
         val flattened: LinkedList<Item> = items.stream()
-            .flatMap({stack: ItemStack ->
-                IntStream.range(0, stack.getCount())
-                    .mapToObj<Item>({n: Int -> stack.getItem() })
-            })
-            .collect(
-                Collectors.toCollection<Item, LinkedList<Item>>(
-                        { LinkedList() })
-            )
+            .flatMap {stack: ItemStack ->
+                IntStream.range(0, stack.count)
+                        .mapToObj { stack.item }
+            }
+                .collect(
+                Collectors.toCollection {LinkedList()}
+                )
         while (!flattened.isEmpty()) {
             val component: ISpellComponent? = ComponentRegistry.getComponentForItems(flattened)
             if (component == null) flattened.remove()

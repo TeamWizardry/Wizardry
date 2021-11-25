@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.spell.shape
 
 import com.teamwizardry.librarianlib.math.Vec2d
 import com.teamwizardry.wizardry.LOGGER
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.init.ModSounds
 import com.teamwizardry.wizardry.common.spell.component.Attributes.INTENSITY
 import com.teamwizardry.wizardry.common.spell.component.Attributes.RANGE
@@ -20,8 +19,7 @@ import net.minecraft.util.math.*
 import net.minecraft.world.World
 import java.awt.Color
 import java.util.*
-import java.util.function.Predicate
-import kotlin.collections.ArrayList
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -33,14 +31,14 @@ class ShapeZone : PatternShape() {
         val region = Box(BlockPos(center)).expand(range - 1)
         val rangeSq = range * range
         val pointsTag = NbtCompound()
-        val interactors: MutableList<Interactor> = ArrayList<Interactor>()
+        val interactors: MutableList<Interactor> = ArrayList()
         LOGGER.debug("Range: $rangeSq")
 
         // Run on entities
-        val entities: MutableList<LivingEntity> = world.getEntitiesByClass<LivingEntity>(
+        val entities: MutableList<LivingEntity> = world.getEntitiesByClass(
             LivingEntity::class.java,
-            region,
-            Predicate<LivingEntity> { entity: LivingEntity -> entity.getPos().squaredDistanceTo(center) <= rangeSq })
+            region
+        ) {entity: LivingEntity -> entity.getPos().squaredDistanceTo(center) <= rangeSq}
         val numEntityProcs = ceil(entities.size * procFraction).toInt()
         LOGGER.debug(
             """
@@ -86,9 +84,9 @@ class ShapeZone : PatternShape() {
         }
         for (pos in blocks) {
             val direction = Vec3d(
-                pos.getX() + 0.5 - center.x,
-                pos.getY() + 0.5 - center.y,
-                pos.getZ() + 0.5 - center.z
+                    pos.x + 0.5 - center.x,
+                    pos.y + 0.5 - center.y,
+                    pos.z + 0.5 - center.z
             )
             val interactor = Interactor(pos, Direction.getFacing(direction.x, direction.y, direction.z))
             val point: Vec3d = interactor.pos
@@ -162,10 +160,10 @@ class ShapeZone : PatternShape() {
         }
         if (nbt.contains("points")) {
             val points: NbtCompound = nbt.getCompound("points")
-            for (pointKey in points.getKeys()) {
+            for (pointKey in points.keys) {
                 val pointTag: NbtCompound = points.getCompound(pointKey)
                 val point = Vec3d(pointTag.getDouble("x"), pointTag.getDouble("y"), pointTag.getDouble("z"))
-                val yDist: Double = Math.abs(target.pos.y - point.getY())
+                val yDist: Double = abs(target.pos.y - point.getY())
                 for (i in 0..4) {
                     val to: Vec3d = point.add(0.0, RandUtil.nextDouble(-yDist, yDist), 0.0)
                     //                    Wizardry.PROXY.spawnKeyedParticle(

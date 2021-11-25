@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.spell.effect
 
 import com.teamwizardry.wizardry.PROXY
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.client.particle.GlitterBox
 import com.teamwizardry.wizardry.common.init.ModSounds
 import com.teamwizardry.wizardry.common.init.ModSounds.playSound
@@ -27,7 +26,7 @@ class EffectArcane : PatternEffect() {
         playSound(world, instance.caster, entity, ModSounds.FIREWORK, 0.1f)
     }
 
-    // No affect on blocks. This remains a NO-OP.
+    // No effect on blocks. This remains a NO-OP.
     override fun affectBlock(world: World, block: Interactor, instance: Instance) {
         // NO-OP
     }
@@ -38,18 +37,18 @@ class EffectArcane : PatternEffect() {
 
     @Environment(EnvType.CLIENT)
     override fun runClient(world: World, instance: Instance, target: Interactor) {
-        for (i in 0..99) PROXY?.spawnParticle(
+        for (i in 0..99) PROXY.spawnParticle(
                 GlitterBox.GlitterBoxFactory()
-                .setOrigin(target.pos.add(RandUtil.nextDouble(-0.15, 0.15), RandUtil.nextDouble(-0.15, 0.15), RandUtil.nextDouble(-0.15, 0.15)))
-                .setTarget(RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5))
-                .setDrag(RandUtil.nextFloat(0.2f, 0.3f))
-                .setGravity(RandUtil.nextFloat(-0.005f, -0.015f))
-                .setInitialColor(randomColor)
-                .setGoalColor(randomColor)
-                .setInitialSize(RandUtil.nextFloat(0.1f, 0.3f))
-                .setGoalSize(0f)
-                .setInitialAlpha(RandUtil.nextFloat(0.5f, 1f))
-                .createGlitterBox(RandUtil.nextInt(5, 25))
+                        .setOrigin(target.pos.add(RandUtil.nextDouble(-0.15, 0.15), RandUtil.nextDouble(-0.15, 0.15), RandUtil.nextDouble(-0.15, 0.15)))
+                        .setTarget(RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5))
+                        .setDrag(RandUtil.nextFloat(0.2f, 0.3f))
+                        .setGravity(RandUtil.nextFloat(-0.005f, -0.015f))
+                        .setInitialColor(randomColor)
+                        .setGoalColor(randomColor)
+                        .setInitialSize(RandUtil.nextFloat(0.1f, 0.3f))
+                        .setGoalSize(0f)
+                        .setInitialAlpha(RandUtil.nextFloat(0.5f, 1f))
+                        .createGlitterBox(RandUtil.nextInt(5, 25))
         )
     }
 

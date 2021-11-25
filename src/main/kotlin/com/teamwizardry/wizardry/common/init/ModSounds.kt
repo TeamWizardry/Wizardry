@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.init
 
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.spell.component.Interactor
 import com.teamwizardry.wizardry.getId
 import net.minecraft.entity.mob.MobEntity

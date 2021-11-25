@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.init
 
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.getId
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings

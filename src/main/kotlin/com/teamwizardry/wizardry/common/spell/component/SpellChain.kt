@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.spell.component
 import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException
 import com.teamwizardry.librarianlib.scribe.Save
 import net.minecraft.nbt.NbtCompound
-import java.util.function.BiFunction
 import java.util.function.Consumer
 
 abstract class SpellChain(@field:Save protected var module: Module?) {
@@ -17,7 +16,7 @@ abstract class SpellChain(@field:Save protected var module: Module?) {
     protected var manaMultiplier = 0.0
     fun addModifier(modifier: Modifier): SpellChain {
         val attribute = modifier.name
-        modifiers.merge(attribute, 1, BiFunction<Int, Int, Int> { a: Int, b: Int -> a + b })
+        modifiers.merge(attribute, 1) {a: Int, b: Int -> a + b}
         manaMultiplier *= module?.getCostPerModifier(attribute) ?: 0.05
         return this
     }
@@ -29,7 +28,7 @@ abstract class SpellChain(@field:Save protected var module: Module?) {
 
     open fun toInstance(caster: Interactor): Instance? {
         if (module == null) return null
-        var module = module!!
+        val module = module!!
 
         // TODO: Get modifications from Caster (Halo, potions, autocaster tiers, etc.)
         val attributeValues: MutableMap<String, Double> = HashMap()
@@ -79,7 +78,7 @@ abstract class SpellChain(@field:Save protected var module: Module?) {
         module = ComponentRegistry.modules[nbt.getString(MODULE)] ?: throw RuntimeException()
         targetType = TargetType.valueOf(nbt.getString(TARGET))
         val modifiers: NbtCompound = nbt.getCompound(MODIFIERS)
-        modifiers.getKeys()
+        modifiers.keys
             .forEach(Consumer { attribute: String -> this.modifiers[attribute] = modifiers.getInt(attribute) })
         manaMultiplier = nbt.getDouble(MULTIPLIER)
     }

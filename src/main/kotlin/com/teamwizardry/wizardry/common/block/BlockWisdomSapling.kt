@@ -30,6 +30,6 @@ class BlockWisdomSapling(generator: SaplingGenerator?, settings: Settings?) :
                 return config
             }
 
-        protected override fun getTreeFeature(random: Random, hasNearbyFlora: Boolean): ConfiguredFeature<TreeFeatureConfig, *>? { return Feature.TREE.configure(treeFeatureConfig) }
+        override fun getTreeFeature(random: Random, hasNearbyFlora: Boolean): ConfiguredFeature<TreeFeatureConfig, *>? { return Feature.TREE.configure(treeFeatureConfig) }
     }
 }

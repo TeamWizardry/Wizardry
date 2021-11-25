@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.component
 
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.configs.ServerConfigs
 import com.teamwizardry.wizardry.makeLogger
 import net.minecraft.item.Item

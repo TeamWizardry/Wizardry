@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.init
 
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.getId
 import net.fabricmc.fabric.api.tag.TagFactory
 import net.minecraft.fluid.Fluid

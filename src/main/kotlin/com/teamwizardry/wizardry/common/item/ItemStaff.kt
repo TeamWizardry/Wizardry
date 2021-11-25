@@ -25,6 +25,6 @@ class ItemStaff(settings: Settings?) : Item(settings), INacreProduct.INacreDecay
                 ?.toInstance(caster)
                 ?.run(world, caster)
         }
-        return TypedActionResult.success<ItemStack>(itemStack)
+        return TypedActionResult.success(itemStack)
     }
 }

@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.spell.shape
 
 import com.teamwizardry.librarianlib.etcetera.Raycaster
 import com.teamwizardry.wizardry.PROXY
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.client.lib.LibTheme
 import com.teamwizardry.wizardry.client.particle.GlitterBox
 import com.teamwizardry.wizardry.common.init.ModSounds
@@ -22,7 +21,6 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import java.awt.Color
-import java.util.function.Predicate
 
 class ShapeRay : PatternShape() {
     override fun run(world: World, instance: Instance, target: Interactor) {
@@ -31,7 +29,7 @@ class ShapeRay : PatternShape() {
         val sourceEntity: Entity? = target.entity
         ray.cast(
                 world, Raycaster.BlockMode.VISUAL, Raycaster.FluidMode.ANY,
-                Predicate { entity: Entity -> entity is LivingEntity && entity != sourceEntity },  // TODO - where'd the better equality check move to?
+                { entity: Entity -> entity is LivingEntity && entity != sourceEntity },  // TODO - where'd the better equality check move to?
                 start.x,
                 start.y,
                 start.z,
@@ -39,7 +37,7 @@ class ShapeRay : PatternShape() {
                 end.y,
                 end.z
         )
-        var newTarget: Interactor = when (ray.hitType) {
+        val newTarget: Interactor = when (ray.hitType) {
             Raycaster.HitType.NONE, Raycaster.HitType.BLOCK, Raycaster.HitType.FLUID -> {
                 val dir: Vec3d = end.subtract(start)
                 val hit = Vec3d(ray.hitX, ray.hitY, ray.hitZ)
@@ -59,7 +57,7 @@ class ShapeRay : PatternShape() {
         val v2: Vec3d = target.pos
         for (i in 0..29) {
             val a = i / 30.0
-            PROXY?.spawnParticle(
+            PROXY.spawnParticle(
                     GlitterBox.GlitterBoxFactory()
                     .setOrigin(
                         v1.getX() * a + v2.getX() * (1 - a) + RandUtil.nextDouble(-0.035, 0.035),

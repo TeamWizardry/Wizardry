@@ -1,19 +1,14 @@
 package com.teamwizardry.wizardry.common.network
 
 import com.teamwizardry.wizardry.MODID
-import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.block.IManaNode
-import net.minecraft.block.*
+import net.minecraft.block.Block
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.ChunkPos
 import net.minecraft.world.PersistentState
 import java.util.*
-import java.util.function.Function
-import java.util.function.Supplier
-import java.util.function.ToLongFunction
-import kotlin.collections.HashMap
 import kotlin.math.ceil
 
 class ManaNetwork private constructor() : PersistentState() {

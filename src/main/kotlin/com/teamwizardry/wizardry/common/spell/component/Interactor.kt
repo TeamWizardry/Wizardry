@@ -1,8 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.component
 
-import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException
 import com.teamwizardry.wizardry.common.block.IManaNode
-import net.minecraft.block.*
+import net.minecraft.block.Block
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
