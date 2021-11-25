@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.shape
 
 import com.teamwizardry.librarianlib.math.Vec2d
+import com.teamwizardry.wizardry.LOGGER
 import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.init.ModSounds
 import com.teamwizardry.wizardry.common.spell.component.Attributes.INTENSITY
@@ -33,7 +34,7 @@ class ShapeZone : PatternShape() {
         val rangeSq = range * range
         val pointsTag = NbtCompound()
         val interactors: MutableList<Interactor> = ArrayList<Interactor>()
-        Wizardry.LOGGER.debug("Range: $rangeSq")
+        LOGGER.debug("Range: $rangeSq")
 
         // Run on entities
         val entities: MutableList<LivingEntity> = world.getEntitiesByClass<LivingEntity>(
@@ -41,7 +42,7 @@ class ShapeZone : PatternShape() {
             region,
             Predicate<LivingEntity> { entity: LivingEntity -> entity.getPos().squaredDistanceTo(center) <= rangeSq })
         val numEntityProcs = ceil(entities.size * procFraction).toInt()
-        Wizardry.LOGGER.debug(
+        LOGGER.debug(
             """
     Entities: ${entities.size}
     procFrac: $procFraction

@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBatter
 import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBatteryEntity
 import com.teamwizardry.wizardry.common.block.fluid.mana.BlockMana
 import com.teamwizardry.wizardry.common.block.fluid.nacre.BlockNacre
+import com.teamwizardry.wizardry.getId
 import com.teamwizardry.wizardry.mixins.BlocksMixin
 import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricBlockSettings
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
@@ -122,8 +123,8 @@ object ModBlocks {
         ///////////////////////////////
         // Fluids
         ///////////////////////////////
-        Registry.register(Registry.BLOCK, Wizardry.getId("mana"), liquidMana)
-        Registry.register(Registry.BLOCK, Wizardry.getId("nacre"), liquidNacre)
+        Registry.register(Registry.BLOCK, getId("mana"), liquidMana)
+        Registry.register(Registry.BLOCK, getId("nacre"), liquidNacre)
 
         ///////////////////////////////
         // Complex Blocks
@@ -142,18 +143,18 @@ object ModBlocks {
     fun initBlockEntities() {
         craftingPlateEntity = Registry.register<BlockEntityType<*>, BlockEntityType<BlockCraftingPlateEntity>>(
             Registry.BLOCK_ENTITY_TYPE,
-            Wizardry.getId("crafting_plate"),
+            getId("crafting_plate"),
             FabricBlockEntityTypeBuilder.create(FabricBlockEntityTypeBuilder.Factory(::BlockCraftingPlateEntity), craftingPlate).build()
         )
         manaBatteryEntity = Registry.register<BlockEntityType<*>, BlockEntityType<BlockManaBatteryEntity>>(
             Registry.BLOCK_ENTITY_TYPE,
-            Wizardry.getId("mana_battery"),
+            getId("mana_battery"),
             FabricBlockEntityTypeBuilder.create(FabricBlockEntityTypeBuilder.Factory(::BlockManaBatteryEntity), manaBattery).build()
         )
     }
 
     private fun register(block: Block, path: String) {
-        val id: Identifier = Wizardry.getId(path)
+        val id: Identifier = getId(path)
         Registry.register(Registry.BLOCK, id, block)
         Registry.register(Registry.ITEM, id, BlockItem(block, Item.Settings().group(ModItems.wizardry)))
     }

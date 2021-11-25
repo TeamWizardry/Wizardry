@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.shape
 
 import com.teamwizardry.librarianlib.etcetera.Raycaster
+import com.teamwizardry.wizardry.PROXY
 import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.client.lib.LibTheme
 import com.teamwizardry.wizardry.client.particle.GlitterBox
@@ -58,7 +59,7 @@ class ShapeRay : PatternShape() {
         val v2: Vec3d = target.pos
         for (i in 0..29) {
             val a = i / 30.0
-            Wizardry.PROXY?.spawnParticle(
+            PROXY?.spawnParticle(
                     GlitterBox.GlitterBoxFactory()
                     .setOrigin(
                         v1.getX() * a + v2.getX() * (1 - a) + RandUtil.nextDouble(-0.035, 0.035),

@@ -2,13 +2,14 @@ package com.teamwizardry.wizardry.common.spell.component
 
 import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.configs.ServerConfigs
+import com.teamwizardry.wizardry.makeLogger
 import net.minecraft.item.Item
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import org.apache.logging.log4j.Logger
 
 object ComponentRegistry {
-    private val LOGGER: Logger = Wizardry.INSTANCE!!.makeLogger(ComponentRegistry::class.java)
+    private val LOGGER: Logger = makeLogger(ComponentRegistry::class.java)
     val modules: MutableMap<String, Module> = HashMap()
     private val modifiers: MutableMap<String, Modifier> = HashMap()
     private val spellComponents: MutableMap<List<Item>, ISpellComponent> = HashMap()

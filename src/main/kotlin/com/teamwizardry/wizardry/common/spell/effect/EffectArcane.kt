@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.spell.effect
 
+import com.teamwizardry.wizardry.PROXY
 import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.client.particle.GlitterBox
 import com.teamwizardry.wizardry.common.init.ModSounds
@@ -37,7 +38,7 @@ class EffectArcane : PatternEffect() {
 
     @Environment(EnvType.CLIENT)
     override fun runClient(world: World, instance: Instance, target: Interactor) {
-        for (i in 0..99) Wizardry.PROXY?.spawnParticle(
+        for (i in 0..99) PROXY?.spawnParticle(
                 GlitterBox.GlitterBoxFactory()
                 .setOrigin(target.pos.add(RandUtil.nextDouble(-0.15, 0.15), RandUtil.nextDouble(-0.15, 0.15), RandUtil.nextDouble(-0.15, 0.15)))
                 .setTarget(RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5))

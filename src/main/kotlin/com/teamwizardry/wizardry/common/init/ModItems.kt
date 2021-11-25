@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.init
 
 import com.teamwizardry.wizardry.Wizardry
+import com.teamwizardry.wizardry.getId
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.entity.effect.StatusEffectInstance
@@ -13,7 +14,7 @@ import net.minecraft.util.Rarity
 import net.minecraft.util.registry.Registry
 
 object ModItems {
-    val wizardry: ItemGroup = FabricItemGroupBuilder.build(Wizardry.getId("general")) { ItemStack(staff) }
+    val wizardry: ItemGroup = FabricItemGroupBuilder.build(getId("general")) { ItemStack(staff) }
     private val wisdomStick = Item(FabricItemSettings().group(wizardry))
     val staff = Item(FabricItemSettings().group(wizardry).maxCount(1).rarity(Rarity.UNCOMMON))
     private val pearl = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
@@ -48,6 +49,6 @@ object ModItems {
     }
 
     private fun initItem(item: Item?, path: String) {
-        Registry.register<Item, Item?>(Registry.ITEM, Wizardry.getId(path), item)
+        Registry.register<Item, Item?>(Registry.ITEM, getId(path), item)
     }
 }

@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.init
 
 import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.spell.component.Interactor
+import com.teamwizardry.wizardry.getId
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.sound.SoundCategory
@@ -101,7 +102,7 @@ object ModSounds {
     }
 
     private fun makeSound(name: String): SoundEvent {
-        val loc: Identifier = Wizardry.getId(name)
+        val loc: Identifier = getId(name)
         return SoundEvent(loc)
     }
 

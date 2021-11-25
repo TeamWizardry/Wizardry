@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.network
 
+import com.teamwizardry.wizardry.MODID
 import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.block.IManaNode
 import net.minecraft.block.*
@@ -83,7 +84,7 @@ class ManaNetwork private constructor() : PersistentState() {
     }
 
     companion object {
-        private const val DATA_NAME: String = Wizardry.MODID + "_ManaNetwork"
+        private const val DATA_NAME: String = MODID + "_ManaNetwork"
         private const val POSITIONS = "positions"
         operator fun get(world: ServerWorld): ManaNetwork {
             return world.persistentStateManager.getOrCreate({ nbt: NbtCompound -> readNbt(nbt) }, { ManaNetwork() }, DATA_NAME)

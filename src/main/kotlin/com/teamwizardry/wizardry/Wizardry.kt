@@ -7,28 +7,21 @@ import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class Wizardry : ModInitializer {
+const val MODID = "wizardry"
+fun getId(path: String): Identifier { return Identifier(MODID, path) }
+
+fun makeLogger(cls: Class<*>): Logger { return LogManager.getLogger(cls) }
+
+val LOGGER = makeLogger(Wizardry::class.java)
+lateinit var PROXY: IProxy
+
+object Wizardry : ModInitializer {
     override fun onInitialize() {
-        INSTANCE = this
         ModTags.init()
         ModFluids.init()
         ModItems.init()
         ModBlocks.init()
         ModSounds.init()
         ModPatterns.init()
-    }
-
-    fun makeLogger(cls: Class<*>?): Logger {
-        return LogManager.getLogger(cls)
-    }
-
-    companion object {
-        const val MODID = "wizardry"
-        val LOGGER = LogManager.getLogger(Wizardry::class.java)!!
-        var PROXY: IProxy? = null
-        var INSTANCE: Wizardry? = null
-        fun getId(path: String?): Identifier {
-            return Identifier(MODID, path)
-        }
     }
 }
