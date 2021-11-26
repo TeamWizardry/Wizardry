@@ -12,13 +12,17 @@ import com.teamwizardry.wizardry.common.block.fluid.mana.BlockMana
 import com.teamwizardry.wizardry.common.block.fluid.nacre.BlockNacre
 import com.teamwizardry.wizardry.getId
 import com.teamwizardry.wizardry.mixins.BlocksMixin
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricBlockSettings
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.client.color.world.BiomeColors
 import net.minecraft.client.color.world.FoliageColors
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.sound.BlockSoundGroup
@@ -31,10 +35,10 @@ object ModBlocks {
     private val nacreSettings = AbstractBlock.Settings.of(Material.STONE, MapColor.IRON_GRAY).sounds(BlockSoundGroup.STONE).strength(2f)
     private val nacreBrickSettings = AbstractBlock.Settings.of(Material.STONE, MapColor.IRON_GRAY).sounds(BlockSoundGroup.STONE).strength(2f)
 
-    var craftingPlate: Block = BlockCraftingPlate(AbstractBlock.Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2f).solidBlock(BlocksMixin::never))
+    var craftingPlate: Block = BlockCraftingPlate(AbstractBlock.Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2f).solidBlock(BlocksMixin::never).nonOpaque())
     var craftingPlateEntity: BlockEntityType<BlockCraftingPlateEntity>? = null
-    var magiciansWorktable: Block = BlockWorktable(AbstractBlock.Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2f).solidBlock(BlocksMixin::never))
-    var manaBattery: Block = BlockManaBattery(AbstractBlock.Settings.of(Material.GLASS).sounds(BlockSoundGroup.AMETHYST_BLOCK).strength(3f).solidBlock(BlocksMixin::never).luminance { state: BlockState? -> 15 })
+    var magiciansWorktable: Block = BlockWorktable(AbstractBlock.Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2f).solidBlock(BlocksMixin::never).nonOpaque())
+    var manaBattery: Block = BlockManaBattery(AbstractBlock.Settings.of(Material.GLASS).sounds(BlockSoundGroup.AMETHYST_BLOCK).strength(3f).solidBlock(BlocksMixin::never).luminance { state: BlockState? -> 15 }.nonOpaque())
     var manaBatteryEntity: BlockEntityType<BlockManaBatteryEntity>? = null
 
     var wisdomLeaves: Block = LeavesBlock(AbstractBlock.Settings.of(Material.LEAVES).strength(0.2f).ticksRandomly().sounds(BlockSoundGroup.GRASS).nonOpaque().allowsSpawning(BlocksMixin::canSpawnOnLeaves).suffocates(BlocksMixin::never).blockVision(BlocksMixin::never))
@@ -49,7 +53,7 @@ object ModBlocks {
     var wisdomFence: Block = FenceBlock(wisdomWoodSettings)
     var wisdomFenceGate: Block = FenceGateBlock(wisdomWoodSettings)
 
-    var wisdomSapling: Block = BlockWisdomSapling(WisdomSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.OAK_SAPLING))
+    var wisdomSapling: Block = BlockWisdomSapling(WisdomSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.OAK_SAPLING).nonOpaque())
 
     var gildedPlanks: Block = Block(gildedWoodSettings)
     var gildedDoor: Block = Invokers.DoorBlock(gildedWoodSettings)
@@ -69,8 +73,9 @@ object ModBlocks {
     var nacreBrickWall: Block = WallBlock(nacreSettings)
 
     // Fluids
-    var liquidMana: FluidBlock = BlockMana(ModFluids.STILL_MANA, FabricBlockSettings.copy(Blocks.WATER))
-    var liquidNacre: FluidBlock = BlockNacre(ModFluids.STILL_NACRE, FabricBlockSettings.copy(Blocks.WATER))
+    lateinit var liquidMana: FluidBlock
+    lateinit var liquidNacre: FluidBlock
+
     fun init() {
         ///////////////////////////////
         // Basic Blocks
@@ -112,7 +117,7 @@ object ModBlocks {
         register(nacreBlock, "nacre_block")
         register(nacreSlab, "nacre_slab")
         register(nacreStairs, "nacre_stairs")
-        register(nacreWall, "narce_wall")
+        register(nacreWall, "nacre_wall")
 
         register(nacreBrickBlock, "nacre_brick_block")
         register(nacreBrickSlab, "nacre_brick_slab")
@@ -122,8 +127,8 @@ object ModBlocks {
         ///////////////////////////////
         // Fluids
         ///////////////////////////////
-        Registry.register(Registry.BLOCK, getId("mana"), liquidMana)
-        Registry.register(Registry.BLOCK, getId("nacre"), liquidNacre)
+        liquidMana = Registry.register(Registry.BLOCK, getId("mana"), BlockMana(ModFluids.STILL_MANA, FabricBlockSettings.copy(Blocks.WATER)))
+        liquidNacre = Registry.register(Registry.BLOCK, getId("nacre"), BlockNacre(ModFluids.STILL_NACRE, FabricBlockSettings.copy(Blocks.WATER)))
 
         ///////////////////////////////
         // Complex Blocks
@@ -154,9 +159,14 @@ object ModBlocks {
         )
     }
 
-    private fun register(block: Block, path: String) {
+    private fun register(block: Block, path: String, blockItem: Boolean = true) {
         val id: Identifier = getId(path)
         Registry.register(Registry.BLOCK, id, block)
-        Registry.register(Registry.ITEM, id, BlockItem(block, Item.Settings().group(ModItems.wizardry)))
+        if (blockItem) Registry.register(Registry.ITEM, id, BlockItem(block, Item.Settings().group(ModItems.wizardry)))
+    }
+
+    @Environment(EnvType.CLIENT)
+    public fun initClient() {
+        BlockRenderLayerMap.INSTANCE.putBlock(wisdomSapling, RenderLayer.getCutout())
     }
 }

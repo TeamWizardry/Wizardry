@@ -14,14 +14,14 @@ import net.minecraft.util.registry.Registry
 
 object ModItems {
     val wizardry: ItemGroup = FabricItemGroupBuilder.build(getId("general")) { ItemStack(staff) }
-    private val wisdomStick = Item(FabricItemSettings().group(wizardry))
+    val wisdomStick = Item(FabricItemSettings().group(wizardry))
     val staff = Item(FabricItemSettings().group(wizardry).maxCount(1).rarity(Rarity.UNCOMMON))
-    private val pearl = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
+    val pearl = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
     val devilDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
-    private val skyDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
-    private val fairyDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
-    private val fairyWings = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
-    private val fairyApple = Item(
+    val skyDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
+    val fairyDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
+    val fairyWings = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
+    val fairyApple = Item(
         FabricItemSettings().group(wizardry).rarity(Rarity.RARE).food(
             FoodComponent.Builder()
                 .hunger(5)
@@ -33,8 +33,9 @@ object ModItems {
                 .build()
         )
     )
-    var manaBucket: Item? = null
-    var nacreBucket: Item? = null
+    lateinit var manaBucket: Item
+    lateinit var nacreBucket: Item
+
     fun init() {
         initItem(wisdomStick, "wisdom_stick")
         initItem(staff, "staff")
@@ -45,9 +46,10 @@ object ModItems {
         initItem(fairyWings, "fairy_wings")
         initItem(fairyApple, "fairy_apple")
         initItem(manaBucket, "mana_bucket")
+        initItem(nacreBucket, "nacre_bucket")
     }
 
-    private fun initItem(item: Item?, path: String) {
-        Registry.register<Item, Item?>(Registry.ITEM, getId(path), item)
+    private fun initItem(item: Item, path: String) {
+        Registry.register(Registry.ITEM, getId(path), item)
     }
 }

@@ -28,7 +28,7 @@ import kotlin.math.min
 open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockEntity(ModBlocks.craftingPlateEntity, pos, state), Hopper {
     var transferCooldown = -1
         protected set
-    var inventory: DefaultedList<ItemStack>? = null
+    var inventory: DefaultedList<ItemStack> = DefaultedList.ofSize(INV_SIZE, ItemStack.EMPTY)
         protected set
 
     override fun readNbt(nbt: NbtCompound) {

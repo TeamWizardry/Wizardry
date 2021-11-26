@@ -24,7 +24,7 @@ class BlockWisdomSapling(generator: SaplingGenerator?, settings: Settings?) :
                         StraightTrunkPlacer(5, 2, 0),
                         SimpleBlockStateProvider(ModBlocks.wisdomLeaves.defaultState),
                         SimpleBlockStateProvider(ModBlocks.wisdomSapling.defaultState),
-                        BlobFoliagePlacer(ConstantIntProvider.create(3), ConstantIntProvider.ZERO, 3),
+                        BlobFoliagePlacer(ConstantIntProvider.create(2), ConstantIntProvider.ZERO, 2),
                         TwoLayersFeatureSize(1, 0, 1)
                 ).build()
                 return config

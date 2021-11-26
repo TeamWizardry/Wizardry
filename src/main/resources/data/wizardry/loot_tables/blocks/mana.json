@@ -6,7 +6,7 @@
       "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:item",
+          "type": "minecraft:block",
           "name": "wizardry:mana"
         }
       ],

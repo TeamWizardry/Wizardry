@@ -10,18 +10,18 @@ import net.minecraft.item.Items
 import net.minecraft.util.registry.Registry
 
 object ModFluids {
-    var STILL_MANA: FlowableFluid? = null
-    var FLOWING_MANA: FlowableFluid? = null
-    var STILL_NACRE: FlowableFluid? = null
-    var FLOWING_NACRE: FlowableFluid? = null
+    lateinit var STILL_MANA: FlowableFluid
+    lateinit var FLOWING_MANA: FlowableFluid
+    lateinit var STILL_NACRE: FlowableFluid
+    lateinit var FLOWING_NACRE: FlowableFluid
 
     fun init() {
         STILL_MANA = Registry.register(Registry.FLUID, getId("mana"), ManaFluid.Still())
         FLOWING_MANA = Registry.register(Registry.FLUID, getId("flowing_mana"), ManaFluid.Flowing())
-        ModItems.manaBucket = BucketItem(STILL_MANA, Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1))
+        ModItems.manaBucket = BucketItem(STILL_MANA, Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1).group(ModItems.wizardry))
 
         STILL_NACRE = Registry.register(Registry.FLUID, getId("nacre"), NacreFluid.Still())
         FLOWING_NACRE = Registry.register(Registry.FLUID, getId("flowing_nacre"), NacreFluid.Flowing())
-        ModItems.nacreBucket = BucketItem(STILL_NACRE, Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1))
+        ModItems.nacreBucket = BucketItem(STILL_NACRE, Item.Settings().recipeRemainder(Items.BUCKET).maxCount(1).group(ModItems.wizardry))
     }
 }

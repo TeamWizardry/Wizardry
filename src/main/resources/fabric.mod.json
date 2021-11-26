@@ -25,6 +25,12 @@
                 "adapter": "kotlin",
                 "value": "com.teamwizardry.wizardry.Wizardry"
             }
+        ],
+        "client": [
+            {
+                "adapter": "kotlin",
+                "value": "com.teamwizardry.wizardry.WizardryClient"
+            }
         ]
     },
     "mixins": [

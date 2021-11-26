@@ -1,0 +1,9 @@
+{
+    "replace": false,
+    "values": [
+        "wizardry:wisdom_log",
+        "wizardry:wisdom_wood",
+        "wizardry:stripped_wisdom_log",
+        "wizardry:stripped_wisdom_wood"
+    ]
+}
