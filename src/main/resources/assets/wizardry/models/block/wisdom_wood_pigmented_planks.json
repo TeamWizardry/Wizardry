@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "wizardry:block/wisdom_wood_pigmented_planks"
+  }
+}

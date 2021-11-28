@@ -3,8 +3,11 @@
   "package": "com.teamwizardry.wizardry.mixins",
   "compatibilityLevel": "JAVA_16",
   "refmap": "wizardry.refmap.json",
+  "client" : [
+    "AccessorModelManager"
+  ],
   "mixins": [
-  	"BlocksMixin"
+    "BlocksMixin"
   ],
   "injectors": {
     "defaultRequire": 1

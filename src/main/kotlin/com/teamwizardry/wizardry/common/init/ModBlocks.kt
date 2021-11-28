@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.init
 
+import com.teamwizardry.wizardry.client.ter.RenderManaBattery
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling.WisdomSaplingGenerator
 import com.teamwizardry.wizardry.common.block.BlockWorktable
@@ -10,13 +11,14 @@ import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBatter
 import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBatteryEntity
 import com.teamwizardry.wizardry.common.block.fluid.mana.BlockMana
 import com.teamwizardry.wizardry.common.block.fluid.nacre.BlockNacre
-import com.teamwizardry.wizardry.getId
+import com.teamwizardry.wizardry.getID
 import com.teamwizardry.wizardry.mixins.BlocksMixin
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricBlockSettings
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntityType
@@ -30,30 +32,48 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
 object ModBlocks {
-    private val wisdomWoodSettings = AbstractBlock.Settings.of(Material.WOOD, MapColor.BROWN).sounds(BlockSoundGroup.WOOD).strength(2f)
-    private val gildedWoodSettings = AbstractBlock.Settings.of(Material.WOOD, MapColor.BROWN).sounds(BlockSoundGroup.WOOD).strength(2f)
-    private val nacreSettings = AbstractBlock.Settings.of(Material.STONE, MapColor.IRON_GRAY).sounds(BlockSoundGroup.STONE).strength(2f)
-    private val nacreBrickSettings = AbstractBlock.Settings.of(Material.STONE, MapColor.IRON_GRAY).sounds(BlockSoundGroup.STONE).strength(2f)
+    private val wisdomWoodSettings =
+        AbstractBlock.Settings.of(Material.WOOD, MapColor.BROWN).sounds(BlockSoundGroup.WOOD).strength(2f)
+    private val gildedWoodSettings =
+        AbstractBlock.Settings.of(Material.WOOD, MapColor.BROWN).sounds(BlockSoundGroup.WOOD).strength(2f)
+    private val nacreSettings =
+        AbstractBlock.Settings.of(Material.STONE, MapColor.IRON_GRAY).sounds(BlockSoundGroup.STONE).strength(2f)
+    private val nacreBrickSettings =
+        AbstractBlock.Settings.of(Material.STONE, MapColor.IRON_GRAY).sounds(BlockSoundGroup.STONE).strength(2f)
 
-    var craftingPlate: Block = BlockCraftingPlate(AbstractBlock.Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2f).solidBlock(BlocksMixin::never).nonOpaque())
+    var craftingPlate: Block = BlockCraftingPlate(
+        AbstractBlock.Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2f)
+            .solidBlock(BlocksMixin::never).nonOpaque()
+    )
     var craftingPlateEntity: BlockEntityType<BlockCraftingPlateEntity>? = null
-    var magiciansWorktable: Block = BlockWorktable(AbstractBlock.Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2f).solidBlock(BlocksMixin::never).nonOpaque())
-    var manaBattery: Block = BlockManaBattery(AbstractBlock.Settings.of(Material.GLASS).sounds(BlockSoundGroup.AMETHYST_BLOCK).strength(3f).solidBlock(BlocksMixin::never).luminance { state: BlockState? -> 15 }.nonOpaque())
+    var magiciansWorktable: Block = BlockWorktable(
+        AbstractBlock.Settings.of(Material.WOOD).sounds(BlockSoundGroup.WOOD).strength(2f)
+            .solidBlock(BlocksMixin::never).nonOpaque()
+    )
+    var manaBattery: Block = BlockManaBattery(
+        AbstractBlock.Settings.of(Material.GLASS).sounds(BlockSoundGroup.AMETHYST_BLOCK).strength(3f)
+            .solidBlock(BlocksMixin::never).luminance { state: BlockState? -> 15 }.nonOpaque()
+    )
     var manaBatteryEntity: BlockEntityType<BlockManaBatteryEntity>? = null
 
-    var wisdomLeaves: Block = LeavesBlock(AbstractBlock.Settings.of(Material.LEAVES).strength(0.2f).ticksRandomly().sounds(BlockSoundGroup.GRASS).nonOpaque().allowsSpawning(BlocksMixin::canSpawnOnLeaves).suffocates(BlocksMixin::never).blockVision(BlocksMixin::never))
+    var wisdomLeaves: Block = LeavesBlock(
+        AbstractBlock.Settings.of(Material.LEAVES).strength(0.2f).ticksRandomly().sounds(BlockSoundGroup.GRASS)
+            .nonOpaque().allowsSpawning(BlocksMixin::canSpawnOnLeaves).suffocates(BlocksMixin::never)
+            .blockVision(BlocksMixin::never)
+    )
     var wisdomLog: Block = PillarBlock(wisdomWoodSettings)
-    var wisdomWood = Block(wisdomWoodSettings)
+    var wisdomWood: Block = PillarBlock(wisdomWoodSettings)
     var wisdomStrippedLog: Block = PillarBlock(wisdomWoodSettings)
-    var wisdomStrippedWood = Block(wisdomWoodSettings)
-    var wisdomPlanks = Block(wisdomWoodSettings)
+    var wisdomStrippedWood: Block = PillarBlock(wisdomWoodSettings)
+    var wisdomPlanks: Block = Block(wisdomWoodSettings)
     var wisdomDoor: Block = Invokers.DoorBlock(wisdomWoodSettings.nonOpaque())
     var wisdomSlab: Block = SlabBlock(wisdomWoodSettings)
     var wisdomStairs: Block = Invokers.StairsBlock(wisdomPlanks.defaultState, wisdomWoodSettings)
     var wisdomFence: Block = FenceBlock(wisdomWoodSettings)
     var wisdomFenceGate: Block = FenceGateBlock(wisdomWoodSettings)
 
-    var wisdomSapling: Block = BlockWisdomSapling(WisdomSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.OAK_SAPLING).nonOpaque())
+    var wisdomSapling: Block =
+        BlockWisdomSapling(WisdomSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.OAK_SAPLING).nonOpaque())
 
     var gildedPlanks: Block = Block(gildedWoodSettings)
     var gildedDoor: Block = Invokers.DoorBlock(gildedWoodSettings)
@@ -99,8 +119,13 @@ object ModBlocks {
         register(wisdomFenceGate, "wisdom_gate")
         register(wisdomSapling, "wisdom_sapling")
 
-        ColorProviderRegistry.BLOCK.register({_, world, pos, _ -> if (world != null && pos != null) BiomeColors.getFoliageColor(world, pos) else FoliageColors.getDefaultColor() }, wisdomLeaves)
-        ColorProviderRegistry.ITEM.register({_, _ -> FoliageColors.getDefaultColor() }, wisdomLeaves)
+        ColorProviderRegistry.BLOCK.register({ _, world, pos, _ ->
+            if (world != null && pos != null) BiomeColors.getFoliageColor(
+                world,
+                pos
+            ) else FoliageColors.getDefaultColor()
+        }, wisdomLeaves)
+        ColorProviderRegistry.ITEM.register({ _, _ -> FoliageColors.getDefaultColor() }, wisdomLeaves)
 
         // Gilded
         register(gildedPlanks, "gilded_wisdom_planks")
@@ -127,8 +152,16 @@ object ModBlocks {
         ///////////////////////////////
         // Fluids
         ///////////////////////////////
-        liquidMana = Registry.register(Registry.BLOCK, getId("mana"), BlockMana(ModFluids.STILL_MANA, FabricBlockSettings.copy(Blocks.WATER)))
-        liquidNacre = Registry.register(Registry.BLOCK, getId("nacre"), BlockNacre(ModFluids.STILL_NACRE, FabricBlockSettings.copy(Blocks.WATER)))
+        liquidMana = Registry.register(
+            Registry.BLOCK,
+            getID("mana"),
+            BlockMana(ModFluids.STILL_MANA, FabricBlockSettings.copy(Blocks.WATER))
+        )
+        liquidNacre = Registry.register(
+            Registry.BLOCK,
+            getID("nacre"),
+            BlockNacre(ModFluids.STILL_NACRE, FabricBlockSettings.copy(Blocks.WATER))
+        )
 
         ///////////////////////////////
         // Complex Blocks
@@ -149,24 +182,33 @@ object ModBlocks {
     private fun initBlockEntities() {
         craftingPlateEntity = Registry.register<BlockEntityType<*>, BlockEntityType<BlockCraftingPlateEntity>>(
             Registry.BLOCK_ENTITY_TYPE,
-            getId("crafting_plate"),
-            FabricBlockEntityTypeBuilder.create(FabricBlockEntityTypeBuilder.Factory(::BlockCraftingPlateEntity), craftingPlate).build()
+            getID("crafting_plate"),
+            FabricBlockEntityTypeBuilder.create(
+                FabricBlockEntityTypeBuilder.Factory(::BlockCraftingPlateEntity),
+                craftingPlate
+            ).build()
         )
         manaBatteryEntity = Registry.register<BlockEntityType<*>, BlockEntityType<BlockManaBatteryEntity>>(
             Registry.BLOCK_ENTITY_TYPE,
-            getId("mana_battery"),
-            FabricBlockEntityTypeBuilder.create(FabricBlockEntityTypeBuilder.Factory(::BlockManaBatteryEntity), manaBattery).build()
+            getID("mana_battery"),
+            FabricBlockEntityTypeBuilder.create(
+                FabricBlockEntityTypeBuilder.Factory(::BlockManaBatteryEntity),
+                manaBattery
+            ).build()
         )
     }
 
     private fun register(block: Block, path: String, blockItem: Boolean = true) {
-        val id: Identifier = getId(path)
+        val id: Identifier = getID(path)
         Registry.register(Registry.BLOCK, id, block)
         if (blockItem) Registry.register(Registry.ITEM, id, BlockItem(block, Item.Settings().group(ModItems.wizardry)))
     }
 
     @Environment(EnvType.CLIENT)
-    public fun initClient() {
+    fun initClient() {
         BlockRenderLayerMap.INSTANCE.putBlock(wisdomSapling, RenderLayer.getCutout())
+
+        BlockEntityRendererRegistry.register(manaBatteryEntity, ::RenderManaBattery)
+
     }
 }
