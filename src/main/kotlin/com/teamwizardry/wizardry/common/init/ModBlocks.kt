@@ -209,6 +209,5 @@ object ModBlocks {
         BlockRenderLayerMap.INSTANCE.putBlock(wisdomSapling, RenderLayer.getCutout())
 
         BlockEntityRendererRegistry.register(manaBatteryEntity, ::RenderManaBattery)
-
     }
 }

@@ -13,7 +13,9 @@ import net.minecraft.client.render.model.BakedModel
 import net.minecraft.client.render.model.BakedModelManager
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.util.Identifier
-
+import net.minecraft.util.math.Direction
+import net.minecraft.util.math.Quaternion
+import net.minecraft.util.math.Vec3f
 
 class RenderManaBattery(ctx: BlockEntityRendererFactory.Context) : BlockEntityRenderer<BlockManaBatteryEntity> {
 
@@ -25,32 +27,37 @@ class RenderManaBattery(ctx: BlockEntityRendererFactory.Context) : BlockEntityRe
         return mm[location] ?: missing
     }
 
-    override fun render(
-        entity: BlockManaBatteryEntity,
-        tickDelta: Float,
-        ms: MatrixStack,
-        buffers: VertexConsumerProvider,
-        light: Int,
-        overlay: Int
-    ) {
+    override fun render(entity: BlockManaBatteryEntity, tickDelta: Float, ms: MatrixStack, buffers: VertexConsumerProvider, light: Int, overlay: Int) {
+
+        if (entity.world == null) return
+
+        val buffer: VertexConsumer = buffers.getBuffer(RenderLayer.getTranslucentNoCrumbling())
+        val renderer = MinecraftClient.getInstance().blockRenderManager.modelRenderer
+        val axis = Direction.UP.unitVector
+
+        val time = entity.world!!.time + tickDelta
+
+        val manaCrystal: BakedModel = getModel("block/mana_crystal")
+        val innerRing: BakedModel = getModel("block/mana_crystal_ring")
+        val outerRing: BakedModel = getModel("block/mana_crystal_ring_outer")
+
         ms.push()
 
         ms.translate(0.0, 0.5, 0.0)
 
-        val buffer: VertexConsumer = buffers.getBuffer(RenderLayer.getTranslucentNoCrumbling())
-        val bakedModel: BakedModel = getModel("block/mana_crystal")
-        MinecraftClient.getInstance().blockRenderManager.modelRenderer.render(
-            ms.peek(),
-            buffer,
-            entity.cachedState,
-            bakedModel,
-            0.3F,
-            0.3F,
-            0.3F,
-            light,
-            overlay
-        )
-        ms.translate(0.0, -0.5, 0.0)
+        renderer.render(ms.peek(), buffer, entity.cachedState, manaCrystal, 1F, 1F, 1F, light, overlay)
+
+        ms.translate(0.5, 0.0, 0.5)
+        ms.multiply(Quaternion(axis, time, true))
+        ms.translate(-0.5, 0.0, -0.5)
+
+        renderer.render(ms.peek(), buffer, entity.cachedState, innerRing, 1f, 1f, 1f, light, overlay)
+
+        ms.translate(0.5, 0.0, 0.5)
+        ms.multiply(Quaternion(axis, -2*time, true))
+        ms.translate(-0.5, 0.0, -0.5)
+
+        renderer.render(ms.peek(), buffer, entity.cachedState, outerRing, 1f, 1f, 1f, light, overlay)
 
         ms.pop()
     }
