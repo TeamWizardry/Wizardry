@@ -207,6 +207,7 @@ object ModBlocks {
     @Environment(EnvType.CLIENT)
     fun initClient() {
         BlockRenderLayerMap.INSTANCE.putBlock(wisdomSapling, RenderLayer.getCutout())
+        BlockRenderLayerMap.INSTANCE.putBlock(manaBattery, RenderLayer.getTranslucentMovingBlock());
 
         BlockEntityRendererRegistry.register(manaBatteryEntity, ::RenderManaBattery)
     }
