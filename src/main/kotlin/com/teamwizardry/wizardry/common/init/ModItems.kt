@@ -1,7 +1,11 @@
 package com.teamwizardry.wizardry.common.init
 
+import com.teamwizardry.wizardry.common.item.ItemPearl
 import com.teamwizardry.wizardry.getID
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
@@ -16,7 +20,7 @@ object ModItems {
     val wizardry: ItemGroup = FabricItemGroupBuilder.build(getID("general")) { ItemStack(staff) }
     val wisdomStick = Item(FabricItemSettings().group(wizardry))
     val staff = Item(FabricItemSettings().group(wizardry).maxCount(1).rarity(Rarity.UNCOMMON))
-    val pearl = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
+    val pearl = ItemPearl(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
     val devilDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
     val skyDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
     val fairyDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
@@ -33,6 +37,11 @@ object ModItems {
                 .build()
         )
     )
+    val book = Item(FabricItemSettings().group(wizardry).maxCount(1).rarity(Rarity.UNCOMMON))
+    val emptyJar = Item(FabricItemSettings().group(wizardry).rarity(Rarity.COMMON))
+    val jamJar = Item(FabricItemSettings().group(wizardry).rarity(Rarity.EPIC))
+    val fairyJar = Item(FabricItemSettings().group(wizardry).rarity(Rarity.EPIC))
+
     lateinit var manaBucket: Item
     lateinit var nacreBucket: Item
 
@@ -45,11 +54,18 @@ object ModItems {
         initItem(fairyDust, "fairy_dust")
         initItem(fairyWings, "fairy_wings")
         initItem(fairyApple, "fairy_apple")
+        initItem(book, "book")
+
         initItem(manaBucket, "mana_bucket")
         initItem(nacreBucket, "nacre_bucket")
     }
 
     private fun initItem(item: Item, path: String) {
         Registry.register(Registry.ITEM, getID(path), item)
+    }
+
+    @Environment(EnvType.CLIENT)
+    fun initClient() {
+        ColorProviderRegistry.ITEM.register({ stack, tintIndex -> pearl.getColor(stack, tintIndex) }, pearl)
     }
 }

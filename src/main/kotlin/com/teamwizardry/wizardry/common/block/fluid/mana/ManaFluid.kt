@@ -3,7 +3,8 @@ package com.teamwizardry.wizardry.common.block.fluid.mana
 import com.teamwizardry.wizardry.common.init.ModBlocks
 import com.teamwizardry.wizardry.common.init.ModFluids
 import com.teamwizardry.wizardry.common.init.ModItems
-import net.minecraft.block.*
+import net.minecraft.block.Block
+import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.fluid.FlowableFluid
 import net.minecraft.fluid.Fluid
@@ -19,9 +20,11 @@ import net.minecraft.world.WorldView
 
 abstract class ManaFluid : FlowableFluid() {
 
-    override fun getFlowing(): Fluid { return ModFluids.FLOWING_MANA!! }
-    override fun getStill(): Fluid { return ModFluids.STILL_MANA!! }
-    override fun getBucketItem(): Item { return ModItems.manaBucket!! }
+    override fun getFlowing(): Fluid { return ModFluids.FLOWING_MANA }
+    override fun getStill(): Fluid { return ModFluids.STILL_MANA }
+    override fun getBucketItem(): Item { return ModItems.manaBucket }
+
+    override fun matchesType(fluid: Fluid): Boolean { return fluid === still || fluid === flowing }
 
     override fun isInfinite(): Boolean { return false }
 
@@ -36,7 +39,7 @@ abstract class ManaFluid : FlowableFluid() {
 
     override fun canBeReplacedWith(state: FluidState, world: BlockView, pos: BlockPos, fluid: Fluid, direction: Direction): Boolean { return false }
 
-    override fun getTickRate(world: WorldView): Int { return 5 }
+    override fun getTickRate(world: WorldView): Int { return 2 }
 
     override fun getBlastResistance(): Float { return 100.0f }
 

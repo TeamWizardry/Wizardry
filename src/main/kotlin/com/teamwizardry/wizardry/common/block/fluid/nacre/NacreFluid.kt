@@ -3,7 +3,8 @@ package com.teamwizardry.wizardry.common.block.fluid.nacre
 import com.teamwizardry.wizardry.common.init.ModBlocks
 import com.teamwizardry.wizardry.common.init.ModFluids
 import com.teamwizardry.wizardry.common.init.ModItems
-import net.minecraft.block.*
+import net.minecraft.block.Block
+import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.fluid.FlowableFluid
 import net.minecraft.fluid.Fluid
@@ -18,9 +19,11 @@ import net.minecraft.world.WorldAccess
 import net.minecraft.world.WorldView
 
 abstract class NacreFluid : FlowableFluid() {
-    override fun getFlowing(): Fluid { return ModFluids.FLOWING_NACRE!! }
-    override fun getStill(): Fluid { return ModFluids.STILL_NACRE!! }
-    override fun getBucketItem(): Item { return ModItems.nacreBucket!! }
+    override fun getFlowing(): Fluid { return ModFluids.FLOWING_NACRE }
+    override fun getStill(): Fluid { return ModFluids.STILL_NACRE }
+    override fun getBucketItem(): Item { return ModItems.nacreBucket }
+
+    override fun matchesType(fluid: Fluid): Boolean { return fluid === still || fluid === flowing }
 
     override fun isInfinite(): Boolean { return false }
 
@@ -35,7 +38,7 @@ abstract class NacreFluid : FlowableFluid() {
 
     override fun canBeReplacedWith(state: FluidState, world: BlockView, pos: BlockPos, fluid: Fluid, direction: Direction): Boolean { return false }
 
-    override fun getTickRate(world: WorldView): Int { return 200 }
+    override fun getTickRate(world: WorldView): Int { return 40 }
 
     override fun getBlastResistance(): Float { return 100.0f }
 

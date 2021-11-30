@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry
 
 import com.teamwizardry.wizardry.common.init.ModBlocks
 import com.teamwizardry.wizardry.common.init.ModFluids
+import com.teamwizardry.wizardry.common.init.ModItems
 import com.teamwizardry.wizardry.proxy.ClientProxy
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry
@@ -14,6 +15,7 @@ object WizardryClient : ClientModInitializer {
         PROXY = ClientProxy()
         ModFluids.initClient()
         ModBlocks.initClient()
+        ModItems.initClient()
 
         ModelLoadingRegistry.INSTANCE.registerModelProvider(::registerModels);
     }
