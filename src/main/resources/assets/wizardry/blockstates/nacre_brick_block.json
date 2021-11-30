@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "wizardry:nacre_brick_block"
+      "model": "wizardry:block/nacre_brick_block"
     }
   }
 }

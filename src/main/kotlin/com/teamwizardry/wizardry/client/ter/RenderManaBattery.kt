@@ -36,7 +36,7 @@ class RenderManaBattery(ctx: BlockEntityRendererFactory.Context) : BlockEntityRe
 
         val time = entity.world!!.time + tickDelta
 
-        val bobbing = kotlin.math.sin((entity.world!!.time + tickDelta) / 30.0) / 10.0
+        val bobbing = kotlin.math.sin(time / 30.0) / 10.0
 
         val manaCrystal: BakedModel = getModel("block/mana_crystal")
         val innerRing: BakedModel = getModel("block/mana_crystal_ring")

@@ -212,8 +212,10 @@ object ModBlocks {
     @Environment(EnvType.CLIENT)
     fun initClient() {
         BlockRenderLayerMap.INSTANCE.putBlock(wisdomSapling, RenderLayer.getCutout())
-        BlockRenderLayerMap.INSTANCE.putBlock(wisdomTrapdoor, RenderLayer.getTranslucent())
-        BlockRenderLayerMap.INSTANCE.putBlock(gildedTrapdoor, RenderLayer.getTranslucent())
+        BlockRenderLayerMap.INSTANCE.putBlock(wisdomTrapdoor, RenderLayer.getCutout())
+        BlockRenderLayerMap.INSTANCE.putBlock(gildedTrapdoor, RenderLayer.getCutout())
+        BlockRenderLayerMap.INSTANCE.putBlock(gildedDoor, RenderLayer.getCutout())
+        BlockRenderLayerMap.INSTANCE.putBlock(wisdomDoor, RenderLayer.getCutout())
         BlockRenderLayerMap.INSTANCE.putBlock(manaBattery, RenderLayer.getTranslucentMovingBlock());
 
         BlockEntityRendererRegistry.register(manaBatteryEntity, ::RenderManaBattery)
