@@ -1,0 +1,6 @@
+{
+  "parent": "block/wall_inventory",
+  "textures": {
+    "wall": "wizardry:block/nacre_brick_block"
+  }
+}

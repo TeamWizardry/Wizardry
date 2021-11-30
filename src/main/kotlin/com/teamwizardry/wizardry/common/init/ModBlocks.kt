@@ -65,12 +65,14 @@ object ModBlocks {
     var wisdomWood: Block = PillarBlock(wisdomWoodSettings)
     var wisdomStrippedLog: Block = PillarBlock(wisdomWoodSettings)
     var wisdomStrippedWood: Block = PillarBlock(wisdomWoodSettings)
+
     var wisdomPlanks: Block = Block(wisdomWoodSettings)
     var wisdomDoor: Block = Invokers.DoorBlock(wisdomWoodSettings.nonOpaque())
     var wisdomSlab: Block = SlabBlock(wisdomWoodSettings)
     var wisdomStairs: Block = Invokers.StairsBlock(wisdomPlanks.defaultState, wisdomWoodSettings)
     var wisdomFence: Block = FenceBlock(wisdomWoodSettings)
     var wisdomFenceGate: Block = FenceGateBlock(wisdomWoodSettings)
+    var wisdomTrapdoor: Block = Invokers.TrapdoorBlock(FabricBlockSettings.copyOf(wisdomWoodSettings).nonOpaque())
 
     var wisdomSapling: Block =
         BlockWisdomSapling(WisdomSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.OAK_SAPLING).nonOpaque())
@@ -81,16 +83,17 @@ object ModBlocks {
     var gildedStairs: Block = Invokers.StairsBlock(gildedPlanks.defaultState, gildedWoodSettings)
     var gildedFence: Block = FenceBlock(gildedWoodSettings)
     var gildedFenceGate: Block = FenceGateBlock(gildedWoodSettings)
+    var gildedTrapdoor: Block = Invokers.TrapdoorBlock(FabricBlockSettings.copyOf(gildedWoodSettings).nonOpaque())
 
     var nacreBlock: Block = Block(nacreSettings)
     var nacreSlab: Block = SlabBlock(nacreSettings)
     var nacreStairs: Block = Invokers.StairsBlock(nacreBlock.defaultState, nacreSettings)
     var nacreWall: Block = WallBlock(nacreSettings)
 
-    var nacreBrickBlock: Block = Block(nacreSettings)
-    var nacreBrickSlab: Block = SlabBlock(nacreSettings)
-    var nacreBrickStairs: Block = Invokers.StairsBlock(nacreBlock.defaultState, nacreSettings)
-    var nacreBrickWall: Block = WallBlock(nacreSettings)
+    var nacreBrickBlock: Block = Block(nacreBrickSettings)
+    var nacreBrickSlab: Block = SlabBlock(nacreBrickSettings)
+    var nacreBrickStairs: Block = Invokers.StairsBlock(nacreBlock.defaultState, nacreBrickSettings)
+    var nacreBrickWall: Block = WallBlock(nacreBrickSettings)
 
     // Fluids
     lateinit var liquidMana: FluidBlock
@@ -117,6 +120,7 @@ object ModBlocks {
         register(wisdomStairs, "wisdom_stairs")
         register(wisdomFence, "wisdom_fence")
         register(wisdomFenceGate, "wisdom_gate")
+        register(wisdomTrapdoor, "wisdom_trapdoor")
         register(wisdomSapling, "wisdom_sapling")
 
         ColorProviderRegistry.BLOCK.register({ _, world, pos, _ ->
@@ -134,6 +138,7 @@ object ModBlocks {
         register(gildedStairs, "gilded_wisdom_stairs")
         register(gildedFence, "gilded_wisdom_fence")
         register(gildedFenceGate, "gilded_wisdom_gate")
+        register(gildedTrapdoor, "gilded_wisdom_trapdoor")
 
         ////////////////
         // Nacre
@@ -207,6 +212,8 @@ object ModBlocks {
     @Environment(EnvType.CLIENT)
     fun initClient() {
         BlockRenderLayerMap.INSTANCE.putBlock(wisdomSapling, RenderLayer.getCutout())
+        BlockRenderLayerMap.INSTANCE.putBlock(wisdomTrapdoor, RenderLayer.getTranslucent())
+        BlockRenderLayerMap.INSTANCE.putBlock(gildedTrapdoor, RenderLayer.getTranslucent())
         BlockRenderLayerMap.INSTANCE.putBlock(manaBattery, RenderLayer.getTranslucentMovingBlock());
 
         BlockEntityRendererRegistry.register(manaBatteryEntity, ::RenderManaBattery)

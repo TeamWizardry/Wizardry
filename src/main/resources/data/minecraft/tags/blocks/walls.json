@@ -1,6 +1,7 @@
 {
     "replace": false,
     "values": [
+        "wizardry:nacre_wall",
         "wizardry:nacre_brick_wall"
     ]
 }

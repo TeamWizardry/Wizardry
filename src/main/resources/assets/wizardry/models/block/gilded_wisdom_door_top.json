@@ -1,0 +1,7 @@
+{
+  "parent": "block/door_top",
+  "textures": {
+    "bottom": "wizardry:block/gilded_wisdom_door_bottom",
+    "top": "wizardry:block/gilded_wisdom_door_top"
+  }
+}

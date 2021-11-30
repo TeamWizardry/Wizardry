@@ -1,15 +1,15 @@
 {
   "variants": {
     "axis=x": {
-      "model": "wizardry:block/wisdom_log_bark",
+      "model": "wizardry:block/wisdom_wood",
       "x": 90,
       "y": 90
     },
     "axis=y": {
-      "model": "wizardry:block/wisdom_log_bark"
+      "model": "wizardry:block/wisdom_wood"
     },
     "axis=z": {
-      "model": "wizardry:block/wisdom_log_bark",
+      "model": "wizardry:block/wisdom_wood",
       "x": 90
     }
   }
