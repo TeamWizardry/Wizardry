@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.proxy
 
-import com.teamwizardry.wizardry.client.particle.GlitterBox
+import com.teamwizardry.wizardry.common.PhysicsGlitterBox
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Hand
 
@@ -14,7 +14,9 @@ class ServerProxy : IProxy {
         //NOOP
     }
 
-    override fun spawnParticle(box: GlitterBox) {}
+    override fun spawnPhysicsGlitter(box: PhysicsGlitterBox) {
+
+    }
 
     //    @Override
     //    public void spawnKeyedParticle(KeyFramedGlitterBox box) {

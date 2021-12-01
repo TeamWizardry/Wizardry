@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry
 
+import com.teamwizardry.librarianlib.glitter.ParticleSystemManager
+import com.teamwizardry.wizardry.client.particle.ModParticles
 import com.teamwizardry.wizardry.common.init.ModBlocks
 import com.teamwizardry.wizardry.common.init.ModFluids
 import com.teamwizardry.wizardry.common.init.ModItems
@@ -17,6 +19,7 @@ object WizardryClient : ClientModInitializer {
         ModBlocks.initClient()
         ModItems.initClient()
 
+        ParticleSystemManager.add(ModParticles.physicsGlitter)
         ModelLoadingRegistry.INSTANCE.registerModelProvider(::registerModels);
     }
 

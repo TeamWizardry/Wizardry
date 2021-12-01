@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.spell.shape
 
 import com.teamwizardry.librarianlib.etcetera.Raycaster
-import com.teamwizardry.wizardry.PROXY
-import com.teamwizardry.wizardry.client.lib.LibTheme
-import com.teamwizardry.wizardry.client.particle.GlitterBox
 import com.teamwizardry.wizardry.common.init.ModSounds
 import com.teamwizardry.wizardry.common.init.ModSounds.playSound
 import com.teamwizardry.wizardry.common.spell.component.Attributes.RANGE
@@ -11,7 +8,6 @@ import com.teamwizardry.wizardry.common.spell.component.Instance
 import com.teamwizardry.wizardry.common.spell.component.Interactor
 import com.teamwizardry.wizardry.common.spell.component.PatternShape
 import com.teamwizardry.wizardry.common.utils.ColorUtils
-import com.teamwizardry.wizardry.common.utils.RandUtil
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.entity.Entity
@@ -55,23 +51,23 @@ class ShapeRay : PatternShape() {
         val colors: Array<Color>? = ColorUtils.mergeColorSets(instance.effectColors)
         val v1: Vec3d = instance.caster.clientPos
         val v2: Vec3d = target.pos
-        for (i in 0..29) {
-            val a = i / 30.0
-            PROXY.spawnParticle(
-                    GlitterBox.GlitterBoxFactory()
-                    .setOrigin(
-                        v1.getX() * a + v2.getX() * (1 - a) + RandUtil.nextDouble(-0.035, 0.035),
-                        v1.getY() * a + v2.getY() * (1 - a) + RandUtil.nextDouble(-0.035, 0.035),
-                        v1.getZ() * a + v2.getZ() * (1 - a) + RandUtil.nextDouble(-0.035, 0.035)
-                    )
-                    .setGravity(RandUtil.nextFloat(-0.001f, -0.003f))
-                    .setInitialColor(colors?.get(0) ?: LibTheme.accentColor)
-                    .setGoalColor(colors?.get(1) ?: LibTheme.hintColor)
-                    .setInitialSize(RandUtil.nextFloat(0.05f, 0.2f))
-                    .setGoalSize(0f)
-                    .createGlitterBox(RandUtil.nextInt(5, 10))
-            )
-        }
+//        for (i in 0..29) {
+//            val a = i / 30.0
+//            PROXY.spawnParticle(
+//                    GlitterBox.GlitterBoxFactory()
+//                    .setOrigin(
+//                        v1.getX() * a + v2.getX() * (1 - a) + RandUtil.nextDouble(-0.035, 0.035),
+//                        v1.getY() * a + v2.getY() * (1 - a) + RandUtil.nextDouble(-0.035, 0.035),
+//                        v1.getZ() * a + v2.getZ() * (1 - a) + RandUtil.nextDouble(-0.035, 0.035)
+//                    )
+//                    .setGravity(RandUtil.nextFloat(-0.001f, -0.003f))
+//                    .setInitialColor(colors?.get(0) ?: LibTheme.accentColor)
+//                    .setGoalColor(colors?.get(1) ?: LibTheme.hintColor)
+//                    .setInitialSize(RandUtil.nextFloat(0.05f, 0.2f))
+//                    .setGoalSize(0f)
+//                    .createGlitterBox(RandUtil.nextInt(5, 10))
+//            )
+//        }
     }
 
     companion object {

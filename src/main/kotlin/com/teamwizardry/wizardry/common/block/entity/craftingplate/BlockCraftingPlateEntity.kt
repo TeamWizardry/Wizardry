@@ -1,8 +1,12 @@
 package com.teamwizardry.wizardry.common.block.entity.craftingplate
 
+import com.teamwizardry.librarianlib.math.Easing
+import com.teamwizardry.wizardry.PROXY
+import com.teamwizardry.wizardry.client.lib.LibTheme
+import com.teamwizardry.wizardry.common.PhysicsGlitterBox
 import com.teamwizardry.wizardry.common.init.ModBlocks
-import net.fabricmc.api.EnvType
-import net.fabricmc.api.Environment
+import com.teamwizardry.wizardry.common.utils.MathUtils
+import com.teamwizardry.wizardry.common.utils.RandUtil
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.Hopper
@@ -25,7 +29,8 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.math.min
 
-open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockEntity(ModBlocks.craftingPlateEntity, pos, state), Hopper {
+open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
+    BlockEntity(ModBlocks.craftingPlateEntity, pos, state), Hopper {
     var transferCooldown = -1
         protected set
     var inventory: DefaultedList<ItemStack> = DefaultedList.ofSize(INV_SIZE, ItemStack.EMPTY)
@@ -102,15 +107,15 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockE
 
     private fun getCaptureItems(): List<ItemEntity> {
         return inputAreaShape.boundingBoxes
-                .stream()
-                .flatMap {alignedBB: Box ->
-                    this.world?.getEntitiesByClass(
-                            ItemEntity::class.java,
-                            alignedBB.offset(hopperX - 0.5, hopperY - 0.5, hopperZ - 0.5),
-                            EntityPredicates.VALID_ENTITY
-                    )?.stream() ?: Stream.empty()
-                }
-                .collect(Collectors.toList())
+            .stream()
+            .flatMap { alignedBB: Box ->
+                this.world?.getEntitiesByClass(
+                    ItemEntity::class.java,
+                    alignedBB.offset(hopperX - 0.5, hopperY - 0.5, hopperZ - 0.5),
+                    EntityPredicates.VALID_ENTITY
+                )?.stream() ?: Stream.empty()
+            }
+            .collect(Collectors.toList())
     }
 
     private fun captureItem(entity: ItemEntity): Boolean {
@@ -134,16 +139,20 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockE
             )
         )
         if (VoxelShapes.matchesAnywhere(
-                        shape,
-                        this.inputAreaShape
-                ) {a: Boolean, b: Boolean -> a && b}
+                shape,
+                this.inputAreaShape
+            ) { a: Boolean, b: Boolean -> a && b }
         ) updateHopper { captureItem(collidedEntity) }
     }
     //////////////////////////////////////////////////////////////////////////
 
-    fun isOnTransferCooldown(): Boolean { return transferCooldown > 0 }
+    fun isOnTransferCooldown(): Boolean {
+        return transferCooldown > 0
+    }
 
-    fun mayTransfer(): Boolean { return transferCooldown > 8 }
+    fun mayTransfer(): Boolean {
+        return transferCooldown > 8
+    }
 
     private fun inventoryChanged() {
         this.markDirty()
@@ -155,11 +164,11 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockE
     }
 
     override fun isEmpty(): Boolean {
-        return inventory?.stream()?.allMatch {obj: ItemStack -> obj.isEmpty} ?: true
+        return inventory.stream().allMatch { obj: ItemStack -> obj.isEmpty } ?: true
     }
 
     override fun getStack(index: Int): ItemStack {
-        return inventory?.get(index) ?: ItemStack.EMPTY
+        return inventory.get(index) ?: ItemStack.EMPTY
     }
 
     override fun removeStack(index: Int, amount: Int): ItemStack {
@@ -173,33 +182,44 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockE
     }
 
     override fun setStack(index: Int, stack: ItemStack) {
-        inventory?.set(index, stack)
-        if (stack.count > BlockCraftingPlateEntity.maxCountPerStack) stack.count = BlockCraftingPlateEntity.maxCountPerStack
+        inventory.set(index, stack)
+        if (stack.count > BlockCraftingPlateEntity.maxCountPerStack) stack.count =
+            BlockCraftingPlateEntity.maxCountPerStack
         this.markDirty()
     }
 
     override fun canPlayerUse(player: PlayerEntity): Boolean {
-        return if (this.world?.getBlockEntity(this.getPos()) !== this) false else player.squaredDistanceTo(Vec3d.ofCenter(this.getPos())) <= 64
+        return if (this.world?.getBlockEntity(this.getPos()) !== this) false else player.squaredDistanceTo(
+            Vec3d.ofCenter(
+                this.getPos()
+            )
+        ) <= 64
     }
 
     override fun clear() {
-        inventory?.clear()
+        inventory.clear()
     }
 
     /**
      * Gets the world X position for this hopper entity.
      */
-    override fun getHopperX(): Double { return this.getPos().x + 0.5 }
+    override fun getHopperX(): Double {
+        return this.getPos().x + 0.5
+    }
 
     /**
      * Gets the world Y position for this hopper entity.
      */
-    override fun getHopperY(): Double { return this.getPos().y.toDouble() + 0.5 }
+    override fun getHopperY(): Double {
+        return this.getPos().y.toDouble() + 0.5
+    }
 
     /**
      * Gets the world Z position for this hopper entity.
      */
-    override fun getHopperZ(): Double { return this.getPos().z.toDouble() + 0.5 }
+    override fun getHopperZ(): Double {
+        return this.getPos().z.toDouble() + 0.5
+    }
 
     companion object {
         private const val INV_SIZE = 256
@@ -210,31 +230,33 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockE
             return ItemStack.areNbtEqual(left, right)
         }
 
-        @Environment(EnvType.CLIENT)
         fun clientTick(world: World, entity: BlockCraftingPlateEntity) {
-//        if (world == null) return;
-//        if (world.getTime() % 2 != 0) return;
-//        Vec3d target = new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
-//                              RandUtil.nextDouble(0, 0.05),
-//                              RandUtil.nextDouble(-0.01, 0.01));
-//        for (int i = 0; i < 5; i++)
-//        {
-//            Vec2d randDot = MathUtils.genRandomDotInCircle(0.1f);
-//            Vec3d origin = Vec3d.ofCenter(entity.getPos(), 0.7).add(randDot.getX(), RandUtil.nextDouble(0,0.3), randDot.getY());
-            // TODO - re-add glitter
-//            Wizardry.PROXY.spawnParticle(
-//                    new GlitterBox.GlitterBoxFactory()
-//                            .setOrigin(origin)
-//                            .setTarget(target)
-//                            .setDrag(RandUtil.nextFloat(0.03f, 0.05f))
-//                            .setGoalColor(LibTheme.accentColor)
-//                            .setInitialSize(RandUtil.nextFloat(0.1f, 0.2f))
-//                            .setGoalSize(0)
-//                            .createGlitterBox(20));
-//        }
+
+            repeat(3) {
+                val spherePos = MathUtils.genRandomPointInSphere(0.1)
+                val origin = Vec3d.ofCenter(entity.getPos(), 1.0).add(spherePos);
+
+                val target = Vec3d(
+                    RandUtil.nextDouble(-0.01, 0.01),
+                    RandUtil.nextDouble(0.01, 0.05),
+                    RandUtil.nextDouble(-0.01, 0.01)
+                )
+
+                PROXY.spawnPhysicsGlitter(PhysicsGlitterBox.build(40, origin, LibTheme.accentColor) {
+                    velocity = target
+                    gravity = 0.0
+                    damping = RandUtil.nextDouble(0.01, 0.05)
+
+                    startSize = RandUtil.nextDouble(0.1, 0.2)
+                    endSize = 0.0
+                    sizeEasing = Easing.easeOutQuad
+
+                    endAlpha = 0.0
+                    alphaEasing = Easing.easeOutSine
+                })
+            }
         }
 
-//        @Environment(EnvType.SERVER)
         fun serverTick(world: World, entity: BlockCraftingPlateEntity) {
             entity.transferCooldown--
             if (entity.isOnTransferCooldown()) return

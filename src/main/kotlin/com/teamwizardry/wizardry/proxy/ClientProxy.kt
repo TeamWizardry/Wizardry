@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.proxy
 
-import com.teamwizardry.wizardry.client.particle.GlitterBox
+import com.teamwizardry.wizardry.client.particle.ModParticles
+import com.teamwizardry.wizardry.common.PhysicsGlitterBox
 import com.teamwizardry.wizardry.common.init.ModFluids
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.minecraft.client.render.RenderLayer
@@ -32,12 +33,8 @@ class ClientProxy : IProxy {
 		else itemStackOffHandHandler.invoke(Minecraft.getInstance().getItemRenderer(), stack);*/
     }
 
-    override fun spawnParticle(box: GlitterBox) {
-        if (box.physics) {
-//            physicsGlitter.spawn(box);
-        } else {
-//            predeterminedGlitter.spawn(box);
-        }
+    override fun spawnPhysicsGlitter(box: PhysicsGlitterBox) {
+        ModParticles.physicsGlitter.spawn(box)
     }
 
     //    @Override
