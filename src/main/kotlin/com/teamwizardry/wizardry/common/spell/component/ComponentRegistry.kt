@@ -1,17 +1,17 @@
 package com.teamwizardry.wizardry.common.spell.component
 
+import com.teamwizardry.wizardry.Wizardry.Companion.logManager
 import com.teamwizardry.wizardry.configs.ServerConfigs
-import com.teamwizardry.wizardry.makeLogger
 import net.minecraft.item.Item
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import org.apache.logging.log4j.Logger
 
 object ComponentRegistry {
-    private val LOGGER: Logger = makeLogger(ComponentRegistry::class.java)
-    val modules: MutableMap<String, Module> = HashMap()
-    private val modifiers: MutableMap<String, Modifier> = HashMap()
-    private val spellComponents: MutableMap<List<Item>, ISpellComponent> = HashMap()
+    private val LOGGER: Logger = logManager.makeLogger(ComponentRegistry::class.java)
+    lateinit var modules: MutableMap<String, Module> private set
+    lateinit var modifiers: MutableMap<String, Modifier> private set
+    lateinit var spellComponents: MutableMap<List<Item>, ISpellComponent> private set
     var entityTarget: TargetComponent? = null
     var blockTarget: TargetComponent? = null
 
@@ -28,6 +28,14 @@ object ComponentRegistry {
             if (listStartsWith(items, spells))
                 return spellComponents[spells]
         return null
+    }
+
+    fun initialize() {
+        modules = HashMap()
+        modifiers = HashMap()
+        spellComponents = HashMap()
+
+        loadTargets()
     }
 
     private fun listStartsWith(list: List<Item>, other: List<Item?>?): Boolean {
@@ -51,7 +59,7 @@ object ComponentRegistry {
         return true
     }
 
-    fun loadTargets() {
+    private fun loadTargets() {
         if (entityTarget != null) spellComponents.remove(entityTarget?.items)
         if (blockTarget != null) spellComponents.remove(blockTarget?.items)
         entityTarget = TargetComponent("entityTarget", Registry.ITEM[Identifier(ServerConfigs.entityTargetItem)])

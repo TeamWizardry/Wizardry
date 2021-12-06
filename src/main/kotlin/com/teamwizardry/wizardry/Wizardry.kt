@@ -42,6 +42,8 @@ class Wizardry {
             ModBlocks.init()
             ModSounds.init()
             ModPatterns.init()
+
+            ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(ModPatterns.ModuleReloadListener)
         }
     }
 

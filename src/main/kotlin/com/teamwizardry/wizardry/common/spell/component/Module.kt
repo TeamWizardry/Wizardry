@@ -4,13 +4,14 @@ import net.minecraft.item.Item
 import java.util.*
 import java.util.stream.Collectors
 
-open class Module(// Identifying data - must be unique
+open class Module(
+    // Identifying data - must be unique
     open val pattern: Pattern,
     override val name: String,
-    override val items: List<Item>, // Base Costs
+    override val items: List<Item>,
+    // Base Costs
     val baseManaCost: Double,
-    val baseBurnoutCost: Double, // Modifier and Usage Metadata
-    val element: String,
+    // Modifier and Usage Metadata
     private val modifierCosts: Map<String, Double>, //    public String toString() { return pattern.getRegistryName() + ":" + name + " = [" + items + ", " + element + "]"; }
     private val attributeValues: Map<String, List<Double>>
 ) : ISpellComponent {

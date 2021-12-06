@@ -35,6 +35,8 @@ dependencies {
     ].each {
         modImplementation(it)
     }
+
+    implementation 'org.snakeyaml:snakeyaml-engine:2.3'
 }
 
 processResources {
