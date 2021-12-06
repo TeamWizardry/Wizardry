@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.init
 
+import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.item.ItemPearl
-import com.teamwizardry.wizardry.getID
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
@@ -17,7 +17,7 @@ import net.minecraft.util.Rarity
 import net.minecraft.util.registry.Registry
 
 object ModItems {
-    val wizardry: ItemGroup = FabricItemGroupBuilder.build(getID("general")) { ItemStack(staff) }
+    val wizardry: ItemGroup = FabricItemGroupBuilder.build(Wizardry.getID("general")) { ItemStack(staff) }
     val wisdomStick = Item(FabricItemSettings().group(wizardry))
     val staff = Item(FabricItemSettings().group(wizardry).maxCount(1).rarity(Rarity.UNCOMMON))
     val pearl = ItemPearl(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
@@ -61,7 +61,7 @@ object ModItems {
     }
 
     private fun initItem(item: Item, path: String) {
-        Registry.register(Registry.ITEM, getID(path), item)
+        Registry.register(Registry.ITEM, Wizardry.getID(path), item)
     }
 
     @Environment(EnvType.CLIENT)

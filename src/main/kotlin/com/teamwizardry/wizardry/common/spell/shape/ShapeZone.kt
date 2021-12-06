@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.shape
 
 import com.teamwizardry.librarianlib.math.Vec2d
-import com.teamwizardry.wizardry.LOGGER
+import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.init.ModSounds
 import com.teamwizardry.wizardry.common.spell.component.Attributes.INTENSITY
 import com.teamwizardry.wizardry.common.spell.component.Attributes.RANGE
@@ -24,6 +24,10 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 class ShapeZone : PatternShape() {
+    companion object {
+        private val LOGGER = Wizardry.logManager.makeLogger(ShapeZone::class.java)
+    }
+
     override fun run(world: World, instance: Instance, target: Interactor) {
         val center: Vec3d = target.pos
         val range = instance.getAttributeValue(RANGE)
@@ -38,7 +42,7 @@ class ShapeZone : PatternShape() {
         val entities: MutableList<LivingEntity> = world.getEntitiesByClass(
             LivingEntity::class.java,
             region
-        ) {entity: LivingEntity -> entity.getPos().squaredDistanceTo(center) <= rangeSq}
+        ) {entity: LivingEntity -> entity.pos.squaredDistanceTo(center) <= rangeSq}
         val numEntityProcs = ceil(entities.size * procFraction).toInt()
         LOGGER.debug(
             """

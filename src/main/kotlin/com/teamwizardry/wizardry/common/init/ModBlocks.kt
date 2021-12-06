@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.init
 
+import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.client.ter.RenderManaBattery
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling.WisdomSaplingGenerator
@@ -11,7 +12,6 @@ import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBatter
 import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBatteryEntity
 import com.teamwizardry.wizardry.common.block.fluid.mana.BlockMana
 import com.teamwizardry.wizardry.common.block.fluid.nacre.BlockNacre
-import com.teamwizardry.wizardry.getID
 import com.teamwizardry.wizardry.mixins.BlocksMixin
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -159,12 +159,12 @@ object ModBlocks {
         ///////////////////////////////
         liquidMana = Registry.register(
             Registry.BLOCK,
-            getID("mana"),
+            Wizardry.getID("mana"),
             BlockMana(ModFluids.STILL_MANA, FabricBlockSettings.copy(Blocks.WATER))
         )
         liquidNacre = Registry.register(
             Registry.BLOCK,
-            getID("nacre"),
+            Wizardry.getID("nacre"),
             BlockNacre(ModFluids.STILL_NACRE, FabricBlockSettings.copy(Blocks.WATER))
         )
 
@@ -187,7 +187,7 @@ object ModBlocks {
     private fun initBlockEntities() {
         craftingPlateEntity = Registry.register<BlockEntityType<*>, BlockEntityType<BlockCraftingPlateEntity>>(
             Registry.BLOCK_ENTITY_TYPE,
-            getID("crafting_plate"),
+            Wizardry.getID("crafting_plate"),
             FabricBlockEntityTypeBuilder.create(
                 FabricBlockEntityTypeBuilder.Factory(::BlockCraftingPlateEntity),
                 craftingPlate
@@ -195,7 +195,7 @@ object ModBlocks {
         )
         manaBatteryEntity = Registry.register<BlockEntityType<*>, BlockEntityType<BlockManaBatteryEntity>>(
             Registry.BLOCK_ENTITY_TYPE,
-            getID("mana_battery"),
+            Wizardry.getID("mana_battery"),
             FabricBlockEntityTypeBuilder.create(
                 FabricBlockEntityTypeBuilder.Factory(::BlockManaBatteryEntity),
                 manaBattery
@@ -204,7 +204,7 @@ object ModBlocks {
     }
 
     private fun register(block: Block, path: String, blockItem: Boolean = true) {
-        val id: Identifier = getID(path)
+        val id: Identifier = Wizardry.getID(path)
         Registry.register(Registry.BLOCK, id, block)
         if (blockItem) Registry.register(Registry.ITEM, id, BlockItem(block, Item.Settings().group(ModItems.wizardry)))
     }

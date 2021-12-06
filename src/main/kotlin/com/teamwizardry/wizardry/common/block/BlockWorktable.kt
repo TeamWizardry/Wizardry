@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.block
 
-import com.teamwizardry.wizardry.PROXY
+import com.teamwizardry.wizardry.Wizardry
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.piston.PistonBehavior
@@ -96,7 +96,7 @@ class BlockWorktable(settings: Settings?) : HorizontalFacingBlock(settings), Wat
 
     @Suppress("DEPRECATION")
     override fun onUse(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity, hand: Hand, hit: BlockHitResult): ActionResult {
-        if (world.isClient) PROXY.openWorktableGui()
+        if (world.isClient) Wizardry.PROXY.openWorktableGui()
         return super.onUse(state, world, pos, player, hand, hit)
     }
 

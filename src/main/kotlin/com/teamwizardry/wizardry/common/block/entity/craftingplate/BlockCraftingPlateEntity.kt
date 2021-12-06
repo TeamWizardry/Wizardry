@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.block.entity.craftingplate
 
 import com.teamwizardry.librarianlib.math.Easing
-import com.teamwizardry.wizardry.PROXY
+import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.client.lib.LibTheme
 import com.teamwizardry.wizardry.common.PhysicsGlitterBox
 import com.teamwizardry.wizardry.common.init.ModBlocks
@@ -242,7 +242,7 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
                     RandUtil.nextDouble(-0.01, 0.01)
                 )
 
-                PROXY.spawnPhysicsGlitter(PhysicsGlitterBox.build(40, origin, LibTheme.accentColor) {
+                Wizardry.PROXY.spawnPhysicsGlitter(PhysicsGlitterBox.build(40, origin, LibTheme.accentColor) {
                     velocity = target
                     gravity = 0.0
                     damping = RandUtil.nextDouble(0.01, 0.05)

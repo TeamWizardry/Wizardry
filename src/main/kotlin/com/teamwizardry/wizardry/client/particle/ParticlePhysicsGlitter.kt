@@ -5,10 +5,10 @@ import com.teamwizardry.librarianlib.glitter.modules.BasicPhysicsUpdateModule
 import com.teamwizardry.librarianlib.glitter.modules.DepthSortModule
 import com.teamwizardry.librarianlib.glitter.modules.SpriteRenderModule
 import com.teamwizardry.librarianlib.glitter.modules.SpriteRenderOptions
+import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.PhysicsGlitterBox
-import com.teamwizardry.wizardry.getID
 
-class ParticlePhysicsGlitter : ParticleSystem(getID("physics_glitter")) {
+class ParticlePhysicsGlitter : ParticleSystem(Wizardry.getID("physics_glitter")) {
 
     override fun configure() {
         val position = bind(3)
@@ -51,7 +51,7 @@ class ParticlePhysicsGlitter : ParticleSystem(getID("physics_glitter")) {
 
         renderModules.add(
             SpriteRenderModule.build(
-                SpriteRenderOptions.build(getID("textures/particles/sparkle_blurred.png")).additiveBlending().build(),
+                SpriteRenderOptions.build(Wizardry.getID("textures/particles/sparkle_blurred.png")).additiveBlending().build(),
                 position,
             )
                 .previousPosition(previousPosition)

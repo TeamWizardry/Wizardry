@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.client.ter
 
+import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBatteryEntity
-import com.teamwizardry.wizardry.getID
+import com.teamwizardry.wizardry.Wizardry.Companion.getID
 import com.teamwizardry.wizardry.mixins.AccessorModelManager
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
@@ -22,7 +23,7 @@ class RenderManaBattery(ctx: BlockEntityRendererFactory.Context) : BlockEntityRe
         val bmm: BakedModelManager = MinecraftClient.getInstance().bakedModelManager
         val mm: Map<Identifier, BakedModel> = (bmm as AccessorModelManager).models
         val missing: BakedModel = bmm.missingModel
-        val location: Identifier = getID(name)
+        val location: Identifier = Wizardry.getID(name)
         return mm[location] ?: missing
     }
 

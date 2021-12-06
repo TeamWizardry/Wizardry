@@ -23,13 +23,13 @@
         "main": [
             {
                 "adapter": "kotlin",
-                "value": "com.teamwizardry.wizardry.Wizardry"
+                "value": "com.teamwizardry.wizardry.Wizardry\$CommonInitializer"
             }
         ],
         "client": [
             {
                 "adapter": "kotlin",
-                "value": "com.teamwizardry.wizardry.WizardryClient"
+                "value": "com.teamwizardry.wizardry.Wizardry\$ClientInitializer"
             }
         ]
     },
