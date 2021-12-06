@@ -14,13 +14,14 @@ abstract class FileLoader<T> {
 
     private val yaml = Load(LoadSettings.builder().setLabel("Wizardry Yaml Loader").build())
 
+    fun loadJson(file: InputStream): T {
+        return compileJson(JsonParser().parse(InputStreamReader(file)).asJsonObject)
+    }
+
+    @Suppress("UNCHECKED_CAST")
     fun loadYaml(file: InputStream): List<T> {
         return StreamSupport.stream(yaml.loadAllFromInputStream(file).spliterator(), false)
             .map { compileYaml(it as Map<String, Object>) }
             .toList()
-    }
-
-    fun loadJson(file: InputStream): T {
-        return compileJson(JsonParser().parse(InputStreamReader(file)).asJsonObject)
     }
 }

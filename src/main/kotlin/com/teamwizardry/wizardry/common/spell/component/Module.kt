@@ -12,12 +12,14 @@ open class Module(
     // Base Costs
     val baseManaCost: Double,
     // Modifier and Usage Metadata
-    private val modifierCosts: Map<String, Double>, //    public String toString() { return pattern.getRegistryName() + ":" + name + " = [" + items + ", " + element + "]"; }
+    private val modifierCosts: Map<String, Double>,
     private val attributeValues: Map<String, List<Double>>
 ) : ISpellComponent {
 
-//    public String getTranslationKey() { return "wizardry.spell." + pattern.getRegistryName() + ":" + name; }
-//    public String getTranslationKey(String key) { return getTranslationKey() + "." + key; }
+    val id: String get() = "${pattern.id}:$name"
+    val translationKey: String get() = "wizardry.spell.$id"
+    fun getTranslationSubKey(subKey: String): String { return "$translationKey.$subKey" }
+    override fun toString(): String { return "$id = [$items]"; }
 
     fun getCostPerModifier(modifier: String): Double {
         return modifierCosts[modifier] ?: 0.05

@@ -91,11 +91,11 @@ class Interactor {
         }
 
     /**
-     * Drains mana from and adds burnout to the Interactor's target.
+     * Drains mana from the Interactor's target.
      * @return Returns `true` if enough mana was drained to cast the spell.
-     * Returns `false` otherwise, although mana and burnout are still modified.
+     * Returns `false` otherwise, although mana is still modified.
      */
-    fun consumeCost(world: World, mana: Double, burnout: Double): Boolean {
+    fun consumeCost(world: World, mana: Double): Boolean {
         return when (type) {
             InteractorType.BLOCK -> {
                 val block: Block = world.getBlockState(blockPos).block

@@ -5,10 +5,9 @@ class ShapeInstance(
     targetType: TargetType,
     attributeValues: Map<String, Double>,
     manaCost: Double,
-    burnoutCost: Double,
     caster: Interactor
-) : Instance(pattern, targetType, attributeValues, manaCost, burnoutCost, caster) {
+) : Instance(pattern, targetType, attributeValues, manaCost, caster) {
     init {
-        extraData.putString(PATTERN_TYPE, "shape")
+        extraData.putString("pattern_type", "shape")
     }
 }

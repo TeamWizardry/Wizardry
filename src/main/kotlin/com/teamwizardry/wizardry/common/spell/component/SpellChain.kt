@@ -45,14 +45,12 @@ abstract class SpellChain(@field:Save protected var module: Module?) {
             targetType,
             attributeValues,
             module.baseManaCost * manaMultiplier,
-            module.baseBurnoutCost * manaMultiplier,
             caster
         ) else if (module is ModuleEffect) return EffectInstance(
             module.pattern,
             targetType,
             attributeValues,
             module.baseManaCost * manaMultiplier,
-            module.baseBurnoutCost * manaMultiplier,
             caster
         )
         throw InconceivableException("How? There are only two module types, you shouldn't ever be constructing the root")

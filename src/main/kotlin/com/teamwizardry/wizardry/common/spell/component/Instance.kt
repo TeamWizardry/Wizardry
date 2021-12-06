@@ -1,8 +1,11 @@
 package com.teamwizardry.wizardry.common.spell.component
 
+import com.teamwizardry.librarianlib.core.util.kotlin.InconceivableException
+import com.teamwizardry.wizardry.common.init.ModPatterns
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import java.awt.Color
 import java.util.*
@@ -21,9 +24,7 @@ import java.util.stream.Collectors
  *
  * @see PatternShape
  */
-abstract class Instance(var pattern: Pattern, targetType: TargetType, attributeValues: Map<String, Double>, manaCost: Double, burnoutCost: Double, caster: Interactor) {
-    var targetType: TargetType
-
+abstract class Instance(val pattern: Pattern, val targetType: TargetType, val attributeValues: Map<String, Double>, val manaCost: Double, val caster: Interactor) {
     /**
      * List of all known attribute values. Keys found in [Attributes].
      * Use [Map.getOrDefault] to retrieve values, as
@@ -31,17 +32,9 @@ abstract class Instance(var pattern: Pattern, targetType: TargetType, attributeV
      * appear in here.
      * @see .getAttributeValue
      */
-    var attributeValues: Map<String, Double>
-        protected set
-    var manaCost: Double
-        protected set
-    var burnoutCost: Double
-        protected set
     var nextShape: ShapeInstance? = null
         protected set
     var effects: MutableList<EffectInstance>
-        protected set
-    var caster: Interactor
         protected set
     var extraData: NbtCompound
         protected set
@@ -85,111 +78,73 @@ abstract class Instance(var pattern: Pattern, targetType: TargetType, attributeV
         }
 
     fun toNBT(): NbtCompound {
+        val nbt = NbtCompound()
 
-//        if (pattern != null)
-//            nbt.putString(PATTERN, pattern.getRegistryName().toString());
-//
-//        if (targetType != null)
-//            nbt.putString(TARGET_TYPE, targetType.toString());
-//
-//        if (attributeValues != null) {
-//            NbtCompound nbtAttributeValues = new NbtCompound();
-//            attributeValues.forEach(nbtAttributeValues::putDouble);
-//            nbt.put(ATTRIBUTE_VALUES, nbtAttributeValues);
-//        }
-//
-//        nbt.putDouble(MANA_COST, manaCost);
-//        nbt.putDouble(BURNOUT_COST, burnoutCost);
-//
-//        if (nextShape != null)
-//            nbt.put(NEXT_SHAPE, nextShape.toNBT());
-//
-//        if (!effects.isEmpty()) {
-//            NbtCompound nbtEffects = new NbtCompound();
-//            for (EffectInstance instance : effects)
-//                nbtEffects.put(effects.indexOf(instance) + "", instance.toNBT());
-//            nbt.put(EFFECTS, nbtEffects);
-//        }
-//
-//        nbt.put(CASTER, caster.toNBT());
-//        nbt.put(EXTRA_DATA, extraData);
-        return NbtCompound()
+        nbt.putString(PATTERN, pattern.id.toString());
+
+        nbt.putString(TARGET_TYPE, targetType.toString());
+
+        val nbtAttributeValues = NbtCompound();
+        attributeValues.forEach(nbtAttributeValues::putDouble);
+        nbt.put(ATTRIBUTE_VALUES, nbtAttributeValues);
+
+        nbt.putDouble(MANA_COST, manaCost);
+
+        if (nextShape != null)
+            nbt.put(NEXT_SHAPE, nextShape!!.toNBT());
+
+        val nbtEffects = NbtCompound();
+        for (instance in effects)
+            nbtEffects.put("${effects.indexOf(instance)}", instance.toNBT());
+        nbt.put(EFFECTS, nbtEffects);
+
+        nbt.put(CASTER, caster.toNBT());
+        nbt.put(EXTRA_DATA, extraData);
+        return nbt
     }
 
     companion object {
-        const val PATTERN_TYPE = "pattern_type"
-        fun fromNBT(world: World?, nbt: NbtCompound?): Instance? {
-            var pattern: Pattern
-            var targetType: TargetType
-            val attributeValues: Map<String, Double>? = null
-            val manaCost = 0.0
-            val burnoutCost = 0.0
-            val nextShape: ShapeInstance? = null
-            val effects: List<EffectInstance> = LinkedList<EffectInstance>()
-            var caster: Interactor
-            val extraData = NbtCompound()
+        private const val PATTERN = "pattern"
+        private const val PATTERN_TYPE = "pattern_type"
+        private const val TARGET_TYPE = "target_type"
+        private const val ATTRIBUTE_VALUES = "attribute_values"
+        private const val MANA_COST = "mana_cost"
+        private const val NEXT_SHAPE = "next_shape"
+        private const val EFFECTS = "effects"
+        private const val CASTER = "caster"
+        private const val EXTRA_DATA = "extra_data"
 
-//        if (nbt.contains(PATTERN))
-//            pattern = GameRegistry.findRegistry(Pattern.class).getValue(new Identifier(nbt.getString(PATTERN)));
-//        else throw new InconceivableException("Pattern must always be specified.");
+        fun fromNBT(world: World, nbt: NbtCompound): Instance? {
+            val pattern = ModPatterns.PATTERN[Identifier(nbt.getString(PATTERN))]
+            val targetType = TargetType.valueOf(nbt.getString(TARGET_TYPE))
+            val manaCost = nbt.getDouble(MANA_COST)
+            val nextShape = if (nbt.contains(NEXT_SHAPE)) fromNBT(world, nbt.getCompound(NEXT_SHAPE)) as ShapeInstance else null
+            val caster = Interactor.fromNBT(world, nbt.getCompound(CASTER)) ?: return null
+            val extraData = nbt.getCompound(EXTRA_DATA)
 
-//        if (nbt.contains(TARGET_TYPE))
-//            targetType = TargetType.valueOf(nbt.getString(TARGET_TYPE));
-//        else throw new InconceivableException("TargetType enum must always be specified.");
+            val attributeValues = HashMap<String, Double>()
+            val nbtAttributeValues = nbt.getCompound(ATTRIBUTE_VALUES)
+            nbtAttributeValues.keys.forEach{ attributeValues[it] = nbtAttributeValues.getDouble(it) }
 
-//        if (nbt.contains(ATTRIBUTE_VALUES)) {
-//            NbtCompound nbtAttributeValues = nbt.getCompound(ATTRIBUTE_VALUES);
-//            attributeValues = new HashMap<>();
-//            for (String key : nbtAttributeValues.keySet())
-//                attributeValues.put(key, nbtAttributeValues.getDouble(key));
-//        }
+            val effects = ArrayList<EffectInstance>()
+            val nbtEffects = nbt.getCompound(EFFECTS)
+            nbtEffects.keys.forEach{ effects.add(fromNBT(world, nbtEffects.getCompound(it)) as EffectInstance) }
 
-//        if (nbt.contains(MANA_COST))
-//            manaCost = nbt.getDouble(MANA_COST);
-
-//        if (nbt.contains(BURNOUT_COST))
-//            burnoutCost = nbt.getDouble(BURNOUT_COST);
-
-//        if (nbt.contains(NEXT_SHAPE))
-//            nextShape = (ShapeInstance) fromNBT(world, nbt.getCompound(NEXT_SHAPE));
-
-//        if (nbt.contains(EFFECTS)) {
-//            NbtCompound nbtEffects = nbt.getCompound(EFFECTS);
-//            effects = new ArrayList<>();
-//            for (int i = 0; i < nbtEffects.size(); i++)
-//                effects.add((EffectInstance) fromNBT(world, nbtEffects.getCompound(i + "")));
-//        }
-//        if (nbt.contains(CASTER))
-//            caster = Interactor.fromNBT(world, nbt.getCompound(CASTER));
-//        else throw new InconceivableException("Caster Interactor must always be specified.");
-
-//        if (nbt.contains(EXTRA_DATA))
-//            extraData = nbt.getCompound(EXTRA_DATA);
-
-//        Instance instance;
-//        if (extraData != null && extraData.contains(PATTERN_TYPE)) {
-//            String patternType = extraData.getString(PATTERN_TYPE);
-//            if (patternType.equals("shape"))
-//                instance = new ShapeInstance(pattern, targetType, attributeValues, manaCost, burnoutCost, caster);
-//            else if (patternType.equals("effect"))
-//                instance = new EffectInstance(pattern, targetType, attributeValues, manaCost, burnoutCost, caster);
-//            else throw new InconceivableException("Pattern type must be Shape or Effect");
-//            instance.nextShape = nextShape;
-//            instance.effects = effects;
-//            instance.extraData = extraData;
-//        } else throw new InconceivableException("Pattern type must always be specified.");
-
-//        return instance;
-            return null
+            if (extraData.contains(PATTERN_TYPE)) {
+                val instance = when (extraData.getString(PATTERN_TYPE)) {
+                    "shape" -> ShapeInstance(pattern, targetType, attributeValues, manaCost, caster)
+                    "effect" -> EffectInstance(pattern, targetType, attributeValues, manaCost, caster)
+                    else -> throw InconceivableException("Pattern type must be Shape or Effect")
+                }
+                instance.nextShape = nextShape
+                instance.effects = effects
+                instance.extraData = extraData
+                return instance
+            } else throw InconceivableException("Pattern type must always be specified.")
         }
     }
 
     init {
-        this.targetType = targetType
-        this.attributeValues = attributeValues
-        this.manaCost = manaCost
-        this.burnoutCost = burnoutCost
-        this.caster = caster
         extraData = NbtCompound()
         effects = LinkedList<EffectInstance>()
     }

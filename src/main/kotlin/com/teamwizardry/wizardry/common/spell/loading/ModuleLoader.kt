@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.spell.loading
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParseException
+import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.init.ModPatterns
 import com.teamwizardry.wizardry.common.spell.component.*
 import net.minecraft.item.Item
@@ -43,7 +44,7 @@ object ModuleLoader: FileLoader<Module>() {
         val pattern = ModPatterns.PATTERN[Identifier(yaml[MODULE] as String)]
         val name = yaml[NAME] as String
         val items = (yaml[ITEMS] as List<String>).map(::Identifier).map(Registry.ITEM::get).toList()
-        val mana = yaml[MANA] as Double
+        val mana = (yaml[MANA] as Number).toDouble()
 
         val modifierCosts = HashMap<String, Double>()
         val attributeValues = HashMap<String, List<Double>>()
@@ -51,7 +52,7 @@ object ModuleLoader: FileLoader<Module>() {
         for (attribute in modifierMap.keys) {
             val modifierValues = modifierMap[attribute] ?: continue
             if (modifierValues.containsKey(COST))
-                modifierCosts[attribute] = modifierValues[COST] as Double
+                modifierCosts[attribute] = (modifierValues[COST] as Number).toDouble()
             attributeValues[attribute] = (modifierValues[VALUES] as List<Number>).map(Number::toDouble)
         }
 

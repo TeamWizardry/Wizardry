@@ -15,6 +15,7 @@ object ModifierLoader: FileLoader<Modifier>() {
         return Modifier(name, items)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun compileYaml(yaml: Map<String, Any>): Modifier {
         val name = yaml[NAME] as String
         val items = (yaml[ITEMS] as List<String>).map{Identifier(it)}.map{Registry.ITEM[it]}.toList()

@@ -1,7 +1,9 @@
 package com.teamwizardry.wizardry.common.spell.component
 
 import com.teamwizardry.wizardry.client.lib.LibTheme
+import com.teamwizardry.wizardry.common.init.ModPatterns
 import com.teamwizardry.wizardry.common.utils.RandUtil
+import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import java.awt.Color
 
@@ -11,6 +13,8 @@ import java.awt.Color
  * registered under
  */
 abstract class Pattern {
+    val id: Identifier get() = ModPatterns.PATTERN.getId(this)
+
     open val colors: Array<Color> = arrayOf(
         LibTheme.accentColor,
         LibTheme.hintColor,
@@ -21,14 +25,14 @@ abstract class Pattern {
         when (target.type) {
             Interactor.InteractorType.BLOCK -> {
                 when (instance.targetType) {
-                    TargetType.ALL, TargetType.BLOCK -> if (instance.caster.consumeCost(world, instance.manaCost, instance.burnoutCost))
+                    TargetType.ALL, TargetType.BLOCK -> if (instance.caster.consumeCost(world, instance.manaCost))
                         affectBlock(world, target, instance)
                     else -> {}
                 }
             }
             Interactor.InteractorType.ENTITY -> {
                 when (instance.targetType) {
-                    TargetType.ALL, TargetType.ENTITY -> if (instance.caster.consumeCost(world, instance.manaCost, instance.burnoutCost))
+                    TargetType.ALL, TargetType.ENTITY -> if (instance.caster.consumeCost(world, instance.manaCost))
                         affectEntity(world, target, instance)
                     else -> {}
                 }

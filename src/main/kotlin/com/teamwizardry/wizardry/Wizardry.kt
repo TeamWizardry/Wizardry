@@ -33,8 +33,6 @@ class Wizardry {
     }
 
     object CommonInitializer: ModInitializer {
-        private val LOGGER = logManager.makeLogger(CommonInitializer::class.java)
-
         override fun onInitialize() {
             ModTags.init()
             ModFluids.init()
@@ -59,10 +57,10 @@ class Wizardry {
         }
 
         private fun registerModels(rm: ResourceManager, consumer: Consumer<Identifier>) {
-            consumer.accept(Wizardry.getID("block/mana_battery"))
-            consumer.accept(Wizardry.getID("block/mana_crystal"))
-            consumer.accept(Wizardry.getID("block/mana_crystal_ring"))
-            consumer.accept(Wizardry.getID("block/mana_crystal_ring_outer"))
+            consumer.accept(getID("block/mana_battery"))
+            consumer.accept(getID("block/mana_crystal"))
+            consumer.accept(getID("block/mana_crystal_ring"))
+            consumer.accept(getID("block/mana_crystal_ring_outer"))
         }
     }
 }

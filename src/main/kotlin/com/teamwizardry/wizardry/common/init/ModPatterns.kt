@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.common.spell.effect.EffectBurn
 import com.teamwizardry.wizardry.common.spell.loading.ModifierLoader
 import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader
 import com.teamwizardry.wizardry.common.spell.shape.ShapeRay
+import com.teamwizardry.wizardry.common.spell.shape.ShapeSelf
 import com.teamwizardry.wizardry.common.spell.shape.ShapeZone
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.resource.Resource
@@ -24,6 +25,7 @@ object ModPatterns {
     val PATTERN_KEY: RegistryKey<Registry<Pattern>> = RegistryKey.ofRegistry(Wizardry.getID("pattern"))
     val PATTERN = DefaultedRegistry("${Wizardry.MODID}:self", PATTERN_KEY, Lifecycle.experimental())
 
+    val shapeSelf = ShapeSelf()
     val shapeRay = ShapeRay()
     val shapeZone = ShapeZone()
 
@@ -31,11 +33,12 @@ object ModPatterns {
     val effectBurn = EffectBurn()
 
     fun init() {
-        register("shape_ray", shapeRay)
-        register("shape_zone", shapeZone)
+        register("self", shapeSelf)
+        register("ray", shapeRay)
+        register("zone", shapeZone)
 
-        register("effect_arcane", effectArcane)
-        register("effect_burn", effectBurn)
+        register("arcane", effectArcane)
+        register("burn", effectBurn)
     }
 
     private fun register(path: String, pattern: Pattern) {
@@ -45,8 +48,7 @@ object ModPatterns {
     object ModuleReloadListener : SimpleSynchronousResourceReloadListener {
         private val LOGGER = Wizardry.logManager.makeLogger(ModuleReloadListener::class.java)
 
-        override fun getFabricId(): Identifier { return Wizardry.getID("pattern")
-        }
+        override fun getFabricId(): Identifier { return Wizardry.getID("pattern") }
 
         override fun reload(manager: ResourceManager) {
             ComponentRegistry.initialize()
