@@ -4,9 +4,6 @@ import com.teamwizardry.librarianlib.core.util.ModLogManager
 import com.teamwizardry.librarianlib.glitter.ParticleSystemManager
 import com.teamwizardry.wizardry.client.particle.ModParticles
 import com.teamwizardry.wizardry.common.init.*
-import com.teamwizardry.wizardry.common.spell.component.ComponentRegistry
-import com.teamwizardry.wizardry.common.spell.loading.ModifierLoader
-import com.teamwizardry.wizardry.common.spell.loading.ModuleLoader
 import com.teamwizardry.wizardry.proxy.ClientProxy
 import com.teamwizardry.wizardry.proxy.IProxy
 import com.teamwizardry.wizardry.proxy.ServerProxy
@@ -14,11 +11,9 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.ResourceType
 import net.minecraft.util.Identifier
-import java.io.InputStream
 import java.util.function.Consumer
 
 class Wizardry {
@@ -53,7 +48,7 @@ class Wizardry {
             ModItems.initClient()
 
             ParticleSystemManager.add(ModParticles.physicsGlitter)
-            ModelLoadingRegistry.INSTANCE.registerModelProvider(::registerModels);
+            ModelLoadingRegistry.INSTANCE.registerModelProvider(::registerModels)
         }
 
         private fun registerModels(rm: ResourceManager, consumer: Consumer<Identifier>) {

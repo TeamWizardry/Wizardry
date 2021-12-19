@@ -54,6 +54,7 @@ object ModFluids {
         val stillSprite = Identifier(texture.namespace, "fluid/${texture.path}_still")
         val flowingSprite = Identifier(texture.namespace, "fluid/${texture.path}_flow")
 
+        @Suppress("DEPRECATION")
         ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register {_, registry -> registry.register(stillSprite); registry.register(flowingSprite)}
 
         val fluid = Registry.FLUID.getId(still)

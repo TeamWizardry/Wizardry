@@ -1,6 +1,10 @@
 package com.teamwizardry.wizardry.common.block
 
-import com.teamwizardry.wizardry.api.capability.mana.IManaCapability
+import com.teamwizardry.wizardry.capability.mana.IManaCapability
+import com.teamwizardry.wizardry.capability.network.ManaNetwork
+import com.teamwizardry.wizardry.common.init.ModCapabilities
+import net.minecraft.item.ItemPlacementContext
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
@@ -17,20 +21,18 @@ interface IManaNode {
      * with an attached [IManaCapability]
      * @return The amount of mana unable to be added
      */
-    fun addMana(world: World?, pos: BlockPos?, amount: Double): Double {
-//        BlockEntity te = world.getBlockEntity(pos);
-//        IManaCapability cap = te.getCapability(MANA_CAPABILITY).orElse(null);
-//        if (cap == null)
-        return amount
-        //        double current = cap.getMana();
-//        double available = cap.getMaxMana() - current;
-//        if (available >= amount)
-//        {
-//            cap.setMana(current + amount);
-//            return 0;
-//        }
-//        cap.setMana(cap.getMaxMana());
-//        return amount - available;
+    fun addMana(world: World, pos: BlockPos, amount: Double): Double {
+        val blockEntity = world.getBlockEntity(pos)
+        val cap = ModCapabilities.MANA.maybeGet(blockEntity).orElse(null) ?: return amount
+        val availableSpace = cap.maxMana - cap.mana
+        return if (amount <= availableSpace) {
+            cap.mana += amount
+            0.0
+        }
+        else {
+            cap.mana = cap.maxMana
+            amount - availableSpace
+        }
     }
 
     /**
@@ -39,19 +41,18 @@ interface IManaNode {
      * with an attached [IManaCapability]
      * @return The amount of mana unable to be removed
      */
-    fun removeMana(world: World?, pos: BlockPos?, amount: Double): Double {
-//        BlockEntity te = world.getBlockEntity(pos);
-//        IManaCapability cap = te.getCapability(MANA_CAPABILITY).orElse(null);
-//        if (cap == null)
-        return amount
-        //        double current = cap.getMana();
-//        if (current >= amount)
-//        {
-//            cap.setMana(current - amount);
-//            return 0;
-//        }
-//        cap.setMana(0);
-//        return amount - current;
+    fun removeMana(world: World, pos: BlockPos, amount: Double): Double {
+        val blockEntity = world.getBlockEntity(pos)
+        val cap = ModCapabilities.MANA.maybeGet(blockEntity).orElse(null) ?: return amount
+        val current = cap.mana
+        return if (current >= amount) {
+            cap.mana -= amount
+            0.0
+        }
+        else {
+            cap.mana = 0.0
+            amount - current
+        }
     }
 
     /**
@@ -60,11 +61,10 @@ interface IManaNode {
      * with an attached [IManaCapability]
      * @return The amount of mana in the given block, 0 if it has no storage
      */
-    fun getMana(world: World?, pos: BlockPos?): Double {
-        return 0.0
-        //        BlockEntity te = world.getBlockEntity(pos);
-//        IManaCapability cap = te.getCapability(MANA_CAPABILITY).orElse(null);
-//        return cap == null ? 0 : cap.getMana();
+    fun getMana(world: World, pos: BlockPos): Double {
+        val blockEntity = world.getBlockEntity(pos)
+        val cap = ModCapabilities.MANA.maybeGet(blockEntity).orElse(null) ?: return 0.0
+        return cap.mana
     }
 
     /**
@@ -73,11 +73,10 @@ interface IManaNode {
      * with an attached [IManaCapability]
      * @return The size of the given block's mana pool, 0 if it has no storage
      */
-    fun getMaxMana(world: World?, pos: BlockPos?): Double {
-        return 0.0
-        //        BlockEntity te = world.getBlockEntity(pos);
-//        IManaCapability cap = te.getCapability(MANA_CAPABILITY).orElse(null);
-//        return cap == null ? 0 : cap.getMaxMana();
+    fun getMaxMana(world: World, pos: BlockPos): Double {
+        val blockEntity = world.getBlockEntity(pos)
+        val cap = ModCapabilities.MANA.maybeGet(blockEntity).orElse(null) ?: return 0.0
+        return cap.maxMana
     }
 
     /**
@@ -86,7 +85,7 @@ interface IManaNode {
      * with an attached [IManaCapability]
      * @return The amount of mana to add to the given block to fill its pool
      */
-    fun getMissingMana(world: World?, pos: BlockPos?): Double {
+    fun getMissingMana(world: World, pos: BlockPos): Double {
         return getMaxMana(world, pos) - getMana(world, pos)
     }
 
@@ -96,7 +95,7 @@ interface IManaNode {
      * @param sink The block the mana is transfered to
      * @param amount The maximum amount of mana to transfer
      */
-    fun transferMana(world: World?, source: BlockPos?, sink: BlockPos?, amount: Double) {
+    fun transferMana(world: World, source: BlockPos, sink: BlockPos, amount: Double) {
         var amount = amount
         val fromSource = getMana(world, source)
         val toSink = getMissingMana(world, sink)
@@ -104,5 +103,10 @@ interface IManaNode {
         if (amount > toSink) amount = toSink
         removeMana(world, source, amount)
         addMana(world, sink, amount)
+    }
+
+    fun placeManaNode(context: ItemPlacementContext) {
+        if (!context.world.isClient)
+            ManaNetwork[context.world as ServerWorld].addBlock(context.blockPos)
     }
 }

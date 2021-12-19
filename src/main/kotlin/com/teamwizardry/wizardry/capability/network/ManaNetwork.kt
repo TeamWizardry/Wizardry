@@ -1,7 +1,8 @@
-package com.teamwizardry.wizardry.common.network
+package com.teamwizardry.wizardry.capability.network
 
 import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.block.IManaNode
+import com.teamwizardry.wizardry.configs.ServerConfigs
 import net.minecraft.block.Block
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
@@ -13,7 +14,8 @@ import kotlin.math.ceil
 
 class ManaNetwork private constructor() : PersistentState() {
     private val positions: MutableMap<ChunkPos, MutableSet<BlockPos>>
-    private val paths: MutableList<ManaPath?>
+    private val paths: MutableList<ManaPath>
+
     fun addBlock(pos: BlockPos) {
         positions.computeIfAbsent(ChunkPos(pos)) {HashSet<BlockPos>()}.add(pos)
     }
@@ -46,7 +48,7 @@ class ManaNetwork private constructor() : PersistentState() {
             when (node.manaNodeType) {
                 IManaNode.ManaNodeType.SINK -> continue
                 IManaNode.ManaNodeType.SOURCE -> {
-                    this.paths.add(path)
+                    if (path != null) { this.paths.add(path) }
                     return true
                 }
                 IManaNode.ManaNodeType.ROUTER -> for (nearby in nodesNear(nodePos)) {
@@ -59,7 +61,7 @@ class ManaNetwork private constructor() : PersistentState() {
     }
 
     private fun nodesNear(pos: BlockPos): List<BlockPos> {
-        val maxDist = 32.0 // TODO: config? variable?
+        val maxDist = ServerConfigs.pathRange
         val chunkDist = ceil(maxDist / 16).toInt()
         val nodes: MutableList<BlockPos> = LinkedList<BlockPos>()
         val centerX = pos.x shr 4
@@ -74,7 +76,7 @@ class ManaNetwork private constructor() : PersistentState() {
     }
 
     override fun writeNbt(compound: NbtCompound): NbtCompound {
-        compound.putLongArray(POSITIONS, positions.values.stream().flatMap { obj: Set<BlockPos> -> obj.stream() }.mapToLong {obj: BlockPos -> obj.asLong()}.toArray())
+        compound.putLongArray(POSITIONS, positions.values.stream().flatMap {obj: Set<BlockPos> -> obj.stream() }.mapToLong {obj: BlockPos -> obj.asLong()}.toArray())
         return compound
     }
 

@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.component
 
 import com.teamwizardry.wizardry.common.block.IManaNode
+import com.teamwizardry.wizardry.common.init.ModCapabilities
 import net.minecraft.block.Block
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
@@ -99,18 +100,17 @@ class Interactor {
         return when (type) {
             InteractorType.BLOCK -> {
                 val block: Block = world.getBlockState(blockPos).block
-                if (block is IManaNode) (block as IManaNode).removeMana(world, blockPos, mana) <= 0 else false
+                if (block is IManaNode) (block as IManaNode).removeMana(world, blockPos!!, mana) <= 0 else false
             }
-            InteractorType.ENTITY -> //                IManaCapability cap = this.entity.getCapability(MANA_CAPABILITY).orElse(null);
-//                if (cap == null) return false;
-//                cap.setBurnout(Math.min(cap.getBurnout() + burnout, cap.getMaxBurnout()));
-//                if (cap.getMana() < mana)
-//                {
-//                    cap.setMana(0);
-//                    return false;
-//                }
-//                cap.setMana(cap.getMana() - mana);
-                true
+            InteractorType.ENTITY -> {
+                val cap = ModCapabilities.MANA.maybeGet(entity!!).orElse(null) ?: return false
+                if (cap.mana < mana) {
+                    cap.mana = 0.0
+                    return false
+                }
+                cap.mana -= mana
+                return true
+            }
         }
     }
 

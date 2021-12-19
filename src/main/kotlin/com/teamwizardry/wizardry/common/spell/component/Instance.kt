@@ -56,12 +56,12 @@ abstract class Instance(val pattern: Pattern, val targetType: TargetType, val at
         return attributeValues[attribute] ?: 1.0
     }
 
-    fun run(world: World, target: Interactor) {
+    fun run(world: World, target: Interactor = caster) {
         pattern.run(world, this, target)
     }
 
     @Environment(EnvType.CLIENT)
-    fun runClient(world: World, target: Interactor) {
+    fun runClient(world: World, target: Interactor = caster) {
         pattern.runClient(world, this, target)
     }
 

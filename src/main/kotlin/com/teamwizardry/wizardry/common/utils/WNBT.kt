@@ -5,57 +5,51 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtElement
 
 object WNBT {
-    fun getFloat(tag: NbtCompound, key: String?, defaultValue: Float): Float {
-        return if (tag.contains(key, NbtElement.FLOAT_TYPE.toInt())) tag.getFloat(key) else defaultValue
+    fun NbtCompound.getFloat(key: String, defaultValue: Float): Float {
+        return if (this.contains(key, NbtElement.FLOAT_TYPE.toInt())) this.getFloat(key) else defaultValue
     }
 
-    fun getInt(tag: NbtCompound, key: String?, defaultValue: Int): Int {
-        return if (tag.contains(key, NbtElement.INT_TYPE.toInt())) tag.getInt(key) else defaultValue
+    fun NbtCompound.getInt(key: String, defaultValue: Int): Int {
+        return if (this.contains(key, NbtElement.INT_TYPE.toInt())) this.getInt(key) else defaultValue
     }
 
-    private fun getDouble(tag: NbtCompound, key: String?, defaultValue: Double): Double {
-        return if (tag.contains(key, NbtElement.DOUBLE_TYPE.toInt())) tag.getDouble(key) else defaultValue
+    fun NbtCompound.getDouble(key: String, defaultValue: Double): Double {
+        return if (this.contains(key, NbtElement.DOUBLE_TYPE.toInt())) this.getDouble(key) else defaultValue
     }
 
-    private fun getString(tag: NbtCompound, key: String?, defaultValue: String?): String {
-        return if (tag.contains(key, NbtElement.STRING_TYPE.toInt())) tag.getString(key) else defaultValue!!
+    fun NbtCompound.getString(key: String, defaultValue: String): String {
+        return if (this.contains(key, NbtElement.STRING_TYPE.toInt())) this.getString(key) else defaultValue
     }
 
-    private fun getBoolean(tag: NbtCompound, key: String?, defaultValue: Boolean): Boolean {
-        return if (tag.contains(key, NbtElement.BYTE_TYPE.toInt())) tag.getBoolean(key) else defaultValue
+    fun NbtCompound.getBoolean(key: String, defaultValue: Boolean): Boolean {
+        return if (this.contains(key, NbtElement.BYTE_TYPE.toInt())) this.getBoolean(key) else defaultValue
     }
 
-    fun getLong(tag: NbtCompound, key: String?, defaultValue: Long): Long {
-        return if (tag.contains(key, NbtElement.LONG_TYPE.toInt())) tag.getLong(key) else defaultValue
+    fun NbtCompound.getLong(key: String, defaultValue: Long): Long {
+        return if (this.contains(key, NbtElement.LONG_TYPE.toInt())) this.getLong(key) else defaultValue
     }
 
-    fun getFloat(stack: ItemStack, key: String?, defaultValue: Float): Float {
-        val tag: NbtCompound = stack.orCreateNbt
-        return getFloat(tag, key, defaultValue)
+    fun ItemStack.getFloat(key: String, defaultValue: Float): Float {
+        return this.getOrCreateNbt().getFloat(key, defaultValue)
     }
 
-    fun getInt(stack: ItemStack, key: String?, defaultValue: Int): Int {
-        val tag: NbtCompound = stack.orCreateNbt
-        return getInt(tag, key, defaultValue)
+    fun ItemStack.getInt(key: String, defaultValue: Int): Int {
+        return this.getOrCreateNbt().getInt(key, defaultValue)
     }
 
-    private fun getDouble(stack: ItemStack, key: String?, defaultValue: Double): Double {
-        val tag: NbtCompound = stack.orCreateNbt
-        return getDouble(tag, key, defaultValue)
+    fun ItemStack.getDouble(key: String, defaultValue: Double): Double {
+        return this.getOrCreateNbt().getDouble(key, defaultValue)
     }
 
-    private fun getString(stack: ItemStack, key: String?, defaultValue: String?): String {
-        val tag: NbtCompound = stack.orCreateNbt
-        return getString(tag, key, defaultValue)
+    fun ItemStack.getString(key: String, defaultValue: String): String {
+        return this.getOrCreateNbt().getString(key, defaultValue)
     }
 
-    private fun getBoolean(stack: ItemStack, key: String?, defaultValue: Boolean): Boolean {
-        val tag: NbtCompound = stack.orCreateNbt
-        return getBoolean(tag, key, defaultValue)
+    fun ItemStack.getBoolean(key: String, defaultValue: Boolean): Boolean {
+        return this.getOrCreateNbt().getBoolean(key, defaultValue)
     }
 
-    fun getLong(stack: ItemStack, key: String?, defaultValue: Long): Long {
-        val tag: NbtCompound = stack.orCreateNbt
-        return getLong(tag, key, defaultValue)
+    fun ItemStack.getLong(stack: ItemStack, key: String, defaultValue: Long): Long {
+        return this.getOrCreateNbt().getLong(key, defaultValue)
     }
 }

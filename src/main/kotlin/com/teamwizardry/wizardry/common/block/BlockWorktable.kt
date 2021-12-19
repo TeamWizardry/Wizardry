@@ -84,7 +84,7 @@ class BlockWorktable(settings: Settings?) : HorizontalFacingBlock(settings), Wat
         super.onPlaced(world, pos, state, placer, stack)
         if (!world.isClient) {
             val blockPos = pos.offset(state.get(FACING))
-            world.setBlockState(blockPos, state.with(PART, WorktablePart.RIGHT), 3)
+            world.setBlockState(blockPos, state.with(PART, WorktablePart.RIGHT), NOTIFY_ALL)
             world.updateNeighbors(pos, Blocks.AIR)
             state.updateNeighbors(world, pos, NOTIFY_ALL)
         }

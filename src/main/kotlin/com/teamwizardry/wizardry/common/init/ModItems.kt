@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.init
 
 import com.teamwizardry.wizardry.Wizardry
 import com.teamwizardry.wizardry.common.item.ItemPearl
+import com.teamwizardry.wizardry.common.item.ItemStaff
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
@@ -19,7 +20,7 @@ import net.minecraft.util.registry.Registry
 object ModItems {
     val wizardry: ItemGroup = FabricItemGroupBuilder.build(Wizardry.getID("general")) { ItemStack(staff) }
     val wisdomStick = Item(FabricItemSettings().group(wizardry))
-    val staff = Item(FabricItemSettings().group(wizardry).maxCount(1).rarity(Rarity.UNCOMMON))
+    val staff = ItemStaff(FabricItemSettings().group(wizardry).maxCount(1).rarity(Rarity.UNCOMMON))
     val pearl = ItemPearl(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
     val devilDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))
     val skyDust = Item(FabricItemSettings().group(wizardry).rarity(Rarity.UNCOMMON))

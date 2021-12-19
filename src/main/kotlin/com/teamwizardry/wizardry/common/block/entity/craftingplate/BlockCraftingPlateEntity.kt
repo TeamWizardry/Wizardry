@@ -29,8 +29,7 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 import kotlin.math.min
 
-open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
-    BlockEntity(ModBlocks.craftingPlateEntity, pos, state), Hopper {
+open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) : BlockEntity(ModBlocks.craftingPlateEntity, pos, state), Hopper {
     var transferCooldown = -1
         protected set
     var inventory: DefaultedList<ItemStack> = DefaultedList.ofSize(INV_SIZE, ItemStack.EMPTY)
@@ -138,11 +137,8 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
                 -pos.z.toDouble()
             )
         )
-        if (VoxelShapes.matchesAnywhere(
-                shape,
-                this.inputAreaShape
-            ) { a: Boolean, b: Boolean -> a && b }
-        ) updateHopper { captureItem(collidedEntity) }
+        if (VoxelShapes.matchesAnywhere(shape, this.inputAreaShape) { a: Boolean, b: Boolean -> a && b })
+            updateHopper { captureItem(collidedEntity) }
     }
     //////////////////////////////////////////////////////////////////////////
 
@@ -164,11 +160,11 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
     }
 
     override fun isEmpty(): Boolean {
-        return inventory.stream().allMatch { obj: ItemStack -> obj.isEmpty } ?: true
+        return inventory.stream().allMatch { obj: ItemStack -> obj.isEmpty }
     }
 
     override fun getStack(index: Int): ItemStack {
-        return inventory.get(index) ?: ItemStack.EMPTY
+        return inventory[index]
     }
 
     override fun removeStack(index: Int, amount: Int): ItemStack {
@@ -189,11 +185,7 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
     }
 
     override fun canPlayerUse(player: PlayerEntity): Boolean {
-        return if (this.world?.getBlockEntity(this.getPos()) !== this) false else player.squaredDistanceTo(
-            Vec3d.ofCenter(
-                this.getPos()
-            )
-        ) <= 64
+        return if (this.world?.getBlockEntity(this.getPos()) !== this) false else player.squaredDistanceTo(Vec3d.ofCenter(this.getPos())) <= 64
     }
 
     override fun clear() {
@@ -262,8 +254,8 @@ open class BlockCraftingPlateEntity(pos: BlockPos?, state: BlockState?) :
             if (entity.isOnTransferCooldown()) return
             entity.transferCooldown = 0
             entity.updateHopper {
-                for (itementity in entity.getCaptureItems()) {
-                    if (entity.captureItem(itementity)) {
+                for (itemEntity in entity.getCaptureItems()) {
+                    if (entity.captureItem(itemEntity)) {
                         return@updateHopper true
                     }
                 }

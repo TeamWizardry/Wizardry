@@ -1,8 +1,8 @@
-package com.teamwizardry.wizardry.api.capability.mana
+package com.teamwizardry.wizardry.capability.mana
 
-interface IManaCapability {
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent
+
+interface IManaCapability : AutoSyncedComponent {
     var mana: Double
     var maxMana: Double
-    var burnout: Double
-    var maxBurnout: Double
 }

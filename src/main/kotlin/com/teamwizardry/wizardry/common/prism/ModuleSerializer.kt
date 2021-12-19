@@ -7,8 +7,8 @@ import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtString
 
 open class ModuleSerializer private constructor() : NbtSerializer<Module>() {
-    override fun deserialize(nbt: NbtElement): Module {
-        return ComponentRegistry.modules[nbt.asString()] ?: throw RuntimeException("Failed to deserialize module!")
+    override fun deserialize(tag: NbtElement): Module {
+        return ComponentRegistry.modules[tag.asString()] ?: throw RuntimeException("Failed to deserialize module!")
     }
 
     override fun serialize(module: Module): NbtElement {

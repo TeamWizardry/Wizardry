@@ -5,7 +5,6 @@ import com.teamwizardry.wizardry.client.ter.RenderManaBattery
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling
 import com.teamwizardry.wizardry.common.block.BlockWisdomSapling.WisdomSaplingGenerator
 import com.teamwizardry.wizardry.common.block.BlockWorktable
-import com.teamwizardry.wizardry.common.block.access.Invokers
 import com.teamwizardry.wizardry.common.block.entity.craftingplate.BlockCraftingPlate
 import com.teamwizardry.wizardry.common.block.entity.craftingplate.BlockCraftingPlateEntity
 import com.teamwizardry.wizardry.common.block.entity.manabattery.BlockManaBattery
@@ -30,6 +29,7 @@ import net.minecraft.item.Item
 import net.minecraft.sound.BlockSoundGroup
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
+import com.teamwizardry.wizardry.mixins.Invokers.*
 
 object ModBlocks {
     private val wisdomWoodSettings =
@@ -52,7 +52,7 @@ object ModBlocks {
     )
     var manaBattery: Block = BlockManaBattery(
         AbstractBlock.Settings.of(Material.GLASS).sounds(BlockSoundGroup.AMETHYST_BLOCK).strength(3f)
-            .solidBlock(BlocksMixin::never).luminance { state: BlockState? -> 15 }.nonOpaque()
+            .solidBlock(BlocksMixin::never).luminance { 15 }.nonOpaque()
     )
     var manaBatteryEntity: BlockEntityType<BlockManaBatteryEntity>? = null
 
@@ -67,32 +67,32 @@ object ModBlocks {
     var wisdomStrippedWood: Block = PillarBlock(wisdomWoodSettings)
 
     var wisdomPlanks: Block = Block(wisdomWoodSettings)
-    var wisdomDoor: Block = Invokers.DoorBlock(wisdomWoodSettings.nonOpaque())
+    var wisdomDoor: Block = DoorInvoker.construct(wisdomWoodSettings.nonOpaque())
     var wisdomSlab: Block = SlabBlock(wisdomWoodSettings)
-    var wisdomStairs: Block = Invokers.StairsBlock(wisdomPlanks.defaultState, wisdomWoodSettings)
+    var wisdomStairs: Block = StairsInvoker.construct(wisdomPlanks.defaultState, wisdomWoodSettings)
     var wisdomFence: Block = FenceBlock(wisdomWoodSettings)
     var wisdomFenceGate: Block = FenceGateBlock(wisdomWoodSettings)
-    var wisdomTrapdoor: Block = Invokers.TrapdoorBlock(FabricBlockSettings.copyOf(wisdomWoodSettings).nonOpaque())
+    var wisdomTrapdoor: Block = TrapdoorInvoker.construct(FabricBlockSettings.copyOf(wisdomWoodSettings).nonOpaque())
 
     var wisdomSapling: Block =
         BlockWisdomSapling(WisdomSaplingGenerator(), FabricBlockSettings.copyOf(Blocks.OAK_SAPLING).nonOpaque())
 
     var gildedPlanks: Block = Block(gildedWoodSettings)
-    var gildedDoor: Block = Invokers.DoorBlock(gildedWoodSettings)
+    var gildedDoor: Block = DoorInvoker.construct(gildedWoodSettings)
     var gildedSlab: Block = SlabBlock(gildedWoodSettings)
-    var gildedStairs: Block = Invokers.StairsBlock(gildedPlanks.defaultState, gildedWoodSettings)
+    var gildedStairs: Block = StairsInvoker.construct(gildedPlanks.defaultState, gildedWoodSettings)
     var gildedFence: Block = FenceBlock(gildedWoodSettings)
     var gildedFenceGate: Block = FenceGateBlock(gildedWoodSettings)
-    var gildedTrapdoor: Block = Invokers.TrapdoorBlock(FabricBlockSettings.copyOf(gildedWoodSettings).nonOpaque())
+    var gildedTrapdoor: Block = TrapdoorInvoker.construct(FabricBlockSettings.copyOf(gildedWoodSettings).nonOpaque())
 
     var nacreBlock: Block = Block(nacreSettings)
     var nacreSlab: Block = SlabBlock(nacreSettings)
-    var nacreStairs: Block = Invokers.StairsBlock(nacreBlock.defaultState, nacreSettings)
+    var nacreStairs: Block = StairsInvoker.construct(nacreBlock.defaultState, nacreSettings)
     var nacreWall: Block = WallBlock(nacreSettings)
 
     var nacreBrickBlock: Block = Block(nacreBrickSettings)
     var nacreBrickSlab: Block = SlabBlock(nacreBrickSettings)
-    var nacreBrickStairs: Block = Invokers.StairsBlock(nacreBlock.defaultState, nacreBrickSettings)
+    var nacreBrickStairs: Block = StairsInvoker.construct(nacreBlock.defaultState, nacreBrickSettings)
     var nacreBrickWall: Block = WallBlock(nacreBrickSettings)
 
     // Fluids

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.network
+package com.teamwizardry.wizardry.capability.network
 
 import com.teamwizardry.wizardry.common.block.IManaNode
 import net.minecraft.block.BlockState

@@ -31,17 +31,43 @@
                 "adapter": "kotlin",
                 "value": "com.teamwizardry.wizardry.Wizardry\$ClientInitializer"
             }
+        ],
+        "cardinal-components-entity": [
+            {
+                "adapter": "kotlin",
+                "value": "com.teamwizardry.wizardry.common.init.ModCapabilities"
+            }
+        ],
+        "cardinal-components-block": [
+            {
+                "adapter": "kotlin",
+                "value": "com.teamwizardry.wizardry.common.init.ModCapabilities"
+            }
+        ],
+        "cardinal-components-item": [
+            {
+                "adapter": "kotlin",
+                "value": "com.teamwizardry.wizardry.common.init.ModCapabilities"
+            }
         ]
     },
     "mixins": [
         "wizardry.mixins.json"
     ],
 
+    "custom": {
+        "cardinal-components": [
+            "wizardry:mana",
+            "wizardry:spell"
+        ]
+    },
+
     "depends": {
         "fabric": "*",
         "fabric-language-kotlin": ">=1.6.4+kotlin.1.5.30",
         "minecraft": "1.17.x",
         "java": ">=16",
-        "liblib-core": ">=5.0.0-alpha.10"
+        "liblib-core": ">=5.0.0-alpha.10",
+        "cardinal-components-base": ">=3.1.1"
     }
 }

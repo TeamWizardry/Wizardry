@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.block.entity.manabattery
 
+import com.teamwizardry.wizardry.capability.network.ManaNetwork
 import com.teamwizardry.wizardry.common.block.IManaNode
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
@@ -9,6 +10,7 @@ import net.minecraft.block.entity.BlockEntity
 import net.minecraft.fluid.FluidState
 import net.minecraft.fluid.Fluids
 import net.minecraft.item.ItemPlacementContext
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.Properties
 import net.minecraft.util.math.BlockPos
@@ -21,14 +23,8 @@ class BlockManaBattery(settings: Settings?) : BlockWithEntity(settings), Waterlo
         this.defaultState = this.stateManager.defaultState.with(Properties.WATERLOGGED, false)
     }
 
-    override fun getStateForNeighborUpdate(
-        state: BlockState,
-        direction: Direction,
-        neighborState: BlockState?,
-        world: WorldAccess,
-        pos: BlockPos?,
-        neighborPos: BlockPos?
-    ): BlockState? {
+    @Suppress("DEPRECATION")
+    override fun getStateForNeighborUpdate(state: BlockState, direction: Direction, neighborState: BlockState, world: WorldAccess, pos: BlockPos, neighborPos: BlockPos): BlockState {
         if (state.get(Properties.WATERLOGGED)) {
             world.fluidTickScheduler.schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world))
         }
@@ -36,6 +32,8 @@ class BlockManaBattery(settings: Settings?) : BlockWithEntity(settings), Waterlo
     }
 
     override fun getPlacementState(context: ItemPlacementContext): BlockState {
+        super.placeManaNode(context)
+
         val fluidState: FluidState = context.world.getFluidState(context.blockPos)
         val bl = fluidState.fluid === Fluids.WATER
         return super.getPlacementState(context)!!.with(Properties.WATERLOGGED, bl) as BlockState
@@ -55,7 +53,9 @@ class BlockManaBattery(settings: Settings?) : BlockWithEntity(settings), Waterlo
 
     override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity {
         return BlockManaBatteryEntity(pos, state)
-    } // TODO: Check if necessary, find replacement
+    }
+
+    // TODO: Check if necessary, find replacement
     //	@Override
     //	public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
     //		return false;

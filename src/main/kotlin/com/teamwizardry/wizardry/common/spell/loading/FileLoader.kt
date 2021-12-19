@@ -6,6 +6,7 @@ import org.snakeyaml.engine.v2.api.Load
 import org.snakeyaml.engine.v2.api.LoadSettings
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.util.stream.Stream
 import java.util.stream.StreamSupport
 
 abstract class FileLoader<T> {

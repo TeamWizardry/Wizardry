@@ -17,6 +17,10 @@ group = 'com.teamwizardry.wizardry'
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        name = "Cardinal Components"
+        url = "https://ladysnake.jfrog.io/artifactory/mods"
+    }
 }
 
 dependencies {
@@ -28,15 +32,16 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
     [
-            "com.teamwizardry.librarianlib:scribe:${liblib_version}",
-            "com.teamwizardry.librarianlib:facade:${liblib_version}",
-            "com.teamwizardry.librarianlib:glitter:${liblib_version}",
-            "com.teamwizardry.librarianlib:etcetera:${liblib_version}"
-    ].each {
-        modImplementation(it)
-    }
+            "scribe", "facade", "glitter", "etcetera"
+    ].each { modImplementation("com.teamwizardry.librarianlib:${it}:${liblib_version}") }
+
+    [
+            "base", "util",
+            "entity", "item", "block"
+    ].each { modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-${it}:${cardinal_components_version}") }
 
     implementation 'org.snakeyaml:snakeyaml-engine:2.3'
+    include 'org.snakeyaml:snakeyaml-engine:2.3'
 }
 
 processResources {
