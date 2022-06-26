@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -9,9 +8,6 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.NBTConstants;
-import com.teamwizardry.wizardry.api.capability.player.mana.ManaManager;
-import com.teamwizardry.wizardry.api.capability.player.miscdata.IMiscCapability;
-import com.teamwizardry.wizardry.api.capability.player.miscdata.MiscCapabilityProvider;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorld;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -25,13 +21,8 @@ import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -44,8 +35,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import java.util.HashMap;
-import java.util.Queue;
 import java.util.UUID;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;

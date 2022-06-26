@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.block.wisdomwood;
 
 import com.teamwizardry.librarianlib.features.base.block.BlockModSapling;
-import com.teamwizardry.wizardry.common.world.WorldGeneratorWisdomTree;
 import com.teamwizardry.wizardry.init.ModBlocks;
 
 import net.minecraft.block.state.IBlockState;

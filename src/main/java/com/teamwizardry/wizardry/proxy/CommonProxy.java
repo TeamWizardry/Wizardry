@@ -23,7 +23,6 @@ import com.teamwizardry.wizardry.common.item.ItemBook;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
-import com.teamwizardry.wizardry.common.world.trickery.WorldProviderTorikki;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;

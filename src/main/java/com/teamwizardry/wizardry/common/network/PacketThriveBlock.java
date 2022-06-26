@@ -20,6 +20,9 @@ public class PacketThriveBlock extends PacketBase {
 	@Save
 	public BlockPos pos;
 
+	public PacketThriveBlock() {
+	}
+
 	public PacketThriveBlock(BlockPos lower) {
 		pos = lower;
 	}

@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry;
 
-import com.teamwizardry.librarianlib.features.utilities.UnsafeKt;
 import com.teamwizardry.wizardry.common.command.CommandWizardry;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.world.DimensionType;

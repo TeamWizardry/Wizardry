@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.common.command;
 
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
