@@ -1,63 +1,100 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-    }
+import org.apache.tools.ant.filters.ReplaceTokens
+
+import java.nio.file.Paths
+
+plugins {
+    id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'idea'
 
-version = "$mod_version"
-group = "com.teamwizardry"
-archivesBaseName = "wizardry"
+version = mod_version
+group = 'com.teamwizardry'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+def tokens = [VERSION: mod_version]
+def included = ['com/teamwizardry/wizardry/Wizardry.java']
+
+def expandedSrc = new File(project.buildDir, 'expandedSrc')
+def srcMainJava = project.file('src/main/java').toPath()
+def includedPaths = included.collect { Paths.get(it) }
+task javaReplaceTokens(type: Copy) {
+    inputs.property 'tokens', tokens
+    from(srcMainJava) {
+        include included
+    }
+    into expandedSrc
+    filter(ReplaceTokens, beginToken: '@', endToken: '@', tokens: tokens)
+}
+
+compileJava {
+    dependsOn javaReplaceTokens
+    exclude {
+        srcMainJava.relativize(it.file.toPath()) in includedPaths
+    }
+    source expandedSrc
+}
+
+java {
+    archivesBaseName = 'wizardry'
+    toolchain.languageVersion = JavaLanguageVersion.of(8)
+}
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 minecraft {
-    version = "$mc_version-$forge_version"
-    runDir = "run"
-    mappings = "$mcp_version"
+    mappings channel: 'stable', version: '39-1.12'
+    accessTransformer = file('src/main/resources/dev_ats.cfg')
+    runs {
+        client {
+            workingDirectory project.file('run')
 
-    replace 'GRADLE:VERSION', "$mod_version"
-    replace 'required-before:librarianlib', "required-before:librarianlib@[$liblib_version]"
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.coreMods.load', 'com.teamwizardry.librarianlib.asm.LibLibCorePlugin'
 
-    replaceIn 'Wizardry.java'
+            mods {
+                wizardry {
+                    source sourceSets.main
+                }
+            }
+        }
 
-    clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin,com.teamwizardry.librarianlib.asm.LibLibCorePlugin"]
-    serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin,com.teamwizardry.librarianlib.asm.LibLibCorePlugin"]
+        server {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'fml.coreMods.load', 'com.teamwizardry.librarianlib.asm.LibLibCorePlugin'
+
+            mods {
+                wizardry {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-    maven { url = "http://maven.bluexin.be/repository/snapshots/" }
-    maven { url = "http://dvs1.progwml6.com/files/maven" }
-    maven { url = "http://tehnut.info/maven" }
-    maven { url = "http://maven.tterrag.com/" }
-    maven { url = "http://maven.thiakil.com" }
+    maven { url = "https://jitpack.io" }
+    maven { url = "https://cursemaven.com" }
+    maven { url = "https://dvs1.progwml6.com/files/maven" }
+    maven { url = "https://maven.tterrag.com/" }
+    maven { url = "https://maven.shadowfacts.net/" }
+    maven { url = "https://maven.thiakil.com" }
 }
 
 dependencies {
-    compile("com.teamwizardry.librarianlib:librarianlib-1.12.2:v4.21-4.20-SNAPSHOT") { changing = true }
-    deobfCompile "mezz.jei:jei_1.12.2:$jei_version:api"
-    runtime "mezz.jei:jei_1.12.2:$jei_version"
-    runtime "team.chisel.ctm:CTM:$ctm_version"
-    deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
+    minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
 
-    // https://mvnrepository.com/artifact/ai.api/libai
-    //compile group: 'ai.api', name: 'libai', version: '1.6.12'
-
+    compileOnly fg.deobf('mezz.jei:jei_1.12.2:4.16.1.302:api')
+    runtimeOnly fg.deobf('mezz.jei:jei_1.12.2:4.16.1.302')
+    runtimeOnly "team.chisel.ctm:CTM:$ctm_version"
+    implementation 'net.shadowfacts:Forgelin:1.8.4'
+    implementation fg.deobf('curse.maven:librarianlib-252910:2989926')
+    implementation fg.deobf('com.azanor.baubles:Baubles:1.12-1.5.2')
 }
 
 jar {
@@ -67,16 +104,18 @@ jar {
                 "FMLCorePlugin": "$core_plugin"
         )
     }
+    exclude 'dev_ats.cfg'
 }
 
 processResources {
     inputs.property 'mod_version', project.version
-    inputs.property 'mc_version', project.minecraft.version
+    inputs.property 'mc_version', mc_version
 
+    setDuplicatesStrategy(DuplicatesStrategy.WARN)
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info', 'pack.mcmeta'
         expand 'mod_version': project.version,
-                'mc_version': project.minecraft.version
+                'mc_version': mc_version
     }
 
     from(sourceSets.main.resources.srcDirs) {
@@ -84,10 +123,6 @@ processResources {
     }
 }
 
-idea {
-    module {
-        inheritOutputDirs = false
-        outputDir = compileJava.destinationDir
-        testOutputDir = compileTestJava.destinationDir
-    }
-}
+jar.finalizedBy('reobfJar')
+
+idea { module { inheritOutputDirs = true } }
