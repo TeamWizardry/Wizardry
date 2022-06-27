@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 public class Wizardry {
     public static final String MODID = "wizardry";
     public static final String MODNAME = "Wizardry";
-    public static final String VERSION = "GRADLE:VERSION";
+    public static final String VERSION = "@VERSION@";
     public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
     public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
     public static final String DEPENDENCIES = "required-after:librarianlib";
