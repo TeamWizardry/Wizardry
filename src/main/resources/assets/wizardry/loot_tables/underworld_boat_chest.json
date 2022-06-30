@@ -1,0 +1,53 @@
+{
+  "pools": [
+    {
+      "name": "common",
+      "rolls": {
+        "min": 5,
+        "max": 10
+      },
+      "entries": [
+        {
+          "type": "item",
+          "weight": 15,
+          "name": "wizardry:fairy_dust"
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "wizardry:fairy_wings"
+        },
+        {
+          "type": "item",
+          "weight": 2,
+          "name": "wizardry:unicorn_horn"
+        },
+        {
+          "type": "item",
+          "weight": 20,
+          "name": "wizardry:wisdom_sapling",
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 4
+              }
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "weight": 2,
+          "name": "wizardry:orb",
+          "functions": [
+            {
+              "function": "set_nbt",
+              "tag": "{mana:10}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

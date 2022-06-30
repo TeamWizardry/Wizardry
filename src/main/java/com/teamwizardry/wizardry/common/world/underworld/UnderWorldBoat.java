@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.world.underworld;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -14,7 +15,6 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
-import net.minecraft.world.storage.loot.LootTableList;
 
 import java.util.Map;
 import java.util.Random;
@@ -42,8 +42,7 @@ public class UnderWorldBoat extends WorldGenerator {
 				TileEntity tileEntity = world.getTileEntity(blockPos.down());
 
 				if (tileEntity instanceof TileEntityChest) {
-					//TODO add custom loot the boat
-					((TileEntityChest) tileEntity).setLootTable(LootTableList.CHESTS_IGLOO_CHEST, rand.nextLong());
+					((TileEntityChest) tileEntity).setLootTable(CommonProxy.UNDERWORLD_BOAT_CHEST, rand.nextLong());
 				}
 			}
 		}
