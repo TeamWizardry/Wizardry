@@ -18,6 +18,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -47,8 +48,8 @@ public class ModuleEffectVanish implements IModuleEffect {
 
 		if (targetPos == null) return false;
 
-		Vec3d min = targetPos.subtract(aoe, range, aoe);
-		Vec3d max = targetPos.add(aoe, range, aoe);
+		BlockPos min = new BlockPos(targetPos.subtract(aoe, range, aoe));
+		BlockPos max = new BlockPos(targetPos.add(aoe, range, aoe));
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(min, max));
 		for (Entity entity : entities) {
