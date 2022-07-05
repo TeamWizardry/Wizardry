@@ -1,21 +1,7 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.wizardry.common.core.WizardryNemezManager;
-import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 // import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeLock;
-import com.teamwizardry.wizardry.init.ModPotions;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by Demoniaque.

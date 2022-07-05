@@ -55,8 +55,8 @@ public class ModuleEffectLowGravity implements IModuleEffect {
 
 		if (targetPos == null) return false;
 
-		Vec3d min = targetPos.subtract(aoe, range, aoe);
-		Vec3d max = targetPos.add(aoe, range, aoe);
+		BlockPos min = new BlockPos(targetPos.subtract(aoe, range, aoe));
+		BlockPos max = new BlockPos(targetPos.add(aoe, range, aoe));
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(min, max));
 		for (Entity entity : entities) {

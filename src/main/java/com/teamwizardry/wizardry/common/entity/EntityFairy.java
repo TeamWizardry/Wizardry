@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.features.helpers.NBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.NBTConstants.NBT;
 import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
 import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskController;
 import com.teamwizardry.wizardry.api.entity.fairy.fairytasks.FairyTaskRegistry;

@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.init;
 
-import com.teamwizardry.wizardry.common.world.biome.BiomeTorikki;
-import com.teamwizardry.wizardry.common.world.biome.BiomeTorikkiSea;
 import com.teamwizardry.wizardry.common.world.biome.BiomeUnderWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;

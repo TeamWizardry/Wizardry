@@ -31,6 +31,9 @@ public class ConfigValues {
 	@ConfigProperty(category = "world", comment = "If you have a dimension ID conflict with this mod and something else, change this number")
 	public static int underworldID = 33;
 
+	@ConfigProperty(category = "world", comment = "Chance of an underworld boat being generated in a chunk (1 in X)")
+	public static int underworldBoatChance = 1000;
+
 	@ConfigProperty(category = "world", comment = "If you have a dimension ID conflict with this mod and something else, change this number")
 	public static int torikkiID = 34;
 

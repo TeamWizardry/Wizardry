@@ -1,35 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.google.common.collect.HashMultimap;
-import com.teamwizardry.wizardry.api.spell.IDelayedModule;
-import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
-import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.core.WizardryNemezManager;
-import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
-import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
-import com.teamwizardry.wizardry.init.ModPotions;
-import com.teamwizardry.wizardry.init.ModSounds;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import java.awt.*;
-import java.util.UUID;
-
 /**
  * Created by Demoniaque.
  */

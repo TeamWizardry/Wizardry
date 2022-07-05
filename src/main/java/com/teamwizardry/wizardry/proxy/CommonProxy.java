@@ -23,7 +23,6 @@ import com.teamwizardry.wizardry.common.item.ItemBook;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
-import com.teamwizardry.wizardry.common.world.trickery.WorldProviderTorikki;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
@@ -31,7 +30,9 @@ import com.teamwizardry.wizardry.init.*;
 import com.teamwizardry.wizardry.init.plugin.PluginLoaderContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -46,6 +47,7 @@ import java.util.ServiceLoader;
 public class CommonProxy {
 
 	private File directory;
+	public static final ResourceLocation UNDERWORLD_BOAT_CHEST = new ResourceLocation(Wizardry.MODID, "underworld_boat_chest");
 
 	public File getWizardryDirectory() {
 		return directory;
@@ -80,6 +82,9 @@ public class CommonProxy {
 		ModCapabilities.preInit();
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
+
+		// Loot tables
+		LootTableList.register(UNDERWORLD_BOAT_CHEST);
 
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", ConfigValues.underworldID, WorldProviderUnderWorld.class, false);
 //		Wizardry.torikki = DimensionType.register("torikki", "_dim", ConfigValues.torikkiID, WorldProviderTorikki.class, false);

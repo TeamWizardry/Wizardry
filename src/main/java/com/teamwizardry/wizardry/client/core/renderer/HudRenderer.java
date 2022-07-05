@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
-import com.teamwizardry.librarianlib.features.sprite.ISprite;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
