@@ -88,7 +88,7 @@ public class TableModule extends GuiComponent {
 			BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
 				if (worktable.animationPlaying) return;
 				if (event.getButton() == EnumMouseButton.LEFT && getMouseOver()) {
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 0.5f, 1f);
 					TableModule item = new TableModule(this.worktable, this.module, true, false);
 					item.setPos(paper.otherPosToThisContext(event.component, event.getMousePos()));
 					DragMixin drag = new DragMixin(item, vec2d -> vec2d);
@@ -112,7 +112,7 @@ public class TableModule extends GuiComponent {
 				initialPos = event.component.thisPosToOtherContext(null);
 				if (event.getButton() == EnumMouseButton.RIGHT) {
 					event.component.addTag("connecting");
-					Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.POP, 0.5f, 1f);
 				}
 			});
 
@@ -145,13 +145,13 @@ public class TableModule extends GuiComponent {
 				if (event.getButton() == EnumMouseButton.LEFT && initialPos.squareDist(currentPos) < 0.1) {
 
 					if (worktable.selectedModule == this) {
-						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 0.5f, 1f);
 
 						worktable.selectedModule = null;
 						deselect(this);
 
 					} else {
-						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 0.5f, 1f);
 						if (worktable.selectedModule != null) {
 							unhoverOver(worktable.selectedModule);
 						}
@@ -185,7 +185,7 @@ public class TableModule extends GuiComponent {
 
 						if (worktable.selectedModule == this) worktable.selectedModule = null;
 
-						Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
+						Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 0.5f, 1f);
 						event.component.invalidate();
 
 						if (event.component.hasTag("placed"))
@@ -252,7 +252,7 @@ public class TableModule extends GuiComponent {
 								}
 							}
 
-							Minecraft.getMinecraft().player.playSound(ModSounds.BELL_TING, 1f, 1f);
+							Minecraft.getMinecraft().player.playSound(ModSounds.BELL_TING, 0.5f, 1f);
 							worktable.setToastMessage("", Color.GREEN);
 							worktable.paper.BUS.fire(new ModuleUpdateEvent());
 							worktable.syncToServer();

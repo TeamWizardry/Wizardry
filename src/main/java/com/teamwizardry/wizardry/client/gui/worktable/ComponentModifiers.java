@@ -139,7 +139,7 @@ public class ComponentModifiers extends GuiComponent {
 				animPlate.setFrom(-PIXELS_PER_BAR); // units: pixels
 				animPlate.setTo(lengthToTravel - PIXELS_PER_BAR); // units: pixels
 				animPlate.setDuration(slideDuration); // units: ticks
-				animPlate.setCompletion(() -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+				animPlate.setCompletion(() -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 0.5f, 1f));
 				add(animPlate);
 
 				bar.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
@@ -190,11 +190,11 @@ public class ComponentModifiers extends GuiComponent {
 							}
 						}
 						if (cap != null && cap.max <= j) {
-							Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 1f, 1f);
+							Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 0.5f, 1f);
 							return;
 						}
 
-						Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f);
+						Minecraft.getMinecraft().player.playSound(ModSounds.POP, 0.5f, 1f);
 						worktable.selectedModule.setData(Integer.class, modifier.getNBTKey(), ++j);
 						status = 0;
 						worktable.setToastMessage("", Color.GREEN);
@@ -203,18 +203,18 @@ public class ComponentModifiers extends GuiComponent {
 						if (worktable.selectedModule.hasData(Integer.class, modifier.getNBTKey())) {
 
 							if (j > 0) {
-								Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
+								Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 0.5f, 1f);
 								worktable.selectedModule.setData(Integer.class, modifier.getNBTKey(), --j);
 
 								if (j <= 0) {
-									Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 1f, 1f);
+									Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 0.5f, 1f);
 									worktable.selectedModule.removeData(Integer.class, modifier.getNBTKey());
 								}
 								status = 1;
 								worktable.syncToServer();
 							}
 							worktable.setToastMessage("", Color.GREEN);
-						} else Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 1f, 1f);
+						} else Minecraft.getMinecraft().player.playSound(ModSounds.SPELL_FAIL, 0.5f, 1f);
 					}
 
 					if (status == -1) return;

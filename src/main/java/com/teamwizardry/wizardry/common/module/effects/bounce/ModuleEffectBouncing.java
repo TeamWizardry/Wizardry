@@ -21,6 +21,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
@@ -60,7 +61,7 @@ public class ModuleEffectBouncing implements IModuleEffect, ILingeringModule {
 			PacketHandler.NETWORK.sendToAll(new PacketAddBouncyBlock(world, pos, (int) time));
 		}
 
-		world.playSound(null, pos, ModSounds.SLIME_SQUISHING, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
+		world.playSound(null, pos, ModSounds.SLIME_SQUISHING, CommonProxy.SC_Wizardry, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
 		return true;
 	}
 

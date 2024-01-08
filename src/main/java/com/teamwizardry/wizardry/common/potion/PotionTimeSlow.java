@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
@@ -56,7 +57,7 @@ public class PotionTimeSlow extends PotionBase {
 			}
 		}
 
-		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_IN, SoundCategory.NEUTRAL, 1f, 1);
+		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_IN, CommonProxy.SC_Wizardry, 1f, 1);
 	}
 
 	@Override
@@ -66,7 +67,7 @@ public class PotionTimeSlow extends PotionBase {
 			((EntityLiving) entityLivingBaseIn).setNoAI(false);
 		}
 
-		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_OUT, SoundCategory.NEUTRAL, 1f, 1);
+		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_OUT, CommonProxy.SC_Wizardry, 1f, 1);
 	}
 
 	public static float timeScale(Entity entity) {

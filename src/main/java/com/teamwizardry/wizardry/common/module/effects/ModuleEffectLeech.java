@@ -16,6 +16,7 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityWitch;
@@ -92,7 +93,7 @@ public class ModuleEffectLeech implements IModuleEffect {
 
 		Vec3d target = spell.getTargetWithFallback(world);
 		if (target != null)
-			world.playSound(null, new BlockPos(target), ModSounds.CHAINY_ZAP, SoundCategory.NEUTRAL, 0.5f, 1f);
+			world.playSound(null, new BlockPos(target), ModSounds.CHAINY_ZAP, CommonProxy.SC_Wizardry, 0.5f, 1f);
 		return true;
 	}
 

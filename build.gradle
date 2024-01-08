@@ -78,12 +78,14 @@ minecraft {
 }
 
 repositories {
+    mavenCentral()
     maven { url = "https://jitpack.io" }
     maven { url = "https://cursemaven.com" }
     maven { url = "https://dvs1.progwml6.com/files/maven" }
     maven { url = "https://maven.tterrag.com/" }
     maven { url = "https://maven.shadowfacts.net/" }
     maven { url = "https://maven.thiakil.com" }
+    maven { url = 'https://files.minecraftforge.net/maven' }
 }
 
 dependencies {

@@ -18,6 +18,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
@@ -57,7 +58,7 @@ public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule
 		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).grow(potency, potency, potency));
 
 		if (RandUtil.nextInt(10) == 0)
-			world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
+			world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, CommonProxy.SC_Wizardry, 0.5f, RandUtil.nextFloat());
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);
 			if (dist > potency) continue;

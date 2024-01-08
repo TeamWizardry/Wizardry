@@ -80,4 +80,9 @@ public class ConfigValues {
 	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
 	@ConfigProperty(category = "spells", comment = "Maximum number of ticks between Beam activations. Minimum of 1.")
 	public static int beamTimer = 10;
+
+	@ConfigProperty(category = "spells", comment = "Blocks that the phase spell should not work with. Use the registryName of the block you want to blacklist.")
+	public static String[] phaseBlocksBlackList = {
+			"minecraft:bedrock"
+	};
 }

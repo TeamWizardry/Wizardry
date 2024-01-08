@@ -29,8 +29,10 @@ import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import com.teamwizardry.wizardry.init.*;
 import com.teamwizardry.wizardry.init.plugin.PluginLoaderContext;
+import net.aeronica.mods.mxtune.sound.MODSoundCategory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,6 +57,8 @@ public class CommonProxy {
 
 	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 	}
+
+	public static SoundCategory SC_Wizardry = MODSoundCategory.add(Wizardry.MODID);
 
 	public void preInit(FMLPreInitializationEvent event) {
 		directory = new File(event.getModConfigurationDirectory(), Wizardry.MODID);

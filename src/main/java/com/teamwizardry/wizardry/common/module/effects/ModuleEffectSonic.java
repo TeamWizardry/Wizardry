@@ -16,6 +16,7 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,7 +55,7 @@ public class ModuleEffectSonic implements IModuleEffect {
 		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetEntity instanceof EntityLivingBase) {
-			world.playSound(null, pos, ModSounds.SOUND_BOMB, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.8f, 1.2f));
+			world.playSound(null, pos, ModSounds.SOUND_BOMB, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat(0.8f, 1.2f));
 			damageEntity((EntityLivingBase) targetEntity, caster, (float) potency);
 
 			if (((EntityLivingBase) targetEntity).getHealth() <= 0) {

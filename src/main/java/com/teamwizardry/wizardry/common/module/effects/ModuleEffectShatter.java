@@ -15,6 +15,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -67,8 +68,8 @@ public class ModuleEffectShatter implements IModuleEffect {
 			int invTime = targetEntity.hurtResistantTime;
 			targetEntity.hurtResistantTime = 0;
 
-			world.playSound(null, pos, ModSounds.MARBLE_EXPLOSION, SoundCategory.NEUTRAL, 2, RandUtil.nextFloat(0.8f, 1.2f));
-			world.playSound(null, pos, ModSounds.FIREWORK, SoundCategory.NEUTRAL, 2, RandUtil.nextFloat(0.8f, 1.2f));
+			world.playSound(null, pos, ModSounds.MARBLE_EXPLOSION, CommonProxy.SC_Wizardry, 2, RandUtil.nextFloat(0.8f, 1.2f));
+			world.playSound(null, pos, ModSounds.FIREWORK, CommonProxy.SC_Wizardry, 2, RandUtil.nextFloat(0.8f, 1.2f));
 			if (caster instanceof EntityLivingBase)
 			{
 				((EntityLivingBase) caster).setLastAttackedEntity(targetEntity);

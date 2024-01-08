@@ -16,6 +16,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
@@ -55,7 +56,7 @@ public class ModuleEffectDecay implements IModuleEffect {
 
 		if (!spellRing.taxCaster(world, spell, true)) return false;
 
-		world.playSound(null, targetPos, ModSounds.SLOW_MOTION_IN, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.1f, 0.5f));
+		world.playSound(null, targetPos, ModSounds.SLOW_MOTION_IN, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat(0.1f, 0.5f));
 
 		if (targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase target = (EntityLivingBase) targetEntity;

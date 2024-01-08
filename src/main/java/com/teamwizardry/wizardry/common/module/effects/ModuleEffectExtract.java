@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -149,7 +150,7 @@ public class ModuleEffectExtract implements IModuleEffect {
 			EntityItem entityitem = new EntityItem(world, targetEntity.posX, targetEntity.posY, targetEntity.posZ, left);
 			entityitem.setPickupDelay((int) (duration));
 			world.spawnEntity(entityitem);
-			world.playSound(null, targetEntity.getPosition(), ModSounds.ENCHANTED_WHASHOOSH, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.5f, 1.5f));
+			world.playSound(null, targetEntity.getPosition(), ModSounds.ENCHANTED_WHASHOOSH, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat(0.5f, 1.5f));
 
 
 			return true;
@@ -177,7 +178,7 @@ public class ModuleEffectExtract implements IModuleEffect {
 							EntityItem entityitem = new EntityItem(world, pos.x, pos.y, pos.z, extracted);
 							entityitem.setPickupDelay((int) duration);
 							world.spawnEntity(entityitem);
-							world.playSound(null, targetPos, ModSounds.ENCHANTED_WHASHOOSH, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.5f, 1.5f));
+							world.playSound(null, targetPos, ModSounds.ENCHANTED_WHASHOOSH, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat(0.5f, 1.5f));
 
 							return true;
 						}

@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -52,7 +53,7 @@ public class ModuleEffectBurn implements IModuleEffect {
 
 		if (targetEntity != null) {
 			targetEntity.setFire((int) time);
-			world.playSound(null, targetEntity.getPosition(), ModSounds.FIRE, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.35f, 0.75f), RandUtil.nextFloat(0.35f, 1.5f));
+			world.playSound(null, targetEntity.getPosition(), ModSounds.FIRE, CommonProxy.SC_Wizardry, RandUtil.nextFloat(0.35f, 0.75f), RandUtil.nextFloat(0.35f, 1.5f));
 		}
 
 		if (targetPos != null) {

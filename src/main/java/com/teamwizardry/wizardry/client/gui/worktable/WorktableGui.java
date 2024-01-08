@@ -193,12 +193,12 @@ public class WorktableGui extends GuiBase {
 
 			save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
 				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 0.5f, 1f);
 			});
 
 			save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
 				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 0.5f, 1f);
 			});
 
 			paper.BUS.hook(TableModule.ModuleUpdateEvent.class, event -> {
@@ -416,12 +416,12 @@ public class WorktableGui extends GuiBase {
 
 			load.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
 				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 0.5f, 1f);
 			});
 
 			load.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
 				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 0.5f, 1f);
 			});
 
 			load.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
@@ -513,12 +513,12 @@ public class WorktableGui extends GuiBase {
 
 			clear.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
 				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 0.5f, 1f);
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
 				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 0.5f, 1f);
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
@@ -821,7 +821,7 @@ public class WorktableGui extends GuiBase {
 					}
 				});
 
-				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.5f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.SCRIBBLING, 1f, 1f));
+				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.5f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.SCRIBBLING, 0.5f, 1f));
 
 				bookIcon.add(anim, animSound);
 
@@ -891,9 +891,9 @@ public class WorktableGui extends GuiBase {
 					float dur = RandUtil.nextFloat(70, 100);
 
 
-					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 0.5f, 1f));
 
-					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.75f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.75f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 0.5f, 1f));
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
 					animX.setDuration(dur);
@@ -988,7 +988,7 @@ public class WorktableGui extends GuiBase {
 					animText.setEasing(Easing.easeOutCubic);
 					animText.setTo(0);
 
-					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 0.5f, 1f));
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(module, "pos.x");
 					animX.setDuration(dur);
@@ -1010,7 +1010,7 @@ public class WorktableGui extends GuiBase {
 
 					animY.setCompletion(() -> {
 						module.invalidate();
-						Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
+						Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 0.5f, 1f);
 					});
 
 					module.add(animX, animY, animSound1, animRadius, animText);
@@ -1084,7 +1084,7 @@ public class WorktableGui extends GuiBase {
 					float delay = RandUtil.nextFloat(0.2f, 0.3f);
 					float dur = RandUtil.nextFloat(70, 100);
 
-					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 0.5f, 1f));
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(module, "pos.x");
 					animX.setDuration(dur);
@@ -1168,7 +1168,7 @@ public class WorktableGui extends GuiBase {
 				});
 
 				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.4f, () -> {
-					Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 0.5f, 1f);
 					itemsRunnable.run();
 
 					ScheduledEventAnimation animFinish = new ScheduledEventAnimation(100, () -> {
