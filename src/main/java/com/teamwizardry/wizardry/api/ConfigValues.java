@@ -74,10 +74,6 @@ public class ConfigValues {
 	public static double damagedPearlMultiplier = 0.05;
 	
 	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
-	@ConfigProperty(category = "spells", comment = "Maximum number of ticks between Zone activations. Minimum of 1.")
-	public static int zoneTimer = 20;
-	
-	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
 	@ConfigProperty(category = "spells", comment = "Maximum number of ticks between Beam activations. Minimum of 1.")
 	public static int beamTimer = 10;
 
