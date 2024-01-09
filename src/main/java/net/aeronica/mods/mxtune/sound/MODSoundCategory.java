@@ -66,7 +66,7 @@ public class MODSoundCategory
         SoundCategory soundCategory;
         constantName = name.toUpperCase().replace(" ", "");
         referenceName = constantName.toLowerCase();
-        soundCategory =  EnumHelper.addEnum(SoundCategory.class , constantName, new Class[]{String.class}, new Object[]{referenceName});
+        soundCategory =  EnumHelper.addEnum(SoundCategory.class , constantName, new Class[]{String.class}, referenceName);
         SOUND_CATEGORIES = ObfuscationReflectionHelper.getPrivateValue(SoundCategory.class, SoundCategory.VOICE ,"SOUND_CATEGORIES", SRG_SOUND_CATEGORIES);
         if (SOUND_CATEGORIES.containsKey(referenceName))
             throw new Error("Clash in Sound Category name pools! Cannot insert " + constantName);

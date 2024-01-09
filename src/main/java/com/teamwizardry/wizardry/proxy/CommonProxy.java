@@ -57,7 +57,7 @@ public class CommonProxy {
 	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 	}
 
-	public static SoundCategory SoundCategory_WizardryGeneral = MODSoundCategory.add(Wizardry.MODID + "_general");
+	public static SoundCategory SoundCategory_WizardryGeneral = MODSoundCategory.add(Wizardry.MODID + "_gen");
 	public static SoundCategory SoundCategory_WizardryGUI = MODSoundCategory.add(Wizardry.MODID + "_gui");
 
 	public void preInit(FMLPreInitializationEvent event) {

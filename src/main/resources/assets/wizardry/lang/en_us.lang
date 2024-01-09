@@ -1,4 +1,6 @@
-﻿soundCategory.wizardry=Wizardry
+﻿
+soundCategory.wizardry_gen=Wizardry General
+soundCategory.wizardry_gui=Wizardry GUI
 
 jei.wizardry.category.mana_crafting=Mana Crafting
 
