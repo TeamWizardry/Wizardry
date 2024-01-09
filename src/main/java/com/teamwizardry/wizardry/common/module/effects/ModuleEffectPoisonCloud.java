@@ -21,7 +21,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -59,7 +58,7 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
 		double area = spellRing.getAttributeValue(world, AttributeRegistry.AREA, spell);
 
 		if (world.getTotalWorldTime() % 2 == 0)
-			world.playSound(null, pos, ModSounds.FIZZING_LOOP, CommonProxy.SC_Wizardry, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.1f, 4f));
+			world.playSound(null, pos, ModSounds.FIZZING_LOOP, CommonProxy.SoundCategory_WizardryGeneral, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.1f, 4f));
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(area, area, area))) {
 			if (entity instanceof EntityLivingBase) {
 				EntityLivingBase living = (EntityLivingBase) entity;

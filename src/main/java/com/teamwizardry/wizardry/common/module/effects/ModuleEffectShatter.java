@@ -23,7 +23,6 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -68,8 +67,8 @@ public class ModuleEffectShatter implements IModuleEffect {
 			int invTime = targetEntity.hurtResistantTime;
 			targetEntity.hurtResistantTime = 0;
 
-			world.playSound(null, pos, ModSounds.MARBLE_EXPLOSION, CommonProxy.SC_Wizardry, 2, RandUtil.nextFloat(0.8f, 1.2f));
-			world.playSound(null, pos, ModSounds.FIREWORK, CommonProxy.SC_Wizardry, 2, RandUtil.nextFloat(0.8f, 1.2f));
+			world.playSound(null, pos, ModSounds.MARBLE_EXPLOSION, CommonProxy.SoundCategory_WizardryGeneral, 2, RandUtil.nextFloat(0.8f, 1.2f));
+			world.playSound(null, pos, ModSounds.FIREWORK, CommonProxy.SoundCategory_WizardryGeneral, 2, RandUtil.nextFloat(0.8f, 1.2f));
 			if (caster instanceof EntityLivingBase)
 			{
 				((EntityLivingBase) caster).setLastAttackedEntity(targetEntity);

@@ -6,7 +6,6 @@ import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -25,7 +24,7 @@ public class PotionGrace extends PotionBase {
 	@Override
 	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.GOOD_ETHEREAL_CHILLS, CommonProxy.SC_Wizardry, 1f, 1f);
+		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.GOOD_ETHEREAL_CHILLS, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f);
 	}
 
 	@SubscribeEvent

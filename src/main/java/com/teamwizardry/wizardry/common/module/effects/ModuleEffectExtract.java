@@ -18,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.ILockableContainer;
@@ -150,7 +149,7 @@ public class ModuleEffectExtract implements IModuleEffect {
 			EntityItem entityitem = new EntityItem(world, targetEntity.posX, targetEntity.posY, targetEntity.posZ, left);
 			entityitem.setPickupDelay((int) (duration));
 			world.spawnEntity(entityitem);
-			world.playSound(null, targetEntity.getPosition(), ModSounds.ENCHANTED_WHASHOOSH, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat(0.5f, 1.5f));
+			world.playSound(null, targetEntity.getPosition(), ModSounds.ENCHANTED_WHASHOOSH, CommonProxy.SoundCategory_WizardryGeneral, 1, RandUtil.nextFloat(0.5f, 1.5f));
 
 
 			return true;
@@ -178,7 +177,7 @@ public class ModuleEffectExtract implements IModuleEffect {
 							EntityItem entityitem = new EntityItem(world, pos.x, pos.y, pos.z, extracted);
 							entityitem.setPickupDelay((int) duration);
 							world.spawnEntity(entityitem);
-							world.playSound(null, targetPos, ModSounds.ENCHANTED_WHASHOOSH, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat(0.5f, 1.5f));
+							world.playSound(null, targetPos, ModSounds.ENCHANTED_WHASHOOSH, CommonProxy.SoundCategory_WizardryGeneral, 1, RandUtil.nextFloat(0.5f, 1.5f));
 
 							return true;
 						}

@@ -37,7 +37,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -87,8 +86,8 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 			caster.rotationYaw = yawTarget;
 			caster.rotationPitch = pitchTarget;
 			caster.setPositionAndUpdate(posTarget.x, posTarget.y, posTarget.z);
-			world.playSound(null, caster.getPosition(), ModSounds.TELEPORT, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat());
-			world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat());
+			world.playSound(null, caster.getPosition(), ModSounds.TELEPORT, CommonProxy.SoundCategory_WizardryGeneral, 1, RandUtil.nextFloat());
+			world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, CommonProxy.SoundCategory_WizardryGeneral, 1, RandUtil.nextFloat());
 
 			return true;
 
@@ -97,7 +96,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 			ItemStack hand = ((EntityPlayer) caster).getHeldItemMainhand();
 			if (hand.isEmpty()) return false;
 
-			world.playSound(null, targetBlock, ModSounds.TELEPORT, CommonProxy.SC_Wizardry, 1, RandUtil.nextFloat());
+			world.playSound(null, targetBlock, ModSounds.TELEPORT, CommonProxy.SoundCategory_WizardryGeneral, 1, RandUtil.nextFloat());
 			if (NBTHelper.hasNBTEntry(hand, "selected")) {
 
 				NBTTagCompound compound = NBTHelper.getCompound(hand, "selected");

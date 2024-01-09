@@ -24,7 +24,6 @@ import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -82,8 +81,8 @@ public class ModuleEffectLightning implements IModuleEffect {
 		ArrayList<Vec3d> points = new ArrayList<>();
 		LightningGenerator.generate(rand, from, to, offshootRange).forEach(points::add);
 
-		world.playSound(null, new BlockPos(to), ModSounds.LIGHTNING, CommonProxy.SC_Wizardry, 0.1f, RandUtil.nextFloat(1, 1.5f));
-		world.playSound(null, new BlockPos(from), ModSounds.LIGHTNING, CommonProxy.SC_Wizardry, 0.1f, RandUtil.nextFloat(1, 1.5f));
+		world.playSound(null, new BlockPos(to), ModSounds.LIGHTNING, CommonProxy.SoundCategory_WizardryGeneral, 0.1f, RandUtil.nextFloat(1, 1.5f));
+		world.playSound(null, new BlockPos(from), ModSounds.LIGHTNING, CommonProxy.SoundCategory_WizardryGeneral, 0.1f, RandUtil.nextFloat(1, 1.5f));
 
 		HashSet<BlockPos> positions = new HashSet<>();
 		for (Vec3d point : points)

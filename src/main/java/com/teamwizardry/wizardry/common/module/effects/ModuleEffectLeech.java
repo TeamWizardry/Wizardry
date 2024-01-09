@@ -24,7 +24,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -93,7 +92,7 @@ public class ModuleEffectLeech implements IModuleEffect {
 
 		Vec3d target = spell.getTargetWithFallback(world);
 		if (target != null)
-			world.playSound(null, new BlockPos(target), ModSounds.CHAINY_ZAP, CommonProxy.SC_Wizardry, 0.5f, 1f);
+			world.playSound(null, new BlockPos(target), ModSounds.CHAINY_ZAP, CommonProxy.SoundCategory_WizardryGeneral, 0.5f, 1f);
 		return true;
 	}
 

@@ -53,7 +53,7 @@ public class ModuleEffectBurn implements IModuleEffect {
 
 		if (targetEntity != null) {
 			targetEntity.setFire((int) time);
-			world.playSound(null, targetEntity.getPosition(), ModSounds.FIRE, CommonProxy.SC_Wizardry, RandUtil.nextFloat(0.35f, 0.75f), RandUtil.nextFloat(0.35f, 1.5f));
+			world.playSound(null, targetEntity.getPosition(), ModSounds.FIRE, CommonProxy.SoundCategory_WizardryGeneral, RandUtil.nextFloat(0.35f, 0.75f), RandUtil.nextFloat(0.35f, 1.5f));
 		}
 
 		if (targetPos != null) {

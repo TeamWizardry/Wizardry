@@ -16,7 +16,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -102,7 +101,7 @@ public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));
-			world.playSound(null, target.getPosition(), ModSounds.FLY, CommonProxy.SC_Wizardry, 1, 1);
+			world.playSound(null, target.getPosition(), ModSounds.FLY, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 		}
 		return true;
 	}

@@ -1,11 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -14,17 +9,13 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketThriveBlock;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,8 +23,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -71,7 +60,7 @@ public class ModuleEffectThrive implements IModuleEffect {
 			if (!spellRing.taxCaster(world, spell, true)) return false;
 
 			((EntityLivingBase) targetEntity).heal((float) potency);
-			world.playSound(null, new BlockPos(pos), ModSounds.HEAL, CommonProxy.SC_Wizardry, 1, 1);
+			world.playSound(null, new BlockPos(pos), ModSounds.HEAL, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 		}
 
 		if (targetPos != null) {
@@ -102,7 +91,7 @@ public class ModuleEffectThrive implements IModuleEffect {
 						block = state.getBlock();
 					}
 					world.immediateBlockTick(targetPos, state, RandUtil.random);
-					world.playSound(null, new BlockPos(pos), ModSounds.HEAL, CommonProxy.SC_Wizardry, 1, 1);
+					world.playSound(null, new BlockPos(pos), ModSounds.HEAL, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 				}
 
 				state = world.getBlockState(otherTargetPos);
@@ -115,7 +104,7 @@ public class ModuleEffectThrive implements IModuleEffect {
 						block = state.getBlock();
 					}
 					world.immediateBlockTick(otherTargetPos, state, RandUtil.random);
-					world.playSound(null, new BlockPos(pos), ModSounds.HEAL, CommonProxy.SC_Wizardry, 1, 1);
+					world.playSound(null, new BlockPos(pos), ModSounds.HEAL, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 				}
 			}
 		}

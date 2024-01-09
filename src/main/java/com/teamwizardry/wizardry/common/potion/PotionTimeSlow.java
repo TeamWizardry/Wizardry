@@ -17,11 +17,7 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.dragon.phase.IPhase;
 import net.minecraft.entity.boss.dragon.phase.PhaseList;
 import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.item.ItemEnderEye;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -33,7 +29,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import javax.annotation.Nonnull;
-import java.util.logging.Logger;
 
 /**
  * Created by Demoniaque.
@@ -57,7 +52,7 @@ public class PotionTimeSlow extends PotionBase {
 			}
 		}
 
-		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_IN, CommonProxy.SC_Wizardry, 1f, 1);
+		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_IN, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1);
 	}
 
 	@Override
@@ -67,7 +62,7 @@ public class PotionTimeSlow extends PotionBase {
 			((EntityLiving) entityLivingBaseIn).setNoAI(false);
 		}
 
-		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_OUT, CommonProxy.SC_Wizardry, 1f, 1);
+		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_OUT, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1);
 	}
 
 	public static float timeScale(Entity entity) {
