@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.capability.chunk.WizardryChunkCapability;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.plugin.PluginContext;
 import com.teamwizardry.wizardry.api.plugin.WizardryPlugin;
+import com.teamwizardry.wizardry.api.sound.SoundCategoryRegistry;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -28,7 +29,6 @@ import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import com.teamwizardry.wizardry.init.*;
 import com.teamwizardry.wizardry.init.plugin.PluginLoaderContext;
-import net.aeronica.mods.mxtune.sound.MODSoundCategory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -57,8 +57,8 @@ public class CommonProxy {
 	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 	}
 
-	public static SoundCategory SoundCategory_WizardryGeneral = MODSoundCategory.add(Wizardry.MODID + "_gen");
-	public static SoundCategory SoundCategory_WizardryGUI = MODSoundCategory.add(Wizardry.MODID + "_gui");
+	public static SoundCategory SoundCategory_WizardryGeneral = SoundCategoryRegistry.register(Wizardry.MODID + "_gen");
+	public static SoundCategory SoundCategory_WizardryGUI = SoundCategoryRegistry.register(Wizardry.MODID + "_gui");
 
 	public void preInit(FMLPreInitializationEvent event) {
 		directory = new File(event.getModConfigurationDirectory(), Wizardry.MODID);
