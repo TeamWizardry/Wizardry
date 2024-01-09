@@ -143,7 +143,7 @@ public class ComponentModifiers extends GuiComponent {
 				animPlate.setDuration(slideDuration); // units: ticks
 				animPlate.setCompletion(() -> {
 					EntityPlayerSP player = Minecraft.getMinecraft().player;
-					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.WHOOSH, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.WHOOSH, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 				});
 				add(animPlate);
 
@@ -196,13 +196,13 @@ public class ComponentModifiers extends GuiComponent {
 						}
 						if (cap != null && cap.max <= j) {
 							EntityPlayerSP player = Minecraft.getMinecraft().player;
-							player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+							player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 							return;
 						}
 
 						EntityPlayerSP player = Minecraft.getMinecraft().player;
-						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 						worktable.selectedModule.setData(Integer.class, modifier.getNBTKey(), ++j);
 						status = 0;
@@ -213,12 +213,12 @@ public class ComponentModifiers extends GuiComponent {
 
 							if (j > 0) {
 								EntityPlayerSP player = Minecraft.getMinecraft().player;
-								player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.ZOOM, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+								player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.ZOOM, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 								worktable.selectedModule.setData(Integer.class, modifier.getNBTKey(), --j);
 
 								if (j <= 0) {
-									player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+									player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 									worktable.selectedModule.removeData(Integer.class, modifier.getNBTKey());
 								}
@@ -228,7 +228,7 @@ public class ComponentModifiers extends GuiComponent {
 							worktable.setToastMessage("", Color.GREEN);
 						} else {
 							EntityPlayerSP player = Minecraft.getMinecraft().player;
-							player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+							player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 						}
 					}
 

@@ -91,7 +91,7 @@ public class TableModule extends GuiComponent {
 				if (worktable.animationPlaying) return;
 				if (event.getButton() == EnumMouseButton.LEFT && getMouseOver()) {
 					EntityPlayerSP player = Minecraft.getMinecraft().player;
-					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_IN, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_IN, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 					TableModule item = new TableModule(this.worktable, this.module, true, false);
 					item.setPos(paper.otherPosToThisContext(event.component, event.getMousePos()));
@@ -118,7 +118,7 @@ public class TableModule extends GuiComponent {
 					event.component.addTag("connecting");
 
 					EntityPlayerSP player = Minecraft.getMinecraft().player;
-					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 				}
 			});
 
@@ -152,14 +152,14 @@ public class TableModule extends GuiComponent {
 
 					if (worktable.selectedModule == this) {
 						EntityPlayerSP player = Minecraft.getMinecraft().player;
-						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_OUT, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_OUT, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 						worktable.selectedModule = null;
 						deselect(this);
 
 					} else {
 						EntityPlayerSP player = Minecraft.getMinecraft().player;
-						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_IN, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_IN, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 						if (worktable.selectedModule != null) {
 							unhoverOver(worktable.selectedModule);
@@ -195,7 +195,7 @@ public class TableModule extends GuiComponent {
 						if (worktable.selectedModule == this) worktable.selectedModule = null;
 
 						EntityPlayerSP player = Minecraft.getMinecraft().player;
-						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.ZOOM, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.ZOOM, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 						event.component.invalidate();
 
@@ -264,7 +264,7 @@ public class TableModule extends GuiComponent {
 							}
 
 							EntityPlayerSP player = Minecraft.getMinecraft().player;
-							player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BELL_TING, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+							player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BELL_TING, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 
 							worktable.setToastMessage("", Color.GREEN);
 							worktable.paper.BUS.fire(new ModuleUpdateEvent());

@@ -58,7 +58,6 @@ public class CommonProxy {
 	}
 
 	public static SoundCategory SoundCategory_WizardryGeneral = SoundCategoryRegistry.register(Wizardry.MODID + "_gen");
-	public static SoundCategory SoundCategory_WizardryGUI = SoundCategoryRegistry.register(Wizardry.MODID + "_gui");
 
 	public void preInit(FMLPreInitializationEvent event) {
 		directory = new File(event.getModConfigurationDirectory(), Wizardry.MODID);

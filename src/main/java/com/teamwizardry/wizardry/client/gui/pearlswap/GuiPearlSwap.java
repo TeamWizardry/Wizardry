@@ -250,13 +250,13 @@ public class GuiPearlSwap extends GuiBase {
 					ANIMATOR.add(new ScheduledEventAnimation(10, this::dilateItems));
 			}
 
-			player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+			player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 		} else if (newPearlCount != 0 && index != -1) {
 			contractItem(index);
 			ANIMATOR.add(new ScheduledEventAnimation(10, () -> dilateItem(index)));
-			player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+			player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 		} else {
-			player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGUI, 1f, 1f, false);
+			player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 		}
 
 		double centerRad = newPearlCount == 0 ? getGuiHeight() : getGuiHeight() * 0.75;
