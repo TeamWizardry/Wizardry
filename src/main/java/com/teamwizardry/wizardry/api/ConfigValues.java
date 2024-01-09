@@ -17,7 +17,13 @@ public class ConfigValues {
 
 	@ConfigProperty(category = "general", comment = "If enabled, external recipes and modules will be forcibly reset to default.\nDisable to allow custom recipes and module values.")
 	public static boolean useInternalValues = false;
-	
+
+	@ConfigProperty(category = "sound", comment = "Volume of sounds produced in general by the mod.\nThe value must be a floating number between 0 and 1.")
+	public static float generalVolume = 1f;
+
+	@ConfigProperty(category = "sound", comment = "Volume of sounds produced in the mod's GUI.\nThe value must be a floating number between 0 and 1.")
+	public static float guiVolume = 1f;
+
 	@ConfigProperty(category = "world", comment = "If true, mana pool dimension whitelist is instead a blacklist")
 	public static boolean isDimBlacklist = false;
 	
