@@ -1,7 +1,9 @@
 package com.teamwizardry.wizardry.common.potion;
 
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.events.EntityMoveEvent;
 import com.teamwizardry.wizardry.api.events.PlayerClipEvent;
+import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
@@ -17,14 +19,14 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -73,7 +75,7 @@ public class PotionPhase extends PotionBase {
 		double d4 = z;
 
 		if ((type == MoverType.SELF || type == MoverType.PLAYER) && entity.onGround && entity.isSneaking() && entity instanceof EntityPlayer) {
-			for (; x != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(x, (double) (-entity.stepHeight), 0.0D)).isEmpty(); d2 = x) {
+			for (; x != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(x, -entity.stepHeight, 0.0D)).isEmpty(); d2 = x) {
 				if (x >= 0.05D || x < -0.05D) {
 					if (x > 0.0D) {
 						x -= 0.05D;
@@ -83,7 +85,7 @@ public class PotionPhase extends PotionBase {
 				} else x = 0.0D;
 			}
 
-			for (; z != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(0.0D, (double) (-entity.stepHeight), z)).isEmpty(); d4 = z) {
+			for (; z != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(0.0D, -entity.stepHeight, z)).isEmpty(); d4 = z) {
 				if (z >= 0.05D || z < -0.05D) {
 					if (z > 0.0D) {
 						z -= 0.05D;
@@ -93,7 +95,7 @@ public class PotionPhase extends PotionBase {
 				} else z = 0.0D;
 			}
 
-			for (; x != 0.0D && z != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(x, (double) (-entity.stepHeight), z)).isEmpty(); d4 = z) {
+			for (; x != 0.0D && z != 0.0D && entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(x, -entity.stepHeight, z)).isEmpty(); d4 = z) {
 				if (x >= 0.05D || x < -0.05D) {
 					if (x > 0.0D) {
 						x -= 0.05D;
@@ -121,16 +123,64 @@ public class PotionPhase extends PotionBase {
 			int k = 0;
 
 			for (int l = list1.size(); k < l; ++k) {
-				double offsetY = list1.get(k).calculateYOffset(entity.getEntityBoundingBox(), y);
+				AxisAlignedBB collision = list1.get(k);
+				double offsetY = collision.calculateYOffset(entity.getEntityBoundingBox(), y);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					y = offsetY;
+				}
+
 				if (offsetY <= 0)
 					y = offsetY;
 			}
 
-			entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(0.0D, y + (y == 0 && entity.isSneaking() ? -0.1 : 0), 0.0D));
+			double yModifier = 0;
+
+			if (y == 0 && entity.isSneaking()) {
+				int j6 = MathHelper.floor(entity.posX);
+				int i1 = MathHelper.floor(entity.posY - 0.20000000298023224D);
+				int k6 = MathHelper.floor(entity.posZ);
+				BlockPos blockpos = new BlockPos(j6, i1, k6);
+				IBlockState blockState = entity.world.getBlockState(blockpos);
+
+				if (!isBlacklistedBlock(blockState.getBlock())) {
+					yModifier = -0.1;
+				}
+			}
+
+			entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(0.0D, y + yModifier, 0.0D));
 		}
 
-		if (x != 0.0D) entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(x, 0.0D, 0.0D));
-		if (z != 0.0D) entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(0.0D, 0.0D, z));
+		if (x != 0.0D) {
+			int j5 = 0;
+
+			for (int l5 = list1.size(); j5 < l5; ++j5)
+			{
+				AxisAlignedBB collision = list1.get(j5);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					x = collision.calculateXOffset(entity.getEntityBoundingBox(), x);
+				}
+			}
+
+			if (x != 0.0D)
+				entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(x, 0.0D, 0.0D));
+		}
+		if (z != 0.0D) {
+			int k5 = 0;
+
+			for (int i6 = list1.size(); k5 < i6; ++k5)
+			{
+				AxisAlignedBB collision = list1.get(k5);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					z = collision.calculateZOffset(entity.getEntityBoundingBox(), z);
+				}
+			}
+
+			if (z != 0.0D)
+				entity.setEntityBoundingBox(entity.getEntityBoundingBox().offset(0.0D, 0.0D, z));
+		}
 
 		boolean flag = entity.onGround || d3 != y && d3 < 0.0D;
 
@@ -140,7 +190,7 @@ public class PotionPhase extends PotionBase {
 			double d7 = z;
 			AxisAlignedBB axisalignedbb1 = entity.getEntityBoundingBox();
 			entity.setEntityBoundingBox(axisalignedbb);
-			y = (double) entity.stepHeight;
+			y = entity.stepHeight;
 			List<AxisAlignedBB> list = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(d2, y, d4));
 			AxisAlignedBB axisalignedbb2 = entity.getEntityBoundingBox();
 			AxisAlignedBB axisalignedbb3 = axisalignedbb2.offset(d2, 0.0D, d4);
@@ -148,38 +198,98 @@ public class PotionPhase extends PotionBase {
 			int j1 = 0;
 
 			for (int k1 = list.size(); j1 < k1; ++j1) {
-				double offsetY = list1.get(j1).calculateYOffset(axisalignedbb3, y);
+				AxisAlignedBB collision = list1.get(j1);
+				double offsetY = collision.calculateYOffset(axisalignedbb3, y);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					d8 = offsetY;
+				}
+
 				if (offsetY <= 0)
 					d8 = offsetY;
 			}
 
 			axisalignedbb2 = axisalignedbb2.offset(0.0D, d8, 0.0D);
+			double d18 = d2;
+			int l1 = 0;
+
+			for (int i2 = list.size(); l1 < i2; ++l1)
+			{
+				AxisAlignedBB collision = list.get(l1);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					d18 = collision.calculateXOffset(axisalignedbb2, d18);
+				}
+			}
+
 			axisalignedbb2 = axisalignedbb2.offset(d2, 0.0D, 0.0D);
+			double d19 = d4;
+			int j2 = 0;
+
+			for (int k2 = list.size(); j2 < k2; ++j2)
+			{
+				AxisAlignedBB collision = list.get(j2);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					d19 = collision.calculateZOffset(axisalignedbb2, d19);
+				}
+			}
+
 			axisalignedbb2 = axisalignedbb2.offset(0.0D, 0.0D, d4);
 			AxisAlignedBB axisalignedbb4 = entity.getEntityBoundingBox();
 			double d20 = y;
 			int l2 = 0;
 
 			for (int i3 = list.size(); l2 < i3; ++l2) {
-				double offsetY = list1.get(i3).calculateYOffset(axisalignedbb4, y);
+				AxisAlignedBB collision = list1.get(l2);
+				double offsetY = collision.calculateYOffset(axisalignedbb4, y);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					d20 = offsetY;
+				}
+
 				if (offsetY <= 0)
 					d20 = offsetY;
 			}
 
 			axisalignedbb4 = axisalignedbb4.offset(0.0D, d20, 0.0D);
+			double d21 = d2;
+			int j3 = 0;
+
+			for (int k3 = list.size(); j3 < k3; ++j3)
+			{
+				AxisAlignedBB collision = list.get(j3);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					d21 = collision.calculateXOffset(axisalignedbb4, d21);
+				}
+			}
+
 			axisalignedbb4 = axisalignedbb4.offset(d2, 0.0D, 0.0D);
+			double d22 = d4;
+			int l3 = 0;
+
+			for (int i4 = list.size(); l3 < i4; ++l3)
+			{
+				AxisAlignedBB collision = list.get(l3);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					d22 = collision.calculateZOffset(axisalignedbb4, d22);
+				}
+			}
+
 			axisalignedbb4 = axisalignedbb4.offset(0.0D, 0.0D, d4);
 			double d23 = d2 * d2 + d4 * d4;
 			double d9 = d2 * d2 + d4 * d4;
 
 			if (d23 > d9) {
-				x = d2;
-				z = d4;
+				x = d18;
+				z = d19;
 				y = -d8;
 				entity.setEntityBoundingBox(axisalignedbb2);
 			} else {
-				x = d2;
-				z = d4;
+				x = d21;
+				z = d22;
 				y = -d20;
 				entity.setEntityBoundingBox(axisalignedbb4);
 			}
@@ -187,7 +297,13 @@ public class PotionPhase extends PotionBase {
 			int j4 = 0;
 
 			for (int k4 = list.size(); j4 < k4; ++j4) {
-				double offsetY = list1.get(j4).calculateYOffset(entity.getEntityBoundingBox(), y);
+				AxisAlignedBB collision = list1.get(j4);
+				double offsetY = collision.calculateYOffset(entity.getEntityBoundingBox(), y);
+
+				if (BlockUtils.isBlockBlacklistedInPhaseEffect(getBlockFromCollisionBox(collision, entity.world))) {
+					y = offsetY;
+				}
+
 				if (offsetY <= 0)
 					y = offsetY;
 			}
@@ -264,6 +380,11 @@ public class PotionPhase extends PotionBase {
 
 							try {
 								state.getBlock().onEntityCollision(entity.world, blockpos$pooledmutableblockpos2, state, entity);
+
+								if (isBlacklistedBlock(state.getBlock())) {
+									entity.onInsideBlock(state);
+								}
+
 							} catch (Throwable throwable) {
 								CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Colliding entity with block");
 								CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being collided with");
@@ -289,23 +410,32 @@ public class PotionPhase extends PotionBase {
 		//event.entity.noClip = false;
 	}
 
-	@Nullable
-	public BlockPos getBottomBlock(@Nonnull Entity entity) {
-		boolean isSpectator = (entity instanceof EntityPlayer && ((EntityPlayer) entity).isSpectator());
-		if (isSpectator) return null;
-		AxisAlignedBB bb = entity.getEntityBoundingBox();
-		int mX = MathHelper.floor(bb.minX);
-		int mY = MathHelper.floor(bb.minY);
-		int mZ = MathHelper.floor(bb.minZ);
-		for (int y2 = mY; y2 < bb.maxY; y2++) {
-			for (int x2 = mX; x2 < bb.maxX; x2++) {
-				for (int z2 = mZ; z2 < bb.maxZ; z2++) {
-					BlockPos tmp = new BlockPos(x2, y2, z2);
-					if (!entity.world.isAirBlock(tmp)) return tmp;
-				}
+	public Block getBlockFromCollisionBox(AxisAlignedBB collisionBox, World world) {
+		try {
+			BlockPos blockPos = new BlockPos(collisionBox.getCenter());
+			IBlockState blockState = world.getBlockState(blockPos);
+			return blockState.getBlock();
+
+		} catch(Exception ignored) {}
+
+		return Blocks.AIR;
+	}
+
+	public boolean isBlacklistedBlock(Block block) {
+		ResourceLocation registry = block.getRegistryName();
+
+		if (registry == null) {
+			return false;
+		}
+
+		String name = registry.toString();
+
+		for (String regName : ConfigValues.phaseBlocksBlackList) {
+			if (name.equals(regName)) {
+				return true;
 			}
 		}
 
-		return null;
+		return false;
 	}
 }

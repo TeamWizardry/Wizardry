@@ -17,7 +17,7 @@ public class ConfigValues {
 
 	@ConfigProperty(category = "general", comment = "If enabled, external recipes and modules will be forcibly reset to default.\nDisable to allow custom recipes and module values.")
 	public static boolean useInternalValues = false;
-	
+
 	@ConfigProperty(category = "world", comment = "If true, mana pool dimension whitelist is instead a blacklist")
 	public static boolean isDimBlacklist = false;
 	
@@ -74,10 +74,11 @@ public class ConfigValues {
 	public static double damagedPearlMultiplier = 0.05;
 	
 	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
-	@ConfigProperty(category = "spells", comment = "Maximum number of ticks between Zone activations. Minimum of 1.")
-	public static int zoneTimer = 20;
-	
-	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
 	@ConfigProperty(category = "spells", comment = "Maximum number of ticks between Beam activations. Minimum of 1.")
 	public static int beamTimer = 10;
+
+	@ConfigProperty(category = "spells", comment = "Blocks that the phase spell should not work with. Use the registryName of the block you want to blacklist.")
+	public static String[] phaseBlocksBlackList = {
+			"minecraft:bedrock"
+	};
 }

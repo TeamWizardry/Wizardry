@@ -18,11 +18,11 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -83,7 +83,7 @@ public class ModuleEffectLowGravity implements IModuleEffect {
 		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetEntity != null) {
-			world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, (int) duration, (int) potency, true, false));
 		}
 		return true;

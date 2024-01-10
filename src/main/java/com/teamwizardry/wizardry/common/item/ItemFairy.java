@@ -6,13 +6,13 @@ import com.teamwizardry.wizardry.api.entity.fairy.FairyData;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class ItemFairy extends ItemMod {
 		}
 
 		stack.shrink(1);
-		worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), ModSounds.FAIRY, SoundCategory.BLOCKS, 1, 1, false);
+		worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), ModSounds.FAIRY, CommonProxy.SoundCategory_WizardryGeneral, 1, 1, false);
 
 		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}

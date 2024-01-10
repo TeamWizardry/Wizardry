@@ -18,12 +18,12 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler;
 import com.teamwizardry.wizardry.api.util.FixedPointUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -285,7 +285,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 			Vec3d origin = data.getOriginWithFallback(world);
 			if (origin != null)
-				world.playSound(null, new BlockPos(origin), ModSounds.SPELL_FAIL, SoundCategory.NEUTRAL, 1f, 1f);
+				world.playSound(null, new BlockPos(origin), ModSounds.SPELL_FAIL, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f);
 		}
 
 		return !fail;

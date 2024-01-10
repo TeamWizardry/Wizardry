@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.util;
 
 import com.mojang.authlib.GameProfile;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -14,6 +15,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -40,6 +42,24 @@ public final class BlockUtils {
 	private final static GameProfile PLACER = new GameProfile(ID, "Wizardry Block Placer");
 
 	private BlockUtils() {
+	}
+
+	public static boolean isBlockBlacklistedInPhaseEffect(Block block) {
+		ResourceLocation registry = block.getRegistryName();
+
+		if (registry == null) {
+			return false;
+		}
+
+		String name = registry.toString();
+
+		for (String regName : ConfigValues.phaseBlocksBlackList) {
+			if (name.equals(regName)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static boolean isAnyAir(IBlockState state) {

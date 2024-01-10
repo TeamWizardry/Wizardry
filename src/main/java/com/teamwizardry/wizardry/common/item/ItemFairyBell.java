@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.network.capability.PacketUpdateMiscCapToServer;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -90,7 +91,7 @@ public class ItemFairyBell extends ItemMod {
 
 					if (selected != null && selected.equals(targetFairy.getUniqueID())) {
 						cap.setSelectedFairy(null);
-						playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, SoundCategory.NEUTRAL, 1, 0.25f);
+						playerIn.world.playSound(null, playerIn.getPosition(), ModSounds.TINY_BELL, CommonProxy.SoundCategory_WizardryGeneral, 1, 0.25f);
 
 						playerIn.sendStatusMessage(new TextComponentTranslation("item.wizardry:fairy_bell.status.deselected"), true);
 

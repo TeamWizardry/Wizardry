@@ -25,6 +25,7 @@ import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -34,7 +35,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -91,11 +91,11 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 		if (targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;
 			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) duration, 0, true, false));
-			world.playSound(null, targetEntity.getPosition(), ModSounds.ETHEREAL, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, targetEntity.getPosition(), ModSounds.ETHEREAL, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 		}
 
 		if (targetPos != null && faceHit != null) {
-			world.playSound(null, targetPos, ModSounds.ETHEREAL, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, targetPos, ModSounds.ETHEREAL, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 			NemezTracker nemezDrive = WizardryNemezManager.getOrCreateNemezDrive(world, targetPos);
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
 
@@ -192,6 +192,10 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 				if (!fullAirPlane) {
 					if (edgeAirCount <= edgeBlockCount) {
 						for (Map.Entry<BlockPos, IBlockState> entry : tmp.entrySet()) {
+							if (BlockUtils.isBlockBlacklistedInPhaseEffect(entry.getValue().getBlock())) {
+								stateCache.put(entry.getKey(), entry.getValue());
+								continue;
+							}
 
 							nemezDrive.trackBlock(entry.getKey(), entry.getValue());
 
@@ -205,7 +209,7 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 						poses.addAll(tmp.keySet());
 					} else {
 						for (Map.Entry<BlockPos, IBlockState> entry : tmp.entrySet()) {
-							if (entry.getValue().getBlock() == Blocks.AIR) {
+							if (entry.getValue().getBlock() == Blocks.AIR || BlockUtils.isBlockBlacklistedInPhaseEffect(entry.getValue().getBlock())) {
 								stateCache.put(entry.getKey(), entry.getValue());
 								continue;
 							}

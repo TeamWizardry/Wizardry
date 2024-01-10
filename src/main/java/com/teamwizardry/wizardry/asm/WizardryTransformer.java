@@ -7,6 +7,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -73,44 +74,59 @@ public class WizardryTransformer implements IClassTransformer {
 			  Used in time slow and low grav.
 			 */
 			case "net.minecraft.entity.Entity": {
-				return transformSingleMethod(
-						basicClass,
-						"func_70091_d",
-						"move",
-						"(L" + CLASS_MOVER_TYPE + ";DDD)V",
-						methodNode -> {
-							InsnList newInstructions = new InsnList();
-							LabelNode node1 = new LabelNode();
+				return transformMultipleMethods(
+					basicClass,
+					new MethodTransformer[]{
+							new MethodTransformer(
+									"func_70091_d",
+									"move",
+									"(L" + CLASS_MOVER_TYPE + ";DDD)V",
+									methodNode -> {
+										InsnList newInstructions = new InsnList();
+										LabelNode node1 = new LabelNode();
 
-							newInstructions.add(new VarInsnNode(ALOAD, 0));
-							newInstructions.add(new VarInsnNode(ALOAD, 1));
-							newInstructions.add(new VarInsnNode(DLOAD, 2));
-							newInstructions.add(new VarInsnNode(DLOAD, 4));
-							newInstructions.add(new VarInsnNode(DLOAD, 6));
-							newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityPreMoveHook",
-									"(L" + CLASS_ENTITY + ";L" + CLASS_MOVER_TYPE + ";DDD)L" + CLASS_MOVE_EVENT + ";", false));
-							newInstructions.add(new InsnNode(DUP));
-							newInstructions.add(new MethodInsnNode(INVOKEVIRTUAL, CLASS_EVENT, "isCanceled", "()Z", false));
-							newInstructions.add(new JumpInsnNode(IFEQ, node1));
-							newInstructions.add(new InsnNode(POP));
-							newInstructions.add(new InsnNode(RETURN));
-							newInstructions.add(node1);
-							newInstructions.add(new InsnNode(DUP));
-							newInstructions.add(new InsnNode(DUP));
-							newInstructions.add(new InsnNode(DUP));
-							newInstructions.add(new FieldInsnNode(GETFIELD, CLASS_MOVE_EVENT, "type", "L" + CLASS_MOVER_TYPE + ";"));
-							newInstructions.add(new VarInsnNode(ASTORE, 1));
-							newInstructions.add(new FieldInsnNode(GETFIELD, CLASS_MOVE_EVENT, "x", "D"));
-							newInstructions.add(new VarInsnNode(DSTORE, 2));
-							newInstructions.add(new FieldInsnNode(GETFIELD, CLASS_MOVE_EVENT, "y", "D"));
-							newInstructions.add(new VarInsnNode(DSTORE, 4));
-							newInstructions.add(new FieldInsnNode(GETFIELD, CLASS_MOVE_EVENT, "z", "D"));
-							newInstructions.add(new VarInsnNode(DSTORE, 6));
+										newInstructions.add(new VarInsnNode(ALOAD, 0));
+										newInstructions.add(new VarInsnNode(ALOAD, 1));
+										newInstructions.add(new VarInsnNode(DLOAD, 2));
+										newInstructions.add(new VarInsnNode(DLOAD, 4));
+										newInstructions.add(new VarInsnNode(DLOAD, 6));
+										newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityPreMoveHook",
+												"(L" + CLASS_ENTITY + ";L" + CLASS_MOVER_TYPE + ";DDD)L" + CLASS_MOVE_EVENT + ";", false));
+										newInstructions.add(new InsnNode(DUP));
+										newInstructions.add(new MethodInsnNode(INVOKEVIRTUAL, CLASS_EVENT, "isCanceled", "()Z", false));
+										newInstructions.add(new JumpInsnNode(IFEQ, node1));
+										newInstructions.add(new InsnNode(POP));
+										newInstructions.add(new InsnNode(RETURN));
+										newInstructions.add(node1);
+										newInstructions.add(new InsnNode(DUP));
+										newInstructions.add(new InsnNode(DUP));
+										newInstructions.add(new InsnNode(DUP));
+										newInstructions.add(new FieldInsnNode(GETFIELD, CLASS_MOVE_EVENT, "type", "L" + CLASS_MOVER_TYPE + ";"));
+										newInstructions.add(new VarInsnNode(ASTORE, 1));
+										newInstructions.add(new FieldInsnNode(GETFIELD, CLASS_MOVE_EVENT, "x", "D"));
+										newInstructions.add(new VarInsnNode(DSTORE, 2));
+										newInstructions.add(new FieldInsnNode(GETFIELD, CLASS_MOVE_EVENT, "y", "D"));
+										newInstructions.add(new VarInsnNode(DSTORE, 4));
+										newInstructions.add(new FieldInsnNode(GETFIELD, CLASS_MOVE_EVENT, "z", "D"));
+										newInstructions.add(new VarInsnNode(DSTORE, 6));
 
-							methodNode.instructions.insertBefore(methodNode.instructions.getFirst(), newInstructions);
-							methodNode.instructions.resetLabels();
-							return true;
-						}
+										methodNode.instructions.insertBefore(methodNode.instructions.getFirst(), newInstructions);
+										methodNode.instructions.resetLabels();
+										return true;
+									}
+							),
+							new MethodTransformer(
+									"func_191955_a",
+									"onInsideBlock",
+									"(L" + CLASS_BLOCK_STATE + ";)V",
+									methodNode -> {
+										// Change access modifier to public
+										methodNode.access = ACC_PUBLIC;
+										log("Successfully patched -> 'onInsideBlock' with '(L" + CLASS_BLOCK_STATE + ";)V'");
+										return true;
+									}
+							)
+					}
 				);
 			}
 
@@ -233,6 +249,36 @@ public class WizardryTransformer implements IClassTransformer {
 						log("Successfully patched -> '" + srgName + "', '" + mcpName + "' with '" + desc + "'");
 					} else {
 						log("Failed to patch      -> '" + srgName + "', '" + mcpName + "' with '" + desc + "'");
+					}
+				}
+			}
+		});
+	}
+
+	public class MethodTransformer {
+		public String srgName;
+		public String mcpName;
+		public String desc;
+		public Predicate<MethodNode> transformer;
+
+		public MethodTransformer(String srgName, String mcpName, String desc, Predicate<MethodNode> transformer) {
+			this.srgName = srgName;
+			this.mcpName = mcpName;
+			this.desc = desc;
+			this.transformer = transformer;
+		}
+	}
+
+	private byte[] transformMultipleMethods(byte[] basicClass, MethodTransformer[] transformers) {
+		return transformClass(basicClass, classNode -> {
+			for (MethodNode methodNode : classNode.methods) {
+				for (MethodTransformer transformer : transformers) {
+					if (equalsEither(methodNode.name, transformer.srgName, transformer.mcpName) && methodNode.desc.equals(transformer.desc)) {
+						if (transformer.transformer.test(methodNode)) {
+							log("Successfully patched -> '" + transformer.srgName + "', '" + transformer.mcpName + "' with '" + transformer.desc + "'");
+						} else {
+							log("Failed to patch      -> '" + transformer.srgName + "', '" + transformer.mcpName + "' with '" + transformer.desc + "'");
+						}
 					}
 				}
 			}

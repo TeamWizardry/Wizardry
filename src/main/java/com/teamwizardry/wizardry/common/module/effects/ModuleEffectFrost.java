@@ -19,6 +19,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -27,7 +28,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -72,7 +72,7 @@ public class ModuleEffectFrost implements IModuleEffect {
 				if (!((EntityLivingBase) entity).isPotionActive(ModPotions.SLIPPERY) && entity.getDistanceSq(targetPos.x, targetPos.y, targetPos.z) <= aoe * aoe) {
 
 					double time = childRing.getAttributeValue(world, AttributeRegistry.DURATION, data) * 10;
-					world.playSound(null, entity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
+					world.playSound(null, entity.getPosition(), ModSounds.FROST_FORM, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 					((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 0, true, false));
 				}
 			}
@@ -92,7 +92,7 @@ public class ModuleEffectFrost implements IModuleEffect {
 		if (!spellRing.taxCaster(world, spell, true)) return false;
 
 		if (targetEntity != null) {
-			world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 			targetEntity.extinguish();
 			if (targetEntity instanceof EntityLivingBase) {
 				((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 0, true, false));
@@ -100,7 +100,7 @@ public class ModuleEffectFrost implements IModuleEffect {
 		}
 
 		if (targetPos != null) {
-			world.playSound(null, targetPos, ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, targetPos, ModSounds.FROST_FORM, CommonProxy.SoundCategory_WizardryGeneral, 1, 1);
 			for (BlockPos pos : BlockPos.getAllInBox(targetPos.add(-range, -range, -range), targetPos.add(range + 1, range + 1, range + 1))) {
 				double dist = pos.distanceSq(targetPos);
 				if (dist > range) continue;

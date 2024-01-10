@@ -33,8 +33,10 @@ import com.teamwizardry.wizardry.common.network.PacketSyncWorktable;
 import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import kotlin.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -192,13 +194,17 @@ public class WorktableGui extends GuiBase {
 			});
 
 			save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+				if (!animationPlaying && event.component.getMouseOver()) {
+					EntityPlayerSP player = Minecraft.getMinecraft().player;
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_IN, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+				}
 			});
 
 			save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+				if (!animationPlaying && event.component.getMouseOver()) {
+					EntityPlayerSP player = Minecraft.getMinecraft().player;
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_OUT, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+				}
 			});
 
 			paper.BUS.hook(TableModule.ModuleUpdateEvent.class, event -> {
@@ -415,13 +421,17 @@ public class WorktableGui extends GuiBase {
 			});
 
 			load.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+				if (!animationPlaying && event.component.getMouseOver()) {
+					EntityPlayerSP player = Minecraft.getMinecraft().player;
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_IN, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+				}
 			});
 
 			load.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+				if (!animationPlaying && event.component.getMouseOver()) {
+					EntityPlayerSP player = Minecraft.getMinecraft().player;
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_OUT, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+				}
 			});
 
 			load.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
@@ -512,13 +522,17 @@ public class WorktableGui extends GuiBase {
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+				if (!animationPlaying && event.component.getMouseOver()) {
+					EntityPlayerSP player = Minecraft.getMinecraft().player;
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_IN, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+				}
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-				if (!animationPlaying && event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+				if (!animationPlaying && event.component.getMouseOver()) {
+					EntityPlayerSP player = Minecraft.getMinecraft().player;
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.BUTTON_CLICK_OUT, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+				}
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
@@ -821,7 +835,10 @@ public class WorktableGui extends GuiBase {
 					}
 				});
 
-				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.5f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.SCRIBBLING, 1f, 1f));
+				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.5f, () -> {
+					EntityPlayerSP player = Minecraft.getMinecraft().player;
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.SCRIBBLING, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+				});
 
 				bookIcon.add(anim, animSound);
 
@@ -891,9 +908,15 @@ public class WorktableGui extends GuiBase {
 					float dur = RandUtil.nextFloat(70, 100);
 
 
-					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> {
+						EntityPlayerSP player = Minecraft.getMinecraft().player;
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+					});
 
-					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.75f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.75f, () -> {
+						EntityPlayerSP player = Minecraft.getMinecraft().player;
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.WHOOSH, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+					});
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
 					animX.setDuration(dur);
@@ -988,7 +1011,10 @@ public class WorktableGui extends GuiBase {
 					animText.setEasing(Easing.easeOutCubic);
 					animText.setTo(0);
 
-					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> {
+						EntityPlayerSP player = Minecraft.getMinecraft().player;
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.POP, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+					});
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(module, "pos.x");
 					animX.setDuration(dur);
@@ -1010,7 +1036,8 @@ public class WorktableGui extends GuiBase {
 
 					animY.setCompletion(() -> {
 						module.invalidate();
-						Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
+						EntityPlayerSP player = Minecraft.getMinecraft().player;
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.ZOOM, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
 					});
 
 					module.add(animX, animY, animSound1, animRadius, animText);
@@ -1084,7 +1111,10 @@ public class WorktableGui extends GuiBase {
 					float delay = RandUtil.nextFloat(0.2f, 0.3f);
 					float dur = RandUtil.nextFloat(70, 100);
 
-					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> {
+						EntityPlayerSP player = Minecraft.getMinecraft().player;
+						player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.WHOOSH, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+					});
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(module, "pos.x");
 					animX.setDuration(dur);
@@ -1168,7 +1198,9 @@ public class WorktableGui extends GuiBase {
 				});
 
 				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.4f, () -> {
-					Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f);
+					EntityPlayerSP player = Minecraft.getMinecraft().player;
+					player.world.playSound(player.posX, player.posY, player.posZ, ModSounds.WHOOSH, CommonProxy.SoundCategory_WizardryGeneral, 1f, 1f, false);
+
 					itemsRunnable.run();
 
 					ScheduledEventAnimation animFinish = new ScheduledEventAnimation(100, () -> {
